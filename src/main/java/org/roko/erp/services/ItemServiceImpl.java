@@ -44,7 +44,12 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> list() {
         return repo.findAll();
     }
-    
+
+    @Override
+    public long count() {
+        return repo.count();
+    }
+
     private void transferFields(Item item, Item itemFromDB) {
         itemFromDB.setDescription(item.getDescription());
         itemFromDB.setSalesPrice(item.getSalesPrice());

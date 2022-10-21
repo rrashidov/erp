@@ -15,4 +15,6 @@ public interface ItemService {
     public Item get(String id);
 
     public List<Item> list();
+
+    public long count();
 }

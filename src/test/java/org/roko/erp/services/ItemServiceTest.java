@@ -72,4 +72,11 @@ public class ItemServiceTest {
 
         verify(repoMock).findAll();
     }
+
+    @Test
+    public void count_delegatesToRepo(){
+        svc.count();
+
+        verify(repoMock).count();
+    }
 }
