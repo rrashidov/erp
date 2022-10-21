@@ -126,4 +126,13 @@ public class ItemControllerTest {
         assertEquals(TEST_ITEM_SALES_PRICE, createdItem.getSalesPrice());
         assertEquals(TEST_ITEM_PURCHASE_PRICE, createdItem.getPurchasePrice());
     }
+
+    @Test
+    public void deletingItem_deletesItem(){
+        RedirectView redirect = controller.delete(TEST_ITEM_CODE);
+
+        verify(itemServiceMock).delete(TEST_ITEM_CODE);
+
+        assertEquals("/itemList", redirect.getUrl());
+    }
 }

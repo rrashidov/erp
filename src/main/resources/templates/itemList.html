@@ -36,7 +36,7 @@
                         <td th:text="${item.salesPrice}"></td>
                         <td th:text="${item.purchasePrice}"></td>
                         <td th:text="${item.inventory}"></td>
-                        <td><a th:href="@{/itemCard?code={code}(code=${item.code})}">edit</a> <a th:href="@{/deleteCard?code={code}(code=${item.code})}">delete</a></td>
+                        <td><a th:href="@{/itemCard?code={code}(code=${item.code})}">edit</a> <a th:href="@{/deleteItem?code={code}(code=${item.code})}">delete</a></td>
                     </tr>
 
                 </tbody>

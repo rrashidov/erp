@@ -9,6 +9,7 @@ import org.roko.erp.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,6 +68,13 @@ public class ItemController {
         itemFromDB.setPurchasePrice(item.getPurchasePrice());
 
         svc.create(itemFromDB);
+
+        return new RedirectView("/itemList");
+    }
+
+    @GetMapping("/deleteItem")
+    public RedirectView delete(@RequestParam(name = "code") String code){
+        svc.delete(code);
 
         return new RedirectView("/itemList");
     }
