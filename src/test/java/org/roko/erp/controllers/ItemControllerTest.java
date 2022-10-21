@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,7 @@ public class ItemControllerTest {
     
     private static final String EXPECTED_ITEM_LIST_TEMPLATE = "itemList.html";
 
-    private List<Item> itemListMock;
+    private List<Item> itemListMock = new ArrayList<>();
 
     @Mock
     private Model modelMock;
