@@ -106,6 +106,18 @@ public class PagingServiceTest {
     }
 
     @Test
+    public void pagesAreProperlyCalculated(){
+        // record count: 121
+        // records per page: 20
+        // max page count: 7
+
+        PagingData pagingData = svc.generate("item", null, 121);
+
+        assertEquals(7, pagingData.getMaxPageCount());
+    }
+
+
+    @Test
     public void navigationHasProperState_whenNoRecords(){
         PagingData pagingData = svc.generate("item", null, 0);
 

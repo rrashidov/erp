@@ -19,6 +19,10 @@ public class PagingServiceImpl implements PagingService {
 
         long maxPageCount = recordCount / RECORDS_PER_PAGE;
 
+        if ((recordCount % RECORDS_PER_PAGE) > 0){
+            maxPageCount++;
+        }
+
         if (maxPageCount == 0){
             maxPageCount = 1;
         }
