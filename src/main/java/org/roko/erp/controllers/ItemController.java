@@ -40,8 +40,14 @@ public class ItemController {
     }
 
     @GetMapping("/itemCard")
-    public String card(Model model){
-        model.addAttribute("item", new Item());
+    public String card(@RequestParam(name = "code", required = false) String code, Model model){
+        Item item = new Item();
+
+        if (code != null){
+            item = svc.get(code);
+        }
+
+        model.addAttribute("item", item);
 
         return "itemCard.html";
     }

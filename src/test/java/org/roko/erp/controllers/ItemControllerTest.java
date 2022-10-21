@@ -72,6 +72,7 @@ public class ItemControllerTest {
 
         when(itemServiceMock.list()).thenReturn(itemListMock);
         when(itemServiceMock.count()).thenReturn(TEST_ITEM_COUNT);
+        when(itemServiceMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
         when(pagingServiceMock.generate(eq("item"), anyLong(), eq(TEST_ITEM_COUNT))).thenReturn(pagingDataMock);
 
@@ -90,11 +91,20 @@ public class ItemControllerTest {
 
     @Test
     public void itemCardReturnsProperTemplate(){
-        String returnedTemplate = controller.card(modelMock);
+        String returnedTemplate = controller.card(null, modelMock);
 
         assertEquals(EXPECTED_ITEM_CARD_TEMPLATE, returnedTemplate);
 
         verify(modelMock).addAttribute(eq("item"), any(Item.class));
+    }
+
+    @Test
+    public void itemCardReturnsProperData_whenCalledWithExistingItem(){
+        String returnedTemplate = controller.card(TEST_ITEM_CODE, modelMock);
+
+        assertEquals(EXPECTED_ITEM_CARD_TEMPLATE, returnedTemplate);
+
+        verify(modelMock).addAttribute("item", itemMock);
     }
 
     @Test
