@@ -1,0 +1,40 @@
+<nav aria-label="...">
+    <ul class="pagination justify-content-center">
+
+      <li th:if="${paging.firstActive}" class="page-item">
+        <a class="page-link" th:href="@{/{object}List?page=1(object=${paging.objectName})}">First</a>
+      </li>
+
+      <li th:unless="${paging.firstActive}" class="page-item disabled">
+        <a class="page-link" th:href="@{/{object}List?page=1(object=${paging.objectName})}">First</a>
+      </li>
+
+      <li th:if="${paging.prevActive}" class="page-item">
+        <a class="page-link" th:href="@{/{object}List?page={prevPage}(object=${paging.objectName},prevPage=${paging.prevPage})}">Prev</a>
+      </li>
+
+      <li th:unless="${paging.prevActive}" class="page-item disabled">
+        <a class="page-link" th:href="@{/{object}List?page={prevPage}(object=${paging.objectName},prevPage=${paging.prevPage})}">Prev</a>
+      </li>
+
+      <li class="page-item active disabled" aria-current="page">
+        <a class="page-link" href="#" th:text="@{{currentPage} of {maxPageCount}(currentPage=${paging.currentPage},maxPageCount=${paging.maxPageCount})}"></a>
+      </li>
+
+      <li th:if="${paging.nextActive}" class="page-item">
+        <a class="page-link" th:href="@{/{object}List?page={nextPage}(object=${paging.objectName},nextPage=${paging.nextPage})}">Next</a>
+      </li>
+
+      <li th:unless="${paging.nextActive}" class="page-item disabled">
+        <a class="page-link" th:href="@{/{object}List?page={nextPage}(object=${paging.objectName},nextPage=${paging.nextPage})}">Next</a>
+      </li>
+
+      <li th:if="${paging.lastActive}" class="page-item">
+        <a class="page-link" th:href="@{/{object}List?page={lastPage}(object=${paging.objectName},lastPage=${paging.lastPage})}">Last</a>
+      </li>
+
+      <li th:unless="${paging.lastActive}" class="page-item disabled">
+        <a class="page-link" th:href="@{/{object}List?page={lastPage}(object=${paging.objectName},lastPage=${paging.lastPage})}">Last</a>
+      </li>
+    </ul>
+  </nav>
