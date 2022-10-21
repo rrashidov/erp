@@ -1,6 +1,7 @@
 package org.roko.erp.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.roko.erp.model.Item;
 import org.roko.erp.repositories.ItemRepository;
@@ -37,7 +38,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item get(String id) {
-        return repo.findById(id).get();
+        Optional<Item> item = repo.findById(id);
+
+        if (item.isPresent()) {
+            return item.get();
+        }
+
+        return null;
     }
 
     @Override

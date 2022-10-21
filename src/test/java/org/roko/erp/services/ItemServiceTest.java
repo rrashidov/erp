@@ -1,6 +1,7 @@
 package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,6 +65,13 @@ public class ItemServiceTest {
         Item retrievedItem = svc.get(TEST_ID);
 
         assertEquals(itemFromDBMock, retrievedItem);
+    }
+
+    @Test
+    public void getReturnsNull_whenItemNotFound(){
+        Item item = svc.get("non-existing-item-id");
+
+        assertNull(item);
     }
 
     @Test 
