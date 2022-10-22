@@ -1,7 +1,5 @@
 package org.roko.erp.controllers;
 
-import java.util.List;
-
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Item;
@@ -9,7 +7,6 @@ import org.roko.erp.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
