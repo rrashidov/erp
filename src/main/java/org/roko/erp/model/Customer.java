@@ -2,6 +2,7 @@ package org.roko.erp.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Customer {
@@ -10,7 +11,10 @@ public class Customer {
 	private String code;
 	private String name;
 	private String address;
+
+	@ManyToOne
 	private PaymentMethod paymentMethod;
+	
 	private double balance;
 	
 	public String getCode() {
