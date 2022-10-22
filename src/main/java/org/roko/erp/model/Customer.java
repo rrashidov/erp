@@ -11,6 +11,7 @@ public class Customer {
 	private String name;
 	private String address;
 	private PaymentMethod paymentMethod;
+	private double balance;
 	
 	public String getCode() {
 		return code;
@@ -36,5 +37,10 @@ public class Customer {
 	public void setPaymentMethod(PaymentMethod paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
-	
+	public double getBalance() {
+		return balance;
+	}
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}		
 }
