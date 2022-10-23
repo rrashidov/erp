@@ -9,6 +9,8 @@ public class BankAccount {
 	@Id
 	private String code;
 	private String name;
+
+	private double balance;
 	
 	public String getCode() {
 		return code;
@@ -21,6 +23,12 @@ public class BankAccount {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public double getBalance() {
+		return balance;
+	}
+	public void setBalance(double balance) {
+		this.balance = balance;
 	}
 	
 }
