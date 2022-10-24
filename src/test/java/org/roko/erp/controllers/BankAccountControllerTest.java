@@ -122,4 +122,11 @@ public class BankAccountControllerTest {
         assertEquals(TEST_CODE, createdBankAccount.getCode());
         assertEquals(TEST_NAME, createdBankAccount.getName());
     }
+
+    @Test
+    public void deletingBankAccount_deletesBankAccount(){
+        controller.delete(TEST_CODE);
+
+        verify(svcMock).delete(TEST_CODE);
+    }
 }

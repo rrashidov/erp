@@ -72,4 +72,11 @@ public class BankAccountController {
 
         return new RedirectView("/bankAccountList");
     }
+
+    @GetMapping("/deleteBankAccount")
+    public RedirectView delete(@RequestParam(name = "code") String code){
+        svc.delete(code);
+
+        return new RedirectView("/bankAccountList");
+    }
 }
