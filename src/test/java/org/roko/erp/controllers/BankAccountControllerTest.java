@@ -68,6 +68,7 @@ public class BankAccountControllerTest {
 
         when(svcMock.list()).thenReturn(bankAccountList);
         when(svcMock.count()).thenReturn(TEST_RECORD_COUNT);
+        when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
 
         controller = new BankAccountController(svcMock, pagingSvcMock);
     }
@@ -94,6 +95,18 @@ public class BankAccountControllerTest {
 
         assertEquals("", bankAccountInModel.getCode());
         assertEquals("", bankAccountInModel.getName());
+    }
+
+    @Test
+    public void cardReturnsProperData_whenCalledForExistingBankAccount(){
+        controller.card(TEST_CODE, modelMock);
+
+        verify(modelMock).addAttribute(eq("bankAccount"), bankAccountCaptor.capture());
+
+        BankAccount bankAccountInModel = bankAccountCaptor.getValue();
+
+        assertEquals(TEST_CODE, bankAccountInModel.getCode());
+        assertEquals(TEST_NAME, bankAccountInModel.getName());
     }
 
     @Test

@@ -48,6 +48,10 @@ public class BankAccountController {
     public String card(@RequestParam(name="code", required=false) String code, Model model){
         BankAccount bankAccount = new BankAccount();
 
+        if (code != null){
+            bankAccount = svc.get(code);
+        }
+
         model.addAttribute("bankAccount", bankAccount);
 
         return "bankAccountCard.html";
