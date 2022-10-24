@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class BankAccountController {
@@ -18,7 +21,7 @@ public class BankAccountController {
     private static final String BANK_ACCOUNTS_MODEL_ATTRIBUTE = "bankAccounts";
     private static final String PAGING_MODEL_ATTRIBUTE = "paging";
 
-    private static final String OBJECT_NAME = "customer";
+    private static final String OBJECT_NAME = "bankAccount";
     private static final String BANK_ACCOUNT_LIST_TEMPLATE = "bankAccountList.html";
 
     private BankAccountService svc;
@@ -39,5 +42,30 @@ public class BankAccountController {
         model.addAttribute(BANK_ACCOUNTS_MODEL_ATTRIBUTE, bankAccounts);
 
         return BANK_ACCOUNT_LIST_TEMPLATE;
+    }
+
+    @GetMapping("/bankAccountCard")
+    public String card(@RequestParam(name="code", required=false) String code, Model model){
+        BankAccount bankAccount = new BankAccount();
+
+        model.addAttribute("bankAccount", bankAccount);
+
+        return "bankAccountCard.html";
+    }
+
+    @PostMapping("/bankAccountCard")
+    public RedirectView postCard(@ModelAttribute BankAccount bankAccount){
+        BankAccount bankAccountFromDB = svc.get(bankAccount.getCode());
+
+        if (bankAccountFromDB == null){
+            bankAccountFromDB = new BankAccount();
+            bankAccountFromDB.setCode(bankAccount.getCode());
+        }
+
+        bankAccountFromDB.setName(bankAccount.getName());
+
+        svc.create(bankAccountFromDB);
+
+        return new RedirectView("/bankAccountList");
     }
 }

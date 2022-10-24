@@ -7,8 +7,8 @@ import javax.persistence.Id;
 public class BankAccount {
 
 	@Id
-	private String code;
-	private String name;
+	private String code = "";
+	private String name = "";
 
 	private double balance;
 	
