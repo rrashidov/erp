@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Payment Method List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav th:replace="navigation">
+    </nav>
+
+    <div class="container-fluid">
+        <h2>Payment Method List <a class="btn btn-primary" href="/paymentMethodCard" role="button">New</a></h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Bank Account</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="paymentMethod : ${paymentMethods}">
+                        <td th:text="${paymentMethod.code}"></td>
+                        <td th:text="${paymentMethods.name}"></td>
+                        <td th:text="${paymentMethods.bankAccount.name}"></td>
+                        <td><a th:href="@{/paymentMethodCard?code={code}(code=${paymentMethod.code})}">edit</a> <a
+                                th:href="@{/deletePaymentMethod?code={code}(code=${paymentMethod.code})}">delete</a></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <nav th:replace="paging">
+        </nav>
+
+    </div>
+
+</body>
+
+</html>
