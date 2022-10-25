@@ -34,7 +34,7 @@
                         <td th:text="${customer.code}"></td>
                         <td th:text="${customer.name}"></td>
                         <td th:text="${customer.address}"></td>
-                        <td th:text="${customer.paymentMethod.code}"></td>
+                        <td th:text="${customer.paymentMethod.name}"></td>
                         <td th:text="${customer.balance}"></td>
                         <td><a th:href="@{/customerCard?code={code}(code=${customer.code})}">edit</a> <a th:href="@{/deleteCustomer?code={code}(code=${customer.code})}">delete</a></td>
                     </tr>

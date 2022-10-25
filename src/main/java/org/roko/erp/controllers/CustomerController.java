@@ -2,15 +2,20 @@ package org.roko.erp.controllers;
 
 import java.util.List;
 
+import org.roko.erp.controllers.model.CustomerModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Customer;
 import org.roko.erp.services.CustomerService;
+import org.roko.erp.services.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class CustomerController {
@@ -21,11 +26,13 @@ public class CustomerController {
     private static final String CUSTOMER_OBJECT_NAME = "customer";
     private CustomerService svc;
     private PagingService pagingSvc;
+    private PaymentMethodService paymentMethodSvc;
 
     @Autowired
-    public CustomerController(CustomerService svc, PagingService pagingSvc) {
+    public CustomerController(CustomerService svc, PagingService pagingSvc, PaymentMethodService paymentMethodSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
+        this.paymentMethodSvc = paymentMethodSvc;
     }
 
     @GetMapping("/customerList")
@@ -38,5 +45,33 @@ public class CustomerController {
         model.addAttribute(MODEL_ATTR_CUSTOMERS, customerList);
 
         return "customerList.html";
+    }
+
+    @GetMapping("/customerCard")
+    public String card(Model model){
+        CustomerModel customerModel = new CustomerModel();
+
+        model.addAttribute("customer", customerModel);
+        model.addAttribute("paymentMethods", paymentMethodSvc.list());
+
+        return "customerCard.html";
+    }
+
+    @PostMapping("/customerCard")
+    public RedirectView post(@ModelAttribute CustomerModel customerModel){
+        Customer customer = new Customer();
+
+        transferFields(customerModel, customer);
+
+        svc.create(customer);
+
+        return new RedirectView("/customerList");
+    }
+
+    private void transferFields(CustomerModel customerModel, Customer customer) {
+        customer.setCode(customerModel.getCode());
+        customer.setName(customerModel.getName());
+        customer.setAddress(customerModel.getAddress());
+        customer.setPaymentMethod(paymentMethodSvc.get(customerModel.getPaymentMethodCode()));
     }
 }
