@@ -167,4 +167,13 @@ public class CustomerControllerTest {
         assertEquals(TEST_ADDRESS, customer.getAddress());
         assertEquals(paymentMethodMock, customer.getPaymentMethod());
     }
+
+    @Test
+    public void deletingCustomer_deletesCustomer(){
+        RedirectView redirect = controller.delete(TEST_CODE);
+
+        assertEquals("/customerList", redirect.getUrl());
+
+        verify(customerSvcMock).delete(TEST_CODE);
+    }
 }

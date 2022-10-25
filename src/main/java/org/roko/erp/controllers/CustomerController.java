@@ -76,10 +76,18 @@ public class CustomerController {
         return new RedirectView("/customerList");
     }
 
+    @GetMapping("/deleteCustomer")
+    public RedirectView delete(@RequestParam(name="code") String code){
+        svc.delete(code);
+
+        return new RedirectView("/customerList");
+    }
+
     private void transferFields(CustomerModel customerModel, Customer customer) {
         customer.setCode(customerModel.getCode());
         customer.setName(customerModel.getName());
         customer.setAddress(customerModel.getAddress());
         customer.setPaymentMethod(paymentMethodSvc.get(customerModel.getPaymentMethodCode()));
     }
+
 }
