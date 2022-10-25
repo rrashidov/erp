@@ -1,6 +1,7 @@
 package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +41,10 @@ public class PaymentMethodControllerTest {
 
     @Captor
     private ArgumentCaptor<PaymentMethod> paymentMethodArgumentCaptor;
-    
+
+    @Captor
+    private ArgumentCaptor<PaymentMethodModel> paymentMethodModelArgumentCaptor;
+
     @Mock
     private PaymentMethodModel paymentMethodModelMock;
 
@@ -72,12 +76,19 @@ public class PaymentMethodControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(bankAccountMock.getCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
+
+        when(paymentMethodMock.getCode()).thenReturn(TEST_CODE);
+        when(paymentMethodMock.getName()).thenReturn(TEST_NAME);
+        when(paymentMethodMock.getBankAccount()).thenReturn(bankAccountMock);
+
         when(paymentMethodModelMock.getCode()).thenReturn(TEST_CODE);
         when(paymentMethodModelMock.getName()).thenReturn(TEST_NAME);
         when(paymentMethodModelMock.getBankAccountCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
 
         when(svcMock.list()).thenReturn(paymentMethodList);
         when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(svcMock.get(TEST_CODE)).thenReturn(paymentMethodMock);
 
         when(bankAccountSvcMock.list()).thenReturn(bankAccountList);
         when(bankAccountSvcMock.get(TEST_BANK_ACCOUNT_CODE)).thenReturn(bankAccountMock);
@@ -105,6 +116,22 @@ public class PaymentMethodControllerTest {
 
         verify(modelMock).addAttribute("bankAccounts", bankAccountList);
     }
+
+    @Test
+    public void cardReturnsProperTemplate_whenCalledForExistingEntity(){
+        String template = controller.card(TEST_CODE, modelMock);
+
+        assertEquals(CARD_TEMPLATE, template);
+
+        verify(modelMock).addAttribute("bankAccounts", bankAccountList);
+        verify(modelMock).addAttribute(eq("paymentMethod"), paymentMethodModelArgumentCaptor.capture());
+
+        PaymentMethodModel paymentMethodModel = paymentMethodModelArgumentCaptor.getValue();
+        assertEquals(TEST_CODE, paymentMethodModel.getCode());
+        assertEquals(TEST_NAME, paymentMethodModel.getName());
+        assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethodModel.getBankAccountCode());
+    }
+
 
     @Test
     public void postingCard_creates_ifDoesNotExist(){

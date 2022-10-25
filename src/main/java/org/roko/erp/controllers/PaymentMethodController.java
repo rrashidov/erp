@@ -47,6 +47,15 @@ public class PaymentMethodController {
     public String card(@RequestParam(name="code", required=false) String code, Model model){
         PaymentMethodModel paymentMethodModel = new PaymentMethodModel();
 
+        if (code != null){
+            PaymentMethod paymentMethod = svc.get(code);
+            paymentMethodModel.setCode(paymentMethod.getCode());
+            paymentMethodModel.setName(paymentMethod.getName());
+            if (paymentMethod.getBankAccount() != null){
+                paymentMethodModel.setBankAccountCode(paymentMethod.getBankAccount().getCode());
+            }
+        }
+
         model.addAttribute("bankAccounts", bankAccountSvc.list());
         model.addAttribute("paymentMethod", paymentMethodModel);
 
