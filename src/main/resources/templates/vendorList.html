@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vendor List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav th:replace="navigation">
+    </nav>
+
+    <div class="container-fluid">
+        <h2>Vendor List <a class="btn btn-primary" href="/vendorCard" role="button">New</a></h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Payment Method</th>
+                        <th scope="col">Balance</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="vendor : ${vendors}">
+                        <td th:text="${vendor.code}"></td>
+                        <td th:text="${vendor.name}"></td>
+                        <td th:text="${vendor.address}"></td>
+                        <td th:text="${vendor.paymentMethod.name}"></td>
+                        <td th:text="${vendor.balance}"></td>
+                        <td><a th:href="@{/vendorCard?code={code}(code=${vendor.code})}">edit</a> <a th:href="@{/deleteVendor?code={code}(code=${vendor.code})}">delete</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav th:replace="paging">
+        </nav>
+    
+    </div>
+
+</body>
+
+</html>
