@@ -11,6 +11,7 @@ public class Vendor {
 	private String code;
 	private String name;
 	private String address;
+	private double balance;
 
 	@ManyToOne
 	private PaymentMethod paymentMethod;
@@ -38,5 +39,11 @@ public class Vendor {
 	}
 	public void setPaymentMethod(PaymentMethod paymentMethod) {
 		this.paymentMethod = paymentMethod;
+	}
+	public double getBalance() {
+		return balance;
+	}
+	public void setBalance(double balance) {
+		this.balance = balance;
 	}
 }
