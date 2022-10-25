@@ -46,6 +46,9 @@ public class CustomerControllerTest {
     private List<Customer> customerList = new ArrayList<>();
 
     @Mock
+    private Customer customerMock;
+
+    @Mock
     private PaymentMethod paymentMethodMock;
 
     @Mock
@@ -78,6 +81,13 @@ public class CustomerControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
+
+        when(customerMock.getCode()).thenReturn(TEST_CODE);
+        when(customerMock.getName()).thenReturn(TEST_NAME);
+        when(customerMock.getAddress()).thenReturn(TEST_ADDRESS);
+        when(customerMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+
         when(customerModelMock.getCode()).thenReturn(TEST_CODE);
         when(customerModelMock.getName()).thenReturn(TEST_NAME);
         when(customerModelMock.getAddress()).thenReturn(TEST_ADDRESS);
@@ -90,6 +100,7 @@ public class CustomerControllerTest {
 
         when(customerSvcMock.count()).thenReturn(TEST_CUSTOMER_COUNT);
         when(customerSvcMock.list()).thenReturn(customerList);
+        when(customerSvcMock.get(TEST_CODE)).thenReturn(customerMock);
 
         controller = new CustomerController(customerSvcMock, pagingServiceMock, paymentMethodSvcMock);
     }
@@ -108,7 +119,7 @@ public class CustomerControllerTest {
 
     @Test
     public void cardReturnsProperTemplate(){
-        String template = controller.card(modelMock);
+        String template = controller.card(null, modelMock);
 
         assertEquals("customerCard.html", template);
 
@@ -122,6 +133,24 @@ public class CustomerControllerTest {
         assertEquals("", customerModel.getAddress());
         assertEquals("", customerModel.getPaymentMethodCode());
     }
+
+    @Test
+    public void cardReturnsProperTemplate_whenCalledWithExistingCustomer(){
+        String template = controller.card(TEST_CODE, modelMock);
+
+        assertEquals("customerCard.html", template);
+
+        verify(modelMock).addAttribute(eq("customer"), customerModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
+
+        CustomerModel customerModel = customerModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_CODE, customerModel.getCode());
+        assertEquals(TEST_NAME, customerModel.getName());
+        assertEquals(TEST_ADDRESS, customerModel.getAddress());
+        assertEquals(TEST_PAYMENT_METHOD_CODE, customerModel.getPaymentMethodCode());
+    }
+
 
     @Test
     public void postingCustomerCard_createsNewCustomerIfCalledForNonExisting(){

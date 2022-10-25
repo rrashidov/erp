@@ -48,8 +48,16 @@ public class CustomerController {
     }
 
     @GetMapping("/customerCard")
-    public String card(Model model){
+    public String card(@RequestParam(name = "code", required = false) String code, Model model) {
         CustomerModel customerModel = new CustomerModel();
+
+        if (code != null){
+            Customer customer = svc.get(code);
+            customerModel.setCode(customer.getCode());
+            customerModel.setName(customer.getName());
+            customerModel.setAddress(customer.getAddress());
+            customerModel.setPaymentMethodCode(customer.getPaymentMethod().getCode());
+        }
 
         model.addAttribute("customer", customerModel);
         model.addAttribute("paymentMethods", paymentMethodSvc.list());
