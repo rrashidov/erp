@@ -77,4 +77,11 @@ public class PaymentMethodController {
 
         return new RedirectView("/paymentMethodList");
     }
+
+    @GetMapping("/deletePaymentMethod")
+    public RedirectView delete(@RequestParam(name="code") String code){
+        svc.delete(code);
+
+        return new RedirectView("/paymentMethodList");
+    }
 }

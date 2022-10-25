@@ -165,4 +165,12 @@ public class PaymentMethodControllerTest {
         assertEquals(null, paymentMethod.getBankAccount());
     }
 
+    @Test
+    public void deletingPaymentMethod_deletesPaymentMethod(){
+        RedirectView redirectView = controller.delete(TEST_CODE);
+
+        verify(svcMock).delete(TEST_CODE);
+
+        assertEquals("/paymentMethodList", redirectView.getUrl());
+    }
 }
