@@ -40,6 +40,9 @@ public class VendorControllerTest {
     private List<PaymentMethod> paymentMethodList = new ArrayList<>();
 
     @Mock
+    private Vendor vendorMock;
+
+    @Mock
     private PaymentMethod paymentMethodMock;
 
     @Mock
@@ -72,6 +75,13 @@ public class VendorControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
+
+        when(vendorMock.getCode()).thenReturn(TEST_CODE);
+        when(vendorMock.getName()).thenReturn(TEST_NAME);
+        when(vendorMock.getAddress()).thenReturn(TEST_ADDRESS);
+        when(vendorMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+
         when(vendorModelMock.getCode()).thenReturn(TEST_CODE);
         when(vendorModelMock.getName()).thenReturn(TEST_NAME);
         when(vendorModelMock.getAddress()).thenReturn(TEST_ADDRESS);
@@ -82,6 +92,7 @@ public class VendorControllerTest {
 
         when(vendorSvcMock.list()).thenReturn(vendorList);
         when(vendorSvcMock.count()).thenReturn(TEST_RECORD_COUNT);
+        when(vendorSvcMock.get(TEST_CODE)).thenReturn(vendorMock);
 
         when(pagingSvcMock.generate("vendor", TEST_PAGE, TEST_RECORD_COUNT)).thenReturn(pagingDataMock);
 
@@ -113,6 +124,23 @@ public class VendorControllerTest {
         assertEquals("", vendorModel.getName());
         assertEquals("", vendorModel.getAddress());
         assertEquals("", vendorModel.getPaymentMethodCode());
+    }
+
+    @Test
+    public void cardReturnsProperTemplate_whenCalledForExistingVendor(){
+        String template = controller.card(TEST_CODE, modelMock);
+
+        assertEquals("vendorCard.html", template);
+
+        verify(modelMock).addAttribute(eq("vendor"), vendorModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
+
+        VendorModel vendorModel = vendorModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_CODE, vendorModel.getCode());
+        assertEquals(TEST_NAME, vendorModel.getName());
+        assertEquals(TEST_ADDRESS, vendorModel.getAddress());
+        assertEquals(TEST_PAYMENT_METHOD_CODE, vendorModel.getPaymentMethodCode());
     }
 
     @Test

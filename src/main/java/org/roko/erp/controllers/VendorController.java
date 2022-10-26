@@ -44,6 +44,15 @@ public class VendorController {
     public String card(@RequestParam(name = "code", required = false) String code, Model model) {
         VendorModel vendorModel = new VendorModel();
 
+        if (code != null){
+            Vendor vendor = vendorSvc.get(code);
+
+            vendorModel.setCode(vendor.getCode());
+            vendorModel.setName(vendor.getName());
+            vendorModel.setAddress(vendor.getAddress());
+            vendorModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
+        }
+
         model.addAttribute("vendor", vendorModel);
         model.addAttribute("paymentMethods", paymentMethodSvc.list());
 
