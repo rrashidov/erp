@@ -7,8 +7,8 @@ import javax.persistence.Id;
 public class GeneralJournalBatch {
 
 	@Id
-	private String code;
-	private String description;
+	private String code = "";
+	private String name = "";
 	
 	public String getCode() {
 		return code;
@@ -16,11 +16,11 @@ public class GeneralJournalBatch {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public String getDescription() {
-		return description;
+	public String getName() {
+		return name;
 	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

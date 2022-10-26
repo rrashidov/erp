@@ -1,6 +1,7 @@
 package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -9,6 +10,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.controllers.paging.PagingData;
@@ -16,6 +19,7 @@ import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.GeneralJournalBatch;
 import org.roko.erp.services.GeneralJournalBatchService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.view.RedirectView;
 
 public class GeneralJournalBatchControllerTest {
 
@@ -24,6 +28,12 @@ public class GeneralJournalBatchControllerTest {
     private static final long TEST_COUNT = 234l;
 
     private List<GeneralJournalBatch> generalJournalBatchList = new ArrayList<>();
+
+    @Mock
+    private GeneralJournalBatch generalJournalBatchMock;
+
+    @Captor
+    private ArgumentCaptor<GeneralJournalBatch> generalJournalBatchArgumentCaptor;
 
     @Mock
     private PagingData pagingDataMock;
@@ -59,5 +69,28 @@ public class GeneralJournalBatchControllerTest {
 
         verify(modelMock).addAttribute("generalJournalBatches", generalJournalBatchList);
         verify(modelMock).addAttribute("paging", pagingDataMock);
+    }
+
+    @Test
+    public void cardReturnsProperTemplate_whenCalledForNew(){
+        String template = controller.card(null, modelMock);
+
+        assertEquals("generalJournalBatchCard.html", template);
+
+        verify(modelMock).addAttribute(eq("generalJournalBatch"), generalJournalBatchArgumentCaptor.capture());
+
+        GeneralJournalBatch generalJournalBatch = generalJournalBatchArgumentCaptor.getValue();
+
+        assertEquals("", generalJournalBatch.getCode());
+        assertEquals("", generalJournalBatch.getDescription());
+    }
+
+    @Test
+    public void postCreatesNewEntity_whenCalledFromEmpty(){
+        RedirectView redirectView = controller.post(generalJournalBatchMock);
+
+        assertEquals("/generalJournalBatchList", redirectView.getUrl());
+
+        verify(svcMock).create(generalJournalBatchMock);
     }
 }
