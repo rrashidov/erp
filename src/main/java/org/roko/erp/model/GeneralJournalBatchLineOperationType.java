@@ -1,6 +1,6 @@
 package org.roko.erp.model;
 
-public enum GenJnlBatchLineOperationType {
+public enum GeneralJournalBatchLineOperationType {
 
 	EMPTY,
 	ORDER,

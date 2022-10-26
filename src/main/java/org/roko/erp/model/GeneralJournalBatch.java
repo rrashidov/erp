@@ -1,6 +1,6 @@
 package org.roko.erp.model;
 
-public class GenJnlBatch {
+public class GeneralJournalBatch {
 
 	private String code;
 	private String description;

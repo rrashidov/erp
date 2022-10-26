@@ -2,17 +2,17 @@ package org.roko.erp.model;
 
 import java.util.Date;
 
-public class GenJnlBatchLine {
+public class GeneralJournalBatchLine {
 
 	private String id;
 	private String genJnlBatchCode;
 	private int lineNo;
-	private GenJnlBatchLineType sourceType;
+	private GeneralJournalBatchLineType sourceType;
 	private String sourceCode;
-	private GenJnlBatchLineOperationType operationType;
+	private GeneralJournalBatchLineOperationType operationType;
 	private Date date;
 	private double amount;
-	private GenJnlBatchLineType targetType;
+	private GeneralJournalBatchLineType targetType;
 	private String targetCode;
 	
 	public String getId() {
@@ -33,10 +33,10 @@ public class GenJnlBatchLine {
 	public void setLineNo(int lineNo) {
 		this.lineNo = lineNo;
 	}
-	public GenJnlBatchLineType getSourceType() {
+	public GeneralJournalBatchLineType getSourceType() {
 		return sourceType;
 	}
-	public void setSourceType(GenJnlBatchLineType sourceType) {
+	public void setSourceType(GeneralJournalBatchLineType sourceType) {
 		this.sourceType = sourceType;
 	}
 	public String getSourceCode() {
@@ -45,10 +45,10 @@ public class GenJnlBatchLine {
 	public void setSourceCode(String sourceCode) {
 		this.sourceCode = sourceCode;
 	}
-	public GenJnlBatchLineOperationType getOperationType() {
+	public GeneralJournalBatchLineOperationType getOperationType() {
 		return operationType;
 	}
-	public void setOperationType(GenJnlBatchLineOperationType operationType) {
+	public void setOperationType(GeneralJournalBatchLineOperationType operationType) {
 		this.operationType = operationType;
 	}
 	public Date getDate() {
@@ -63,10 +63,10 @@ public class GenJnlBatchLine {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	public GenJnlBatchLineType getTargetType() {
+	public GeneralJournalBatchLineType getTargetType() {
 		return targetType;
 	}
-	public void setTargetType(GenJnlBatchLineType targetType) {
+	public void setTargetType(GeneralJournalBatchLineType targetType) {
 		this.targetType = targetType;
 	}
 	public String getTargetCode() {

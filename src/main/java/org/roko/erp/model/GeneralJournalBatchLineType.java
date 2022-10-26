@@ -1,6 +1,6 @@
 package org.roko.erp.model;
 
-public enum GenJnlBatchLineType {
+public enum GeneralJournalBatchLineType {
 
 	CUSTOMER,
 	VENDOR,
