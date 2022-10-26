@@ -82,7 +82,7 @@ public class GeneralJournalBatchControllerTest {
         GeneralJournalBatch generalJournalBatch = generalJournalBatchArgumentCaptor.getValue();
 
         assertEquals("", generalJournalBatch.getCode());
-        assertEquals("", generalJournalBatch.getDescription());
+        assertEquals("", generalJournalBatch.getName());
     }
 
     @Test

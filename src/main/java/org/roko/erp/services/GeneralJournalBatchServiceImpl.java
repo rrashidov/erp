@@ -62,7 +62,7 @@ public class GeneralJournalBatchServiceImpl implements GeneralJournalBatchServic
     
     private void transferFields(GeneralJournalBatch source,
             GeneralJournalBatch target) {
-                target.setDescription(source.getDescription());
+                target.setName(source.getName());
     }
 
 }
