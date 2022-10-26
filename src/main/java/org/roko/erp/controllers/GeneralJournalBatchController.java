@@ -42,6 +42,10 @@ public class GeneralJournalBatchController {
     public String card(@RequestParam(name = "code", required = false) String code, Model model) {
         GeneralJournalBatch generalJournalBatch = new GeneralJournalBatch();
 
+        if (code != null){
+            generalJournalBatch = svc.get(code);
+        }
+
         model.addAttribute("generalJournalBatch", generalJournalBatch);
 
         return "generalJournalBatchCard.html";
