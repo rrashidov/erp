@@ -57,4 +57,11 @@ public class GeneralJournalBatchController {
         
         return new RedirectView("/generalJournalBatchList");
     }
+
+    @GetMapping("/deleteGeneralJournalBatch")
+    public RedirectView delete(@RequestParam(name="code") String code) {
+        svc.delete(code);
+        
+        return new RedirectView("/generalJournalBatchList");
+    }
 }

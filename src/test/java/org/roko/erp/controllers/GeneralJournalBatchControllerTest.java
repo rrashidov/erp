@@ -106,7 +106,6 @@ public class GeneralJournalBatchControllerTest {
         assertEquals(TEST_NAME, generalJournalBatch.getName());
     }
 
-
     @Test
     public void postCreatesNewEntity_whenCalledFromEmpty(){
         RedirectView redirectView = controller.post(generalJournalBatchMock);
@@ -114,5 +113,14 @@ public class GeneralJournalBatchControllerTest {
         assertEquals("/generalJournalBatchList", redirectView.getUrl());
 
         verify(svcMock).create(generalJournalBatchMock);
+    }
+
+    @Test
+    public void delete_deletesEntity(){
+        RedirectView redirectView = controller.delete(TEST_CODE);
+
+        assertEquals("/generalJournalBatchList", redirectView.getUrl());
+
+        verify(svcMock).delete(TEST_CODE);
     }
 }
