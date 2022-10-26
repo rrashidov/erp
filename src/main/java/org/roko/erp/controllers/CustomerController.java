@@ -19,7 +19,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class CustomerController {
-    
+
     private static final String MODEL_ATTR_CUSTOMERS = "customers";
     private static final String MODEL_ATTR_PAGING = "paging";
 
@@ -36,7 +36,7 @@ public class CustomerController {
     }
 
     @GetMapping("/customerList")
-    public String list(@RequestParam(name = "page", required = false) Long page, Model model){
+    public String list(@RequestParam(name = "page", required = false) Long page, Model model) {
         PagingData pagingData = pagingSvc.generate(CUSTOMER_OBJECT_NAME, page, svc.count());
 
         List<Customer> customerList = svc.list();
@@ -51,7 +51,7 @@ public class CustomerController {
     public String card(@RequestParam(name = "code", required = false) String code, Model model) {
         CustomerModel customerModel = new CustomerModel();
 
-        if (code != null){
+        if (code != null) {
             Customer customer = svc.get(code);
             customerModel.setCode(customer.getCode());
             customerModel.setName(customer.getName());
@@ -66,7 +66,7 @@ public class CustomerController {
     }
 
     @PostMapping("/customerCard")
-    public RedirectView post(@ModelAttribute CustomerModel customerModel){
+    public RedirectView post(@ModelAttribute CustomerModel customerModel) {
         Customer customer = new Customer();
 
         transferFields(customerModel, customer);
@@ -77,7 +77,7 @@ public class CustomerController {
     }
 
     @GetMapping("/deleteCustomer")
-    public RedirectView delete(@RequestParam(name="code") String code){
+    public RedirectView delete(@RequestParam(name = "code") String code) {
         svc.delete(code);
 
         return new RedirectView("/customerList");
