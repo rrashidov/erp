@@ -158,4 +158,13 @@ public class VendorControllerTest {
         assertEquals(TEST_ADDRESS, vendor.getAddress());
         assertEquals(paymentMethodMock, vendor.getPaymentMethod());
     }
+
+    @Test
+    public void delete_deletesVendor(){
+        RedirectView redirectView = controller.delete(TEST_CODE);
+
+        assertEquals("/vendorList", redirectView.getUrl());
+
+        verify(vendorSvcMock).delete(TEST_CODE);
+    }
 }

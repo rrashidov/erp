@@ -72,4 +72,11 @@ public class VendorController {
 
         return new RedirectView("/vendorList");
     }
+
+    @GetMapping("/deleteVendor")
+    public RedirectView delete(@RequestParam(name="code", required = true) String code){
+        vendorSvc.delete(code);
+        
+        return new RedirectView("/vendorList");
+    }
 }
