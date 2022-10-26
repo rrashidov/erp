@@ -17,12 +17,16 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class BankAccountController {
-    
-    private static final String BANK_ACCOUNTS_MODEL_ATTRIBUTE = "bankAccounts";
-    private static final String PAGING_MODEL_ATTRIBUTE = "paging";
+
+    private static final String BANK_ACCOUNT_LIST_URL = "/bankAccountList";
+
+    private static final String LIST_MODEL_NAME = "bankAccounts";
+    private static final String PAGING_MODEL_NAME = "paging";
 
     private static final String OBJECT_NAME = "bankAccount";
-    private static final String BANK_ACCOUNT_LIST_TEMPLATE = "bankAccountList.html";
+
+    private static final String LIST_TEMPLATE = "bankAccountList.html";
+    private static final String CARD_TEMPLATE = "bankAccountCard.html";
 
     private BankAccountService svc;
     private PagingService pagingSvc;
@@ -33,35 +37,35 @@ public class BankAccountController {
         this.pagingSvc = pagingSvc;
     }
 
-    @GetMapping("/bankAccountList")
-    public String list(@RequestParam(name = "page", required = false) Long page, Model model){
+    @GetMapping(BANK_ACCOUNT_LIST_URL)
+    public String list(@RequestParam(name = "page", required = false) Long page, Model model) {
         PagingData pagingData = pagingSvc.generate(OBJECT_NAME, page, svc.count());
         List<BankAccount> bankAccounts = svc.list();
 
-        model.addAttribute(PAGING_MODEL_ATTRIBUTE, pagingData);
-        model.addAttribute(BANK_ACCOUNTS_MODEL_ATTRIBUTE, bankAccounts);
+        model.addAttribute(PAGING_MODEL_NAME, pagingData);
+        model.addAttribute(LIST_MODEL_NAME, bankAccounts);
 
-        return BANK_ACCOUNT_LIST_TEMPLATE;
+        return LIST_TEMPLATE;
     }
 
     @GetMapping("/bankAccountCard")
-    public String card(@RequestParam(name="code", required=false) String code, Model model){
+    public String card(@RequestParam(name = "code", required = false) String code, Model model) {
         BankAccount bankAccount = new BankAccount();
 
-        if (code != null){
+        if (code != null) {
             bankAccount = svc.get(code);
         }
 
         model.addAttribute("bankAccount", bankAccount);
 
-        return "bankAccountCard.html";
+        return CARD_TEMPLATE;
     }
 
     @PostMapping("/bankAccountCard")
-    public RedirectView postCard(@ModelAttribute BankAccount bankAccount){
+    public RedirectView postCard(@ModelAttribute BankAccount bankAccount) {
         BankAccount bankAccountFromDB = svc.get(bankAccount.getCode());
 
-        if (bankAccountFromDB == null){
+        if (bankAccountFromDB == null) {
             bankAccountFromDB = new BankAccount();
             bankAccountFromDB.setCode(bankAccount.getCode());
         }
@@ -70,13 +74,13 @@ public class BankAccountController {
 
         svc.create(bankAccountFromDB);
 
-        return new RedirectView("/bankAccountList");
+        return new RedirectView(BANK_ACCOUNT_LIST_URL);
     }
 
     @GetMapping("/deleteBankAccount")
-    public RedirectView delete(@RequestParam(name = "code") String code){
+    public RedirectView delete(@RequestParam(name = "code") String code) {
         svc.delete(code);
 
-        return new RedirectView("/bankAccountList");
+        return new RedirectView(BANK_ACCOUNT_LIST_URL);
     }
 }
