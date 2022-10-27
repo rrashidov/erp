@@ -27,6 +27,11 @@ public class CodeSerieControllerTest {
 
     private static final long TEST_COUNT = 345l;
 
+    private static final String TEST_CODE = "test-code";
+    private static final String TEST_NAME = "test-name";
+    private static final String TEST_FIRST_CODE = "test-first-code";
+    private static final String TEST_LAST_CODE = "test-last-code";
+
     private List<CodeSerie> codeSeries = new ArrayList<>();
 
     @Mock
@@ -53,8 +58,14 @@ public class CodeSerieControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(codeSerieMock.getCode()).thenReturn(TEST_CODE);
+        when(codeSerieMock.getName()).thenReturn(TEST_NAME);
+        when(codeSerieMock.getFirstCode()).thenReturn(TEST_FIRST_CODE);
+        when(codeSerieMock.getLastCode()).thenReturn(TEST_LAST_CODE);
+
         when(svcMock.list()).thenReturn(codeSeries);
         when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(svcMock.get(TEST_CODE)).thenReturn(codeSerieMock);
 
         when(pagingSvcMock.generate("codeSerie", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
         
@@ -73,7 +84,7 @@ public class CodeSerieControllerTest {
 
     @Test
     public void cardReturnsProperTemplate_whenCalledForNew(){
-        String template = controller.card(modelMock);
+        String template = controller.card(null, modelMock);
 
         assertEquals("codeSerieCard.html", template);
 
@@ -88,11 +99,38 @@ public class CodeSerieControllerTest {
     }
 
     @Test
+    public void cardReturnsProperTemplate_whenCalledForUpdate(){
+        String template = controller.card(TEST_CODE, modelMock);
+
+        assertEquals("codeSerieCard.html", template);
+
+        verify(modelMock).addAttribute(eq("codeSerie"), codeSerieArgumentCaptor.capture());
+
+        CodeSerie codeSerie = codeSerieArgumentCaptor.getValue();
+
+        assertEquals(TEST_CODE, codeSerie.getCode());
+        assertEquals(TEST_NAME, codeSerie.getName());
+        assertEquals(TEST_FIRST_CODE, codeSerie.getFirstCode());
+        assertEquals(TEST_LAST_CODE, codeSerie.getLastCode());
+    }
+
+    @Test
     public void postSavesEntity(){
+        when(svcMock.get(TEST_CODE)).thenReturn(null);
+
         RedirectView redirectView = controller.post(codeSerieMock);
 
         assertEquals("/codeSerieList", redirectView.getUrl());
 
         verify(svcMock).create(codeSerieMock);
+    }
+
+    @Test
+    public void postUpdatesEntity_whenCalledForExistingOne(){
+        RedirectView redirectView = controller.post(codeSerieMock);
+
+        assertEquals("/codeSerieList", redirectView.getUrl());
+
+        verify(svcMock).update(TEST_CODE, codeSerieMock);
     }
 }

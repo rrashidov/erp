@@ -36,8 +36,12 @@ public class CodeSerieController {
     }
 
     @GetMapping("/codeSerieCard")
-    public String card(Model model){
+    public String card(@RequestParam(name="code", required=false) String code, Model model){
         CodeSerie codeSerie = new CodeSerie();
+
+        if (code != null){
+            codeSerie = svc.get(code);
+        }
 
         model.addAttribute("codeSerie", codeSerie);
 
@@ -46,7 +50,11 @@ public class CodeSerieController {
 
     @PostMapping("/codeSerieCard")
     public RedirectView post(@ModelAttribute CodeSerie codeSerie){
-        svc.create(codeSerie);
+        if (svc.get(codeSerie.getCode()) == null) {
+            svc.create(codeSerie);
+        } else {
+            svc.update(codeSerie.getCode(), codeSerie);
+        }
         
         return new RedirectView("/codeSerieList");
     }
