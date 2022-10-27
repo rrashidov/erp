@@ -7,12 +7,12 @@ import javax.persistence.Id;
 public class CodeSerie {
     
     @Id
-    private String code;
+    private String code = "";
 
-    private String name;
+    private String name = "";
 
-    private String firstCode;
-    private String lastCode;
+    private String firstCode = "";
+    private String lastCode = "";
     
     public String getCode() {
         return code;

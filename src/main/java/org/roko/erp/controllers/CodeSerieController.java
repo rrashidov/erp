@@ -9,7 +9,10 @@ import org.roko.erp.services.CodeSerieService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class CodeSerieController {
@@ -30,5 +33,21 @@ public class CodeSerieController {
         model.addAttribute("codeSeries", codeSeries);
         model.addAttribute("paging", pagingData);
         return "codeSerieList.html";
+    }
+
+    @GetMapping("/codeSerieCard")
+    public String card(Model model){
+        CodeSerie codeSerie = new CodeSerie();
+
+        model.addAttribute("codeSerie", codeSerie);
+
+        return "codeSerieCard.html";
+    }
+
+    @PostMapping("/codeSerieCard")
+    public RedirectView post(@ModelAttribute CodeSerie codeSerie){
+        svc.create(codeSerie);
+        
+        return new RedirectView("/codeSerieList");
     }
 }
