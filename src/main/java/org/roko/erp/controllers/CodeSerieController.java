@@ -58,4 +58,11 @@ public class CodeSerieController {
         
         return new RedirectView("/codeSerieList");
     }
+
+    @GetMapping("/deleteCodeSerie")
+    public RedirectView delete(@RequestParam(name="code") String code) {
+        svc.delete(code);
+        
+        return new RedirectView("/codeSerieList");
+    }
 }

@@ -133,4 +133,13 @@ public class CodeSerieControllerTest {
 
         verify(svcMock).update(TEST_CODE, codeSerieMock);
     }
+
+    @Test
+    public void deleteReturnsProperTemplate(){
+        RedirectView redirectView = controller.delete(TEST_CODE);
+
+        assertEquals("/codeSerieList", redirectView.getUrl());
+
+        verify(svcMock).delete(TEST_CODE);
+    }
 }
