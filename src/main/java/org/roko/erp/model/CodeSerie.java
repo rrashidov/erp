@@ -9,6 +9,8 @@ public class CodeSerie {
     @Id
     private String code;
 
+    private String name;
+
     private String firstCode;
     private String lastCode;
     
@@ -29,5 +31,11 @@ public class CodeSerie {
     }
     public void setLastCode(String lastCode) {
         this.lastCode = lastCode;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 }
