@@ -47,7 +47,7 @@ public class SetupServiceImpl implements SetupService {
         target.setPostedSalesCreditMemoCodeSerie(source.getPostedSalesCreditMemoCodeSerie());
 
         target.setPurchaseOrderCodeSerie(source.getPurchaseOrderCodeSerie());
-        target.setPurchaseCreditMemoeCodeSerie(source.getPurchaseCreditMemoeCodeSerie());
+        target.setPurchaseCreditMemoCodeSerie(source.getPurchaseCreditMemoCodeSerie());
         target.setPostedPurchaseOrderCodeSerie(source.getPostedPurchaseOrderCodeSerie());
         target.setPostedPurchaseCreditMemoCodeSerie(source.getPostedPurchaseCreditMemoCodeSerie());
     }

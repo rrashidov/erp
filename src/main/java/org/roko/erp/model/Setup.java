@@ -20,7 +20,7 @@ public class Setup {
     private CodeSerie salesCreditMemoCodeSerie;
 
     @ManyToOne
-    private CodeSerie purchaseCreditMemoeCodeSerie;
+    private CodeSerie purchaseCreditMemoCodeSerie;
 
     @ManyToOne
     private CodeSerie postedSalesOrderCodeSerie;
@@ -66,14 +66,6 @@ public class Setup {
         this.salesCreditMemoCodeSerie = salesCreditMemoCodeSerie;
     }
 
-    public CodeSerie getPurchaseCreditMemoeCodeSerie() {
-        return purchaseCreditMemoeCodeSerie;
-    }
-
-    public void setPurchaseCreditMemoeCodeSerie(CodeSerie purchaseCreditMemoeCodeSerie) {
-        this.purchaseCreditMemoeCodeSerie = purchaseCreditMemoeCodeSerie;
-    }
-
     public CodeSerie getPostedSalesOrderCodeSerie() {
         return postedSalesOrderCodeSerie;
     }
@@ -104,6 +96,14 @@ public class Setup {
 
     public void setPostedPurchaseCreditMemoCodeSerie(CodeSerie postedPurchaseCreditMemoCodeSerie) {
         this.postedPurchaseCreditMemoCodeSerie = postedPurchaseCreditMemoCodeSerie;
+    }
+
+    public CodeSerie getPurchaseCreditMemoCodeSerie() {
+        return purchaseCreditMemoCodeSerie;
+    }
+
+    public void setPurchaseCreditMemoCodeSerie(CodeSerie purchaseCreditMemoCodeSerie) {
+        this.purchaseCreditMemoCodeSerie = purchaseCreditMemoCodeSerie;
     }
     
 }
