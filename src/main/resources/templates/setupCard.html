@@ -45,7 +45,8 @@
 
                     <div class="col-sm-6">
                         <label for="salesCreditMemoCodeSerie" class="form-label">Sales Credit Memo</label>
-                        <select class="form-select" aria-label="Sales Credit Memo" th:field="*{salesCreditMemoCodeSerie}">
+                        <select class="form-select" aria-label="Sales Credit Memo"
+                            th:field="*{salesCreditMemoCodeSerie}">
                             <option selected value=""></option>
                             <option th:each="codeSerie : ${codeSeries}" th:value="${codeSerie.code}"
                                 th:text="${codeSerie.name}">
@@ -55,7 +56,8 @@
 
                     <div class="col-sm-6">
                         <label for="postedSalesCreditMemoCodeSerie" class="form-label">Posted Sales Credit Memo</label>
-                        <select class="form-select" aria-label="Posted Sales Credit Memo" th:field="*{postedSalesCreditMemoCodeSerie}">
+                        <select class="form-select" aria-label="Posted Sales Credit Memo"
+                            th:field="*{postedSalesCreditMemoCodeSerie}">
                             <option selected value=""></option>
                             <option th:each="codeSerie : ${codeSeries}" th:value="${codeSerie.code}"
                                 th:text="${codeSerie.name}">
@@ -75,7 +77,8 @@
 
                     <div class="col-sm-6">
                         <label for="postedPurchaseOrderCodeSerie" class="form-label">Posted Purchase Order</label>
-                        <select class="form-select" aria-label="Posted Purchase Order" th:field="*{postedPurchaseOrderCodeSerie}">
+                        <select class="form-select" aria-label="Posted Purchase Order"
+                            th:field="*{postedPurchaseOrderCodeSerie}">
                             <option selected value=""></option>
                             <option th:each="codeSerie : ${codeSeries}" th:value="${codeSerie.code}"
                                 th:text="${codeSerie.name}">
@@ -85,7 +88,8 @@
 
                     <div class="col-sm-6">
                         <label for="purchaseCreditMemoCodeSerie" class="form-label">Purchase Credit Memo</label>
-                        <select class="form-select" aria-label="Purchase Credit Memo" th:field="*{purchaseCreditMemoCodeSerie}">
+                        <select class="form-select" aria-label="Purchase Credit Memo"
+                            th:field="*{purchaseCreditMemoCodeSerie}">
                             <option selected value=""></option>
                             <option th:each="codeSerie : ${codeSeries}" th:value="${codeSerie.code}"
                                 th:text="${codeSerie.name}">
@@ -94,8 +98,10 @@
                     </div>
 
                     <div class="col-sm-6">
-                        <label for="postedPurchaseCreditMemoCodeSerie" class="form-label">Posted Purchase Credit Memo</label>
-                        <select class="form-select" aria-label="Posted Purchase Credit Memo" th:field="*{postedPurchaseCreditMemoCodeSerie}">
+                        <label for="postedPurchaseCreditMemoCodeSerie" class="form-label">Posted Purchase Credit
+                            Memo</label>
+                        <select class="form-select" aria-label="Posted Purchase Credit Memo"
+                            th:field="*{postedPurchaseCreditMemoCodeSerie}">
                             <option selected value=""></option>
                             <option th:each="codeSerie : ${codeSeries}" th:value="${codeSerie.code}"
                                 th:text="${codeSerie.name}">
@@ -115,6 +121,10 @@
 
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
 
 </body>
 

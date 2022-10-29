@@ -36,7 +36,8 @@
                         <td th:text="${vendor.address}"></td>
                         <td th:text="${vendor.paymentMethod.name}"></td>
                         <td th:text="${vendor.balance}"></td>
-                        <td><a th:href="@{/vendorCard?code={code}(code=${vendor.code})}">edit</a> <a th:href="@{/deleteVendor?code={code}(code=${vendor.code})}">delete</a></td>
+                        <td><a th:href="@{/vendorCard?code={code}(code=${vendor.code})}">edit</a> <a
+                                th:href="@{/deleteVendor?code={code}(code=${vendor.code})}">delete</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -44,8 +45,12 @@
 
         <nav th:replace="paging">
         </nav>
-    
+
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
 
 </body>
 
