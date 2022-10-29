@@ -1,19 +1,32 @@
 package org.roko.erp.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.ManyToOne;
+
+import org.roko.erp.model.jpa.SalesOrderLineId;
+
+@Entity
+@IdClass(SalesOrderLineId.class)
 public class SalesOrderLine {
 	
-	private String documentCode;
+	@Id
+	@ManyToOne
+	private SalesOrder salesOrder;
+
+	@Id
 	private int lineNo;
+
+	@ManyToOne
 	private Item item;
+
+	private double price;
+
 	private double quantity;
+
 	private double amount;
-	
-	public String getDocumentCode() {
-		return documentCode;
-	}
-	public void setDocumentCode(String documentCode) {
-		this.documentCode = documentCode;
-	}
+
 	public int getLineNo() {
 		return lineNo;
 	}
@@ -37,6 +50,18 @@ public class SalesOrderLine {
 	}
 	public void setAmount(double amount) {
 		this.amount = amount;
+	}
+	public SalesOrder getSalesOrder() {
+		return salesOrder;
+	}
+	public void setSalesOrder(SalesOrder salesOrder) {
+		this.salesOrder = salesOrder;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
 	}
 	
 }
