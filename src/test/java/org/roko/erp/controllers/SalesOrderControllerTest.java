@@ -219,4 +219,13 @@ public class SalesOrderControllerTest {
         assertEquals(testDate, updatedSalesOrder.getDate());
     }
 
+    @Test
+    public void deleteSalesOrder_deletesSalesOrder(){
+        RedirectView redirectView = controller.delete(TEST_CODE);
+
+        assertEquals("/salesOrderList", redirectView.getUrl());
+
+        verify(svcMock).delete(TEST_CODE);
+    }
+
 }

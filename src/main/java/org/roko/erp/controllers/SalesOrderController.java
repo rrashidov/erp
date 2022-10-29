@@ -94,6 +94,13 @@ public class SalesOrderController {
         return new RedirectView("/salesOrderList");
     }
 
+    @GetMapping("/deleteSalesOrder")
+    public RedirectView delete(@RequestParam(name = "code") String code) {
+        svc.delete(code);
+
+        return new RedirectView("/salesOrderList");
+    }
+
     private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {
         SalesOrder salesOrder = new SalesOrder();
         salesOrder.setCode("SO" + System.currentTimeMillis());
