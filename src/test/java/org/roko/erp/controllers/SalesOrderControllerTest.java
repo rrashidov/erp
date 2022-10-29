@@ -1,6 +1,7 @@
 package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +31,7 @@ public class SalesOrderControllerTest {
 
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
+    private static final String TEST_CODE = "test-code";
     private static final String TEST_CUSTOMER_CODE = "test-customer-code";
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
 
@@ -45,6 +47,15 @@ public class SalesOrderControllerTest {
 
     @Captor
     private ArgumentCaptor<SalesOrder> salesOrderArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<SalesOrderModel> salesOrderModelArgumentCaptor;
+
+    @Mock
+    private Date dateMock;
+
+    @Mock
+    private SalesOrder salesOrderMock;
 
     @Mock
     private PaymentMethod paymentMethodMock;
@@ -79,11 +90,18 @@ public class SalesOrderControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(salesOrderMock.getCode()).thenReturn(TEST_CODE);
+        when(salesOrderMock.getCustomer()).thenReturn(customerMock);
+        when(salesOrderMock.getDate()).thenReturn(dateMock);
+        when(salesOrderMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+
         when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
+        when(customerMock.getCode()).thenReturn(TEST_CUSTOMER_CODE);
         when(customerMock.getPaymentMethod()).thenReturn(paymentMethodMock);
         when(customerMock.getName()).thenReturn(TEST_CUSTOMER_NAME);
 
+        when(salesOrderModelMock.getCode()).thenReturn("");
         when(salesOrderModelMock.getCustomerCode()).thenReturn(TEST_CUSTOMER_CODE);
         when(salesOrderModelMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
@@ -95,6 +113,7 @@ public class SalesOrderControllerTest {
 
         when(svcMock.list()).thenReturn(salesOrderList);
         when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(svcMock.get(TEST_CODE)).thenReturn(salesOrderMock);
 
         when(pagingSvcMock.generate("salesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
 
@@ -112,12 +131,33 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void salesOrderWizardReturnsProperTemplate(){
-        String template = controller.wizard(modelMock);
+    public void salesOrderWizardReturnsProperTemplate_whenCalledForNewSalesOrder(){
+        String template = controller.wizard(null, modelMock);
+
+        assertEquals("salesOrderWizardFirstPage.html", template);
+
+        verify(modelMock).addAttribute(eq("salesOrder"), salesOrderModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("customers", customerList);
+
+        SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
+
+        assertEquals("", salesOrderModel.getCode());
+        assertEquals("", salesOrderModel.getCustomerCode());
+    }
+
+    @Test
+    public void salesOrderWizardReturnsProperTemplate_whenCalledForExistingSalesOrder(){
+        String template = controller.wizard(TEST_CODE, modelMock);
 
         assertEquals("salesOrderWizardFirstPage.html", template);
 
         verify(modelMock).addAttribute("customers", customerList);
+        verify(modelMock).addAttribute(eq("salesOrder"), salesOrderModelArgumentCaptor.capture());
+
+        SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_CODE, salesOrderModel.getCode());
+        assertEquals(TEST_CUSTOMER_CODE, salesOrderModel.getCustomerCode());
     }
 
     @Test
@@ -151,4 +191,32 @@ public class SalesOrderControllerTest {
         assertEquals(paymentMethodMock, salesOrder.getPaymentMethod());
         assertEquals(testDate, salesOrder.getDate());
     }
+
+    @Test
+    public void postSalesOrderWizardSecondPage_updatesSalesOrder_whenCalledWithExistingCode(){
+        SalesOrder salesOrder = new SalesOrder();
+        salesOrder.setCode(TEST_CODE);
+        salesOrder.setCustomer(customerMock);
+        salesOrder.setDate(new Date());
+        salesOrder.setPaymentMethod(paymentMethodMock);
+
+        when(svcMock.get(TEST_CODE)).thenReturn(salesOrder);
+        
+        Date testDate = new Date();
+        when(salesOrderModelMock.getCode()).thenReturn(TEST_CODE);
+        when(salesOrderModelMock.getDate()).thenReturn(testDate);
+        
+        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelMock);
+
+        assertEquals("/salesOrderList", redirectView.getUrl());
+
+        verify(svcMock).update(eq(TEST_CODE), salesOrderArgumentCaptor.capture());
+
+        SalesOrder updatedSalesOrder = salesOrderArgumentCaptor.getValue();
+
+        assertEquals(customerMock, updatedSalesOrder.getCustomer());
+        assertEquals(paymentMethodMock, updatedSalesOrder.getPaymentMethod());
+        assertEquals(testDate, updatedSalesOrder.getDate());
+    }
+
 }

@@ -34,7 +34,7 @@
                         <td th:text="${salesOrder.customer.name}"></td>
                         <td th:text="${salesOrder.date}"></td>
                         <td th:text="${salesOrder.paymentMethod.name}"></td>
-                        <td><a th:href="@{/salesOrderCard?code={code}(code=${salesOrder.code})}">edit</a> <a
+                        <td><a th:href="@{/salesOrderWizard?code={code}(code=${salesOrder.code})}">edit</a> <a
                                 th:href="@{/deleteSalesOrder?code={code}(code=${salesOrder.code})}">delete</a></td>
                     </tr>
 

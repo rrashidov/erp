@@ -49,8 +49,13 @@ public class SalesOrderController {
     }
 
     @GetMapping("/salesOrderWizard")
-    public String wizard(Model model){
+    public String wizard(@RequestParam(name="code", required=false) String code, Model model){
         SalesOrderModel salesOrderModel = new SalesOrderModel();
+
+        if (code != null){
+            SalesOrder salesOrder = svc.get(code);
+            toModel(salesOrder, salesOrderModel);
+        }
 
         model.addAttribute("salesOrder", salesOrderModel);
         model.addAttribute("customers", customerSvc.list());
@@ -74,19 +79,41 @@ public class SalesOrderController {
 
     @PostMapping("/salesOrderWizardSecondPage")
     public RedirectView postWizardSecondPage(@ModelAttribute SalesOrderModel salesOrderModel){
-        SalesOrder salesOrder = createFromModel(salesOrderModel);
+        if (salesOrderModel.getCode().isEmpty()) {
+            SalesOrder salesOrder = fromModel(salesOrderModel);
 
-        svc.create(salesOrder);
+            svc.create(salesOrder);
+        } else {
+            SalesOrder salesOrder = svc.get(salesOrderModel.getCode());
+
+            fromModel(salesOrder, salesOrderModel);
+
+            svc.update(salesOrderModel.getCode(), salesOrder);
+        }
 
         return new RedirectView("/salesOrderList");
     }
 
-    private SalesOrder createFromModel(SalesOrderModel salesOrderModelMock) {
+    private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {
         SalesOrder salesOrder = new SalesOrder();
-        salesOrder.setCode("SO001");
+        salesOrder.setCode("SO" + System.currentTimeMillis());
         salesOrder.setCustomer(customerSvc.get(salesOrderModelMock.getCustomerCode()));
         salesOrder.setDate(salesOrderModelMock.getDate());
         salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModelMock.getPaymentMethodCode()));
         return salesOrder;
     }
+
+    private void toModel(SalesOrder salesOrder, SalesOrderModel salesOrderModel) {
+        salesOrderModel.setCode(salesOrder.getCode());
+        salesOrderModel.setCustomerCode(salesOrder.getCustomer().getCode());
+        salesOrderModel.setDate(salesOrder.getDate());
+        salesOrderModel.setPaymentMethodCode(salesOrder.getPaymentMethod().getCode());
+    }
+
+    private void fromModel(SalesOrder salesOrder, SalesOrderModel salesOrderModel) {
+        salesOrder.setCustomer(customerSvc.get(salesOrderModel.getCustomerCode()));
+        salesOrder.setDate(salesOrderModel.getDate());
+        salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModel.getPaymentMethodCode()));
+    }
+
 }
