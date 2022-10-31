@@ -74,10 +74,10 @@
                             </thead>
                             <tbody>
                                 <tr th:each="salesOrderLine : ${salesOrderLines}">
-                                    <td th:text="${salesOrderLine.lineNo}"></td>
+                                    <td th:text="${salesOrderLine.salesOrderLineId.lineNo}"></td>
                                     <td th:text="${salesOrderLine.item.name}"></td>
                                     <td th:text="${salesOrderLine.quantity}"></td>
-                                    <td th:text="${salesOrderLine.private}"></td>
+                                    <td th:text="${salesOrderLine.price}"></td>
                                     <td th:text="${salesOrderLine.amount}"></td>
                                     <td><a th:href="@{/salesOrderWizard?code={code}(code=${salesOrder.code})}">edit</a>
                                         <a
@@ -91,7 +91,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td><a class="btn btn-primary" href="#" role="button">New</a></td>
+                                    <td><a class="btn btn-primary" th:href="@{/salesOrderLineWizard?salesOrderCode={code}(code=${salesOrder.code})}" role="button">New</a></td>
                                 </tr>
                             </tbody>
                         </table>

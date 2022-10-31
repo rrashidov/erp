@@ -1,22 +1,21 @@
 package org.roko.erp.model;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 
 import org.roko.erp.model.jpa.SalesOrderLineId;
 
 @Entity
-@IdClass(SalesOrderLineId.class)
 public class SalesOrderLine {
 	
-	@Id
-	@ManyToOne
-	private SalesOrder salesOrder;
+	@EmbeddedId
+    private SalesOrderLineId salesOrderLineId;
 
-	@Id
-	private int lineNo;
+	@MapsId("salesOrder")
+    @ManyToOne
+    private SalesOrder salesOrder;
 
 	@ManyToOne
 	private Item item;
@@ -27,12 +26,6 @@ public class SalesOrderLine {
 
 	private double amount;
 
-	public int getLineNo() {
-		return lineNo;
-	}
-	public void setLineNo(int lineNo) {
-		this.lineNo = lineNo;
-	}
 	public Item getItem() {
 		return item;
 	}
@@ -51,17 +44,23 @@ public class SalesOrderLine {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	public SalesOrder getSalesOrder() {
-		return salesOrder;
-	}
-	public void setSalesOrder(SalesOrder salesOrder) {
-		this.salesOrder = salesOrder;
-	}
 	public double getPrice() {
 		return price;
 	}
 	public void setPrice(double price) {
 		this.price = price;
+	}
+	public SalesOrderLineId getSalesOrderLineId() {
+		return salesOrderLineId;
+	}
+	public void setSalesOrderLineId(SalesOrderLineId salesOrderLineId) {
+		this.salesOrderLineId = salesOrderLineId;
+	}
+	public SalesOrder getSalesOrder() {
+		return salesOrder;
+	}
+	public void setSalesOrder(SalesOrder salesOrder) {
+		this.salesOrder = salesOrder;
 	}
 	
 }

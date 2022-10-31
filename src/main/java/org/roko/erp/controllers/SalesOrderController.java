@@ -3,13 +3,17 @@ package org.roko.erp.controllers;
 import java.util.Date;
 import java.util.List;
 
+import org.roko.erp.controllers.model.SalesOrderLineModel;
 import org.roko.erp.controllers.model.SalesOrderModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Customer;
+import org.roko.erp.model.Item;
 import org.roko.erp.model.SalesOrder;
 import org.roko.erp.model.SalesOrderLine;
+import org.roko.erp.model.jpa.SalesOrderLineId;
 import org.roko.erp.services.CustomerService;
+import org.roko.erp.services.ItemService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesOrderLineService;
 import org.roko.erp.services.SalesOrderService;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -30,15 +35,17 @@ public class SalesOrderController {
     private CustomerService customerSvc;
     private PaymentMethodService paymentMethodSvc;
     private SalesOrderLineService salesOrderLineSvc;
+    private ItemService itemSvc;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, PagingService pagingSvc, CustomerService customerSvc,
-            PaymentMethodService paymentMethodSvc, SalesOrderLineService salesOrderLineSvc) {
+            PaymentMethodService paymentMethodSvc, SalesOrderLineService salesOrderLineSvc, ItemService itemSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.customerSvc = customerSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.salesOrderLineSvc = salesOrderLineSvc;
+        this.itemSvc = itemSvc;
     }
 
     @GetMapping("/salesOrderList")
@@ -116,6 +123,64 @@ public class SalesOrderController {
         model.addAttribute("paging", salesOrderLinePagingData);
 
         return "salesOrderCard.html";
+    }
+
+    @GetMapping("/salesOrderLineWizard")
+    public String salesOrderLineWizard(@RequestParam(name="salesOrderCode") String salesOrderCode, Model model){
+        SalesOrderLineModel salesOrderLineModel = new SalesOrderLineModel();
+        salesOrderLineModel.setSalesOrderCode(salesOrderCode);
+
+        model.addAttribute("salesOrderLine", salesOrderLineModel);
+        model.addAttribute("items", itemSvc.list());
+
+        return "salesOrderLineWizardFirstPage.html";
+    }
+
+    @PostMapping("/salesOrderLineWizardFirstPage")
+    public String postSalesOrderLineWizardFirstPage(@ModelAttribute SalesOrderLineModel salesOrderLine, Model model){
+        Item item = itemSvc.get(salesOrderLine.getItemCode());
+
+        salesOrderLine.setItemName(item.getName());
+        salesOrderLine.setPrice(item.getSalesPrice());
+
+        model.addAttribute("salesOrderLine", salesOrderLine);
+        
+        return "salesOrderLineWizardSecondPage.html";
+    }
+
+    @PostMapping("/salesOrderLineWizardSecondPage")
+    public String postSalesOrderLineWizardSecondPage(@ModelAttribute SalesOrderLineModel salesOrderLine, Model model){
+        salesOrderLine.setAmount(salesOrderLine.getQuantity() * salesOrderLine.getPrice());
+
+        model.addAttribute("salesOrderLine", salesOrderLine);
+
+        return "salesOrderLineWizardThirdPage.html";
+    }
+
+    @PostMapping("/salesOrderLineWizardThirdPage")
+    public RedirectView postSalesOrderLineWizardThirdPage(@ModelAttribute SalesOrderLineModel salesOrderLine,
+            RedirectAttributes redirectAttributes) {
+        
+        SalesOrder salesOrder = svc.get(salesOrderLine.getSalesOrderCode());
+
+        long lineNo = salesOrderLineSvc.count(salesOrder) + 1;
+
+        SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
+        salesOrderLineId.setSalesOrder(salesOrder);
+        salesOrderLineId.setLineNo((int)lineNo);
+
+        SalesOrderLine salesOrderLineToCreate = new SalesOrderLine();
+        salesOrderLineToCreate.setSalesOrderLineId(salesOrderLineId);
+        salesOrderLineToCreate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
+        salesOrderLineToCreate.setQuantity(salesOrderLine.getQuantity());
+        salesOrderLineToCreate.setPrice(salesOrderLine.getPrice());
+        salesOrderLineToCreate.setAmount(salesOrderLine.getAmount());
+
+        salesOrderLineSvc.create(salesOrderLineToCreate);
+
+        redirectAttributes.addAttribute("code", salesOrderLine.getSalesOrderCode());
+
+        return new RedirectView("/salesOrderCard");
     }
 
     private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {

@@ -2,11 +2,17 @@ package org.roko.erp.model.jpa;
 
 import java.io.Serializable;
 
+import javax.persistence.Embeddable;
+import javax.persistence.ManyToOne;
+
 import org.roko.erp.model.SalesOrder;
 
+@Embeddable
 public class SalesOrderLineId implements Serializable {
     
+    @ManyToOne
     private SalesOrder salesOrder;
+    
     private int lineNo;
 
     public SalesOrderLineId() {
