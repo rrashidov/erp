@@ -8,8 +8,10 @@ import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Customer;
 import org.roko.erp.model.SalesOrder;
+import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.SalesOrderLineService;
 import org.roko.erp.services.SalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,14 +29,16 @@ public class SalesOrderController {
     private PagingService pagingSvc;
     private CustomerService customerSvc;
     private PaymentMethodService paymentMethodSvc;
+    private SalesOrderLineService salesOrderLineSvc;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, PagingService pagingSvc, CustomerService customerSvc,
-            PaymentMethodService paymentMethodSvc) {
+            PaymentMethodService paymentMethodSvc, SalesOrderLineService salesOrderLineSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.customerSvc = customerSvc;
         this.paymentMethodSvc = paymentMethodSvc;
+        this.salesOrderLineSvc = salesOrderLineSvc;
     }
 
     @GetMapping("/salesOrderList")
@@ -99,6 +103,19 @@ public class SalesOrderController {
         svc.delete(code);
 
         return new RedirectView("/salesOrderList");
+    }
+
+    @GetMapping("/salesOrderCard")
+    public String card(@RequestParam(name="code") String code, Model model) {
+        SalesOrder salesOrder = svc.get(code);
+        List<SalesOrderLine> salesOrderLineList = salesOrderLineSvc.list(salesOrder);
+        PagingData salesOrderLinePagingData = pagingSvc.generate("salesOrderLine", null, salesOrderLineSvc.count(salesOrder));
+
+        model.addAttribute("salesOrder", salesOrder);
+        model.addAttribute("salesOrderLines", salesOrderLineList);
+        model.addAttribute("paging", salesOrderLinePagingData);
+
+        return "salesOrderCard.html";
     }
 
     private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {

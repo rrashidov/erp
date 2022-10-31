@@ -21,8 +21,10 @@ import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Customer;
 import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.SalesOrder;
+import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.SalesOrderLineService;
 import org.roko.erp.services.SalesOrderService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
@@ -38,12 +40,15 @@ public class SalesOrderControllerTest {
     private static final Long TEST_PAGE = 123l;
 
     private static final long TEST_COUNT = 234;
+    private static final long TEST_SALES_ORDER_LINE_COUNT = 789l;
 
     private List<SalesOrder> salesOrderList = new ArrayList<>();
 
     private List<Customer> customerList = new ArrayList<>();
 
     private List<PaymentMethod> paymentMethodList = new ArrayList<>();
+
+    private List<SalesOrderLine> salesOrderLineList = new ArrayList<>();
 
     @Captor
     private ArgumentCaptor<SalesOrder> salesOrderArgumentCaptor;
@@ -70,6 +75,9 @@ public class SalesOrderControllerTest {
     private PagingData pagingDataMock;
 
     @Mock
+    private PagingData salesOrderLinePagingMock;
+
+    @Mock
     private Model modelMock;
 
     @Mock
@@ -83,6 +91,9 @@ public class SalesOrderControllerTest {
 
     @Mock
     private PaymentMethodService paymentMethodSvc;
+
+    @Mock
+    private SalesOrderLineService salesOrderLineSvcMock;
     
     private SalesOrderController controller;
 
@@ -111,13 +122,17 @@ public class SalesOrderControllerTest {
         when(customerSvcMock.list()).thenReturn(customerList);
         when(customerSvcMock.get(TEST_CUSTOMER_CODE)).thenReturn(customerMock);
 
+        when(salesOrderLineSvcMock.list(salesOrderMock)).thenReturn(salesOrderLineList);
+        when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(TEST_SALES_ORDER_LINE_COUNT);
+
         when(svcMock.list()).thenReturn(salesOrderList);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(salesOrderMock);
 
         when(pagingSvcMock.generate("salesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("salesOrderLine", null, TEST_SALES_ORDER_LINE_COUNT)).thenReturn(salesOrderLinePagingMock);
 
-        controller = new SalesOrderController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvc);
+        controller = new SalesOrderController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvc, salesOrderLineSvcMock);
     }
 
     @Test
@@ -228,4 +243,14 @@ public class SalesOrderControllerTest {
         verify(svcMock).delete(TEST_CODE);
     }
 
+    @Test
+    public void salesOrderCard_returnsProperTemplate(){
+        String template = controller.card(TEST_CODE, modelMock);
+
+        assertEquals("salesOrderCard.html", template);
+
+        verify(modelMock).addAttribute("salesOrder", salesOrderMock);
+        verify(modelMock).addAttribute("salesOrderLines", salesOrderLineList);
+        verify(modelMock).addAttribute("paging", salesOrderLinePagingMock);
+    }
 }
