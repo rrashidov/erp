@@ -9,8 +9,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.model.Item;
@@ -18,18 +16,12 @@ import org.roko.erp.model.SalesOrder;
 import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.model.jpa.SalesOrderLineId;
 import org.roko.erp.repositories.SalesOrderLineRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 
 public class SalesOrderLineServiceTest {
 
     private static final double TEST_PRICE = 123.23;
     private static final double TEST_QUANTITY = 23.00;
     private static final double TEST_AMOUNT = 23.34;
-
-    @Captor
-    private ArgumentCaptor<Example> exampleCaptor;
 
     @Mock
     private SalesOrder salesOrderMock;
