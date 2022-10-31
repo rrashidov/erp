@@ -24,6 +24,7 @@ import org.roko.erp.model.Item;
 import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.SalesOrder;
 import org.roko.erp.model.SalesOrderLine;
+import org.roko.erp.model.jpa.SalesOrderLineId;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.ItemService;
 import org.roko.erp.services.PaymentMethodService;
@@ -53,6 +54,8 @@ public class SalesOrderControllerTest {
     private static final double TEST_SALES_ORDER_LINE_QTY = 10.0d;
     private static final double TEST_SALES_ORDER_LINE_AMOUNT = 123.89d;
 
+    private static final Integer TEST_SALES_ORDER_LINENO = 1;
+
     private List<SalesOrder> salesOrderList = new ArrayList<>();
 
     private List<Customer> customerList = new ArrayList<>();
@@ -75,6 +78,9 @@ public class SalesOrderControllerTest {
     @Captor
     private ArgumentCaptor<SalesOrderLineModel> salesOrderLineModelArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor<SalesOrderLineId> salesOrderLineIdArgumentCaptor;
+
     @Mock
     private Date dateMock;
 
@@ -95,6 +101,9 @@ public class SalesOrderControllerTest {
 
     @Mock
     private SalesOrderLineModel salesOrderLineModelMock;
+
+    @Mock
+    private SalesOrderLine salesOrderLineMock;
 
     @Mock
     private PagingData pagingDataMock;
@@ -153,8 +162,21 @@ public class SalesOrderControllerTest {
         when(customerSvcMock.list()).thenReturn(customerList);
         when(customerSvcMock.get(TEST_CUSTOMER_CODE)).thenReturn(customerMock);
 
+
+        SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
+        salesOrderLineId.setSalesOrder(salesOrderMock);
+        salesOrderLineId.setLineNo(TEST_SALES_ORDER_LINENO);
+
+        when(salesOrderLineMock.getSalesOrderLineId()).thenReturn(salesOrderLineId);
+        when(salesOrderLineMock.getSalesOrder()).thenReturn(salesOrderMock);
+        when(salesOrderLineMock.getItem()).thenReturn(itemMock);
+        when(salesOrderLineMock.getQuantity()).thenReturn(TEST_SALES_ORDER_LINE_QTY);
+        when(salesOrderLineMock.getPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
+        when(salesOrderLineMock.getAmount()).thenReturn(TEST_SALES_ORDER_LINE_AMOUNT);
+
         when(salesOrderLineSvcMock.list(salesOrderMock)).thenReturn(salesOrderLineList);
         when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(TEST_SALES_ORDER_LINE_COUNT);
+        when(salesOrderLineSvcMock.get(salesOrderLineId)).thenReturn(salesOrderLineMock);
 
         when(salesOrderLineModelMock.getSalesOrderCode()).thenReturn(TEST_CODE);
         when(salesOrderLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
@@ -299,8 +321,8 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void salesOrderLineWizard_returnsProperTemplate(){
-        String template = controller.salesOrderLineWizard(TEST_CODE, modelMock);
+    public void salesOrderLineWizard_returnsProperTemplate_whenCalledForNew(){
+        String template = controller.salesOrderLineWizard(TEST_CODE, null, modelMock);
 
         assertEquals("salesOrderLineWizardFirstPage.html", template);
 
@@ -312,6 +334,26 @@ public class SalesOrderControllerTest {
         assertEquals(TEST_CODE, salesOrderLineModel.getSalesOrderCode());
         assertEquals("", salesOrderLineModel.getItemCode());
     }
+
+    @Test
+    public void salesOrderLineWizard_returnsProperTemplate_whenCalledForExisting(){
+        String template = controller.salesOrderLineWizard(TEST_CODE, TEST_SALES_ORDER_LINENO, modelMock);
+
+        assertEquals("salesOrderLineWizardFirstPage.html", template);
+
+        verify(modelMock).addAttribute("items", itemList);
+        verify(modelMock).addAttribute(eq("salesOrderLine"), salesOrderLineModelArgumentCaptor.capture());
+
+        SalesOrderLineModel salesOrderLineModel = salesOrderLineModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_SALES_ORDER_LINENO, salesOrderLineModel.getLineNo());
+        assertEquals(TEST_CODE, salesOrderLineModel.getSalesOrderCode());
+        assertEquals(TEST_ITEM_CODE, salesOrderLineModel.getItemCode());
+        assertEquals(TEST_SALES_ORDER_LINE_QTY, salesOrderLineModel.getQuantity());
+        assertEquals(TEST_ITEM_SALES_PRICE, salesOrderLineModel.getPrice());
+        assertEquals(TEST_SALES_ORDER_LINE_AMOUNT, salesOrderLineModel.getAmount());
+    }
+
 
     @Test
     public void postingSalesOrderLineWizardFirstPage_returnsProperTemplate(){
@@ -355,4 +397,30 @@ public class SalesOrderControllerTest {
         assertEquals(TEST_ITEM_SALES_PRICE, createOrderLine.getPrice());
         assertEquals(TEST_SALES_ORDER_LINE_AMOUNT, createOrderLine.getAmount());
     }
+
+    @Test
+    public void postingSalesOrderLineWizardThirdPage_updatesSalesOrderLine_whenCalledWithLineNo(){
+        when(salesOrderLineModelMock.getLineNo()).thenReturn(TEST_SALES_ORDER_LINENO);
+
+        RedirectView redirectView = controller.postSalesOrderLineWizardThirdPage(salesOrderLineModelMock, redirectAttributesMock);
+
+        assertEquals("/salesOrderCard", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+
+        verify(salesOrderLineSvcMock).update(salesOrderLineIdArgumentCaptor.capture(), salesOrderLineArgumentCaptor.capture());
+
+        SalesOrderLineId salesOrderLineId = salesOrderLineIdArgumentCaptor.getValue();
+
+        assertEquals(salesOrderMock, salesOrderLineId.getSalesOrder());
+        assertEquals(TEST_SALES_ORDER_LINENO, salesOrderLineId.getLineNo());
+
+        SalesOrderLine updatedSalesOrderLine = salesOrderLineArgumentCaptor.getValue();
+
+        assertEquals(itemMock, updatedSalesOrderLine.getItem());
+        assertEquals(TEST_SALES_ORDER_LINE_QTY, updatedSalesOrderLine.getQuantity());
+        assertEquals(TEST_ITEM_SALES_PRICE, updatedSalesOrderLine.getPrice());
+        assertEquals(TEST_SALES_ORDER_LINE_AMOUNT, updatedSalesOrderLine.getAmount());
+    }
+
 }

@@ -2,6 +2,7 @@ package org.roko.erp.controllers.model;
 
 public class SalesOrderLineModel {
     
+    private int lineNo = 0;
     private String salesOrderCode = "";
     private String itemCode = "";
     private String itemName = "";
@@ -45,5 +46,11 @@ public class SalesOrderLineModel {
     public void setAmount(double amount) {
         this.amount = amount;
     }
-    
+    public int getLineNo() {
+        return lineNo;
+    }
+    public void setLineNo(int lineNo) {
+        this.lineNo = lineNo;
+    }
+        
 }

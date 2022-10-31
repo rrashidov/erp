@@ -126,9 +126,27 @@ public class SalesOrderController {
     }
 
     @GetMapping("/salesOrderLineWizard")
-    public String salesOrderLineWizard(@RequestParam(name="salesOrderCode") String salesOrderCode, Model model){
+    public String salesOrderLineWizard(@RequestParam(name = "salesOrderCode") String salesOrderCode,
+            @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
         SalesOrderLineModel salesOrderLineModel = new SalesOrderLineModel();
         salesOrderLineModel.setSalesOrderCode(salesOrderCode);
+
+        if (lineNo != null){
+            SalesOrder salesOrder = svc.get(salesOrderCode);
+            SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
+            salesOrderLineId.setSalesOrder(salesOrder);
+            salesOrderLineId.setLineNo(lineNo);
+
+            SalesOrderLine salesOrderLine = salesOrderLineSvc.get(salesOrderLineId);
+            
+            salesOrderLineModel.setLineNo(lineNo);
+            salesOrderLineModel.setItemCode(salesOrderLine.getItem().getCode());
+            salesOrderLineModel.setItemName(salesOrderLine.getItem().getName());
+            
+            salesOrderLineModel.setQuantity(salesOrderLine.getQuantity());
+            salesOrderLineModel.setPrice(salesOrderLine.getPrice());
+            salesOrderLineModel.setAmount(salesOrderLine.getAmount());
+        }
 
         model.addAttribute("salesOrderLine", salesOrderLineModel);
         model.addAttribute("items", itemSvc.list());
@@ -163,20 +181,37 @@ public class SalesOrderController {
         
         SalesOrder salesOrder = svc.get(salesOrderLine.getSalesOrderCode());
 
-        long lineNo = salesOrderLineSvc.count(salesOrder) + 1;
+        if (salesOrderLine.getLineNo() != 0) {
+            //update
+            SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
+            salesOrderLineId.setSalesOrder(salesOrder);
+            salesOrderLineId.setLineNo(salesOrderLine.getLineNo());
+    
+            SalesOrderLine salesOrderLineToUpdate = salesOrderLineSvc.get(salesOrderLineId);
 
-        SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
-        salesOrderLineId.setSalesOrder(salesOrder);
-        salesOrderLineId.setLineNo((int)lineNo);
+            salesOrderLineToUpdate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
+            salesOrderLineToUpdate.setQuantity(salesOrderLine.getQuantity());
+            salesOrderLineToUpdate.setPrice(salesOrderLine.getPrice());
+            salesOrderLineToUpdate.setAmount(salesOrderLine.getAmount());
+    
+            salesOrderLineSvc.update(salesOrderLineId, salesOrderLineToUpdate);
+        } else {
+            //create
+            long lineNo = salesOrderLineSvc.count(salesOrder) + 1;
 
-        SalesOrderLine salesOrderLineToCreate = new SalesOrderLine();
-        salesOrderLineToCreate.setSalesOrderLineId(salesOrderLineId);
-        salesOrderLineToCreate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
-        salesOrderLineToCreate.setQuantity(salesOrderLine.getQuantity());
-        salesOrderLineToCreate.setPrice(salesOrderLine.getPrice());
-        salesOrderLineToCreate.setAmount(salesOrderLine.getAmount());
-
-        salesOrderLineSvc.create(salesOrderLineToCreate);
+            SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
+            salesOrderLineId.setSalesOrder(salesOrder);
+            salesOrderLineId.setLineNo((int)lineNo);
+    
+            SalesOrderLine salesOrderLineToCreate = new SalesOrderLine();
+            salesOrderLineToCreate.setSalesOrderLineId(salesOrderLineId);
+            salesOrderLineToCreate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
+            salesOrderLineToCreate.setQuantity(salesOrderLine.getQuantity());
+            salesOrderLineToCreate.setPrice(salesOrderLine.getPrice());
+            salesOrderLineToCreate.setAmount(salesOrderLine.getAmount());
+    
+            salesOrderLineSvc.create(salesOrderLineToCreate);
+        }
 
         redirectAttributes.addAttribute("code", salesOrderLine.getSalesOrderCode());
 

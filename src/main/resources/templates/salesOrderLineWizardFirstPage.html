@@ -25,6 +25,8 @@
 
                     <div class="col-sm-6">
                         <label for="salesOrderCode" class="form-label">Sales Order</label>
+                        <input hidden type="text" class="form-control" id="lineNo" placeholder="" value=""
+                            th:field="*{lineNo}">
                         <input readonly type="text" class="form-control" id="salesOrderCode" placeholder="" value=""
                             th:field="*{salesOrderCode}">
                     </div>
@@ -37,6 +39,13 @@
                                 th:text="${item.name}">
                             </option>
                         </select>
+                        <input hidden type="text" class="form-control" id="quantity" placeholder="" value=""
+                        th:field="*{quantity}">
+                        <input hidden type="text" class="form-control" id="price" placeholder="" value=""
+                            th:field="*{price}">
+                            <input hidden type="text" class="form-control" id="amount" placeholder="" value=""
+                            th:field="*{amount}">
+
                     </div>
 
                     <div class="col-sm-6">
