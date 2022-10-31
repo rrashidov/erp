@@ -9,7 +9,7 @@ public class Item {
 	@Id
 	private String code;
 	
-	private String description;
+	private String name;
 	
 	private double salesPrice;
 	private double purchasePrice;
@@ -21,12 +21,6 @@ public class Item {
 	}
 	public void setCode(String code) {
 		this.code = code;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
 	}
 	public double getSalesPrice() {
 		return salesPrice;
@@ -45,5 +39,11 @@ public class Item {
 	}
 	public void setInventory(double inventory) {
 		this.inventory = inventory;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}	
 }

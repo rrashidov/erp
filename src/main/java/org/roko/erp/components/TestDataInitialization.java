@@ -72,21 +72,21 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
       // init items
       Item i1 = new Item();
       i1.setCode("ITEM01");
-      i1.setDescription("Test item 01");
+      i1.setName("Test item 01");
       i1.setSalesPrice(1.0);
       i1.setPurchasePrice(1.0);
       itemSvc.create(i1);
 
       Item i2 = new Item();
       i2.setCode("ITEM02");
-      i2.setDescription("Test item 02");
+      i2.setName("Test item 02");
       i2.setSalesPrice(2.0);
       i2.setPurchasePrice(2.0);
       itemSvc.create(i2);
 
       Item i3 = new Item();
       i3.setCode("ITEM03");
-      i3.setDescription("Test item 03");
+      i3.setName("Test item 03");
       i3.setSalesPrice(3.0);
       i3.setPurchasePrice(3.0);
       itemSvc.create(i3);

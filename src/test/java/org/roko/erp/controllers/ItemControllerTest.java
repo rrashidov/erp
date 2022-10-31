@@ -27,7 +27,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class ItemControllerTest {
     
     private static final String TEST_ITEM_CODE = "test-item-code";
-    private static final String TEST_ITEM_DESCRIPTION = "test-item-description";
+    private static final String TEST_ITEM_NAME = "test-item-name";
     private static final double TEST_ITEM_SALES_PRICE = 12.12;
     private static final double TEST_ITEM_PURCHASE_PRICE = 23.23;
 
@@ -66,7 +66,7 @@ public class ItemControllerTest {
         MockitoAnnotations.openMocks(this);
 
         when(itemMock.getCode()).thenReturn(TEST_ITEM_CODE);
-        when(itemMock.getDescription()).thenReturn(TEST_ITEM_DESCRIPTION);
+        when(itemMock.getName()).thenReturn(TEST_ITEM_NAME);
         when(itemMock.getSalesPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
         when(itemMock.getPurchasePrice()).thenReturn(TEST_ITEM_PURCHASE_PRICE);
 
@@ -122,7 +122,7 @@ public class ItemControllerTest {
         Item createdItem = itemArgumentCaptor.getValue();
 
         assertEquals(TEST_ITEM_CODE, createdItem.getCode());
-        assertEquals(TEST_ITEM_DESCRIPTION, createdItem.getDescription());
+        assertEquals(TEST_ITEM_NAME, createdItem.getName());
         assertEquals(TEST_ITEM_SALES_PRICE, createdItem.getSalesPrice());
         assertEquals(TEST_ITEM_PURCHASE_PRICE, createdItem.getPurchasePrice());
     }

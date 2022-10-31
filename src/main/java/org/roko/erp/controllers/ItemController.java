@@ -60,7 +60,7 @@ public class ItemController {
             itemFromDB.setCode(item.getCode());
         }
 
-        itemFromDB.setDescription(item.getDescription());
+        itemFromDB.setName(item.getName());
         itemFromDB.setSalesPrice(item.getSalesPrice());
         itemFromDB.setPurchasePrice(item.getPurchasePrice());
 

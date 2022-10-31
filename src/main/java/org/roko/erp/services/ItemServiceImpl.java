@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void transferFields(Item item, Item itemFromDB) {
-        itemFromDB.setDescription(item.getDescription());
+        itemFromDB.setName(item.getName());
         itemFromDB.setSalesPrice(item.getSalesPrice());
         itemFromDB.setPurchasePrice(item.getPurchasePrice());
     }
