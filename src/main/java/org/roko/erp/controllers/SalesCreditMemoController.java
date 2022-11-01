@@ -49,8 +49,14 @@ public class SalesCreditMemoController {
     }
 
     @GetMapping("/salesCreditMemoWizard")
-    public String wizard(Model model){
+    public String wizard(@RequestParam(name="code", required=false) String code, Model model){
         SalesCreditMemoModel salesCreditMemoModel = new SalesCreditMemoModel();
+
+        if (code != null){
+            SalesCreditMemo salesCreditMemo = svc.get(code);
+            toModel(salesCreditMemo, salesCreditMemoModel);
+        }
+
         List<Customer> customers = customerSvc.list();
 
         model.addAttribute("salesCreditMemoModel", salesCreditMemoModel);
@@ -74,7 +80,17 @@ public class SalesCreditMemoController {
 
     @PostMapping("/salesCreditMemoWizardSecondPage")
     public RedirectView postWizardSecondPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel){
+        if (salesCreditMemoModel.getCode().isEmpty()) {
+            createSalesCreditMemo(salesCreditMemoModel);
+        } else {
+            updateSalesCreditMemo(salesCreditMemoModel);
+        }
 
+
+        return new RedirectView("/salesCreditMemoList");
+    }
+
+    private void createSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
         SalesCreditMemo salesCreditMemo = new SalesCreditMemo();
         salesCreditMemo.setCode("SCM" + System.currentTimeMillis());
         salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
@@ -82,8 +98,23 @@ public class SalesCreditMemoController {
         salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
 
         svc.create(salesCreditMemo);
+    }
 
-        return new RedirectView("/salesCreditMemoList");
+    private void updateSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
+        SalesCreditMemo salesCreditMemo = svc.get(salesCreditMemoModel.getCode());
+        salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
+        salesCreditMemo.setDate(salesCreditMemoModel.getDate());
+        salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
+
+        svc.update(salesCreditMemoModel.getCode(), salesCreditMemo);
+    }
+
+    private void toModel(SalesCreditMemo salesCreditMemo, SalesCreditMemoModel salesCreditMemoModel) {
+        salesCreditMemoModel.setCode(salesCreditMemo.getCode());
+        salesCreditMemoModel.setCustomerCode(salesCreditMemo.getCustomer().getCode());
+        salesCreditMemoModel.setCustomerName(salesCreditMemo.getCustomer().getName());
+        salesCreditMemoModel.setDate(salesCreditMemo.getDate());
+        salesCreditMemoModel.setPaymentMethodCode(salesCreditMemo.getPaymentMethod().getCode());
     }
 
 }

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesCreditMemoControllerTest {
 
+    private static final String TEST_SALES_CREDIT_MEMO_CODE = "test-code";
+
     private static final String TEST_CUSTOMER_CODE = "test-customer-code";
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
 
@@ -48,6 +51,12 @@ public class SalesCreditMemoControllerTest {
 
     @Captor
     private ArgumentCaptor<SalesCreditMemoModel> salesCreditMemoModelArgumentCaptor;
+
+    @Mock
+    private Date dateMock;
+
+    @Mock
+    private SalesCreditMemo salesCreditMemoMock;
 
     @Mock
     private Customer customerMock;
@@ -82,6 +91,7 @@ public class SalesCreditMemoControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(salesCreditMemoModelMock.getCode()).thenReturn("");
         when(salesCreditMemoModelMock.getCustomerCode()).thenReturn(TEST_CUSTOMER_CODE);
         when(salesCreditMemoModelMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
@@ -97,8 +107,14 @@ public class SalesCreditMemoControllerTest {
         when(customerSvcMock.list()).thenReturn(customers);
         when(customerSvcMock.get(TEST_CUSTOMER_CODE)).thenReturn(customerMock);
 
+        when(salesCreditMemoMock.getCode()).thenReturn(TEST_SALES_CREDIT_MEMO_CODE);
+        when(salesCreditMemoMock.getCustomer()).thenReturn(customerMock);
+        when(salesCreditMemoMock.getDate()).thenReturn(dateMock);
+        when(salesCreditMemoMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+
         when(svcMock.list()).thenReturn(salesCreditMemos);
         when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(svcMock.get(TEST_SALES_CREDIT_MEMO_CODE)).thenReturn(salesCreditMemoMock);
 
         when(pagingSvcMock.generate("salesCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
 
@@ -117,7 +133,7 @@ public class SalesCreditMemoControllerTest {
 
     @Test
     public void wizardReturnsProperTemplate_whenCalledForNew(){
-        String template = controller.wizard(modelMock);
+        String template = controller.wizard(null, modelMock);
 
         assertEquals("salesCreditMemoWizardFirstPage.html", template);
 
@@ -133,6 +149,24 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
+    public void wizardReturnsProperTemplate_whenCalledForExisting(){
+        String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, modelMock);
+
+        assertEquals("salesCreditMemoWizardFirstPage.html", template);
+
+        verify(modelMock).addAttribute(eq("salesCreditMemoModel"), salesCreditMemoModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("customers", customers);
+
+        SalesCreditMemoModel salesCreditMemoModel = salesCreditMemoModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoModel.getCode());
+        assertEquals(TEST_CUSTOMER_CODE, salesCreditMemoModel.getCustomerCode());
+        assertEquals(TEST_CUSTOMER_NAME, salesCreditMemoModel.getCustomerName());
+        assertEquals(dateMock, salesCreditMemoModel.getDate());
+        assertEquals(TEST_PAYMENT_METHOD_CODE, salesCreditMemoModel.getPaymentMethodCode());
+    }
+
+    @Test
     public void postWizardFirstPage_returnsProperTemplate(){
         String template = controller.postWizardFirstPage(salesCreditMemoModelMock, modelMock);
 
@@ -145,7 +179,7 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void postWizardSecondPage_createsSalesCreditMemoAndReturnsProperTemplate(){
+    public void postWizardSecondPage_createsSalesCreditMemoAndReturnsProperTemplate_whenCalledForNew(){
         RedirectView redirectView = controller.postWizardSecondPage(salesCreditMemoModelMock);
 
         assertEquals("/salesCreditMemoList", redirectView.getUrl());
@@ -156,5 +190,16 @@ public class SalesCreditMemoControllerTest {
 
         assertEquals(customerMock, createdSalesCreditMemo.getCustomer());
         assertEquals(paymentMethodMock, createdSalesCreditMemo.getPaymentMethod());
+    }
+
+    @Test
+    public void postWizardSecondPage_createsSalesCreditMemoAndReturnsProperTemplate_whenCalledForExisting(){
+        when(salesCreditMemoModelMock.getCode()).thenReturn(TEST_SALES_CREDIT_MEMO_CODE);
+
+        RedirectView redirectView = controller.postWizardSecondPage(salesCreditMemoModelMock);
+
+        assertEquals("/salesCreditMemoList", redirectView.getUrl());
+
+        verify(svcMock).update(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoMock);
     }
 }
