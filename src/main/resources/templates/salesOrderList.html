@@ -34,10 +34,10 @@
                         <td th:text="${salesOrder.customer.name}"></td>
                         <td th:text="${salesOrder.date}"></td>
                         <td th:text="${salesOrder.paymentMethod.name}"></td>
-                        <td><a class="btn btn-primary" th:href="@{/salesOrderWizard?code={code}(code=${salesOrder.code})}">edit</a>  <a
-                            class="btn btn-primary" th:href="@{/salesOrderCard?code={code}(code=${salesOrder.code})}">card</a> <a
-                            class="btn btn-primary" th:href="@{/deleteSalesOrder?code={code}(code=${salesOrder.code})}">delete</a> <a
-                            class="btn btn-primary" th:href="@{/postSalesOrder?code={code}(code=${salesOrder.code})}">post</a></td>
+                        <td><a class="btn btn-primary" th:href="@{/salesOrderWizard?code={code}(code=${salesOrder.code})}">Edit</a>  <a
+                            class="btn btn-primary" th:href="@{/salesOrderCard?code={code}(code=${salesOrder.code})}">Card</a> <a
+                            class="btn btn-primary" th:href="@{/deleteSalesOrder?code={code}(code=${salesOrder.code})}">Delete</a> <a
+                            class="btn btn-primary" th:href="@{/postSalesOrder?code={code}(code=${salesOrder.code})}">Post</a></td>
                     </tr>
 
                 </tbody>
