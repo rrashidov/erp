@@ -67,6 +67,8 @@ public class SalesOrderLineController {
 
         salesOrderLine.setItemName(item.getName());
         salesOrderLine.setPrice(item.getSalesPrice());
+        
+        salesOrderLine.setAmount(salesOrderLine.getQuantity() * salesOrderLine.getPrice());
 
         model.addAttribute("salesOrderLine", salesOrderLine);
         
