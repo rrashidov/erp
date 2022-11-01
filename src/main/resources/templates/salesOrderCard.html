@@ -49,9 +49,9 @@
                     </div>
 
                     <div class="col-sm-6">
-                        <td><a class="btn btn-primary" href="#" role="button">Edit</a></td>
-                        <td><a class="btn btn-primary" href="#" role="button">Delete</a></td>
-                        <td><a class="btn btn-primary" href="#" role="button">Post</a></td>
+                        <td><a class="btn btn-primary" th:href="@{/salesOrderWizard?code={code}(code=${salesOrder.code})}" role="button">Edit</a></td>
+                        <td><a class="btn btn-primary" th:href="@{/deleteSalesOrder?code={code}(code=${salesOrder.code})}" role="button">Delete</a></td>
+                        <td><a class="btn btn-primary" th:href="@{/postSalesOrder?code={code}(code=${salesOrder.code})}" role="button">Post</a></td>
                     </div>
 
                     <div class="container-fluid">
