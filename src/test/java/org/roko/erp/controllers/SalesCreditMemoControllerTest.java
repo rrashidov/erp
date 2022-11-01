@@ -202,4 +202,13 @@ public class SalesCreditMemoControllerTest {
 
         verify(svcMock).update(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoMock);
     }
+
+    @Test
+    public void delete_deletesSalesCreditMemo(){
+        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE);
+
+        assertEquals("/salesCreditMemoList", redirectView.getUrl());
+
+        verify(svcMock).delete(TEST_SALES_CREDIT_MEMO_CODE);
+    }
 }

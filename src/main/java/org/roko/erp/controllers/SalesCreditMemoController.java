@@ -49,10 +49,10 @@ public class SalesCreditMemoController {
     }
 
     @GetMapping("/salesCreditMemoWizard")
-    public String wizard(@RequestParam(name="code", required=false) String code, Model model){
+    public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
         SalesCreditMemoModel salesCreditMemoModel = new SalesCreditMemoModel();
 
-        if (code != null){
+        if (code != null) {
             SalesCreditMemo salesCreditMemo = svc.get(code);
             toModel(salesCreditMemo, salesCreditMemoModel);
         }
@@ -66,7 +66,7 @@ public class SalesCreditMemoController {
     }
 
     @PostMapping("/salesCreditMemoWizardFirstPage")
-    public String postWizardFirstPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel, Model model){
+    public String postWizardFirstPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel, Model model) {
         Customer customer = customerSvc.get(salesCreditMemoModel.getCustomerCode());
 
         salesCreditMemoModel.setCustomerName(customer.getName());
@@ -79,13 +79,19 @@ public class SalesCreditMemoController {
     }
 
     @PostMapping("/salesCreditMemoWizardSecondPage")
-    public RedirectView postWizardSecondPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel){
+    public RedirectView postWizardSecondPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel) {
         if (salesCreditMemoModel.getCode().isEmpty()) {
             createSalesCreditMemo(salesCreditMemoModel);
         } else {
             updateSalesCreditMemo(salesCreditMemoModel);
         }
 
+        return new RedirectView("/salesCreditMemoList");
+    }
+
+    @GetMapping("/deleteSalesCreditMemo")
+    public RedirectView delete(@RequestParam(name = "code") String code) {
+        svc.delete(code);
 
         return new RedirectView("/salesCreditMemoList");
     }
