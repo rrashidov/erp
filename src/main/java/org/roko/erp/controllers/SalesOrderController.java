@@ -61,21 +61,21 @@ public class SalesOrderController {
             toModel(salesOrder, salesOrderModel);
         }
 
-        model.addAttribute("salesOrder", salesOrderModel);
+        model.addAttribute("salesOrderModel", salesOrderModel);
         model.addAttribute("customers", customerSvc.list());
         
         return "salesOrderWizardFirstPage.html";
     }
 
     @PostMapping("/salesOrderWizardFirstPage")
-    public String postWizardFirstPage(@ModelAttribute SalesOrderModel salesOrder, Model model) {
-        Customer customer = customerSvc.get(salesOrder.getCustomerCode());
+    public String postWizardFirstPage(@ModelAttribute SalesOrderModel salesOrderModel, Model model) {
+        Customer customer = customerSvc.get(salesOrderModel.getCustomerCode());
 
-        salesOrder.setPaymentMethodCode(customer.getPaymentMethod().getCode());
-        salesOrder.setDate(new Date());
-        salesOrder.setCustomerName(customer.getName());
+        salesOrderModel.setCustomerName(customer.getName());
+        salesOrderModel.setDate(new Date());
+        salesOrderModel.setPaymentMethodCode(customer.getPaymentMethod().getCode());
 
-        model.addAttribute("salesOrder", salesOrder);
+        model.addAttribute("salesOrderModel", salesOrderModel);
         model.addAttribute("paymentMethods", paymentMethodSvc.list());
 
         return "salesOrderWizardSecondPage.html";
@@ -84,15 +84,12 @@ public class SalesOrderController {
     @PostMapping("/salesOrderWizardSecondPage")
     public RedirectView postWizardSecondPage(@ModelAttribute SalesOrderModel salesOrderModel){
         if (salesOrderModel.getCode().isEmpty()) {
-            SalesOrder salesOrder = fromModel(salesOrderModel);
-
-            svc.create(salesOrder);
+            SalesOrder salesOrderToCreate = fromModel(salesOrderModel);
+            svc.create(salesOrderToCreate);
         } else {
-            SalesOrder salesOrder = svc.get(salesOrderModel.getCode());
-
-            fromModel(salesOrder, salesOrderModel);
-
-            svc.update(salesOrderModel.getCode(), salesOrder);
+            SalesOrder salesOrderToUpdate = svc.get(salesOrderModel.getCode());
+            fromModel(salesOrderToUpdate, salesOrderModel);
+            svc.update(salesOrderModel.getCode(), salesOrderToUpdate);
         }
 
         return new RedirectView("/salesOrderList");

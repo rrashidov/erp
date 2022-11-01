@@ -169,7 +169,7 @@ public class SalesOrderControllerTest {
 
         assertEquals("salesOrderWizardFirstPage.html", template);
 
-        verify(modelMock).addAttribute(eq("salesOrder"), salesOrderModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute(eq("salesOrderModel"), salesOrderModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("customers", customerList);
 
         SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
@@ -184,8 +184,8 @@ public class SalesOrderControllerTest {
 
         assertEquals("salesOrderWizardFirstPage.html", template);
 
+        verify(modelMock).addAttribute(eq("salesOrderModel"), salesOrderModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("customers", customerList);
-        verify(modelMock).addAttribute(eq("salesOrder"), salesOrderModelArgumentCaptor.capture());
 
         SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
 
@@ -202,7 +202,7 @@ public class SalesOrderControllerTest {
         verify(salesOrderModelMock).setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
         verify(salesOrderModelMock).setCustomerName(TEST_CUSTOMER_NAME);
 
-        verify(modelMock).addAttribute("salesOrder", salesOrderModelMock);
+        verify(modelMock).addAttribute("salesOrderModel", salesOrderModelMock);
         verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
     }
 
