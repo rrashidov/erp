@@ -218,6 +218,20 @@ public class SalesOrderController {
         return new RedirectView("/salesOrderCard");
     }
 
+    @GetMapping("/deleteSalesOrderLine")
+    public RedirectView deleteSalesOrderLine(@RequestParam(name = "salesOrderCode") String salesOrderCode,
+    @RequestParam(name = "lineNo") Integer lineNo, RedirectAttributes redirectAttributes){
+
+        SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
+        salesOrderLineId.setSalesOrder(svc.get(salesOrderCode));
+        salesOrderLineId.setLineNo(lineNo);
+
+        salesOrderLineSvc.delete(salesOrderLineId);
+
+        redirectAttributes.addAttribute("code", salesOrderCode);
+        return new RedirectView("/salesOrderCard");
+    }
+
     private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {
         SalesOrder salesOrder = new SalesOrder();
         salesOrder.setCode("SO" + System.currentTimeMillis());

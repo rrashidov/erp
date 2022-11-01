@@ -423,4 +423,19 @@ public class SalesOrderControllerTest {
         assertEquals(TEST_SALES_ORDER_LINE_AMOUNT, updatedSalesOrderLine.getAmount());
     }
 
+    @Test
+    public void deletingSalesOrderLine_deletesSalesOrderLine(){
+        RedirectView redirectView = controller.deleteSalesOrderLine(TEST_CODE, TEST_SALES_ORDER_LINENO, redirectAttributesMock);
+
+        assertEquals("/salesOrderCard", redirectView.getUrl());
+
+        verify(salesOrderLineSvcMock).delete(salesOrderLineIdArgumentCaptor.capture());
+
+        SalesOrderLineId deletedSalesOrderLienId = salesOrderLineIdArgumentCaptor.getValue();
+
+        assertEquals(TEST_CODE, deletedSalesOrderLienId.getSalesOrder().getCode());
+        assertEquals(TEST_SALES_ORDER_LINENO, deletedSalesOrderLienId.getLineNo());
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+    }
 }
