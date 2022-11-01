@@ -24,6 +24,7 @@ import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.SalesOrder;
 import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.model.jpa.SalesOrderLineId;
+import org.roko.erp.rules.sales.SalesOrderModelRule;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesOrderLineService;
@@ -113,6 +114,8 @@ public class SalesOrderControllerTest {
     @Mock
     private RedirectAttributes redirectAttributesMock;
 
+    private SalesOrderModelRule salesOrderModelRule = new SalesOrderModelRule();
+
     private SalesOrderController controller;
 
     @BeforeEach
@@ -146,6 +149,7 @@ public class SalesOrderControllerTest {
         when(svcMock.list()).thenReturn(salesOrderList);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(salesOrderMock);
+        when(svcMock.get(SalesOrderModelRule.TEST_SALES_ORDER_CODE)).thenReturn(salesOrderMock);
 
         when(pagingSvcMock.generate("salesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
         when(pagingSvcMock.generate("salesOrderLine", null, TEST_SALES_ORDER_LINE_COUNT)).thenReturn(salesOrderLinePagingMock);
@@ -208,48 +212,34 @@ public class SalesOrderControllerTest {
 
     @Test
     public void postSalesOrderWizardSecondPage_createsSalesOrder(){
-        Date testDate = new Date();
-
-        when(salesOrderModelMock.getDate()).thenReturn(testDate);
+        salesOrderModelRule.stubSalesOrderModelForNewSalesOrder();
         
-        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelMock);
+        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock);
 
         assertEquals("/salesOrderList", redirectView.getUrl());
 
         verify(svcMock).create(salesOrderArgumentCaptor.capture());
 
-        SalesOrder salesOrder = salesOrderArgumentCaptor.getValue();
+        SalesOrder createdSalesOrder = salesOrderArgumentCaptor.getValue();
 
-        assertEquals(customerMock, salesOrder.getCustomer());
-        assertEquals(paymentMethodMock, salesOrder.getPaymentMethod());
-        assertEquals(testDate, salesOrder.getDate());
+        assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, createdSalesOrder.getCustomer().getCode());
+        assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, createdSalesOrder.getPaymentMethod().getCode());
+        assertEquals(SalesOrderModelRule.TEST_DATE, createdSalesOrder.getDate());
     }
 
     @Test
     public void postSalesOrderWizardSecondPage_updatesSalesOrder_whenCalledWithExistingCode(){
-        SalesOrder salesOrder = new SalesOrder();
-        salesOrder.setCode(TEST_CODE);
-        salesOrder.setCustomer(customerMock);
-        salesOrder.setDate(new Date());
-        salesOrder.setPaymentMethod(paymentMethodMock);
-
-        when(svcMock.get(TEST_CODE)).thenReturn(salesOrder);
-        
-        Date testDate = new Date();
-        when(salesOrderModelMock.getCode()).thenReturn(TEST_CODE);
-        when(salesOrderModelMock.getDate()).thenReturn(testDate);
-        
-        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelMock);
+        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock);
 
         assertEquals("/salesOrderList", redirectView.getUrl());
 
-        verify(svcMock).update(eq(TEST_CODE), salesOrderArgumentCaptor.capture());
+        verify(svcMock).update(eq(SalesOrderModelRule.TEST_SALES_ORDER_CODE), salesOrderArgumentCaptor.capture());
 
         SalesOrder updatedSalesOrder = salesOrderArgumentCaptor.getValue();
 
-        assertEquals(customerMock, updatedSalesOrder.getCustomer());
-        assertEquals(paymentMethodMock, updatedSalesOrder.getPaymentMethod());
-        assertEquals(testDate, updatedSalesOrder.getDate());
+        assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, updatedSalesOrder.getCustomer().getCode());
+        assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, updatedSalesOrder.getPaymentMethod().getCode());
+        assertEquals(dateMock, updatedSalesOrder.getDate());
     }
 
     @Test
