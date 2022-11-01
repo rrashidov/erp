@@ -1,6 +1,7 @@
 package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -9,15 +10,28 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.controllers.model.SalesCreditMemoModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
+import org.roko.erp.model.Customer;
+import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.SalesCreditMemo;
+import org.roko.erp.services.CustomerService;
+import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesCreditMemoService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesCreditMemoControllerTest {
+
+    private static final String TEST_CUSTOMER_CODE = "test-customer-code";
+    private static final String TEST_CUSTOMER_NAME = "test-customer-name";
+
+    private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
     private static final Long TEST_PAGE = 123l;
 
@@ -25,14 +39,39 @@ public class SalesCreditMemoControllerTest {
 
     private List<SalesCreditMemo> salesCreditMemos = new ArrayList<>();
 
+    private List<Customer> customers = new ArrayList<>();
+
+    private List<PaymentMethod> paymentMethods = new ArrayList<>();
+
+    @Captor
+    private ArgumentCaptor<SalesCreditMemo> salesCreditMemoArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<SalesCreditMemoModel> salesCreditMemoModelArgumentCaptor;
+
+    @Mock
+    private Customer customerMock;
+
+    @Mock
+    private PaymentMethod paymentMethodMock;
+
     @Mock
     private Model modelMock;
+
+    @Mock
+    private SalesCreditMemoModel salesCreditMemoModelMock;
 
     @Mock
     private PagingData pagingDataMock;
 
     @Mock
     private SalesCreditMemoService svcMock;
+
+    @Mock
+    private CustomerService customerSvcMock;
+
+    @Mock
+    private PaymentMethodService paymentMethodSvcMock;
 
     @Mock
     private PagingService pagingSvcMock;
@@ -43,12 +82,27 @@ public class SalesCreditMemoControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(salesCreditMemoModelMock.getCustomerCode()).thenReturn(TEST_CUSTOMER_CODE);
+        when(salesCreditMemoModelMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
+
+        when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
+
+        when(paymentMethodSvcMock.list()).thenReturn(paymentMethods);
+        when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
+
+        when(customerMock.getCode()).thenReturn(TEST_CUSTOMER_CODE);
+        when(customerMock.getName()).thenReturn(TEST_CUSTOMER_NAME);
+        when(customerMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+
+        when(customerSvcMock.list()).thenReturn(customers);
+        when(customerSvcMock.get(TEST_CUSTOMER_CODE)).thenReturn(customerMock);
+
         when(svcMock.list()).thenReturn(salesCreditMemos);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
         when(pagingSvcMock.generate("salesCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
 
-        controller = new SalesCreditMemoController(svcMock, pagingSvcMock);
+        controller = new SalesCreditMemoController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvcMock);
     }
 
     @Test
@@ -59,5 +113,48 @@ public class SalesCreditMemoControllerTest {
 
         verify(modelMock).addAttribute("salesCreditMemos", salesCreditMemos);
         verify(modelMock).addAttribute("paging", pagingDataMock);
+    }
+
+    @Test
+    public void wizardReturnsProperTemplate_whenCalledForNew(){
+        String template = controller.wizard(modelMock);
+
+        assertEquals("salesCreditMemoWizardFirstPage.html", template);
+
+        verify(modelMock).addAttribute(eq("salesCreditMemoModel"), salesCreditMemoModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("customers", customers);
+
+        SalesCreditMemoModel salesCreditMemoModel = salesCreditMemoModelArgumentCaptor.getValue();
+
+        assertEquals("", salesCreditMemoModel.getCode());
+        assertEquals("", salesCreditMemoModel.getCustomerCode());
+        assertEquals("", salesCreditMemoModel.getCustomerName());
+        assertEquals("", salesCreditMemoModel.getPaymentMethodCode());
+    }
+
+    @Test
+    public void postWizardFirstPage_returnsProperTemplate(){
+        String template = controller.postWizardFirstPage(salesCreditMemoModelMock, modelMock);
+
+        assertEquals("salesCreditMemoWizardSecondPage.html", template);
+
+        verify(modelMock).addAttribute("paymentMethods", paymentMethods);
+
+        verify(salesCreditMemoModelMock).setCustomerName(TEST_CUSTOMER_NAME);
+        verify(salesCreditMemoModelMock).setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
+    }
+
+    @Test
+    public void postWizardSecondPage_createsSalesCreditMemoAndReturnsProperTemplate(){
+        RedirectView redirectView = controller.postWizardSecondPage(salesCreditMemoModelMock);
+
+        assertEquals("/salesCreditMemoList", redirectView.getUrl());
+
+        verify(svcMock).create(salesCreditMemoArgumentCaptor.capture());
+
+        SalesCreditMemo createdSalesCreditMemo = salesCreditMemoArgumentCaptor.getValue();
+
+        assertEquals(customerMock, createdSalesCreditMemo.getCustomer());
+        assertEquals(paymentMethodMock, createdSalesCreditMemo.getPaymentMethod());
     }
 }

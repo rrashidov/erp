@@ -34,7 +34,7 @@
                         <td th:text="${salesCreditMemo.customer.name}"></td>
                         <td th:text="${salesCreditMemo.date}"></td>
                         <td th:text="${salesCreditMemo.paymentMethod.name}"></td>
-                        <td><a class="btn btn-primary" th:href="@{/salesCreditMemorWizard?code={code}(code=${salesCreditMemo.code})}">Edit</a>  <a
+                        <td><a class="btn btn-primary" th:href="@{/salesCreditMemoWizard?code={code}(code=${salesCreditMemo.code})}">Edit</a>  <a
                             class="btn btn-primary" th:href="@{/salesCreditMemoCard?code={code}(code=${salesCreditMemo.code})}">Card</a> <a
                             class="btn btn-primary" th:href="@{/deleteSalesCreditMemo?code={code}(code=${salesCreditMemo.code})}">Delete</a> <a
                             class="btn btn-primary" th:href="@{/postSalesCreditMemo?code={code}(code=${salesCreditMemo.code})}">Post</a></td>
