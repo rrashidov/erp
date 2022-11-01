@@ -214,9 +214,9 @@ public class SalesOrderControllerTest {
     public void postSalesOrderWizardSecondPage_createsSalesOrder(){
         salesOrderModelRule.stubSalesOrderModelForNewSalesOrder();
         
-        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock);
+        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock, redirectAttributesMock);
 
-        assertEquals("/salesOrderList", redirectView.getUrl());
+        assertEquals("/salesOrderCard", redirectView.getUrl());
 
         verify(svcMock).create(salesOrderArgumentCaptor.capture());
 
@@ -229,11 +229,13 @@ public class SalesOrderControllerTest {
 
     @Test
     public void postSalesOrderWizardSecondPage_updatesSalesOrder_whenCalledWithExistingCode(){
-        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock);
+        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock, redirectAttributesMock);
 
-        assertEquals("/salesOrderList", redirectView.getUrl());
+        assertEquals("/salesOrderCard", redirectView.getUrl());
 
         verify(svcMock).update(eq(SalesOrderModelRule.TEST_SALES_ORDER_CODE), salesOrderArgumentCaptor.capture());
+
+        verify(redirectAttributesMock).addAttribute("code", SalesOrderModelRule.TEST_SALES_ORDER_CODE);
 
         SalesOrder updatedSalesOrder = salesOrderArgumentCaptor.getValue();
 
