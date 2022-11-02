@@ -212,4 +212,18 @@ public class SalesCreditMemoLineControllerTest {
         assertEquals(salesCreditMemoMock, salesCreditMemoLineId.getSalesCreditMemo());
     }
 
+    @Test
+    public void deleting_deletesEntity(){
+        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO, redirectAttributesMock);
+
+        assertEquals("/salesCreditMemoCard", redirectView.getUrl());
+
+        verify(svcMock).delete(salesCreditMemoLineIdArgumentCaptor.capture());
+
+        SalesCreditMemoLineId deletedSalesCreditMemoLineId = salesCreditMemoLineIdArgumentCaptor.getValue();
+
+        assertEquals(salesCreditMemoMock, deletedSalesCreditMemoLineId.getSalesCreditMemo());
+        assertEquals(TEST_LINE_NO, deletedSalesCreditMemoLineId.getLineNo());
+    }
+
 }

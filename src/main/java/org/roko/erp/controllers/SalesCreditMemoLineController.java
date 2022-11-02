@@ -98,6 +98,22 @@ public class SalesCreditMemoLineController {
         return new RedirectView("/salesCreditMemoCard");
     }
 
+    @GetMapping("/deleteSalesCreditMemoLine")
+    public RedirectView delete(@RequestParam(name = "salesCreditMemoCode") String code,
+            @RequestParam(name = "lineNo") Integer lineNo, RedirectAttributes redirectAttributes) {
+
+        SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(code);
+
+        SalesCreditMemoLineId id = new SalesCreditMemoLineId();
+        id.setSalesCreditMemo(salesCreditMemo);
+        id.setLineNo(lineNo);
+
+        svc.delete(id);
+        
+        redirectAttributes.addAttribute("code", code);
+        return new RedirectView("/salesCreditMemoCard");
+    }
+
     private void toModel(SalesCreditMemoLine source, SalesCreditMemoLineModel target) {
         target.setLineNo(source.getSalesCreditMemoLineId().getLineNo());
         target.setItemCode(source.getItem().getCode());
