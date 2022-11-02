@@ -1,25 +1,31 @@
 package org.roko.erp.model;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+
+import org.roko.erp.model.jpa.SalesCreditMemoLineId;
+
+@Entity
 public class SalesCreditMemoLine {
 	
-	private String documentCode;
-	private int lineNo;
+	@EmbeddedId
+	private SalesCreditMemoLineId salesCreditMemoLineId;
+
+	@MapsId("salesCreditMemo")
+	@ManyToOne
+	private SalesCreditMemo salesCreditMemo;
+
+	@ManyToOne
 	private Item item;
+
+	private double price;
+
 	private double quantity;
+
 	private double amount;
-	
-	public String getDocumentCode() {
-		return documentCode;
-	}
-	public void setDocumentCode(String documentCode) {
-		this.documentCode = documentCode;
-	}
-	public int getLineNo() {
-		return lineNo;
-	}
-	public void setLineNo(int lineNo) {
-		this.lineNo = lineNo;
-	}
+
 	public Item getItem() {
 		return item;
 	}
@@ -37,6 +43,24 @@ public class SalesCreditMemoLine {
 	}
 	public void setAmount(double amount) {
 		this.amount = amount;
+	}
+	public SalesCreditMemoLineId getSalesCreditMemoLineId() {
+		return salesCreditMemoLineId;
+	}
+	public void setSalesCreditMemoLineId(SalesCreditMemoLineId salesCreditMemoLineId) {
+		this.salesCreditMemoLineId = salesCreditMemoLineId;
+	}
+	public SalesCreditMemo getSalesCreditMemo() {
+		return salesCreditMemo;
+	}
+	public void setSalesCreditMemo(SalesCreditMemo salesCreditMemo) {
+		this.salesCreditMemo = salesCreditMemo;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
 	}
 	
 }
