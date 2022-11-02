@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sales Order Card</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav th:replace="navigation">
+    </nav>
+
+    <div class="container-fluid">
+        <h2>Sales Credit Memo Card</h2>
+
+        <div class="col-md-12 col-lg-12">
+            <form class="needs-validation" novalidate action="#" th:action="@{/salesCreditMemoCard}"
+                th:object="${salesCreditMemo}" method="post">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="firstName" class="form-label">Code</label>
+                        <input readonly type="text" class="form-control" id="code" placeholder="" value=""
+                            th:field="*{code}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="customer" class="form-label">Customer</label>
+                        <input readonly type="text" class="form-control" id="customerName" placeholder="" value=""
+                            th:field="*{customer.name}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="date" class="form-label">Date</label>
+                        <input readonly type="text" class="form-control" id="date" placeholder="" value=""
+                            th:field="*{date}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="paymentMethod" class="form-label">Payment Method</label>
+                        <input readonly type="text" class="form-control" id="paymentMethod" placeholder="" value=""
+                            th:field="*{paymentMethod.name}">
+                    </div>
+
+                    <div class="col-sm-6">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <td><a class="btn btn-primary"
+                                th:href="@{/salesCreditMemoWizard?code={code}(code=${salesCreditMemo.code})}"
+                                role="button">Edit</a></td>
+                        <td><a class="btn btn-primary"
+                                th:href="@{/deleteSalesCreditMemo?code={code}(code=${salesCreditMemo.code})}"
+                                role="button">Delete</a></td>
+                        <td><a class="btn btn-primary"
+                                th:href="@{/postSalesCreditMemo?code={code}(code=${salesCreditMemo.code})}"
+                                role="button">Post</a></td>
+                    </div>
+
+                    <div class="container-fluid">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#">Lines</a>
+                            </li>
+                        </ul>
+
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="salesCreditMemoLine : ${salesCreditMemoLines}">
+                                    <td th:text="${salesCreditMemoLine.salesCreditMemoLineId.lineNo}"></td>
+                                    <td th:text="${salesCreditMemoLine.item.name}"></td>
+                                    <td th:text="${salesCreditMemoLine.quantity}"></td>
+                                    <td th:text="${salesCreditMemoLine.price}"></td>
+                                    <td th:text="${salesCreditMemoLine.amount}"></td>
+                                    <td><a class="btn btn-primary"
+                                            th:href="@{/salesCreditMemoLineWizard?salesOrderCode={code}&lineNo={lineNo}(code=${salesCreditMemo.code},lineNo=${salesCreditMemoLine.salesCreditMemoLineId.lineNo})}">Edit</a>
+                                        <a class="btn btn-primary"
+                                            th:href="@{/deleteSalesCreditMemoLine?salesOrderCode={code}&lineNo={lineNo}(code=${salesCreditMemo.code},lineNo=${salesCreditMemoLine.salesCreditMemoLineId.lineNo})}">Delete</a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><a class="btn btn-primary"
+                                            th:href="@{/salesCreditMemoLineWizard?salesCreditMemoCode={code}(code=${salesCreditMemo.code})}"
+                                            role="button">New</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <nav th:replace="paging">
+                        </nav>
+
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
