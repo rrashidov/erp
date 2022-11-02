@@ -1,6 +1,7 @@
 package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,7 @@ import org.roko.erp.controllers.model.SalesCreditMemoLineModel;
 import org.roko.erp.model.Item;
 import org.roko.erp.model.SalesCreditMemo;
 import org.roko.erp.model.SalesCreditMemoLine;
+import org.roko.erp.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.services.ItemService;
 import org.roko.erp.services.SalesCreditMemoLineService;
 import org.roko.erp.services.SalesCreditMemoService;
@@ -27,13 +29,17 @@ import org.springframework.web.servlet.view.RedirectView;
 public class SalesCreditMemoLineControllerTest {
 
     private static final String TEST_SALES_CREDIT_MEMO_CODE = "test-sales-credit-memo-code";
-    
+
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
     private static final double TEST_ITEM_SALES_PRICE = 12.00d;
     private static final Double TEST_QTY = 10.00d;
 
-    private static final Long TEST_LINE_NO = 123l;
+    private static final Integer TEST_LINE_NO = 123;
+    private static final Long TEST_LINE_COUNT = 234l;
+
+    private static final Double TEST_PRICE = 12.00d;
+    private static final Double TEST_AMOUNT = 120.00d;
 
     private List<Item> itemList = new ArrayList<>();
 
@@ -42,6 +48,9 @@ public class SalesCreditMemoLineControllerTest {
 
     @Captor
     private ArgumentCaptor<SalesCreditMemoLine> salesCreditMemoLineArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<SalesCreditMemoLineId> salesCreditMemoLineIdArgumentCaptor;
 
     @Mock
     private Model modelMock;
@@ -65,13 +74,27 @@ public class SalesCreditMemoLineControllerTest {
     private RedirectAttributes redirectAttributesMock;
 
     @Mock
+    private SalesCreditMemoLine salesCreditMemoLineMock;
+
+    @Mock
     private SalesCreditMemoLineService svcMock;
 
     private SalesCreditMemoLineController controller;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
+        salesCreditMemoLineId.setLineNo(TEST_LINE_NO);
+        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemoMock);
+
+        when(salesCreditMemoLineMock.getSalesCreditMemoLineId()).thenReturn(salesCreditMemoLineId);
+        when(salesCreditMemoLineMock.getSalesCreditMemo()).thenReturn(salesCreditMemoMock);
+        when(salesCreditMemoLineMock.getItem()).thenReturn(itemMock);
+        when(salesCreditMemoLineMock.getQuantity()).thenReturn(TEST_QTY);
+        when(salesCreditMemoLineMock.getPrice()).thenReturn(TEST_PRICE);
+        when(salesCreditMemoLineMock.getAmount()).thenReturn(TEST_AMOUNT);
 
         when(itemMock.getCode()).thenReturn(TEST_ITEM_CODE);
         when(itemMock.getName()).thenReturn(TEST_ITEM_NAME);
@@ -88,14 +111,15 @@ public class SalesCreditMemoLineControllerTest {
         when(salesCreditMemoLineModelMock.getPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
         when(salesCreditMemoLineModelMock.getAmount()).thenReturn(TEST_QTY * TEST_ITEM_SALES_PRICE);
 
-        when(svcMock.count(salesCreditMemoMock)).thenReturn(TEST_LINE_NO);
+        when(svcMock.count(salesCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
+        when(svcMock.get(salesCreditMemoLineId)).thenReturn(salesCreditMemoLineMock);
 
         controller = new SalesCreditMemoLineController(svcMock, salesCreditMemoSvcMock, itemSvcMock);
     }
 
     @Test
-    public void wizard_returnsProperTemplate(){
-        String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, modelMock);
+    public void wizard_returnsProperTemplate_whenCalledForNew() {
+        String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, null, modelMock);
 
         assertEquals("salesCreditMemoLineWizardFirstPage.html", template);
 
@@ -103,7 +127,29 @@ public class SalesCreditMemoLineControllerTest {
     }
 
     @Test
-    public void postingWizardFirstPage_returnsProperTemplate(){
+    public void wizard_returnsProperTemplate_whenCalledForexisting() {
+        String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO, modelMock);
+
+        assertEquals("salesCreditMemoLineWizardFirstPage.html", template);
+
+        verify(modelMock).addAttribute("items", itemList);
+
+        verify(modelMock).addAttribute(eq("salesCreditMemoLineModel"),
+                salesCreditMemoLineModelArgumentCaptor.capture());
+
+        SalesCreditMemoLineModel salesCreditMemoLineModel = salesCreditMemoLineModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_LINE_NO, salesCreditMemoLineModel.getLineNo());
+        assertEquals(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoLineModel.getSalesCreditMemoCode());
+        assertEquals(TEST_ITEM_CODE, salesCreditMemoLineModel.getItemCode());
+        assertEquals(TEST_ITEM_NAME, salesCreditMemoLineModel.getItemName());
+        assertEquals(TEST_PRICE, salesCreditMemoLineModel.getPrice());
+        assertEquals(TEST_QTY, salesCreditMemoLineModel.getQuantity());
+        assertEquals(TEST_AMOUNT, salesCreditMemoLineModel.getAmount());
+    }
+
+    @Test
+    public void postingWizardFirstPage_returnsProperTemplate() {
         String template = controller.postSalesCreditMemoLineWizardFirstPage(salesCreditMemoLineModelMock, modelMock);
 
         assertEquals("salesCreditMemoLineWizardSecondPage.html", template);
@@ -115,7 +161,7 @@ public class SalesCreditMemoLineControllerTest {
     }
 
     @Test
-    public void postingWizardSecondPage_returnsProperTemplate(){
+    public void postingWizardSecondPage_returnsProperTemplate() {
         String template = controller.postSalesCreditMemoLineWizardSecondPage(salesCreditMemoLineModelMock, modelMock);
 
         assertEquals("salesCreditMemoLineWizardThirdPage.html", template);
@@ -126,8 +172,9 @@ public class SalesCreditMemoLineControllerTest {
     }
 
     @Test
-    public void postingWizardThirdPage_createsNewEntity(){
-        RedirectView redirectView = controller.postSalesCreditMemoLineWizardThirdPage(salesCreditMemoLineModelMock, redirectAttributesMock);
+    public void postingWizardThirdPage_createsNewEntity() {
+        RedirectView redirectView = controller.postSalesCreditMemoLineWizardThirdPage(salesCreditMemoLineModelMock,
+                redirectAttributesMock);
 
         assertEquals("/salesCreditMemoCard", redirectView.getUrl());
 
@@ -138,11 +185,31 @@ public class SalesCreditMemoLineControllerTest {
         SalesCreditMemoLine createdSalesCreditMemoLine = salesCreditMemoLineArgumentCaptor.getValue();
 
         assertEquals(salesCreditMemoMock, createdSalesCreditMemoLine.getSalesCreditMemoLineId().getSalesCreditMemo());
-        assertEquals(TEST_LINE_NO + 1, createdSalesCreditMemoLine.getSalesCreditMemoLineId().getLineNo());
+        assertEquals(TEST_LINE_COUNT + 1, createdSalesCreditMemoLine.getSalesCreditMemoLineId().getLineNo());
 
         assertEquals(itemMock, createdSalesCreditMemoLine.getItem());
         assertEquals(TEST_QTY, createdSalesCreditMemoLine.getQuantity());
         assertEquals(TEST_ITEM_SALES_PRICE, createdSalesCreditMemoLine.getPrice());
         assertEquals(TEST_QTY * TEST_ITEM_SALES_PRICE, createdSalesCreditMemoLine.getAmount());
     }
+
+    @Test
+    public void postingWizardThirdPage_updatesExistingEntity_whenCalledWithLineNo() {
+        when(salesCreditMemoLineModelMock.getLineNo()).thenReturn(TEST_LINE_NO);
+
+        RedirectView redirectView = controller.postSalesCreditMemoLineWizardThirdPage(salesCreditMemoLineModelMock,
+                redirectAttributesMock);
+
+        assertEquals("/salesCreditMemoCard", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_SALES_CREDIT_MEMO_CODE);
+
+        verify(svcMock).update(salesCreditMemoLineIdArgumentCaptor.capture(), salesCreditMemoLineArgumentCaptor.capture());
+
+        SalesCreditMemoLineId salesCreditMemoLineId = salesCreditMemoLineIdArgumentCaptor.getValue();
+
+        assertEquals(TEST_LINE_NO, salesCreditMemoLineId.getLineNo());
+        assertEquals(salesCreditMemoMock, salesCreditMemoLineId.getSalesCreditMemo());
+    }
+
 }

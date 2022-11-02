@@ -214,13 +214,6 @@ public class SalesOrderLineControllerTest {
 
         assertEquals(salesOrderMock, salesOrderLineId.getSalesOrder());
         assertEquals(TEST_SALES_ORDER_LINENO, salesOrderLineId.getLineNo());
-
-        SalesOrderLine updatedSalesOrderLine = salesOrderLineArgumentCaptor.getValue();
-
-        assertEquals(itemMock, updatedSalesOrderLine.getItem());
-        assertEquals(TEST_SALES_ORDER_LINE_QTY, updatedSalesOrderLine.getQuantity());
-        assertEquals(TEST_ITEM_SALES_PRICE, updatedSalesOrderLine.getPrice());
-        assertEquals(TEST_SALES_ORDER_LINE_AMOUNT, updatedSalesOrderLine.getAmount());
     }
 
     @Test

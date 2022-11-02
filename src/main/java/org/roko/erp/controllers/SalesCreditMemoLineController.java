@@ -33,10 +33,21 @@ public class SalesCreditMemoLineController {
     }
 
     @GetMapping("/salesCreditMemoLineWizard")
-    public String wizard(@RequestParam(name="salesCreditMemoCode") String salesCreditMemoCode, Model model) {
+    public String wizard(@RequestParam(name = "salesCreditMemoCode") String salesCreditMemoCode,
+            @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
         SalesCreditMemoLineModel salesCreditMemoLineModel = new SalesCreditMemoLineModel();
 
         salesCreditMemoLineModel.setSalesCreditMemoCode(salesCreditMemoCode);
+
+        if (lineNo != null){
+            SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
+            salesCreditMemoLineId.setLineNo(lineNo);
+            salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemoSvc.get(salesCreditMemoCode));
+
+            SalesCreditMemoLine salesCreditMemoLine = svc.get(salesCreditMemoLineId);
+
+            toModel(salesCreditMemoLine, salesCreditMemoLineModel);
+        }
 
         model.addAttribute("items", itemSvc.list());
         model.addAttribute("salesCreditMemoLineModel", salesCreditMemoLineModel);
@@ -75,7 +86,28 @@ public class SalesCreditMemoLineController {
     public RedirectView postSalesCreditMemoLineWizardThirdPage(
             @ModelAttribute SalesCreditMemoLineModel salesCreditMemoLineModel, RedirectAttributes redirectAttributes) {
         SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(salesCreditMemoLineModel.getSalesCreditMemoCode());
+
+        if (salesCreditMemoLineModel.getLineNo() == 0) {
+            create(salesCreditMemo, salesCreditMemoLineModel);
+        } else {
+            update(salesCreditMemo, salesCreditMemoLineModel);
+        }
         
+        redirectAttributes.addAttribute("code", salesCreditMemoLineModel.getSalesCreditMemoCode());
+        
+        return new RedirectView("/salesCreditMemoCard");
+    }
+
+    private void toModel(SalesCreditMemoLine source, SalesCreditMemoLineModel target) {
+        target.setLineNo(source.getSalesCreditMemoLineId().getLineNo());
+        target.setItemCode(source.getItem().getCode());
+        target.setItemName(source.getItem().getName());
+        target.setQuantity(source.getQuantity());
+        target.setPrice(source.getPrice());
+        target.setAmount(source.getAmount());
+    }
+
+    private void create(SalesCreditMemo salesCreditMemo, SalesCreditMemoLineModel salesCreditMemoLineModel) {
         SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
         salesCreditMemoLineId.setLineNo((int) (svc.count(salesCreditMemo) + 1));
         salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
@@ -88,9 +120,21 @@ public class SalesCreditMemoLineController {
         salesCreditMemoLine.setAmount(salesCreditMemoLineModel.getAmount());
 
         svc.create(salesCreditMemoLine);
-
-        redirectAttributes.addAttribute("code", salesCreditMemoLineModel.getSalesCreditMemoCode());
-        
-        return new RedirectView("/salesCreditMemoCard");
     }
+
+    private void update(SalesCreditMemo salesCreditMemo, SalesCreditMemoLineModel salesCreditMemoLineModel) {
+        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
+        salesCreditMemoLineId.setLineNo(salesCreditMemoLineModel.getLineNo());
+        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
+
+        SalesCreditMemoLine salesCreditMemoLine = svc.get(salesCreditMemoLineId);
+
+        salesCreditMemoLine.setItem(itemSvc.get(salesCreditMemoLineModel.getItemCode()));
+        salesCreditMemoLine.setQuantity(salesCreditMemoLineModel.getQuantity());
+        salesCreditMemoLine.setPrice(salesCreditMemoLineModel.getPrice());
+        salesCreditMemoLine.setAmount(salesCreditMemoLineModel.getAmount());
+
+        svc.update(salesCreditMemoLineId, salesCreditMemoLine);
+    }
+
 }
