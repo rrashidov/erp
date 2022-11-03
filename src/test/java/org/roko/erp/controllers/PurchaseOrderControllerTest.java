@@ -203,4 +203,13 @@ public class PurchaseOrderControllerTest {
         verify(svcMock).update(TEST_CODE, purchaseOrderMock);
     }
 
+    @Test
+    public void delete_deletesTheEntity(){
+        RedirectView redirectView = controller.delete(TEST_CODE);
+
+        assertEquals("/purchaseOrderList", redirectView.getUrl());
+
+        verify(svcMock).delete(TEST_CODE);
+    }
+
 }

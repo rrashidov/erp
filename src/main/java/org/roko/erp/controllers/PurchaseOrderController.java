@@ -94,6 +94,13 @@ public class PurchaseOrderController {
         return new RedirectView("/purchaseOrderList");
     }
 
+    @GetMapping("/deletePurchaseOrder")
+    public RedirectView delete(@RequestParam(name="code") String code) {
+        svc.delete(code);
+        
+        return new RedirectView("/purchaseOrderList");
+    }
+
     private PurchaseOrder fromModel(PurchaseOrderModel purchaseOrderModel) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setCode("PO" + System.currentTimeMillis());
