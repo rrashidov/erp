@@ -43,7 +43,6 @@ public class PurchaseOrderControllerTest {
 
     private static final Date TEST_DATE = new Date();
 
-    private static final Long TEST_LINES_PAGE = 12l;
     private static final long TEST_LINES_COUNT = 23l;
 
     private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
