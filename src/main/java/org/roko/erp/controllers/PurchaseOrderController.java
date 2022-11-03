@@ -7,8 +7,10 @@ import org.roko.erp.controllers.model.PurchaseOrderModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PurchaseOrder;
+import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderService;
 import org.roko.erp.services.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,13 @@ public class PurchaseOrderController {
     private PagingService pagingSvc;
     private VendorService vendorSvc;
     private PaymentMethodService paymentMethodSvc;
+    private PurchaseOrderLineService purchaseOrderLineSvc;
 
     @Autowired
-    public PurchaseOrderController(PurchaseOrderService svc, VendorService vendorSvc,
+    public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc, VendorService vendorSvc,
             PaymentMethodService paymentMethodSvc, PagingService pagingSvc) {
         this.svc = svc;
+        this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.vendorSvc = vendorSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.pagingSvc = pagingSvc;
@@ -99,6 +103,19 @@ public class PurchaseOrderController {
         svc.delete(code);
         
         return new RedirectView("/purchaseOrderList");
+    }
+
+    @GetMapping("/purchaseOrderCard")
+    public String card(@RequestParam(name="code") String code, Model model) {
+        PurchaseOrder purchaseOrder = svc.get(code);
+        List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineSvc.list(purchaseOrder);
+        PagingData pagingData = pagingSvc.generate("purchaseOrderLine", null, purchaseOrderLineSvc.count(purchaseOrder));
+
+        model.addAttribute("purchaseOrder", purchaseOrder);
+        model.addAttribute("purchaseOrderLines", purchaseOrderLines);
+        model.addAttribute("paging", pagingData);
+        
+        return "purchaseOrderCard.html";
     }
 
     private PurchaseOrder fromModel(PurchaseOrderModel purchaseOrderModel) {

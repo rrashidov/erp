@@ -20,8 +20,10 @@ import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.PurchaseOrder;
+import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderService;
 import org.roko.erp.services.VendorService;
 import org.springframework.ui.Model;
@@ -37,10 +39,12 @@ public class PurchaseOrderControllerTest {
     private static final String TEST_VENDOR_NAME = "test-vendor-name";
 
     private static final Long TEST_PAGE = 123l;
-
     private static final long TEST_COUNT = 234l;
 
     private static final Date TEST_DATE = new Date();
+
+    private static final Long TEST_LINES_PAGE = 12l;
+    private static final long TEST_LINES_COUNT = 23l;
 
     private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
 
@@ -48,11 +52,16 @@ public class PurchaseOrderControllerTest {
 
     private List<PaymentMethod> paymentMethods = new ArrayList<>();
 
+    private List<PurchaseOrderLine> purchaseOrderLines = new ArrayList<>();
+
     @Captor
     private ArgumentCaptor<PurchaseOrderModel> purchaseOrderModelArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<PurchaseOrder> purchaseOrderArgumentCaptor;
+
+    @Mock
+    private PagingData purchaseOrderLinePagingMock;
 
     @Mock
     private PurchaseOrder purchaseOrderMock;
@@ -80,6 +89,9 @@ public class PurchaseOrderControllerTest {
 
     @Mock
     private PaymentMethodService paymentMethodSvcMock;
+
+    @Mock
+    private PurchaseOrderLineService purchaseOrderLineSvcMock;
 
     @Mock
     private PagingService pagingSvcMock;
@@ -116,9 +128,13 @@ public class PurchaseOrderControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(purchaseOrderMock);
 
-        when(pagingSvcMock.generate("purchaseOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(purchaseOrderLineSvcMock.list(purchaseOrderMock)).thenReturn(purchaseOrderLines);
+        when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(TEST_LINES_COUNT);
 
-        controller = new PurchaseOrderController(svcMock, vendorSvcMock, paymentMethodSvcMock, pagingSvcMock);
+        when(pagingSvcMock.generate("purchaseOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("purchaseOrderLine", null, TEST_LINES_COUNT)).thenReturn(purchaseOrderLinePagingMock);
+
+        controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, vendorSvcMock, paymentMethodSvcMock, pagingSvcMock);
     }
 
     @Test
@@ -212,4 +228,14 @@ public class PurchaseOrderControllerTest {
         verify(svcMock).delete(TEST_CODE);
     }
 
+    @Test
+    public void card_returnsProperTemplate(){
+        String template = controller.card(TEST_CODE, modelMock);
+
+        assertEquals("purchaseOrderCard.html", template);
+
+        verify(modelMock).addAttribute("purchaseOrder", purchaseOrderMock);
+        verify(modelMock).addAttribute("purchaseOrderLines", purchaseOrderLines);
+        verify(modelMock).addAttribute("paging", purchaseOrderLinePagingMock);
+    }
 }
