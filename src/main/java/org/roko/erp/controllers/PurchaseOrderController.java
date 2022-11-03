@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-
 @Controller
 public class PurchaseOrderController {
 
@@ -53,6 +51,12 @@ public class PurchaseOrderController {
     @GetMapping("/purchaseOrderWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
         PurchaseOrderModel purchaseOrderModel = new PurchaseOrderModel();
+
+        if (code != null){
+            PurchaseOrder purchaseOrder = svc.get(code);
+            toModel(purchaseOrder, purchaseOrderModel);
+        }
+        
         List<Vendor> vendors = vendorSvc.list();
 
         model.addAttribute("purchaseOrderModel", purchaseOrderModel);
@@ -77,9 +81,15 @@ public class PurchaseOrderController {
 
     @PostMapping("/purchaseOrderWizardSecondPage")
     public RedirectView postPurchaseOrderWizardSecondPage(@ModelAttribute PurchaseOrderModel purchaseOrderModel) {
-        PurchaseOrder purchaseOrder = fromModel(purchaseOrderModel);
+        if (purchaseOrderModel.getCode().isEmpty()) {
+            PurchaseOrder purchaseOrder = fromModel(purchaseOrderModel);
 
-        svc.create(purchaseOrder);
+            svc.create(purchaseOrder);
+        } else {
+            PurchaseOrder purchaseOrder = svc.get(purchaseOrderModel.getCode());
+            fromModel(purchaseOrder, purchaseOrderModel);
+            svc.update(purchaseOrderModel.getCode(), purchaseOrder);
+        }
 
         return new RedirectView("/purchaseOrderList");
     }
@@ -91,5 +101,18 @@ public class PurchaseOrderController {
         purchaseOrder.setDate(purchaseOrderModel.getDate());
         purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
         return purchaseOrder;
+    }
+
+    private void fromModel(PurchaseOrder purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
+        purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
+        purchaseOrder.setDate(purchaseOrderModel.getDate());
+        purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
+    }
+    private void toModel(PurchaseOrder purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
+        purchaseOrderModel.setCode(purchaseOrder.getCode());
+        purchaseOrderModel.setDate(purchaseOrder.getDate());
+        purchaseOrderModel.setPaymentMethodCode(purchaseOrder.getPaymentMethod().getCode());
+        purchaseOrderModel.setVendorCode(purchaseOrder.getVendor().getCode());
+        purchaseOrderModel.setVendorName(purchaseOrder.getVendor().getName());
     }
 }

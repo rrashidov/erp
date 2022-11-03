@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseOrderControllerTest {
     
+    private static final String TEST_CODE = "test-purchase-order-code";
+
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
     private static final String TEST_VENDOR_CODE = "test-vendor-code";
@@ -36,6 +39,8 @@ public class PurchaseOrderControllerTest {
     private static final Long TEST_PAGE = 123l;
 
     private static final long TEST_COUNT = 234l;
+
+    private static final Date TEST_DATE = new Date();
 
     private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
 
@@ -48,6 +53,9 @@ public class PurchaseOrderControllerTest {
 
     @Captor
     private ArgumentCaptor<PurchaseOrder> purchaseOrderArgumentCaptor;
+
+    @Mock
+    private PurchaseOrder purchaseOrderMock;
 
     @Mock
     private PaymentMethod paymentMethodMock;
@@ -82,15 +90,23 @@ public class PurchaseOrderControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(purchaseOrderMock.getCode()).thenReturn(TEST_CODE);
+        when(purchaseOrderMock.getVendor()).thenReturn(vendorMock);
+        when(purchaseOrderMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+        when(purchaseOrderMock.getDate()).thenReturn(TEST_DATE);
+
         when(paymentMethodSvcMock.list()).thenReturn(paymentMethods);
         when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
 
         when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
+        when(vendorMock.getCode()).thenReturn(TEST_VENDOR_CODE);
         when(vendorMock.getName()).thenReturn(TEST_VENDOR_NAME);
         when(vendorMock.getPaymentMethod()).thenReturn(paymentMethodMock);
 
+        when(purchaseOrderModelMock.getCode()).thenReturn("");
         when(purchaseOrderModelMock.getVendorCode()).thenReturn(TEST_VENDOR_CODE);
+        when(purchaseOrderModelMock.getDate()).thenReturn(TEST_DATE);
         when(purchaseOrderModelMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
         when(vendorSvcMock.list()).thenReturn(vendors);
@@ -98,6 +114,7 @@ public class PurchaseOrderControllerTest {
 
         when(svcMock.list()).thenReturn(purchaseOrders);
         when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(svcMock.get(TEST_CODE)).thenReturn(purchaseOrderMock);
 
         when(pagingSvcMock.generate("purchaseOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
 
@@ -115,7 +132,7 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
-    public void wizard_returnsProperTemplate(){
+    public void wizard_returnsProperTemplate_whenCalledForNew(){
         String template = controller.wizard(null, modelMock);
 
         assertEquals("purchaseOrderWizardFirstPage.html", template);
@@ -132,6 +149,23 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
+    public void wizard_returnsProperTemplate_whenCalledForExisting(){
+        String template = controller.wizard(TEST_CODE, modelMock);
+
+        assertEquals("purchaseOrderWizardFirstPage.html", template);
+
+        verify(modelMock).addAttribute(eq("purchaseOrderModel"), purchaseOrderModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("vendors", vendors);
+
+        PurchaseOrderModel purchaseOrderModel = purchaseOrderModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_CODE, purchaseOrderModel.getCode());
+        assertEquals(TEST_VENDOR_CODE, purchaseOrderModel.getVendorCode());
+        assertEquals(TEST_VENDOR_NAME, purchaseOrderModel.getVendorName());
+        assertEquals(TEST_PAYMENT_METHOD_CODE, purchaseOrderModel.getPaymentMethodCode());
+    }
+
+    @Test
     public void purchaseOrderWizardFirstPage_returnsProperTemplate(){
         String template = controller.postPurchaseOrderWizardFirstPage(purchaseOrderModelMock, modelMock);
 
@@ -145,7 +179,7 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
-    public void purchaseOrderWizardSecondPage_createsPurchaseOrder(){
+    public void purchaseOrderWizardSecondPage_createsPurchaseOrder_whenCalledForNew(){
         RedirectView redirectView = controller.postPurchaseOrderWizardSecondPage(purchaseOrderModelMock);
 
         assertEquals("/purchaseOrderList", redirectView.getUrl());
@@ -157,4 +191,16 @@ public class PurchaseOrderControllerTest {
         assertEquals(vendorMock, createdPurchaseOrder.getVendor());
         assertEquals(paymentMethodMock, createdPurchaseOrder.getPaymentMethod());
     }
+
+    @Test
+    public void purchaseOrderWizardSecondPage_createsPurchaseOrder_whenCalledForExisting(){
+        when(purchaseOrderModelMock.getCode()).thenReturn(TEST_CODE);
+
+        RedirectView redirectView = controller.postPurchaseOrderWizardSecondPage(purchaseOrderModelMock);
+
+        assertEquals("/purchaseOrderList", redirectView.getUrl());
+
+        verify(svcMock).update(TEST_CODE, purchaseOrderMock);
+    }
+
 }
