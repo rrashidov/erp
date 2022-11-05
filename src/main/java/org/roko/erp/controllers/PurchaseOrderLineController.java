@@ -35,9 +35,21 @@ public class PurchaseOrderLineController {
     }
 
     @GetMapping("/purchaseOrderLineWizard")
-    public String purchaseOrderLineWizard(@RequestParam(name = "purchaseOrderCode") String code, Model model) {
+    public String purchaseOrderLineWizard(@RequestParam(name = "purchaseOrderCode") String code,
+            @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
         PurchaseOrderLineModel purchaseOrderLineModel = new PurchaseOrderLineModel();
         purchaseOrderLineModel.setPurchaseOrderCode(code);
+
+        if (lineNo != null){
+            PurchaseOrder purchaseOrder = purchaseOrderSvc.get(code);
+
+            PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
+            purchaseOrderLineId.setPurchaseOrder(purchaseOrder);
+            purchaseOrderLineId.setLineNo(lineNo);
+
+            PurchaseOrderLine purchaseOrderLine = svc.get(purchaseOrderLineId);
+            toModel(purchaseOrderLine, purchaseOrderLineModel);
+        }
 
         model.addAttribute("purchaseOrderLineModel", purchaseOrderLineModel);
         model.addAttribute("items", itemSvc.list());
@@ -72,13 +84,33 @@ public class PurchaseOrderLineController {
     public RedirectView postPurchaseOrderLineWizardThirdPage(
             @ModelAttribute PurchaseOrderLineModel purchaseOrderLineModel, RedirectAttributes redirectAttributes) {
 
-        PurchaseOrderLine purchaseOrderLine = fromModel(purchaseOrderLineModel);
-
-        svc.create(purchaseOrderLine);
+        if (purchaseOrderLineModel.getLineNo() == 0){
+            create(purchaseOrderLineModel);    
+        } else {
+            update(purchaseOrderLineModel);
+        }
         
         redirectAttributes.addAttribute("code", purchaseOrderLineModel.getPurchaseOrderCode());
 
         return new RedirectView("/purchaseOrderCard");
+    }
+
+    private void create(PurchaseOrderLineModel purchaseOrderLineModel) {
+        PurchaseOrderLine purchaseOrderLine = fromModel(purchaseOrderLineModel);
+        svc.create(purchaseOrderLine);
+    }
+
+    private void update(PurchaseOrderLineModel purchaseOrderLineModel) {
+        PurchaseOrder purchaseOrder = purchaseOrderSvc.get(purchaseOrderLineModel.getPurchaseOrderCode());
+
+        PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
+        purchaseOrderLineId.setPurchaseOrder(purchaseOrder);
+        purchaseOrderLineId.setLineNo(purchaseOrderLineModel.getLineNo());
+
+        PurchaseOrderLine purchaseOrderLine = svc.get(purchaseOrderLineId);
+        fromModel(purchaseOrderLine, purchaseOrderLineModel);
+
+        svc.update(purchaseOrderLineId, purchaseOrderLine);
     }
 
     private PurchaseOrderLine fromModel(PurchaseOrderLineModel purchaseOrderLineModel) {
@@ -97,4 +129,21 @@ public class PurchaseOrderLineController {
 
         return purchaseOrderLine;
     }
+
+    private void fromModel(PurchaseOrderLine purchaseOrderLine, PurchaseOrderLineModel purchaseOrderLineModel) {
+        purchaseOrderLine.setItem(itemSvc.get(purchaseOrderLineModel.getItemCode()));
+        purchaseOrderLine.setQuantity(purchaseOrderLineModel.getQuantity());
+        purchaseOrderLine.setPrice(purchaseOrderLineModel.getPrice());
+        purchaseOrderLine.setAmount(purchaseOrderLineModel.getAmount());
+    }
+
+    private void toModel(PurchaseOrderLine purchaseOrderLine, PurchaseOrderLineModel purchaseOrderLineModel) {
+        purchaseOrderLineModel.setLineNo(purchaseOrderLine.getPurchaseOrderLineId().getLineNo());
+        purchaseOrderLineModel.setItemCode(purchaseOrderLine.getItem().getCode());
+        purchaseOrderLineModel.setItemName(purchaseOrderLine.getItem().getName());
+        purchaseOrderLineModel.setQuantity(purchaseOrderLine.getQuantity());
+        purchaseOrderLineModel.setPrice(purchaseOrderLine.getPrice());
+        purchaseOrderLineModel.setAmount(purchaseOrderLine.getAmount());
+    }
+
 }

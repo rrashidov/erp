@@ -18,6 +18,7 @@ import org.roko.erp.controllers.model.PurchaseOrderLineModel;
 import org.roko.erp.model.Item;
 import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.model.PurchaseOrderLine;
+import org.roko.erp.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.services.ItemService;
 import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderService;
@@ -37,6 +38,7 @@ public class PurchaseOrderLineControllerTest {
     private static final Double TEST_PRICE = 12.00d;
 
     private static final Long TEST_LINE_COUNT = 123l;
+    private static final int TEST_LINE_NO = 2;
 
     private List<Item> items = new ArrayList<>();
 
@@ -45,6 +47,12 @@ public class PurchaseOrderLineControllerTest {
 
     @Captor
     private ArgumentCaptor<PurchaseOrderLine> purchaseOrderLineArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<PurchaseOrderLineId> purchaseOrderLineIdArgumentCaptor;
+
+    @Mock
+    private PurchaseOrderLine purchaseOrderLineMock;
 
     @Mock
     private PurchaseOrder purchaseOrderMock;
@@ -76,6 +84,16 @@ public class PurchaseOrderLineControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
+        purchaseOrderLineId.setPurchaseOrder(purchaseOrderMock);
+        purchaseOrderLineId.setLineNo(TEST_LINE_NO);
+
+        when(purchaseOrderLineMock.getPurchaseOrderLineId()).thenReturn(purchaseOrderLineId);
+        when(purchaseOrderLineMock.getItem()).thenReturn(itemMock);
+        when(purchaseOrderLineMock.getQuantity()).thenReturn(TEST_QTY);
+        when(purchaseOrderLineMock.getPrice()).thenReturn(TEST_PRICE);
+        when(purchaseOrderLineMock.getAmount()).thenReturn(TEST_PRICE * TEST_QTY);
+
         when(purchaseOrderSvcMock.get(TEST_PURCHASE_ORDER_CODE)).thenReturn(purchaseOrderMock);
 
         when(itemMock.getCode()).thenReturn(TEST_ITEM_CODE);
@@ -92,13 +110,14 @@ public class PurchaseOrderLineControllerTest {
         when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
         when(svcMock.count(purchaseOrderMock)).thenReturn(TEST_LINE_COUNT);
+        when(svcMock.get(purchaseOrderLineId)).thenReturn(purchaseOrderLineMock);
 
         controller = new PurchaseOrderLineController(svcMock, purchaseOrderSvcMock, itemSvcMock);
     }
 
     @Test
-    public void wizard_returnsProperTemplate(){
-        String template = controller.purchaseOrderLineWizard(TEST_PURCHASE_ORDER_CODE, modelMock);
+    public void wizard_returnsProperTemplate_whenCalledForNew(){
+        String template = controller.purchaseOrderLineWizard(TEST_PURCHASE_ORDER_CODE, null, modelMock);
 
         assertEquals("purchaseOrderLineWizardFirstPage.html", template);
 
@@ -114,6 +133,26 @@ public class PurchaseOrderLineControllerTest {
         assertEquals(0, purchaseOrderLineModel.getQuantity());
         assertEquals(0, purchaseOrderLineModel.getPrice());
         assertEquals(0, purchaseOrderLineModel.getAmount());
+    }
+
+    @Test
+    public void wizard_returnsProperTemplate_whenCalledForExisting(){
+        String template = controller.purchaseOrderLineWizard(TEST_PURCHASE_ORDER_CODE, TEST_LINE_NO, modelMock);
+
+        assertEquals("purchaseOrderLineWizardFirstPage.html", template);
+
+        verify(modelMock).addAttribute(eq("purchaseOrderLineModel"), purchaseOrderLineModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("items", items);
+
+        PurchaseOrderLineModel purchaseOrderLineModel = purchaseOrderLineModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_PURCHASE_ORDER_CODE, purchaseOrderLineModel.getPurchaseOrderCode());
+        assertEquals(TEST_LINE_NO, purchaseOrderLineModel.getLineNo());
+        assertEquals(TEST_ITEM_CODE, purchaseOrderLineModel.getItemCode());
+        assertEquals(TEST_ITEM_NAME, purchaseOrderLineModel.getItemName());
+        assertEquals(TEST_QTY, purchaseOrderLineModel.getQuantity());
+        assertEquals(TEST_PRICE, purchaseOrderLineModel.getPrice());
+        assertEquals(TEST_QTY * TEST_PRICE, purchaseOrderLineModel.getAmount());
     }
 
     @Test
@@ -140,7 +179,7 @@ public class PurchaseOrderLineControllerTest {
     }
 
     @Test
-    public void postingPurchaseOrderLineWizardThirdPage_returnsProperTemplate(){
+    public void postingPurchaseOrderLineWizardThirdPage_createsEntityAndReturnsProperTemplate_whenCalledForNew(){
         RedirectView redirectView = controller.postPurchaseOrderLineWizardThirdPage(purchaseOrderLineModelMock, redirectAttributesMock);
 
         assertEquals("/purchaseOrderCard", redirectView.getUrl());
@@ -157,5 +196,24 @@ public class PurchaseOrderLineControllerTest {
         assertEquals(TEST_QTY, purchaseOrderLine.getQuantity());
         assertEquals(TEST_PRICE, purchaseOrderLine.getPrice());
         assertEquals(TEST_QTY * TEST_PRICE, purchaseOrderLine.getAmount());
+    }
+
+    @Test
+    public void postingPurchaseOrderLineWizardThirdPage_updatesEntityAndReturnsProperTemplate_whenCalledForExisting(){
+        when(purchaseOrderLineModelMock.getLineNo()).thenReturn(TEST_LINE_NO);
+
+        RedirectView redirectView = controller.postPurchaseOrderLineWizardThirdPage(purchaseOrderLineModelMock, redirectAttributesMock);
+
+        assertEquals("/purchaseOrderCard", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_ORDER_CODE);
+
+        verify(svcMock).get(purchaseOrderLineIdArgumentCaptor.capture());
+        verify(svcMock).update(purchaseOrderLineIdArgumentCaptor.capture(), purchaseOrderLineArgumentCaptor.capture());
+
+        PurchaseOrderLineId purchaseOrderLineId = purchaseOrderLineIdArgumentCaptor.getValue();
+
+        assertEquals(purchaseOrderMock, purchaseOrderLineId.getPurchaseOrder());
+        assertEquals(TEST_LINE_NO, purchaseOrderLineId.getLineNo());
     }
 }
