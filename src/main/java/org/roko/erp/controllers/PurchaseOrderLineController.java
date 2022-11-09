@@ -95,6 +95,22 @@ public class PurchaseOrderLineController {
         return new RedirectView("/purchaseOrderCard");
     }
 
+    @GetMapping("/deletePurchaseOrderLine")
+    public RedirectView delete(@RequestParam("purchaseOrderCode") String purchaseOrderCode,
+            @RequestParam(name = "lineNo") Integer lineNo, RedirectAttributes redirectAttributes) {
+        PurchaseOrder purchaseOrder = purchaseOrderSvc.get(purchaseOrderCode);
+
+        PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
+        purchaseOrderLineId.setPurchaseOrder(purchaseOrder);
+        purchaseOrderLineId.setLineNo(lineNo);
+
+        svc.delete(purchaseOrderLineId);
+
+        redirectAttributes.addAttribute("code", purchaseOrderCode);
+
+        return new RedirectView("/purchaseOrderCard");
+    }
+
     private void create(PurchaseOrderLineModel purchaseOrderLineModel) {
         PurchaseOrderLine purchaseOrderLine = fromModel(purchaseOrderLineModel);
         svc.create(purchaseOrderLine);

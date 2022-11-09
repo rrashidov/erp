@@ -216,4 +216,20 @@ public class PurchaseOrderLineControllerTest {
         assertEquals(purchaseOrderMock, purchaseOrderLineId.getPurchaseOrder());
         assertEquals(TEST_LINE_NO, purchaseOrderLineId.getLineNo());
     }
+
+    @Test
+    public void delete_deletesEntity(){
+        RedirectView redirectView = controller.delete(TEST_PURCHASE_ORDER_CODE, TEST_LINE_NO, redirectAttributesMock);
+
+        assertEquals("/purchaseOrderCard", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_ORDER_CODE);
+
+        verify(svcMock).delete(purchaseOrderLineIdArgumentCaptor.capture());
+
+        PurchaseOrderLineId purchaseOrderLineId = purchaseOrderLineIdArgumentCaptor.getValue();
+
+        assertEquals(purchaseOrderMock, purchaseOrderLineId.getPurchaseOrder());
+        assertEquals(TEST_LINE_NO, purchaseOrderLineId.getLineNo());
+    }
 }
