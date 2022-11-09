@@ -1,6 +1,7 @@
 package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,6 +28,7 @@ import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderService;
 import org.roko.erp.services.VendorService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseOrderControllerTest {
@@ -58,6 +60,9 @@ public class PurchaseOrderControllerTest {
 
     @Captor
     private ArgumentCaptor<PurchaseOrder> purchaseOrderArgumentCaptor;
+
+    @Mock
+    private RedirectAttributes redirectAttributesMock;
 
     @Mock
     private PagingData purchaseOrderLinePagingMock;
@@ -195,9 +200,11 @@ public class PurchaseOrderControllerTest {
 
     @Test
     public void purchaseOrderWizardSecondPage_createsPurchaseOrder_whenCalledForNew(){
-        RedirectView redirectView = controller.postPurchaseOrderWizardSecondPage(purchaseOrderModelMock);
+        RedirectView redirectView = controller.postPurchaseOrderWizardSecondPage(purchaseOrderModelMock, redirectAttributesMock);
 
-        assertEquals("/purchaseOrderList", redirectView.getUrl());
+        assertEquals("/purchaseOrderCard", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute(eq("code"), anyString());
 
         verify(svcMock).create(purchaseOrderArgumentCaptor.capture());
 
@@ -211,9 +218,11 @@ public class PurchaseOrderControllerTest {
     public void purchaseOrderWizardSecondPage_createsPurchaseOrder_whenCalledForExisting(){
         when(purchaseOrderModelMock.getCode()).thenReturn(TEST_CODE);
 
-        RedirectView redirectView = controller.postPurchaseOrderWizardSecondPage(purchaseOrderModelMock);
+        RedirectView redirectView = controller.postPurchaseOrderWizardSecondPage(purchaseOrderModelMock, redirectAttributesMock);
 
-        assertEquals("/purchaseOrderList", redirectView.getUrl());
+        assertEquals("/purchaseOrderCard", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
 
         verify(svcMock).update(TEST_CODE, purchaseOrderMock);
     }

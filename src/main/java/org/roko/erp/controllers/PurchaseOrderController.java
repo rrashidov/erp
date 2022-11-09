@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -84,18 +85,23 @@ public class PurchaseOrderController {
     }
 
     @PostMapping("/purchaseOrderWizardSecondPage")
-    public RedirectView postPurchaseOrderWizardSecondPage(@ModelAttribute PurchaseOrderModel purchaseOrderModel) {
+    public RedirectView postPurchaseOrderWizardSecondPage(@ModelAttribute PurchaseOrderModel purchaseOrderModel,
+            RedirectAttributes redirectAttributes) {
         if (purchaseOrderModel.getCode().isEmpty()) {
             PurchaseOrder purchaseOrder = fromModel(purchaseOrderModel);
 
             svc.create(purchaseOrder);
+
+            redirectAttributes.addAttribute("code", purchaseOrder.getCode());
         } else {
             PurchaseOrder purchaseOrder = svc.get(purchaseOrderModel.getCode());
             fromModel(purchaseOrder, purchaseOrderModel);
             svc.update(purchaseOrderModel.getCode(), purchaseOrder);
+
+            redirectAttributes.addAttribute("code", purchaseOrder.getCode());
         }
 
-        return new RedirectView("/purchaseOrderList");
+        return new RedirectView("/purchaseOrderCard");
     }
 
     @GetMapping("/deletePurchaseOrder")
