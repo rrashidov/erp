@@ -22,6 +22,8 @@ public class PurchaseCreditMemoLine {
 
 	private double quantity;
 
+	private double price;
+
 	private double amount;
 	
 	public Item getItem() {
@@ -53,5 +55,11 @@ public class PurchaseCreditMemoLine {
 	}
 	public void setPurchaseCreditMemo(PurchaseCreditMemo purchaseCreditMemo) {
 		this.purchaseCreditMemo = purchaseCreditMemo;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
 	}	
 }
