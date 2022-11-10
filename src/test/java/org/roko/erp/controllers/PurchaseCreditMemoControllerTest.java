@@ -28,6 +28,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseCreditMemoControllerTest {
+
+    private static final String TEST_PURCHASE_CREDIT_MEMO_CODE = "test-purchase-credit-memo-code";
     
     private static final String TEST_VENDOR_CODE = "test-vendor-code";
     private static final String TEST_VENDOR_NAME = "test-vendor-name";
@@ -49,6 +51,9 @@ public class PurchaseCreditMemoControllerTest {
 
     @Captor
     private ArgumentCaptor<PurchaseCreditMemo> purchaseCreditMemoArgumentCaptor;
+
+    @Mock
+    private PurchaseCreditMemo purchaseCreditMemoMock;
 
     @Mock
     private PaymentMethod paymentMethodMock;
@@ -87,8 +92,14 @@ public class PurchaseCreditMemoControllerTest {
         when(purchaseCreditMemoModelMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
         when(purchaseCreditMemoModelMock.getDate()).thenReturn(TEST_DATE);
 
+        when(purchaseCreditMemoMock.getCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
+        when(purchaseCreditMemoMock.getVendor()).thenReturn(vendorMock);
+        when(purchaseCreditMemoMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+        when(purchaseCreditMemoMock.getDate()).thenReturn(TEST_DATE);
+
         when(svcMock.list()).thenReturn(purchaseCreditMemos);
         when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(svcMock.get(TEST_PURCHASE_CREDIT_MEMO_CODE)).thenReturn(purchaseCreditMemoMock);
 
         when(pagingSvcMock.generate("purchaseCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
 
@@ -118,8 +129,8 @@ public class PurchaseCreditMemoControllerTest {
     }
 
     @Test
-    public void gettingWizard_returnsProperTemplate(){
-        String template = controller.wizard(modelMock);
+    public void gettingWizard_returnsProperTemplate_whenCalledForNew(){
+        String template = controller.wizard(null, modelMock);
 
         assertEquals("purchaseCreditMemoWizardFirstPage.html", template);
 
@@ -132,6 +143,24 @@ public class PurchaseCreditMemoControllerTest {
         assertEquals("", purchaseCreditMemoModel.getVendorCode());
         assertEquals("", purchaseCreditMemoModel.getVendorName());
         assertEquals("", purchaseCreditMemoModel.getPaymentMethodCode());
+    }
+
+    @Test
+    public void gettingWizard_returnsProperTemplate_whenCalledForExisting(){
+        String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, modelMock);
+
+        assertEquals("purchaseCreditMemoWizardFirstPage.html", template);
+
+        verify(modelMock).addAttribute(eq("purchaseCreditMemoModel"), purchaseCreditMemoModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("vendors", vendors);
+
+        PurchaseCreditMemoModel purchaseCreditMemoModel = purchaseCreditMemoModelArgumentCaptor.getValue();
+
+        assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoModel.getCode());
+        assertEquals(TEST_VENDOR_CODE, purchaseCreditMemoModel.getVendorCode());
+        assertEquals(TEST_VENDOR_NAME, purchaseCreditMemoModel.getVendorName());
+        assertEquals(TEST_PAYMENT_METHOD_CODE, purchaseCreditMemoModel.getPaymentMethodCode());
+        assertEquals(TEST_DATE, purchaseCreditMemoModel.getDate());
     }
 
     @Test
@@ -150,7 +179,7 @@ public class PurchaseCreditMemoControllerTest {
     }
 
     @Test
-    public void postingWizardSecondPage_createsNewEntity_andReturnsProperTemplate(){
+    public void postingWizardSecondPage_createsNewEntity_andReturnsProperTemplate_whenCalledForNew(){
         RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock);
 
         assertEquals("/purchaseCreditMemoList", redirectView.getUrl());
@@ -163,4 +192,16 @@ public class PurchaseCreditMemoControllerTest {
         assertEquals(paymentMethodMock, purchaseCreditMemo.getPaymentMethod());
         assertEquals(TEST_DATE, purchaseCreditMemo.getDate());
     }
+
+    @Test
+    public void postingWizardSecondPage_createsNewEntity_andReturnsProperTemplate_whenCalledForExisting(){
+        when(purchaseCreditMemoModelMock.getCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
+
+        RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock);
+
+        assertEquals("/purchaseCreditMemoList", redirectView.getUrl());
+
+        verify(svcMock).update(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoMock);
+    }
+
 }

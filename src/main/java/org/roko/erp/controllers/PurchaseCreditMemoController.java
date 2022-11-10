@@ -48,18 +48,25 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/purchaseCreditMemoWizard")
-    public String wizard(Model model) {
+    public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
         PurchaseCreditMemoModel purchaseCreditMemoModel = new PurchaseCreditMemoModel();
+
+        if (code != null) {
+            PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
+            toModel(purchaseCreditMemo, purchaseCreditMemoModel);
+        }
+
         List<Vendor> vendors = vendorSvc.list();
 
         model.addAttribute("purchaseCreditMemoModel", purchaseCreditMemoModel);
         model.addAttribute("vendors", vendors);
-        
+
         return "purchaseCreditMemoWizardFirstPage.html";
     }
 
     @PostMapping("/purchaseCreditMemoWizardFirstPage")
-    public String postPurchaseCreditMemoWizardFirstPage(@ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel, Model model){
+    public String postPurchaseCreditMemoWizardFirstPage(@ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel,
+            Model model) {
         Vendor vendor = vendorSvc.get(purchaseCreditMemoModel.getVendorCode());
 
         purchaseCreditMemoModel.setVendorName(vendor.getName());
@@ -72,20 +79,41 @@ public class PurchaseCreditMemoController {
     }
 
     @PostMapping("/purchaseCreditMemoWizardSecondPage")
-    public RedirectView postPurchaseCreditMemoWizardSecondPage(@ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel){
-        PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
+    public RedirectView postPurchaseCreditMemoWizardSecondPage(
+            @ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel) {
+        if (purchaseCreditMemoModel.getCode().isEmpty()) {
+            createPurchaseCreditMemo(purchaseCreditMemoModel);
+        } else {
+            updatePurchaseCreditMemo(purchaseCreditMemoModel);
+        }
 
-        fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
-
-        svc.create(purchaseCreditMemo);
-        
         return new RedirectView("/purchaseCreditMemoList");
     }
 
-    private void fromModel(PurchaseCreditMemoModel purchaseCreditMemoModel, PurchaseCreditMemo purchaseCreditMemo) {
+    private void createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
+        PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
         purchaseCreditMemo.setCode("PCM" + System.currentTimeMillis());
+        fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
+        svc.create(purchaseCreditMemo);
+    }
+
+    private void updatePurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
+        PurchaseCreditMemo purchaseCreditMemo = svc.get(purchaseCreditMemoModel.getCode());
+        fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
+        svc.update(purchaseCreditMemoModel.getCode(), purchaseCreditMemo);
+    }
+
+    private void fromModel(PurchaseCreditMemoModel purchaseCreditMemoModel, PurchaseCreditMemo purchaseCreditMemo) {
         purchaseCreditMemo.setVendor(vendorSvc.get(purchaseCreditMemoModel.getVendorCode()));
         purchaseCreditMemo.setDate(purchaseCreditMemoModel.getDate());
         purchaseCreditMemo.setPaymentMethod(paymentMethodSvc.get(purchaseCreditMemoModel.getPaymentMethodCode()));
+    }
+
+    private void toModel(PurchaseCreditMemo purchaseCreditMemo, PurchaseCreditMemoModel purchaseCreditMemoModel) {
+        purchaseCreditMemoModel.setCode(purchaseCreditMemo.getCode());
+        purchaseCreditMemoModel.setVendorCode(purchaseCreditMemo.getVendor().getCode());
+        purchaseCreditMemoModel.setVendorName(purchaseCreditMemo.getVendor().getName());
+        purchaseCreditMemoModel.setDate(purchaseCreditMemo.getDate());
+        purchaseCreditMemoModel.setPaymentMethodCode(purchaseCreditMemo.getPaymentMethod().getCode());
     }
 }
