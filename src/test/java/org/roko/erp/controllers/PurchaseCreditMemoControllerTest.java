@@ -204,4 +204,12 @@ public class PurchaseCreditMemoControllerTest {
         verify(svcMock).update(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoMock);
     }
 
+    @Test
+    public void delete_deletesEntity(){
+        RedirectView redirectView = controller.delete(TEST_PURCHASE_CREDIT_MEMO_CODE);
+
+        assertEquals("/purchaseCreditMemoList", redirectView.getUrl());
+
+        verify(svcMock).delete(TEST_PURCHASE_CREDIT_MEMO_CODE);
+    }
 }

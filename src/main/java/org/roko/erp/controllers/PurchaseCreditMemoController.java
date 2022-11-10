@@ -90,6 +90,13 @@ public class PurchaseCreditMemoController {
         return new RedirectView("/purchaseCreditMemoList");
     }
 
+    @GetMapping("/deletePurchaseCreditMemo")
+    public RedirectView delete(@RequestParam(name = "code") String code) {
+        svc.delete(code);
+
+        return new RedirectView("/purchaseCreditMemoList");
+    }
+
     private void createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
         PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
         purchaseCreditMemo.setCode("PCM" + System.currentTimeMillis());
