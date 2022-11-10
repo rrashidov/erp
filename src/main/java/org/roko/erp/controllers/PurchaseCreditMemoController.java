@@ -2,26 +2,38 @@ package org.roko.erp.controllers;
 
 import java.util.List;
 
+import org.roko.erp.controllers.model.PurchaseCreditMemoModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PurchaseCreditMemo;
+import org.roko.erp.model.Vendor;
+import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.PurchaseCreditMemoService;
+import org.roko.erp.services.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class PurchaseCreditMemoController {
 
     private PurchaseCreditMemoService svc;
     private PagingService pagingSvc;
+    private VendorService vendorSvc;
+    private PaymentMethodService paymentMethodSvc;
 
     @Autowired
-    public PurchaseCreditMemoController(PurchaseCreditMemoService svc, PagingService pagingSvc) {
+    public PurchaseCreditMemoController(PurchaseCreditMemoService svc, PagingService pagingSvc,
+            VendorService vendorSvc, PaymentMethodService paymentMethodSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
+        this.vendorSvc = vendorSvc;
+        this.paymentMethodSvc = paymentMethodSvc;
     }
 
     @GetMapping("/purchaseCreditMemoList")
@@ -33,5 +45,47 @@ public class PurchaseCreditMemoController {
         model.addAttribute("paging", pagingData);
 
         return "purchaseCreditMemoList.html";
+    }
+
+    @GetMapping("/purchaseCreditMemoWizard")
+    public String wizard(Model model) {
+        PurchaseCreditMemoModel purchaseCreditMemoModel = new PurchaseCreditMemoModel();
+        List<Vendor> vendors = vendorSvc.list();
+
+        model.addAttribute("purchaseCreditMemoModel", purchaseCreditMemoModel);
+        model.addAttribute("vendors", vendors);
+        
+        return "purchaseCreditMemoWizardFirstPage.html";
+    }
+
+    @PostMapping("/purchaseCreditMemoWizardFirstPage")
+    public String postPurchaseCreditMemoWizardFirstPage(@ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel, Model model){
+        Vendor vendor = vendorSvc.get(purchaseCreditMemoModel.getVendorCode());
+
+        purchaseCreditMemoModel.setVendorName(vendor.getName());
+        purchaseCreditMemoModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
+
+        model.addAttribute("purchaseCreditMemoModel", purchaseCreditMemoModel);
+        model.addAttribute("paymentMethods", paymentMethodSvc.list());
+
+        return "purchaseCreditMemoWizardSecondPage.html";
+    }
+
+    @PostMapping("/purchaseCreditMemoWizardSecondPage")
+    public RedirectView postPurchaseCreditMemoWizardSecondPage(@ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel){
+        PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
+
+        fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
+
+        svc.create(purchaseCreditMemo);
+        
+        return new RedirectView("/purchaseCreditMemoList");
+    }
+
+    private void fromModel(PurchaseCreditMemoModel purchaseCreditMemoModel, PurchaseCreditMemo purchaseCreditMemo) {
+        purchaseCreditMemo.setCode("PCM" + System.currentTimeMillis());
+        purchaseCreditMemo.setVendor(vendorSvc.get(purchaseCreditMemoModel.getVendorCode()));
+        purchaseCreditMemo.setDate(purchaseCreditMemoModel.getDate());
+        purchaseCreditMemo.setPaymentMethod(paymentMethodSvc.get(purchaseCreditMemoModel.getPaymentMethodCode()));
     }
 }
