@@ -88,6 +88,7 @@ public class PurchaseCreditMemoControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(purchaseCreditMemoModelMock.getCode()).thenReturn("");
         when(purchaseCreditMemoModelMock.getVendorCode()).thenReturn(TEST_VENDOR_CODE);
         when(purchaseCreditMemoModelMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
         when(purchaseCreditMemoModelMock.getDate()).thenReturn(TEST_DATE);
