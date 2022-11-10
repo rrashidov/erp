@@ -27,6 +27,7 @@ import org.roko.erp.services.PurchaseCreditMemoLineService;
 import org.roko.erp.services.PurchaseCreditMemoService;
 import org.roko.erp.services.VendorService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseCreditMemoControllerTest {
@@ -57,6 +58,9 @@ public class PurchaseCreditMemoControllerTest {
 
     @Captor
     private ArgumentCaptor<PurchaseCreditMemo> purchaseCreditMemoArgumentCaptor;
+
+    @Mock
+    private RedirectAttributes redirectAttributesMock;
 
     @Mock
     private PagingData purchaseCreditMemoLinePagingData;
@@ -199,9 +203,9 @@ public class PurchaseCreditMemoControllerTest {
 
     @Test
     public void postingWizardSecondPage_createsNewEntity_andReturnsProperTemplate_whenCalledForNew() {
-        RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock);
+        RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock, redirectAttributesMock);
 
-        assertEquals("/purchaseCreditMemoList", redirectView.getUrl());
+        assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
         verify(svcMock).create(purchaseCreditMemoArgumentCaptor.capture());
 
@@ -216,11 +220,13 @@ public class PurchaseCreditMemoControllerTest {
     public void postingWizardSecondPage_createsNewEntity_andReturnsProperTemplate_whenCalledForExisting(){
         when(purchaseCreditMemoModelMock.getCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-        RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock);
+        RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock, redirectAttributesMock);
 
-        assertEquals("/purchaseCreditMemoList", redirectView.getUrl());
+        assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
         verify(svcMock).update(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoMock);
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
     }
 
     @Test

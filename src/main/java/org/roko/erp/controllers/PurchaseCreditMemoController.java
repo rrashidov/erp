@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -84,14 +85,18 @@ public class PurchaseCreditMemoController {
 
     @PostMapping("/purchaseCreditMemoWizardSecondPage")
     public RedirectView postPurchaseCreditMemoWizardSecondPage(
-            @ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel) {
+            @ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel, RedirectAttributes redirectAttributes) {
         if (purchaseCreditMemoModel.getCode().isEmpty()) {
-            createPurchaseCreditMemo(purchaseCreditMemoModel);
+            String purchaseCreditMemoCode = createPurchaseCreditMemo(purchaseCreditMemoModel);
+
+            redirectAttributes.addAttribute("code", purchaseCreditMemoCode);
         } else {
             updatePurchaseCreditMemo(purchaseCreditMemoModel);
+
+            redirectAttributes.addAttribute("code", purchaseCreditMemoModel.getCode());
         }
 
-        return new RedirectView("/purchaseCreditMemoList");
+        return new RedirectView("/purchaseCreditMemoCard");
     }
 
     @GetMapping("/deletePurchaseCreditMemo")
@@ -114,11 +119,13 @@ public class PurchaseCreditMemoController {
         return "purchaseCreditMemoCard.html";
     }
 
-    private void createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
+    private String createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
         PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
         purchaseCreditMemo.setCode("PCM" + System.currentTimeMillis());
         fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
         svc.create(purchaseCreditMemo);
+
+        return purchaseCreditMemo.getCode();
     }
 
     private void updatePurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
