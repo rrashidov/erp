@@ -6,8 +6,10 @@ import org.roko.erp.controllers.model.PurchaseCreditMemoModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PurchaseCreditMemo;
+import org.roko.erp.model.PurchaseCreditMemoLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PurchaseCreditMemoLineService;
 import org.roko.erp.services.PurchaseCreditMemoService;
 import org.roko.erp.services.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,16 @@ public class PurchaseCreditMemoController {
     private PagingService pagingSvc;
     private VendorService vendorSvc;
     private PaymentMethodService paymentMethodSvc;
+    private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
 
     @Autowired
     public PurchaseCreditMemoController(PurchaseCreditMemoService svc, PagingService pagingSvc,
-            VendorService vendorSvc, PaymentMethodService paymentMethodSvc) {
+            VendorService vendorSvc, PaymentMethodService paymentMethodSvc, PurchaseCreditMemoLineService purchaseCreditMemoLineSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.vendorSvc = vendorSvc;
         this.paymentMethodSvc = paymentMethodSvc;
+        this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
     }
 
     @GetMapping("/purchaseCreditMemoList")
@@ -95,6 +99,19 @@ public class PurchaseCreditMemoController {
         svc.delete(code);
 
         return new RedirectView("/purchaseCreditMemoList");
+    }
+
+    @GetMapping("/purchaseCreditMemoCard")
+    public String card(@RequestParam(name="code") String code, Model model) {
+        PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
+        List<PurchaseCreditMemoLine> purchaseCreditMemoLines = purchaseCreditMemoLineSvc.list(purchaseCreditMemo);
+        PagingData pagingData = pagingSvc.generate("purchaseCreditMemoLine", null, purchaseCreditMemoLineSvc.count(purchaseCreditMemo));
+
+        model.addAttribute("purchaseCreditMemo", purchaseCreditMemo);
+        model.addAttribute("purchaseCreditMemoLines", purchaseCreditMemoLines);
+        model.addAttribute("paging", pagingData);
+        
+        return "purchaseCreditMemoCard.html";
     }
 
     private void createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
