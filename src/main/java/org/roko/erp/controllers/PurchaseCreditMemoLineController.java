@@ -11,7 +11,6 @@ import org.roko.erp.services.ItemService;
 import org.roko.erp.services.PurchaseCreditMemoLineService;
 import org.roko.erp.services.PurchaseCreditMemoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionMessage.ItemsBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,9 +37,20 @@ public class PurchaseCreditMemoLineController {
 
     @GetMapping("/purchaseCreditMemoLineWizard")
     public String wizard(@RequestParam(name = "purchaseCreditMemoCode") String purchaseCreditMemoCode,
-            Model model) {
+            @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
         PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = new PurchaseCreditMemoLineModel();
         purchaseCreditMemoLineModel.setPurchaseCreditMemoCode(purchaseCreditMemoCode);
+
+        if (lineNo != null){
+            PurchaseCreditMemo purchaseCreditMemo = purchaseCreditMemoSvc.get(purchaseCreditMemoCode);
+
+            PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
+            purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemo);
+            purchaseCreditMemoLineId.setLineNo(lineNo);
+
+            PurchaseCreditMemoLine purchaseCreditMemoLine = svc.get(purchaseCreditMemoLineId);
+            toModel(purchaseCreditMemoLine, purchaseCreditMemoLineModel);
+        }
 
         List<Item> items = itemSvc.list();
 
@@ -79,23 +89,63 @@ public class PurchaseCreditMemoLineController {
     public RedirectView postPurchaseCreditMemoLineWizardThirdPage(
             @ModelAttribute PurchaseCreditMemoLineModel purchaseCreditMemoLineModel,
             RedirectAttributes redirectAttributes) {
+        
         PurchaseCreditMemo purchaseCreditMemo = purchaseCreditMemoSvc.get(purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
 
+        if (purchaseCreditMemoLineModel.getLineNo() == 0) {
+            //create
+            create(purchaseCreditMemoLineModel, purchaseCreditMemo);
+        } else {
+            //update
+            update(purchaseCreditMemoLineModel, purchaseCreditMemo);
+        }
+
+        redirectAttributes.addAttribute("code", purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
+
+        return new RedirectView("/purchaseCreditMemoCard");
+    }
+
+    private void toModel(PurchaseCreditMemoLine purchaseCreditMemoLine,
+            PurchaseCreditMemoLineModel purchaseCreditMemoLineModel) {
+
+        purchaseCreditMemoLineModel.setLineNo(purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getLineNo());
+        purchaseCreditMemoLineModel.setItemCode(purchaseCreditMemoLine.getItem().getCode());
+        purchaseCreditMemoLineModel.setItemName(purchaseCreditMemoLine.getItem().getName());
+        purchaseCreditMemoLineModel.setQuantity(purchaseCreditMemoLine.getQuantity());
+        purchaseCreditMemoLineModel.setPrice(purchaseCreditMemoLine.getPrice());
+        purchaseCreditMemoLineModel.setAmount(purchaseCreditMemoLine.getAmount());
+    }
+
+    private void create(PurchaseCreditMemoLineModel purchaseCreditMemoLineModel,
+            PurchaseCreditMemo purchaseCreditMemo) {
         PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
         purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemo);
         purchaseCreditMemoLineId.setLineNo((int) (svc.count(purchaseCreditMemo) + 1));
-
+   
         PurchaseCreditMemoLine purchaseCreditMemoLine = new PurchaseCreditMemoLine();
         purchaseCreditMemoLine.setPurchaseCreditMemoLineId(purchaseCreditMemoLineId);
         purchaseCreditMemoLine.setItem(itemSvc.get(purchaseCreditMemoLineModel.getItemCode()));
         purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
         purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
         purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
-
+   
         svc.create(purchaseCreditMemoLine);
-
-        redirectAttributes.addAttribute("code", purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
-
-        return new RedirectView("/purchaseCreditMemoCard");
     }
+
+    private void update(PurchaseCreditMemoLineModel purchaseCreditMemoLineModel,
+            PurchaseCreditMemo purchaseCreditMemo) {
+        PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
+        purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemo);
+        purchaseCreditMemoLineId.setLineNo(purchaseCreditMemoLineModel.getLineNo());
+   
+        PurchaseCreditMemoLine purchaseCreditMemoLine = svc.get(purchaseCreditMemoLineId);
+
+        purchaseCreditMemoLine.setItem(itemSvc.get(purchaseCreditMemoLineModel.getItemCode()));
+        purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
+        purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
+        purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
+   
+        svc.update(purchaseCreditMemoLineId, purchaseCreditMemoLine);
+    }
+
 }
