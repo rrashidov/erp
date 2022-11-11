@@ -105,6 +105,22 @@ public class PurchaseCreditMemoLineController {
         return new RedirectView("/purchaseCreditMemoCard");
     }
 
+    @GetMapping("/deletePurchaseCreditMemoLine")
+    public RedirectView delete(@RequestParam(name = "purchaseCreditMemoCode") String code,
+            @RequestParam(name = "lineNo") Integer lineNo, RedirectAttributes redirectAttributes) {
+        PurchaseCreditMemo purchaseCreditMemo = purchaseCreditMemoSvc.get(code);
+
+        PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
+        purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemo);
+        purchaseCreditMemoLineId.setLineNo(lineNo);
+
+        svc.delete(purchaseCreditMemoLineId);
+
+        redirectAttributes.addAttribute("code", code);
+
+        return new RedirectView("/purchaseCreditMemoCard");
+    }
+
     private void toModel(PurchaseCreditMemoLine purchaseCreditMemoLine,
             PurchaseCreditMemoLineModel purchaseCreditMemoLineModel) {
 

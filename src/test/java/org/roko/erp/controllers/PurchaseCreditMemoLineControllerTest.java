@@ -229,4 +229,20 @@ public class PurchaseCreditMemoLineControllerTest {
         assertEquals(TEST_PRICE, purchaseCreditMemoLine.getPrice());
         assertEquals(TEST_AMOUNT, purchaseCreditMemoLine.getAmount());
     }
+
+    @Test
+    public void delete_deletesEntity(){
+        RedirectView redirectView = controller.delete(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, redirectAttributesMock);
+
+        assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
+
+        verify(svcMock).delete(purchaseCreditMemoLineIdArgumentCaptor.capture());
+
+        PurchaseCreditMemoLineId purchaseCreditMemoLineId = purchaseCreditMemoLineIdArgumentCaptor.getValue();
+
+        assertEquals(purchaseCreditMemoMock, purchaseCreditMemoLineId.getPurchaseCreditMemo());
+        assertEquals(TEST_LINE_NO, purchaseCreditMemoLineId.getLineNo());
+    }
 }
