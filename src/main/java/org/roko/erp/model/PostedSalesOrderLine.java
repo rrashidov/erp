@@ -1,25 +1,31 @@
 package org.roko.erp.model;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+
+import org.roko.erp.model.jpa.PostedSalesOrderLineId;
+
+@Entity
 public class PostedSalesOrderLine {
 	
-	private String documentCode;
-	private int lineNo;
+	@EmbeddedId
+	private PostedSalesOrderLineId postedSalesOrderLineId;
+
+	@MapsId("postedSalesOrder")
+	@ManyToOne
+	private PostedSalesOrder postedSalesOrder;
+
+	@ManyToOne
 	private Item item;
+
 	private double quantity;
+
+	private double price;
+
 	private double amount;
 	
-	public String getDocumentCode() {
-		return documentCode;
-	}
-	public void setDocumentCode(String documentCode) {
-		this.documentCode = documentCode;
-	}
-	public int getLineNo() {
-		return lineNo;
-	}
-	public void setLineNo(int lineNo) {
-		this.lineNo = lineNo;
-	}
 	public Item getItem() {
 		return item;
 	}
@@ -38,5 +44,23 @@ public class PostedSalesOrderLine {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	
+	public PostedSalesOrderLineId getPostedSalesOrderLineId() {
+		return postedSalesOrderLineId;
+	}
+	public void setPostedSalesOrderLineId(PostedSalesOrderLineId postedSalesOrderLineId) {
+		this.postedSalesOrderLineId = postedSalesOrderLineId;
+	}
+	public PostedSalesOrder getPostedSalesOrder() {
+		return postedSalesOrder;
+	}
+	public void setPostedSalesOrder(PostedSalesOrder postedSalesOrder) {
+		this.postedSalesOrder = postedSalesOrder;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+		
 }
