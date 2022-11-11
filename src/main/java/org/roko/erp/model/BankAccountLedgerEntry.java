@@ -2,20 +2,30 @@ package org.roko.erp.model;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class BankAccountLedgerEntry {
 
-	private String id;
-	private BankAccount bankAccount;
-	private BankAccountLedgerEntryType type;
-	private Date date;
-	private double amount;
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
+	@ManyToOne
+	private BankAccount bankAccount;
+
+	private BankAccountLedgerEntryType type;
+
+	private double amount;
+
+	private Date date;
+	
+	private String documentCode;
+
 	public BankAccount getBankAccount() {
 		return bankAccount;
 	}
@@ -40,5 +50,16 @@ public class BankAccountLedgerEntry {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public String getDocumentCode() {
+		return documentCode;
+	}
+	public void setDocumentCode(String documentCode) {
+		this.documentCode = documentCode;
+	}	
 }
