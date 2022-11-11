@@ -2,21 +2,30 @@ package org.roko.erp.model;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class ItemLedgerEntry {
 
-	private String id;
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+	@ManyToOne
 	private Item item;
-	private Date date;
+
 	private ItemLedgerEntryType type;
+
 	private double quantity;
+
+	private Date date;
+
 	private String documentCode;
 	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
 	public Item getItem() {
 		return item;
 	}
@@ -47,6 +56,11 @@ public class ItemLedgerEntry {
 	public void setDocumentCode(String documentCode) {
 		this.documentCode = documentCode;
 	}
-	
-	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+		
 }
