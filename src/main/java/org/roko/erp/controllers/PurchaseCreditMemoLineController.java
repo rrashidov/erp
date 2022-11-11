@@ -1,0 +1,101 @@
+package org.roko.erp.controllers;
+
+import java.util.List;
+
+import org.roko.erp.controllers.model.PurchaseCreditMemoLineModel;
+import org.roko.erp.model.Item;
+import org.roko.erp.model.PurchaseCreditMemo;
+import org.roko.erp.model.PurchaseCreditMemoLine;
+import org.roko.erp.model.jpa.PurchaseCreditMemoLineId;
+import org.roko.erp.services.ItemService;
+import org.roko.erp.services.PurchaseCreditMemoLineService;
+import org.roko.erp.services.PurchaseCreditMemoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionMessage.ItemsBuilder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
+
+@Controller
+public class PurchaseCreditMemoLineController {
+
+    private PurchaseCreditMemoLineService svc;
+    private ItemService itemSvc;
+    private PurchaseCreditMemoService purchaseCreditMemoSvc;
+
+    @Autowired
+    public PurchaseCreditMemoLineController(PurchaseCreditMemoLineService svc,
+            PurchaseCreditMemoService purchaseCreditMemoSvc, ItemService itemSvc) {
+        this.svc = svc;
+        this.purchaseCreditMemoSvc = purchaseCreditMemoSvc;
+        this.itemSvc = itemSvc;
+    }
+
+    @GetMapping("/purchaseCreditMemoLineWizard")
+    public String wizard(@RequestParam(name = "purchaseCreditMemoCode") String purchaseCreditMemoCode,
+            Model model) {
+        PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = new PurchaseCreditMemoLineModel();
+        purchaseCreditMemoLineModel.setPurchaseCreditMemoCode(purchaseCreditMemoCode);
+
+        List<Item> items = itemSvc.list();
+
+        model.addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModel);
+        model.addAttribute("items", items);
+
+        return "purchaseCreditMemoLineWizardFirstPage.html";
+    }
+
+    @PostMapping("/purchaseCreditMemoLineWizardFirstPage")
+    public String postPurchaseCreditMemoLineWizardFirstPage(
+            @ModelAttribute PurchaseCreditMemoLineModel purchaseCreditMemoLineModel, Model model) {
+        Item item = itemSvc.get(purchaseCreditMemoLineModel.getItemCode());
+
+        purchaseCreditMemoLineModel.setItemName(item.getName());
+        purchaseCreditMemoLineModel.setPrice(item.getPurchasePrice());
+
+        purchaseCreditMemoLineModel.setAmount(purchaseCreditMemoLineModel.getQuantity() * purchaseCreditMemoLineModel.getPrice());
+
+        model.addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModel);
+        
+        return "purchaseCreditMemoLineWizardSecondPage.html";
+    }
+
+    @PostMapping("/purchaseCreditMemoLineWizardSecondPage")
+    public String postPurchaseCreditMemoLineWizardSecondPage(
+            @ModelAttribute PurchaseCreditMemoLineModel purchaseCreditMemoLineModel, Model model) {
+        purchaseCreditMemoLineModel.setAmount(purchaseCreditMemoLineModel.getQuantity() * purchaseCreditMemoLineModel.getPrice());
+
+        model.addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModel);
+        
+        return "purchaseCreditMemoLineWizardThirdPage.html";
+    }
+
+    @PostMapping("/purchaseCreditMemoLineWizardThirdPage")
+    public RedirectView postPurchaseCreditMemoLineWizardThirdPage(
+            @ModelAttribute PurchaseCreditMemoLineModel purchaseCreditMemoLineModel,
+            RedirectAttributes redirectAttributes) {
+        PurchaseCreditMemo purchaseCreditMemo = purchaseCreditMemoSvc.get(purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
+
+        PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
+        purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemo);
+        purchaseCreditMemoLineId.setLineNo((int) (svc.count(purchaseCreditMemo) + 1));
+
+        PurchaseCreditMemoLine purchaseCreditMemoLine = new PurchaseCreditMemoLine();
+        purchaseCreditMemoLine.setPurchaseCreditMemoLineId(purchaseCreditMemoLineId);
+        purchaseCreditMemoLine.setItem(itemSvc.get(purchaseCreditMemoLineModel.getItemCode()));
+        purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
+        purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
+        purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
+
+        svc.create(purchaseCreditMemoLine);
+
+        redirectAttributes.addAttribute("code", purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
+
+        return new RedirectView("/purchaseCreditMemoCard");
+    }
+}

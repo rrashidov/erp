@@ -27,8 +27,8 @@ public class PurchaseCreditMemoLineId implements Serializable {
         return lineNo;
     }
 
-    public void setLineNo(int lineNo) {
-        this.lineNo = lineNo;
+    public void setLineNo(int l) {
+        this.lineNo = l;
     }
 
     @Override
