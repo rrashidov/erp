@@ -1,6 +1,8 @@
 package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -131,7 +133,7 @@ public class SalesOrderPostServiceTest {
     }
 
     @Test
-    public void test() {
+    public void allRelatedInteractionsAreDone() {
         svc.post(TEST_CODE);
 
         PostedSalesOrder postedSalesOrder = verifyPostedSalesOrderCreated();
@@ -147,6 +149,23 @@ public class SalesOrderPostServiceTest {
         verifySalesOrderLinesDeleted();
 
         verifySalesOrderDeleted();
+    }
+
+    @Test
+    public void noPaymentRelatedEntriesAreCreated_whenPaymentMethodDoesNotHaveCorrespondingBankAccount() {
+        when(paymentMethodMock.getBankAccount()).thenReturn(null);
+        
+        svc.post(TEST_CODE);
+
+        PostedSalesOrder postedSalesOrder = verifyPostedSalesOrderCreated();
+
+        verifyCustomerLedgerEntryCreated(postedSalesOrder);
+
+        verifyNoBankAccountLedgerEntryCreated();
+    }
+
+    private void verifyNoBankAccountLedgerEntryCreated() {
+        verify(bankAccountLedgerEntrySvcMock, never()).create(any(BankAccountLedgerEntry.class));
     }
 
     private void verifySalesOrderDeleted() {
@@ -173,12 +192,21 @@ public class SalesOrderPostServiceTest {
     }
 
     private void verifyCustomerLedgerEntryCreated(PostedSalesOrder postedSalesOrder) {
-        verify(customerLedgerEntrySvcMock, times(2)).create(customerLedgerEntryArgumentCaptor.capture());
+        boolean paymentShouldBeDone = postedSalesOrder.getPaymentMethod().getBankAccount() != null;
+
+        int expectedNumberOfCustomerLedgerEntries = 1;
+        if (paymentShouldBeDone) {
+            expectedNumberOfCustomerLedgerEntries++;
+        }
+
+        verify(customerLedgerEntrySvcMock, times(expectedNumberOfCustomerLedgerEntries)).create(customerLedgerEntryArgumentCaptor.capture());
 
         List<CustomerLedgerEntry> customerLedgerEntries = customerLedgerEntryArgumentCaptor.getAllValues();
 
         verifyFirstCustomerLedgerEntry(customerLedgerEntries.get(0), postedSalesOrder.getCode());
-        verifySecondCustomerLedgerEntry(customerLedgerEntries.get(1), postedSalesOrder.getCode());
+        if (paymentShouldBeDone) {
+            verifySecondCustomerLedgerEntry(customerLedgerEntries.get(1), postedSalesOrder.getCode());
+        }
     }
 
     private void verifyFirstCustomerLedgerEntry(CustomerLedgerEntry customerLedgerEntry, String documentCode) {

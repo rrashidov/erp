@@ -78,6 +78,10 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     }
 
     private void createBankAccountLedgerEntries(SalesOrder salesOrder, PostedSalesOrder postedSalesOrder) {
+        if (salesOrder.getPaymentMethod().getBankAccount() == null){
+            return;
+        }
+        
         List<SalesOrderLine> salesOrderLines = salesOrderLineSvc.list(salesOrder);
 
         Optional<Double> amount = salesOrderLines.stream()
@@ -106,7 +110,9 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
                 .reduce((x, y) -> x + y);
 
         createSalesOrderLedgerEntry(postedSalesOrder, amount.get());
-        createPaymentLedgerEntry(postedSalesOrder, amount.get());
+        if (salesOrder.getPaymentMethod().getBankAccount() != null) {
+            createPaymentLedgerEntry(postedSalesOrder, amount.get());
+        }
     }
 
     private void createSalesOrderLedgerEntry(PostedSalesOrder postedSalesOrder, Double amount) {
