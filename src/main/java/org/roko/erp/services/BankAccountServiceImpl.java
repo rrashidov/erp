@@ -54,7 +54,12 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public List<BankAccount> list() {
-        return repo.findAll();
+        List<BankAccount> customers = repo.findAll();
+
+        customers.stream()
+            .forEach(customer -> customer.setBalance(repo.balance(customer)));
+
+        return customers;
     }
 
     @Override

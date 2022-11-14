@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,12 @@ public class BankAccountServiceTest {
     private BankAccount bankAccountMock;
 
     @Mock
+    private BankAccount bankAccountMock1;
+
+    @Mock
+    private BankAccount bankAccountMock2;
+
+    @Mock
     private BankAccountRepository repoMock;
 
     private BankAccountService svc;
@@ -31,6 +38,7 @@ public class BankAccountServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(bankAccountMock));
+        when(repoMock.findAll()).thenReturn(Arrays.asList(bankAccountMock, bankAccountMock1, bankAccountMock2));
 
         svc = new BankAccountServiceImpl(repoMock);
     }
@@ -75,6 +83,10 @@ public class BankAccountServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+
+        verify(repoMock).balance(bankAccountMock);
+        verify(repoMock).balance(bankAccountMock1);
+        verify(repoMock).balance(bankAccountMock2);
     }
 
     @Test
