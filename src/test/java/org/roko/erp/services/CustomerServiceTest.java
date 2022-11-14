@@ -2,9 +2,12 @@ package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +22,12 @@ public class CustomerServiceTest {
     private static final String TEST_CODE = "test-code";
 
     @Mock
+    private Customer customerMock1;
+
+    @Mock
+    private Customer customerMock2;
+
+    @Mock
     private Customer customerMock;
     
     @Mock
@@ -30,7 +39,10 @@ public class CustomerServiceTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        List<Customer> customers = Arrays.asList(customerMock, customerMock1, customerMock2);
+
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(customerMock));
+        when(repoMock.findAll()).thenReturn(customers);
 
         svc = new CustomerServiceImpl(repoMock);
     }
@@ -76,6 +88,10 @@ public class CustomerServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+
+        verify(repoMock).balance(customerMock);
+        verify(repoMock).balance(customerMock1);
+        verify(repoMock).balance(customerMock2);
     }
 
     @Test

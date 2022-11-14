@@ -52,7 +52,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Customer> list() {
-        return repo.findAll();
+        List<Customer> customers = repo.findAll();
+        customers.stream()
+            .forEach(c -> {
+                c.setBalance(repo.balance(c));
+            });
+        return customers;
     }
 
     @Override

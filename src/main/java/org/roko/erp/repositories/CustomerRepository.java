@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
-    @Query("SELECT SUM(customerLedgerEntry.amount) FROM CustomerLedgerEntry customerLedgerEntry WHERE customerLedgerEntry.customer = :customer")
+    @Query("SELECT COALESCE(SUM(customerLedgerEntry.amount), 0) FROM CustomerLedgerEntry customerLedgerEntry WHERE customerLedgerEntry.customer = :customer")
     public double balance(@Param("customer") Customer customer);
 }
