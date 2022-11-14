@@ -6,7 +6,9 @@ import org.roko.erp.model.Item;
 import org.roko.erp.model.ItemLedgerEntry;
 import org.roko.erp.repositories.ItemLedgerEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ItemLedgerEntryServiceImpl implements ItemLedgerEntryService {
 
     private ItemLedgerEntryRepository repo;
