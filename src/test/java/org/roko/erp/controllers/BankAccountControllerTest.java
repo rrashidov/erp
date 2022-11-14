@@ -17,6 +17,8 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.BankAccount;
+import org.roko.erp.model.BankAccountLedgerEntry;
+import org.roko.erp.services.BankAccountLedgerEntryService;
 import org.roko.erp.services.BankAccountService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
@@ -31,11 +33,14 @@ public class BankAccountControllerTest {
     private static final String EXPECTED_BANK_ACCOUNT_CARD_TEMPLATE = "bankAccountCard.html";
 
     private static final long TEST_RECORD_COUNT = 123123l;
+    private static final Long TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT = 123l;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
 
     private List<BankAccount> bankAccountList = new ArrayList<>();
+
+    private List<BankAccountLedgerEntry> bankAccountLedgerEntries = new ArrayList<>();
 
     @Mock
     private BankAccount bankAccountMock;
@@ -47,6 +52,9 @@ public class BankAccountControllerTest {
     private PagingData pagingDataMock;
 
     @Mock
+    private PagingData bankAccountLedgerEntriesPagingDataMock;
+
+    @Mock
     private Model modelMock;
 
     @Mock
@@ -54,6 +62,9 @@ public class BankAccountControllerTest {
 
     @Mock
     private PagingService pagingSvcMock;
+
+    @Mock
+    private BankAccountLedgerEntryService bankAccountLedgerEntrySvcMock;
 
     private BankAccountController controller;
 
@@ -65,12 +76,17 @@ public class BankAccountControllerTest {
         when(bankAccountMock.getName()).thenReturn(TEST_NAME);
 
         when(pagingSvcMock.generate(OBJECT_NAME, TEST_PAGE, TEST_RECORD_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("bankAccountLedgerEntry", null, TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT))
+                .thenReturn(bankAccountLedgerEntriesPagingDataMock);
 
         when(svcMock.list()).thenReturn(bankAccountList);
         when(svcMock.count()).thenReturn(TEST_RECORD_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
 
-        controller = new BankAccountController(svcMock, pagingSvcMock);
+        when(bankAccountLedgerEntrySvcMock.findFor(bankAccountMock)).thenReturn(bankAccountLedgerEntries);
+        when(bankAccountLedgerEntrySvcMock.count(bankAccountMock)).thenReturn(TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT);
+
+        controller = new BankAccountController(svcMock, pagingSvcMock, bankAccountLedgerEntrySvcMock);
     }
 
     @Test
@@ -102,6 +118,8 @@ public class BankAccountControllerTest {
         controller.card(TEST_CODE, modelMock);
 
         verify(modelMock).addAttribute(eq("bankAccount"), bankAccountCaptor.capture());
+        verify(modelMock).addAttribute("bankAccountLedgerEntries", bankAccountLedgerEntries);
+        verify(modelMock).addAttribute("paging", bankAccountLedgerEntriesPagingDataMock);
 
         BankAccount bankAccountInModel = bankAccountCaptor.getValue();
 

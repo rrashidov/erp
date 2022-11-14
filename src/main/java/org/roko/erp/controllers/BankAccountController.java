@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.BankAccount;
+import org.roko.erp.services.BankAccountLedgerEntryService;
 import org.roko.erp.services.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,10 +32,14 @@ public class BankAccountController {
     private BankAccountService svc;
     private PagingService pagingSvc;
 
+    private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
+
     @Autowired
-    public BankAccountController(BankAccountService svc, PagingService pagingSvc) {
+    public BankAccountController(BankAccountService svc, PagingService pagingSvc,
+            BankAccountLedgerEntryService bankAccountLedgerEntrySvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
+        this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
     }
 
     @GetMapping(BANK_ACCOUNT_LIST_URL)
@@ -54,6 +59,10 @@ public class BankAccountController {
 
         if (code != null) {
             bankAccount = svc.get(code);
+
+            model.addAttribute("bankAccountLedgerEntries", bankAccountLedgerEntrySvc.findFor(bankAccount));
+            model.addAttribute("paging",
+                    pagingSvc.generate("bankAccountLedgerEntry", null, bankAccountLedgerEntrySvc.count(bankAccount)));
         }
 
         model.addAttribute("bankAccount", bankAccount);

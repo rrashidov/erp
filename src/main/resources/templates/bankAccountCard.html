@@ -38,6 +38,40 @@
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
 
+                    <div class="container-fluid">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#">Ledger Entries</a>
+                            </li>
+                        </ul>
+
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Document Code</th>
+                                    <th scope="col">Date </th>
+                                    <th scope="col">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="bankAccountLedgerEntry : ${bankAccountLedgerEntries}">
+                                    <td th:text="${bankAccountLedgerEntry.id}"></td>
+                                    <td th:text="${bankAccountLedgerEntry.type}"></td>
+                                    <td th:text="${bankAccountLedgerEntry.documentCode}"></td>
+                                    <td th:text="${bankAccountLedgerEntry.date}"></td>
+                                    <td th:text="${bankAccountLedgerEntry.amount}"></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <nav th:replace="paging">
+                        </nav>
+
+                    </div>
+
                 </div>
             </form>
         </div>
