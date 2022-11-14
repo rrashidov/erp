@@ -6,7 +6,9 @@ import org.roko.erp.model.PostedSalesOrder;
 import org.roko.erp.model.PostedSalesOrderLine;
 import org.roko.erp.repositories.PostedSalesOrderLineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PostedSalesOrderLineServiceImpl implements PostedSalesOrderLineService {
 
     private PostedSalesOrderLineRepository repo;
