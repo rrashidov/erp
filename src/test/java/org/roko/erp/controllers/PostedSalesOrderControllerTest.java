@@ -14,19 +14,33 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PostedSalesOrder;
+import org.roko.erp.model.PostedSalesOrderLine;
+import org.roko.erp.services.PostedSalesOrderLineService;
 import org.roko.erp.services.PostedSalesOrderService;
 import org.springframework.ui.Model;
 
 public class PostedSalesOrderControllerTest {
-    
+
+    private static final String TEST_CODE = "test-code";
+
     private static final Long TEST_PAGE = 123l;
 
     private static final long TEST_COUNT = 234l;
 
+    private static final Long TEST_LINE_COUNT = 345l;
+
     private List<PostedSalesOrder> postedSalesOrders = new ArrayList<>();
+
+    private List<PostedSalesOrderLine> postedSalesOrderLines = new ArrayList<>();
+
+    @Mock
+    private PostedSalesOrder postedSalesOrderMock;
 
     @Mock
     private PagingData pagingDataMock;
+
+    @Mock
+    private PagingData linePagingDataMock;
 
     @Mock
     private Model modelMock;
@@ -35,29 +49,48 @@ public class PostedSalesOrderControllerTest {
     private PostedSalesOrderService svcMock;
 
     @Mock
+    private PostedSalesOrderLineService lineSvcMock;
+
+    @Mock
     private PagingService pagingSvcMock;
 
     private PostedSalesOrderController controller;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
         when(svcMock.list()).thenReturn(postedSalesOrders);
         when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(svcMock.get(TEST_CODE)).thenReturn(postedSalesOrderMock);
+
+        when(lineSvcMock.list(postedSalesOrderMock)).thenReturn(postedSalesOrderLines);
+        when(lineSvcMock.count(postedSalesOrderMock)).thenReturn(TEST_LINE_COUNT);
 
         when(pagingSvcMock.generate("postedSalesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("postedSalesOrderLine", null, TEST_LINE_COUNT)).thenReturn(linePagingDataMock);
 
-        controller = new PostedSalesOrderController(svcMock, pagingSvcMock);
+        controller = new PostedSalesOrderController(svcMock, lineSvcMock, pagingSvcMock);
     }
 
     @Test
-    public void list_returnsProperTemplate(){
+    public void list_returnsProperTemplate() {
         String template = controller.list(TEST_PAGE, modelMock);
 
         assertEquals("postedSalesOrderList.html", template);
 
         verify(modelMock).addAttribute("postedSalesOrders", postedSalesOrders);
         verify(modelMock).addAttribute("paging", pagingDataMock);
+    }
+
+    @Test
+    public void card_returnsProperTemplate() {
+        String template = controller.card(TEST_CODE, modelMock);
+
+        assertEquals("postedSalesOrderCard.html", template);
+
+        verify(modelMock).addAttribute("postedSalesOrder", postedSalesOrderMock);
+        verify(modelMock).addAttribute("postedSalesOrderLines", postedSalesOrderLines);
+        verify(modelMock).addAttribute("paging", linePagingDataMock);
     }
 }
