@@ -28,6 +28,7 @@ import org.roko.erp.rules.sales.SalesOrderModelRule;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesOrderLineService;
+import org.roko.erp.services.SalesOrderPostService;
 import org.roko.erp.services.SalesOrderService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -114,6 +115,9 @@ public class SalesOrderControllerTest {
     @Mock
     private RedirectAttributes redirectAttributesMock;
 
+    @Mock
+    private SalesOrderPostService salesOrderPostSvcMock;
+
     private SalesOrderModelRule salesOrderModelRule = new SalesOrderModelRule();
 
     private SalesOrderController controller;
@@ -154,7 +158,7 @@ public class SalesOrderControllerTest {
         when(pagingSvcMock.generate("salesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
         when(pagingSvcMock.generate("salesOrderLine", null, TEST_SALES_ORDER_LINE_COUNT)).thenReturn(salesOrderLinePagingMock);
 
-        controller = new SalesOrderController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvc, salesOrderLineSvcMock);
+        controller = new SalesOrderController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvc, salesOrderLineSvcMock, salesOrderPostSvcMock);
     }
 
     @Test
@@ -264,4 +268,12 @@ public class SalesOrderControllerTest {
         verify(modelMock).addAttribute("paging", salesOrderLinePagingMock);
     }
 
+    @Test
+    public void post_callsRespectiveService(){
+        RedirectView redirectView = controller.post(TEST_CODE);
+
+        assertEquals("/salesOrderList", redirectView.getUrl());
+
+        verify(salesOrderPostSvcMock).post(TEST_CODE);
+    }
 }

@@ -12,6 +12,7 @@ import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesOrderLineService;
+import org.roko.erp.services.SalesOrderPostService;
 import org.roko.erp.services.SalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,15 +32,18 @@ public class SalesOrderController {
     private CustomerService customerSvc;
     private PaymentMethodService paymentMethodSvc;
     private SalesOrderLineService salesOrderLineSvc;
+    private SalesOrderPostService salesOrderPostService;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, PagingService pagingSvc, CustomerService customerSvc,
-            PaymentMethodService paymentMethodSvc, SalesOrderLineService salesOrderLineSvc) {
+            PaymentMethodService paymentMethodSvc, SalesOrderLineService salesOrderLineSvc,
+            SalesOrderPostService salesOrderPostService) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.customerSvc = customerSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.salesOrderLineSvc = salesOrderLineSvc;
+        this.salesOrderPostService = salesOrderPostService;
     }
 
     @GetMapping("/salesOrderList")
@@ -118,6 +122,13 @@ public class SalesOrderController {
         model.addAttribute("paging", salesOrderLinePagingData);
 
         return "salesOrderCard.html";
+    }
+
+    @GetMapping("/postSalesOrder")
+    public RedirectView post(@RequestParam(name="code") String code){
+        salesOrderPostService.post(code);
+
+        return new RedirectView("/salesOrderList");
     }
 
     private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {
