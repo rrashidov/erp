@@ -17,4 +17,6 @@ public interface SalesOrderService {
     public List<SalesOrder> list();
 
     public long count();
+
+    public void post(String code);
 }
