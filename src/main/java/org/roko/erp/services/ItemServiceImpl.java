@@ -49,7 +49,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> list() {
-        return repo.findAll();
+        List<Item> items = repo.findAll();
+
+        items.stream()
+            .forEach(item -> item.setInventory(repo.inventory(item)));
+
+        return items;
     }
 
     @Override

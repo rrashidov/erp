@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,12 @@ public class ItemServiceTest {
     private Item itemMock;
 
     @Mock
+    private Item itemMock1;
+
+    @Mock
+    private Item itemMock2;
+
+    @Mock
     private ItemRepository repoMock;
 
     private ItemService svc;
@@ -34,6 +41,7 @@ public class ItemServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findById(TEST_ID)).thenReturn(Optional.of(itemFromDBMock));
+        when(repoMock.findAll()).thenReturn(Arrays.asList(itemMock, itemMock1, itemMock2));
 
         svc = new ItemServiceImpl(repoMock);
     }
@@ -79,6 +87,10 @@ public class ItemServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+
+        verify(repoMock).inventory(itemMock);
+        verify(repoMock).inventory(itemMock1);
+        verify(repoMock).inventory(itemMock2);
     }
 
     @Test
