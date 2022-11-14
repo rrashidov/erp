@@ -3,6 +3,7 @@ package org.roko.erp.controllers;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Item;
+import org.roko.erp.services.ItemLedgerEntryService;
 import org.roko.erp.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,11 +20,13 @@ public class ItemController {
 
     private ItemService svc;
     private PagingService pagingSvc;
+    private ItemLedgerEntryService itemLedgerEntrySvc;
 
     @Autowired
-    public ItemController(ItemService svc, PagingService pagingSvc) {
+    public ItemController(ItemService svc, PagingService pagingSvc, ItemLedgerEntryService itemLedgerEntrySvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
+        this.itemLedgerEntrySvc = itemLedgerEntrySvc;
     }
 
     @GetMapping("/itemList")
@@ -43,6 +46,9 @@ public class ItemController {
 
         if (code != null){
             item = svc.get(code);
+
+            model.addAttribute("itemLedgerEntries", itemLedgerEntrySvc.list(item));
+            model.addAttribute("paging", pagingSvc.generate("itemLedgerEntry", null, itemLedgerEntrySvc.count(item)));
         }
 
         model.addAttribute("item", item);

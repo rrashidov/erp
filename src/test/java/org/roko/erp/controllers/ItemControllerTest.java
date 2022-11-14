@@ -19,6 +19,8 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Item;
+import org.roko.erp.model.ItemLedgerEntry;
+import org.roko.erp.services.ItemLedgerEntryService;
 import org.roko.erp.services.ItemService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -31,12 +33,15 @@ public class ItemControllerTest {
     private static final double TEST_ITEM_SALES_PRICE = 12.12;
     private static final double TEST_ITEM_PURCHASE_PRICE = 23.23;
 
-    private static final long TEST_ITEM_COUNT = 123123;
+    private static final long TEST_ITEM_COUNT = 123123l;
+    private static final long TEST_ITEM_LEDGER_ENTRY_COUNT = 123l;
 
     private static final String EXPECTED_ITEM_LIST_TEMPLATE = "itemList.html";
     private static final String EXPECTED_ITEM_CARD_TEMPLATE = "itemCard.html";
 
     private List<Item> itemListMock = new ArrayList<>();
+
+    private List<ItemLedgerEntry> itemLedgerEntries = new ArrayList<>();
 
     @Captor
     private ArgumentCaptor<Item> itemArgumentCaptor;
@@ -53,8 +58,14 @@ public class ItemControllerTest {
     @Mock
     private PagingData pagingDataMock;
 
+    @Mock
+    private PagingData itemLedgerEntryPagingDataMock;
+
     @Mock 
     private ItemService itemServiceMock;
+
+    @Mock
+    private ItemLedgerEntryService itemLedgerEntrySvcMock;
 
     @Mock 
     private PagingService pagingServiceMock;
@@ -74,9 +85,13 @@ public class ItemControllerTest {
         when(itemServiceMock.count()).thenReturn(TEST_ITEM_COUNT);
         when(itemServiceMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
-        when(pagingServiceMock.generate(eq("item"), anyLong(), eq(TEST_ITEM_COUNT))).thenReturn(pagingDataMock);
+        when(itemLedgerEntrySvcMock.list(itemMock)).thenReturn(itemLedgerEntries);
+        when(itemLedgerEntrySvcMock.count(itemMock)).thenReturn(TEST_ITEM_LEDGER_ENTRY_COUNT);
 
-        controller = new ItemController(itemServiceMock, pagingServiceMock);
+        when(pagingServiceMock.generate(eq("item"), anyLong(), eq(TEST_ITEM_COUNT))).thenReturn(pagingDataMock);
+        when(pagingServiceMock.generate("itemLedgerEntry", null, TEST_ITEM_LEDGER_ENTRY_COUNT)).thenReturn(itemLedgerEntryPagingDataMock);
+
+        controller = new ItemController(itemServiceMock, pagingServiceMock, itemLedgerEntrySvcMock);
     }
 
     @Test 
@@ -105,6 +120,8 @@ public class ItemControllerTest {
         assertEquals(EXPECTED_ITEM_CARD_TEMPLATE, returnedTemplate);
 
         verify(modelMock).addAttribute("item", itemMock);
+        verify(modelMock).addAttribute("itemLedgerEntries", itemLedgerEntries);
+        verify(modelMock).addAttribute("paging", itemLedgerEntryPagingDataMock);
     }
 
     @Test
