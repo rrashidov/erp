@@ -6,6 +6,7 @@ import org.roko.erp.controllers.model.CustomerModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Customer;
+import org.roko.erp.services.CustomerLedgerEntryService;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,15 @@ public class CustomerController {
     private CustomerService svc;
     private PagingService pagingSvc;
     private PaymentMethodService paymentMethodSvc;
+    private CustomerLedgerEntryService customerLedgerEntrySvc;
 
     @Autowired
-    public CustomerController(CustomerService svc, PagingService pagingSvc, PaymentMethodService paymentMethodSvc) {
+    public CustomerController(CustomerService svc, PagingService pagingSvc, PaymentMethodService paymentMethodSvc,
+            CustomerLedgerEntryService customerLedgerEntrySvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.paymentMethodSvc = paymentMethodSvc;
+        this.customerLedgerEntrySvc = customerLedgerEntrySvc;
     }
 
     @GetMapping("/customerList")
@@ -57,6 +61,9 @@ public class CustomerController {
             customerModel.setName(customer.getName());
             customerModel.setAddress(customer.getAddress());
             customerModel.setPaymentMethodCode(customer.getPaymentMethod().getCode());
+
+            model.addAttribute("customerLedgerEntries", customerLedgerEntrySvc.findFor(customer));
+            model.addAttribute("paging", pagingSvc.generate("customerLedgerEntry", null, customerLedgerEntrySvc.count(customer)));
         }
 
         model.addAttribute("customer", customerModel);

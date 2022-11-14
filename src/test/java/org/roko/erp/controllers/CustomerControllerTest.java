@@ -18,7 +18,9 @@ import org.roko.erp.controllers.model.CustomerModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Customer;
+import org.roko.erp.model.CustomerLedgerEntry;
 import org.roko.erp.model.PaymentMethod;
+import org.roko.erp.services.CustomerLedgerEntryService;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
 import org.springframework.ui.Model;
@@ -45,6 +47,8 @@ public class CustomerControllerTest {
 
     private List<Customer> customerList = new ArrayList<>();
 
+    private List<CustomerLedgerEntry> customerLedgerEntries = new ArrayList<>();
+
     @Mock
     private Customer customerMock;
 
@@ -56,6 +60,9 @@ public class CustomerControllerTest {
 
     @Mock
     private PaymentMethodService paymentMethodSvcMock;
+
+    @Mock
+    private CustomerLedgerEntryService customerLedgerEntrySvcMock;
 
     @Captor 
     private ArgumentCaptor<Customer> customerArgumentCaptor;
@@ -102,7 +109,8 @@ public class CustomerControllerTest {
         when(customerSvcMock.list()).thenReturn(customerList);
         when(customerSvcMock.get(TEST_CODE)).thenReturn(customerMock);
 
-        controller = new CustomerController(customerSvcMock, pagingServiceMock, paymentMethodSvcMock);
+        controller = new CustomerController(customerSvcMock, pagingServiceMock, paymentMethodSvcMock,
+                customerLedgerEntrySvcMock);
     }
 
     @Test
@@ -112,6 +120,8 @@ public class CustomerControllerTest {
         assertEquals(EXPECTED_CUSTOMER_LIST_TEMPLATE, returnedTemplate);
 
         verify(pagingServiceMock).generate(CUSTOMER_OBJECT_NAME, TEST_PAGE, TEST_CUSTOMER_COUNT);
+
+        when(customerLedgerEntrySvcMock.findFor(customerMock)).thenReturn(customerLedgerEntries);
 
         verify(modelMock).addAttribute(PAGING_MODEL_ATTRIBUTE_NAME, pagingDataMock);
         verify(modelMock).addAttribute("customers", customerList);
@@ -142,6 +152,7 @@ public class CustomerControllerTest {
 
         verify(modelMock).addAttribute(eq("customer"), customerModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
+        verify(modelMock).addAttribute("customerLedgerEntries", customerLedgerEntries);
 
         CustomerModel customerModel = customerModelArgumentCaptor.getValue();
 
