@@ -60,12 +60,6 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         return repo.count();
     }
 
-    @Override
-    public void post(String code) {
-        // TODO Auto-generated method stub
-        
-    }
-
     private void transferFields(SalesOrder source, SalesOrder target) {
         source.setCustomer(target.getCustomer());
         source.setDate(target.getDate());

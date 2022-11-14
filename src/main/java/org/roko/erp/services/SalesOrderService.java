@@ -18,5 +18,4 @@ public interface SalesOrderService {
 
     public long count();
 
-    public void post(String code);
 }
