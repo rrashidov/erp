@@ -25,6 +25,7 @@ import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesCreditMemoLineService;
+import org.roko.erp.services.SalesCreditMemoPostService;
 import org.roko.erp.services.SalesCreditMemoService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -102,6 +103,9 @@ public class SalesCreditMemoControllerTest {
     @Mock
     private PagingService pagingSvcMock;
 
+    @Mock
+    private SalesCreditMemoPostService salesCreditMemoPostSvcMock;
+
     private SalesCreditMemoController controller;
 
     @BeforeEach
@@ -139,7 +143,7 @@ public class SalesCreditMemoControllerTest {
         when(pagingSvcMock.generate("salesCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
         when(pagingSvcMock.generate("salesCreditMemoLine", null, TEST_SALES_CREDIT_MEMO_LINE_COUNT)).thenReturn(salesCreditMemoLinePagingMock);
 
-        controller = new SalesCreditMemoController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvcMock, salesCreditMemoLineSvcMock);
+        controller = new SalesCreditMemoController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvcMock, salesCreditMemoLineSvcMock, salesCreditMemoPostSvcMock);
     }
 
     @Test
@@ -244,5 +248,14 @@ public class SalesCreditMemoControllerTest {
         verify(modelMock).addAttribute("salesCreditMemo", salesCreditMemoMock);
         verify(modelMock).addAttribute("salesCreditMemoLines", salesCreditMemoLines);
         verify(modelMock).addAttribute("paging", salesCreditMemoLinePagingMock);
+    }
+
+    @Test
+    public void post_returnsProperTemplate() {
+        RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE);
+
+        assertEquals("/salesCreditMemoList", redirectView.getUrl());
+
+        verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
     }
 }

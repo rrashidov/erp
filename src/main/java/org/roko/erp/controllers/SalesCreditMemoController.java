@@ -12,6 +12,7 @@ import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesCreditMemoLineService;
+import org.roko.erp.services.SalesCreditMemoPostService;
 import org.roko.erp.services.SalesCreditMemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,15 +32,18 @@ public class SalesCreditMemoController {
     private CustomerService customerSvc;
     private PaymentMethodService paymentMethodSvc;
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
+    private SalesCreditMemoPostService salesCreditMemoPostSvc;
 
     @Autowired
     public SalesCreditMemoController(SalesCreditMemoService svc, PagingService pagingSvc, CustomerService customerSvc,
-            PaymentMethodService paymentMethodSvc, SalesCreditMemoLineService salesCreditMemoLineSvc) {
+            PaymentMethodService paymentMethodSvc, SalesCreditMemoLineService salesCreditMemoLineSvc,
+            SalesCreditMemoPostService salesCreditMemoPostSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.customerSvc = customerSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
+        this.salesCreditMemoPostSvc = salesCreditMemoPostSvc;
     }
 
     @GetMapping("/salesCreditMemoList")
@@ -117,6 +121,13 @@ public class SalesCreditMemoController {
         model.addAttribute("paging", pagingData);
         
         return "salesCreditMemoCard.html";
+    }
+
+    @GetMapping("/postSalesCreditMemo")
+    public RedirectView post(@RequestParam(name="code") String code) {
+        salesCreditMemoPostSvc.post(code);
+        
+        return new RedirectView("/salesCreditMemoList");
     }
 
     private SalesCreditMemo createSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
