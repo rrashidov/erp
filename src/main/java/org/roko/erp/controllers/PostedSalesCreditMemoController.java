@@ -5,6 +5,8 @@ import java.util.List;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PostedSalesCreditMemo;
+import org.roko.erp.model.PostedSalesCreditMemoLine;
+import org.roko.erp.services.PostedSalesCreditMemoLineService;
 import org.roko.erp.services.PostedSalesCreditMemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,10 +19,13 @@ public class PostedSalesCreditMemoController {
 
     private PostedSalesCreditMemoService svc;
     private PagingService pagingSvc;
+    private PostedSalesCreditMemoLineService postedSalesCreditMemoLineSvc;
 
     @Autowired
-    public PostedSalesCreditMemoController(PostedSalesCreditMemoService svc, PagingService pagingSvc) {
+    public PostedSalesCreditMemoController(PostedSalesCreditMemoService svc,
+            PostedSalesCreditMemoLineService postedSalesCreditMemoLineSvc, PagingService pagingSvc) {
         this.svc = svc;
+        this.postedSalesCreditMemoLineSvc = postedSalesCreditMemoLineSvc;
         this.pagingSvc = pagingSvc;
     }
 
@@ -33,5 +38,18 @@ public class PostedSalesCreditMemoController {
         model.addAttribute("paging", pagingData);
 
         return "postedSalesCreditMemoList.html";
+    }
+
+    @GetMapping("/postedSalesCreditMemoCard")
+    public String card(@RequestParam(name = "code") String code, Model model) {
+        PostedSalesCreditMemo postedSalesCreditMemo = svc.get(code);
+        List<PostedSalesCreditMemoLine> postedSalesCreditMemoLines = postedSalesCreditMemoLineSvc.list(postedSalesCreditMemo);
+        PagingData pagingData = pagingSvc.generate("postedSalesCreditMemoLine", null, postedSalesCreditMemoLineSvc.count(postedSalesCreditMemo));
+
+        model.addAttribute("postedSalesCreditMemo", postedSalesCreditMemo);
+        model.addAttribute("postedSalesCreditMemoLines", postedSalesCreditMemoLines);
+        model.addAttribute("paging", pagingData);
+
+        return "postedSalesCreditMemoCard.html";
     }
 }

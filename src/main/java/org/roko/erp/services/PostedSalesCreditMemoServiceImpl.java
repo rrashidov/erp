@@ -1,6 +1,7 @@
 package org.roko.erp.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.roko.erp.model.PostedSalesCreditMemo;
 import org.roko.erp.repositories.PostedSalesCreditMemoRepository;
@@ -20,6 +21,17 @@ public class PostedSalesCreditMemoServiceImpl implements PostedSalesCreditMemoSe
     @Override
     public void create(PostedSalesCreditMemo postedSalesCreditMemo) {
         repo.save(postedSalesCreditMemo);
+    }
+
+    @Override
+    public PostedSalesCreditMemo get(String code) {
+        Optional<PostedSalesCreditMemo> postedSalesCreditMemoOptional = repo.findById(code);
+
+        if (postedSalesCreditMemoOptional.isPresent()) {
+            return postedSalesCreditMemoOptional.get();
+        }
+        
+        return null;
     }
 
     @Override

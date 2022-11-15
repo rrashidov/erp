@@ -8,6 +8,8 @@ public interface PostedSalesCreditMemoService {
     
     public void create(PostedSalesCreditMemo postedSalesCreditMemo);
 
+    public PostedSalesCreditMemo get(String code);
+
     public List<PostedSalesCreditMemo> list();
 
     public long count();
