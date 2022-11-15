@@ -1,6 +1,8 @@
 package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -151,6 +153,24 @@ public class PurchaseOrderPostServiceTest {
         verifyPurchaseOrderDeleted();
     }
 
+    @Test
+    public void paymentRelatedEntriesNotCreated_whenPaymentMethodDoesNotHaveBankAccount() {
+        when(paymentMethodMock.getBankAccount()).thenReturn(null);
+
+        svc.post(TEST_CODE);
+
+        PostedPurchaseOrder postedPurchaseOrder = verifyPostedPurchaseOrderCreated();
+
+        verifyVendorLedgerEntriesCreated(postedPurchaseOrder);
+
+        verifyNoBankAccountLedgerEntiresCreated();
+    }
+
+
+    private void verifyNoBankAccountLedgerEntiresCreated() {
+        verify(bankAccountLedgerEntrySvcMock, never()).create(any(BankAccountLedgerEntry.class));
+    }
+
     private void verifyPurchaseOrderDeleted() {
         verify(purchaseOrderSvcMock).delete(TEST_CODE);
     }
@@ -175,15 +195,23 @@ public class PurchaseOrderPostServiceTest {
     }
 
     private void verifyVendorLedgerEntriesCreated(PostedPurchaseOrder postedPurchaseOrder) {
-        verify(vendorLedgerEntrySvcMock, times(2)).create(vendorLedgerEntryArgumentCaptor.capture());
+        int expectedNumberOfVendorLedgerEntries = 1;
+
+        if (postedPurchaseOrder.getPaymentMethod().getBankAccount() != null){
+            expectedNumberOfVendorLedgerEntries++;
+        }
+
+        verify(vendorLedgerEntrySvcMock, times(expectedNumberOfVendorLedgerEntries)).create(vendorLedgerEntryArgumentCaptor.capture());
 
         List<VendorLedgerEntry> vendorLedgerEntries = vendorLedgerEntryArgumentCaptor.getAllValues();
 
         VendorLedgerEntry documentVendorLedgerEntry = vendorLedgerEntries.get(0);
-        VendorLedgerEntry paymentVendorLedgerEntry = vendorLedgerEntries.get(1);
-
         verifyDocumentVendorLedgerEntry(documentVendorLedgerEntry, postedPurchaseOrder);
-        verifyPaymentVendorLedgerEntry(paymentVendorLedgerEntry, postedPurchaseOrder);
+
+        if (postedPurchaseOrder.getPaymentMethod().getBankAccount() != null) {
+            VendorLedgerEntry paymentVendorLedgerEntry = vendorLedgerEntries.get(1);
+            verifyPaymentVendorLedgerEntry(paymentVendorLedgerEntry, postedPurchaseOrder);    
+        }
     }
 
     private void verifyPaymentVendorLedgerEntry(VendorLedgerEntry paymentVendorLedgerEntry,

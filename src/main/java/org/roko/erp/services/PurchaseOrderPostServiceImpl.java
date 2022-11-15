@@ -72,12 +72,16 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
 
     private void deletePurchaseOrderLines(List<PurchaseOrderLine> purchaseOrderLines) {
         purchaseOrderLines.stream()
-            .forEach(x -> purchaseOrderLineSvc.delete(x.getPurchaseOrderLineId()));
+                .forEach(x -> purchaseOrderLineSvc.delete(x.getPurchaseOrderLineId()));
     }
 
     private void createBankAccountLedgerEntry(List<PurchaseOrderLine> purchaseOrderLines,
             PostedPurchaseOrder postedPurchaseOrder) {
-                Optional<Double> amount = purchaseOrderLines.stream()
+        if (postedPurchaseOrder.getPaymentMethod().getBankAccount() == null) {
+            return;
+        }
+
+        Optional<Double> amount = purchaseOrderLines.stream()
                 .map(PurchaseOrderLine::getAmount)
                 .reduce((x, y) -> x + y);
 
@@ -98,7 +102,10 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
                 .reduce((x, y) -> x + y);
 
         createDocumentVendorLedgerEntry(postedPurchaseOrder, amount.get());
-        createPaymentVendorLedgerEntry(postedPurchaseOrder, amount.get());
+
+        if (postedPurchaseOrder.getPaymentMethod().getBankAccount() != null) {
+            createPaymentVendorLedgerEntry(postedPurchaseOrder, amount.get());
+        }
     }
 
     private void createPaymentVendorLedgerEntry(PostedPurchaseOrder postedPurchaseOrder, Double amount) {
