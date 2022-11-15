@@ -2,12 +2,27 @@ package org.roko.erp.model;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class PostedSalesCreditMemo {
 
+	@Id
 	private String code;
+
+	@ManyToOne
 	private Customer customer;
+
 	private Date date;
+
+	@ManyToOne
 	private PaymentMethod paymentMethod;
+
+	private String orderCode;
+
+	private Date orderDate;
 	
 	public String getCode() {
 		return code;
@@ -33,4 +48,17 @@ public class PostedSalesCreditMemo {
 	public void setPaymentMethod(PaymentMethod paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
+	public String getOrderCode() {
+		return orderCode;
+	}
+	public void setOrderCode(String orderCode) {
+		this.orderCode = orderCode;
+	}
+	public Date getOrderDate() {
+		return orderDate;
+	}
+	public void setOrderDate(Date orderDate) {
+		this.orderDate = orderDate;
+	}
+	
 }
