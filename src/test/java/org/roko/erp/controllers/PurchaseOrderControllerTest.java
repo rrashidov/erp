@@ -25,6 +25,7 @@ import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.PurchaseOrderLineService;
+import org.roko.erp.services.PurchaseOrderPostService;
 import org.roko.erp.services.PurchaseOrderService;
 import org.roko.erp.services.VendorService;
 import org.springframework.ui.Model;
@@ -100,6 +101,9 @@ public class PurchaseOrderControllerTest {
     @Mock
     private PagingService pagingSvcMock;
 
+    @Mock
+    private PurchaseOrderPostService purchaseOrderPostSvcMock;
+
     private PurchaseOrderController controller;
 
     @BeforeEach
@@ -138,7 +142,7 @@ public class PurchaseOrderControllerTest {
         when(pagingSvcMock.generate("purchaseOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
         when(pagingSvcMock.generate("purchaseOrderLine", null, TEST_LINES_COUNT)).thenReturn(purchaseOrderLinePagingMock);
 
-        controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, vendorSvcMock, paymentMethodSvcMock, pagingSvcMock);
+        controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, vendorSvcMock, paymentMethodSvcMock, pagingSvcMock, purchaseOrderPostSvcMock);
     }
 
     @Test
@@ -245,5 +249,14 @@ public class PurchaseOrderControllerTest {
         verify(modelMock).addAttribute("purchaseOrder", purchaseOrderMock);
         verify(modelMock).addAttribute("purchaseOrderLines", purchaseOrderLines);
         verify(modelMock).addAttribute("paging", purchaseOrderLinePagingMock);
+    }
+
+    @Test
+    public void post_returnsProperTemplate() {
+        RedirectView redirectView = controller.post(TEST_CODE);
+
+        assertEquals("/purchaseOrderList", redirectView.getUrl());
+
+        verify(purchaseOrderPostSvcMock).post(TEST_CODE);
     }
 }

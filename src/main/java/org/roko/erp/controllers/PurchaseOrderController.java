@@ -11,6 +11,7 @@ import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.PurchaseOrderLineService;
+import org.roko.erp.services.PurchaseOrderPostService;
 import org.roko.erp.services.PurchaseOrderService;
 import org.roko.erp.services.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +32,17 @@ public class PurchaseOrderController {
     private VendorService vendorSvc;
     private PaymentMethodService paymentMethodSvc;
     private PurchaseOrderLineService purchaseOrderLineSvc;
+    private PurchaseOrderPostService purchaseOrderPostSvc;
 
     @Autowired
     public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc, VendorService vendorSvc,
-            PaymentMethodService paymentMethodSvc, PagingService pagingSvc) {
+            PaymentMethodService paymentMethodSvc, PagingService pagingSvc, PurchaseOrderPostService purchaseOrderPostSvc) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.vendorSvc = vendorSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.pagingSvc = pagingSvc;
+        this.purchaseOrderPostSvc = purchaseOrderPostSvc;
     }
 
     @GetMapping("/purchaseOrderList")
@@ -122,6 +125,13 @@ public class PurchaseOrderController {
         model.addAttribute("paging", pagingData);
         
         return "purchaseOrderCard.html";
+    }
+
+    @GetMapping("/postPurchaseOrder")
+    public RedirectView post(@RequestParam(name="code") String code) {
+        purchaseOrderPostSvc.post(code);
+        
+        return new RedirectView("/purchaseOrderList");
     }
 
     private PurchaseOrder fromModel(PurchaseOrderModel purchaseOrderModel) {
