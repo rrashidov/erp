@@ -7,7 +7,9 @@ import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.VendorLedgerEntryService;
 import org.roko.erp.services.VendorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +24,15 @@ public class VendorController {
     private VendorService vendorSvc;
     private PagingService pagingSvc;
     private PaymentMethodService paymentMethodSvc;
+    private VendorLedgerEntryService vendorLedgerEntrySvc;
 
-    public VendorController(VendorService vendorSvc, PagingService pagingSvc, PaymentMethodService paymentMethodSvc) {
+    @Autowired
+    public VendorController(VendorService vendorSvc, PagingService pagingSvc, PaymentMethodService paymentMethodSvc,
+            VendorLedgerEntryService vendorLedgerEntrySvc) {
         this.vendorSvc = vendorSvc;
         this.pagingSvc = pagingSvc;
         this.paymentMethodSvc = paymentMethodSvc;
+        this.vendorLedgerEntrySvc = vendorLedgerEntrySvc;
     }
 
     @GetMapping("/vendorList")
@@ -51,6 +57,9 @@ public class VendorController {
             vendorModel.setName(vendor.getName());
             vendorModel.setAddress(vendor.getAddress());
             vendorModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
+
+            model.addAttribute("vendorLedgerEntries", vendorLedgerEntrySvc.findFor(vendor));
+            model.addAttribute("paging", pagingSvc.generate("vendorLedgerEntry", null, vendorLedgerEntrySvc.count(vendor)));
         }
 
         model.addAttribute("vendor", vendorModel);

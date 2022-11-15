@@ -19,7 +19,9 @@ import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.Vendor;
+import org.roko.erp.model.VendorLedgerEntry;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.VendorLedgerEntryService;
 import org.roko.erp.services.VendorService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
@@ -35,9 +37,13 @@ public class VendorControllerTest {
     private static final String TEST_ADDRESS = "test-address";
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
+    private static final long TEST_VENDOR_LEDGER_ENTRY_COUNT = 123;
+
     private List<Vendor> vendorList = new ArrayList<>();
 
     private List<PaymentMethod> paymentMethodList = new ArrayList<>();
+
+    private List<VendorLedgerEntry> vendorLedgerEntries = new ArrayList<>();
 
     @Mock
     private Vendor vendorMock;
@@ -58,6 +64,9 @@ public class VendorControllerTest {
     private PagingData pagingDataMock;
 
     @Mock
+    private PagingData vendorLedgerEntryPagingDataMock;
+
+    @Mock
     private Model modelMock;
 
     @Mock
@@ -68,6 +77,9 @@ public class VendorControllerTest {
 
     @Mock
     private PaymentMethodService paymentMethodSvcMock;
+
+    @Mock
+    private VendorLedgerEntryService vendorLedgerEntrySvcMock;
     
     private VendorController controller;
 
@@ -90,13 +102,17 @@ public class VendorControllerTest {
         when(paymentMethodSvcMock.list()).thenReturn(paymentMethodList);
         when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
 
+        when(vendorLedgerEntrySvcMock.findFor(vendorMock)).thenReturn(vendorLedgerEntries);
+        when(vendorLedgerEntrySvcMock.count(vendorMock)).thenReturn(TEST_VENDOR_LEDGER_ENTRY_COUNT);
+
         when(vendorSvcMock.list()).thenReturn(vendorList);
         when(vendorSvcMock.count()).thenReturn(TEST_RECORD_COUNT);
         when(vendorSvcMock.get(TEST_CODE)).thenReturn(vendorMock);
 
         when(pagingSvcMock.generate("vendor", TEST_PAGE, TEST_RECORD_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("vendorLedgerEntry", null, TEST_VENDOR_LEDGER_ENTRY_COUNT)).thenReturn(vendorLedgerEntryPagingDataMock);
 
-        controller = new VendorController(vendorSvcMock, pagingSvcMock, paymentMethodSvcMock);
+        controller = new VendorController(vendorSvcMock, pagingSvcMock, paymentMethodSvcMock, vendorLedgerEntrySvcMock);
     }
 
     @Test
@@ -134,6 +150,8 @@ public class VendorControllerTest {
 
         verify(modelMock).addAttribute(eq("vendor"), vendorModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
+        verify(modelMock).addAttribute("vendorLedgerEntries", vendorLedgerEntries);
+        verify(modelMock).addAttribute("paging", vendorLedgerEntryPagingDataMock);
 
         VendorModel vendorModel = vendorModelArgumentCaptor.getValue();
 
