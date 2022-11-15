@@ -52,7 +52,12 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public List<Vendor> list() {
-        return repo.findAll();
+        List<Vendor> vendors = repo.findAll();
+
+        vendors.stream()
+            .forEach(v -> v.setBalance(repo.balance(v)));
+
+        return vendors;
     }
 
     @Override

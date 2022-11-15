@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,12 @@ public class VendorServiceTest {
     private Vendor vendorMock;
     
     @Mock
+    private Vendor vendorMock1;
+
+    @Mock
+    private Vendor vendorMock2;
+
+    @Mock
     private VendorRepository repoMock;
 
     private VendorService svc;
@@ -31,6 +38,7 @@ public class VendorServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(vendorMock));
+        when(repoMock.findAll()).thenReturn(Arrays.asList(vendorMock, vendorMock1, vendorMock2));
 
         svc = new VendorServiceImpl(repoMock);
     }
@@ -76,6 +84,10 @@ public class VendorServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+
+        verify(repoMock).balance(vendorMock);
+        verify(repoMock).balance(vendorMock1);
+        verify(repoMock).balance(vendorMock2);
     }
 
     @Test
