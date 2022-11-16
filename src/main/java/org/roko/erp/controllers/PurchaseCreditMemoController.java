@@ -10,6 +10,7 @@ import org.roko.erp.model.PurchaseCreditMemoLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.PurchaseCreditMemoLineService;
+import org.roko.erp.services.PurchaseCreditMemoPostService;
 import org.roko.erp.services.PurchaseCreditMemoService;
 import org.roko.erp.services.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +31,19 @@ public class PurchaseCreditMemoController {
     private VendorService vendorSvc;
     private PaymentMethodService paymentMethodSvc;
     private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
+    private PurchaseCreditMemoPostService purchaseCreditMemoPostSvc;
 
     @Autowired
     public PurchaseCreditMemoController(PurchaseCreditMemoService svc, PagingService pagingSvc,
-            VendorService vendorSvc, PaymentMethodService paymentMethodSvc, PurchaseCreditMemoLineService purchaseCreditMemoLineSvc) {
+            VendorService vendorSvc, PaymentMethodService paymentMethodSvc,
+            PurchaseCreditMemoLineService purchaseCreditMemoLineSvc,
+            PurchaseCreditMemoPostService purchaseCreditMemoPostSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.vendorSvc = vendorSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
+        this.purchaseCreditMemoPostSvc = purchaseCreditMemoPostSvc;
     }
 
     @GetMapping("/purchaseCreditMemoList")
@@ -107,16 +112,24 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/purchaseCreditMemoCard")
-    public String card(@RequestParam(name="code") String code, Model model) {
+    public String card(@RequestParam(name = "code") String code, Model model) {
         PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
         List<PurchaseCreditMemoLine> purchaseCreditMemoLines = purchaseCreditMemoLineSvc.list(purchaseCreditMemo);
-        PagingData pagingData = pagingSvc.generate("purchaseCreditMemoLine", null, purchaseCreditMemoLineSvc.count(purchaseCreditMemo));
+        PagingData pagingData = pagingSvc.generate("purchaseCreditMemoLine", null,
+                purchaseCreditMemoLineSvc.count(purchaseCreditMemo));
 
         model.addAttribute("purchaseCreditMemo", purchaseCreditMemo);
         model.addAttribute("purchaseCreditMemoLines", purchaseCreditMemoLines);
         model.addAttribute("paging", pagingData);
-        
+
         return "purchaseCreditMemoCard.html";
+    }
+
+    @GetMapping("/postPurchaseCreditMemo")
+    public RedirectView post(@RequestParam(name = "code") String code) {
+        purchaseCreditMemoPostSvc.post(code);
+        
+        return new RedirectView("/purchaseCreditMemoList");
     }
 
     private String createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
