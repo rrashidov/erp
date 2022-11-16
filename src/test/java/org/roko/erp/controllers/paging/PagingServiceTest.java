@@ -26,7 +26,7 @@ public class PagingServiceTest {
         assertEquals(1, pagingData.getPrevPage());
         assertEquals(1, pagingData.getCurrentPage());
 
-        assertEquals(6, pagingData.getMaxPageCount());
+        assertEquals(12, pagingData.getMaxPageCount());
     }
 
     @Test
@@ -38,7 +38,7 @@ public class PagingServiceTest {
 
         assertEquals(1, pagingData.getPrevPage());
 
-        assertEquals(6, pagingData.getMaxPageCount());
+        assertEquals(12, pagingData.getMaxPageCount());
     }
 
     @Test
@@ -47,15 +47,15 @@ public class PagingServiceTest {
         // records per page: 20
         // max page count: 6
 
-        PagingData pagingData = svc.generate("item", 6, 120);
+        PagingData pagingData = svc.generate("item", 12, 120);
 
         assertFalse(pagingData.isNextActive());
         assertFalse(pagingData.isLastActive());
 
-        assertEquals(6, pagingData.getNextPage());
-        assertEquals(6, pagingData.getCurrentPage());
-        assertEquals(6, pagingData.getLastPage());
-        assertEquals(6, pagingData.getMaxPageCount());
+        assertEquals(12, pagingData.getNextPage());
+        assertEquals(12, pagingData.getCurrentPage());
+        assertEquals(12, pagingData.getLastPage());
+        assertEquals(12, pagingData.getMaxPageCount());
     }
 
     @Test
@@ -64,15 +64,15 @@ public class PagingServiceTest {
         // records per page: 20
         // max page count: 6
 
-        PagingData pagingData = svc.generate("item", 5, 120);
+        PagingData pagingData = svc.generate("item", 11, 120);
 
         assertTrue(pagingData.isNextActive());
         assertTrue(pagingData.isLastActive());
 
-        assertEquals(6, pagingData.getNextPage());
-        assertEquals(5, pagingData.getCurrentPage());
-        assertEquals(6, pagingData.getLastPage());
-        assertEquals(6, pagingData.getMaxPageCount());
+        assertEquals(12, pagingData.getNextPage());
+        assertEquals(11, pagingData.getCurrentPage());
+        assertEquals(12, pagingData.getLastPage());
+        assertEquals(12, pagingData.getMaxPageCount());
     }
 
     @Test
@@ -81,15 +81,15 @@ public class PagingServiceTest {
         // records per page: 20
         // max page count: 6
 
-        PagingData pagingData = svc.generate("item", 10, 120);
+        PagingData pagingData = svc.generate("item", 15, 120);
 
         assertFalse(pagingData.isNextActive());
         assertFalse(pagingData.isLastActive());
 
-        assertEquals(6, pagingData.getNextPage());
-        assertEquals(6, pagingData.getCurrentPage());
-        assertEquals(6, pagingData.getLastPage());
-        assertEquals(6, pagingData.getMaxPageCount());
+        assertEquals(12, pagingData.getNextPage());
+        assertEquals(12, pagingData.getCurrentPage());
+        assertEquals(12, pagingData.getLastPage());
+        assertEquals(12, pagingData.getMaxPageCount());
     }
 
     @Test
@@ -100,7 +100,7 @@ public class PagingServiceTest {
 
         PagingData pagingData = svc.generate("item", 1, 121);
 
-        assertEquals(7, pagingData.getMaxPageCount());
+        assertEquals(13, pagingData.getMaxPageCount());
     }
 
 
