@@ -11,5 +11,5 @@ public interface CustomerLedgerEntryService {
 
     public List<CustomerLedgerEntry> findFor(Customer customer);
 
-    public long count(Customer customer);
+    public int count(Customer customer);
 }

@@ -40,7 +40,7 @@ public class CustomerController {
     }
 
     @GetMapping("/customerList")
-    public String list(@RequestParam(name = "page", required = false) Long page, Model model) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         PagingData pagingData = pagingSvc.generate(CUSTOMER_OBJECT_NAME, page, svc.count());
 
         List<Customer> customerList = svc.list();
@@ -63,7 +63,7 @@ public class CustomerController {
             customerModel.setPaymentMethodCode(customer.getPaymentMethod().getCode());
 
             model.addAttribute("customerLedgerEntries", customerLedgerEntrySvc.findFor(customer));
-            model.addAttribute("paging", pagingSvc.generate("customerLedgerEntry", null, customerLedgerEntrySvc.count(customer)));
+            model.addAttribute("paging", pagingSvc.generate("customerLedgerEntry", 1, customerLedgerEntrySvc.count(customer)));
         }
 
         model.addAttribute("customer", customerModel);

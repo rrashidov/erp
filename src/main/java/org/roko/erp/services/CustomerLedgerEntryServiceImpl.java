@@ -29,8 +29,8 @@ public class CustomerLedgerEntryServiceImpl implements CustomerLedgerEntryServic
     }
 
     @Override
-    public long count(Customer customer) {
-        return repo.count(customer);
+    public int count(Customer customer) {
+        return new Long(repo.count(customer)).intValue();
     }
     
 }

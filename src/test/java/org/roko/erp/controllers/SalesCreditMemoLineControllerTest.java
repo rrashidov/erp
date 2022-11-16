@@ -35,8 +35,8 @@ public class SalesCreditMemoLineControllerTest {
     private static final double TEST_ITEM_SALES_PRICE = 12.00d;
     private static final Double TEST_QTY = 10.00d;
 
-    private static final Integer TEST_LINE_NO = 123;
-    private static final Long TEST_LINE_COUNT = 234l;
+    private static final int TEST_LINE_NO = 123;
+    private static final int TEST_LINE_COUNT = 234;
 
     private static final Double TEST_PRICE = 12.00d;
     private static final Double TEST_AMOUNT = 120.00d;

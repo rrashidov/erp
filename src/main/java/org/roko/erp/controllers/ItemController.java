@@ -30,7 +30,7 @@ public class ItemController {
     }
 
     @GetMapping("/itemList")
-    public String list(@RequestParam(name = "page", required = false) Long page, Model model){
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model){
         model.addAttribute("items", svc.list());
 
         PagingData generate = pagingSvc.generate("item", page, svc.count());
@@ -48,7 +48,7 @@ public class ItemController {
             item = svc.get(code);
 
             model.addAttribute("itemLedgerEntries", itemLedgerEntrySvc.list(item));
-            model.addAttribute("paging", pagingSvc.generate("itemLedgerEntry", null, itemLedgerEntrySvc.count(item)));
+            model.addAttribute("paging", pagingSvc.generate("itemLedgerEntry", 1, itemLedgerEntrySvc.count(item)));
         }
 
         model.addAttribute("item", item);

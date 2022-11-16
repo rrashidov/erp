@@ -18,5 +18,5 @@ public interface PurchaseOrderLineService {
 
     public List<PurchaseOrderLine> list(PurchaseOrder purchaseOrder);
     
-    public long count(PurchaseOrder purchaseOrder);
+    public int count(PurchaseOrder purchaseOrder);
 }

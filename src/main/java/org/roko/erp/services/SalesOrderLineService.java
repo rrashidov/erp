@@ -18,5 +18,5 @@ public interface SalesOrderLineService {
 
     public List<SalesOrderLine> list(SalesOrder salesOrder);
 
-    public long count(SalesOrder salesOrder);
+    public int count(SalesOrder salesOrder);
 }

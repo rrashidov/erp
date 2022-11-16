@@ -30,9 +30,9 @@ public class SalesOrderLineControllerTest {
 
     private static final String TEST_CODE = "test-code";
 
-    private static final long TEST_SALES_ORDER_LINE_COUNT = 789l;
+    private static final int TEST_SALES_ORDER_LINE_COUNT = 789;
 
-    private static final Integer TEST_SALES_ORDER_LINENO = 1;
+    private static final int TEST_SALES_ORDER_LINENO = 1;
     private static final double TEST_SALES_ORDER_LINE_QTY = 10.0d;
     private static final double TEST_SALES_ORDER_LINE_AMOUNT = 123.89d;
 

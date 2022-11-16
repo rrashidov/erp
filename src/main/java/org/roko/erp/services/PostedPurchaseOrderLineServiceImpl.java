@@ -29,8 +29,8 @@ public class PostedPurchaseOrderLineServiceImpl implements PostedPurchaseOrderLi
     }
 
     @Override
-    public long count(PostedPurchaseOrder postedPurchaseOrder) {
-        return repo.count(postedPurchaseOrder);
+    public int count(PostedPurchaseOrder postedPurchaseOrder) {
+        return new Long(repo.count(postedPurchaseOrder)).intValue();
     }
     
 }

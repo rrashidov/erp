@@ -42,10 +42,10 @@ public class SalesOrderControllerTest {
     private static final String TEST_CUSTOMER_CODE = "test-customer-code";
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
 
-    private static final Long TEST_PAGE = 123l;
+    private static final int TEST_PAGE = 123;
 
-    private static final long TEST_COUNT = 234;
-    private static final long TEST_SALES_ORDER_LINE_COUNT = 789l;
+    private static final int TEST_COUNT = 234;
+    private static final int TEST_SALES_ORDER_LINE_COUNT = 789;
 
     private List<SalesOrder> salesOrderList = new ArrayList<>();
 
@@ -156,7 +156,7 @@ public class SalesOrderControllerTest {
         when(svcMock.get(SalesOrderModelRule.TEST_SALES_ORDER_CODE)).thenReturn(salesOrderMock);
 
         when(pagingSvcMock.generate("salesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("salesOrderLine", null, TEST_SALES_ORDER_LINE_COUNT)).thenReturn(salesOrderLinePagingMock);
+        when(pagingSvcMock.generate("salesOrderLine", 1, TEST_SALES_ORDER_LINE_COUNT)).thenReturn(salesOrderLinePagingMock);
 
         controller = new SalesOrderController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvc, salesOrderLineSvcMock, salesOrderPostSvcMock);
     }

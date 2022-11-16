@@ -29,8 +29,8 @@ public class VendorLedgerEntryServiceImpl implements VendorLedgerEntryService {
     }
 
     @Override
-    public long count(Vendor vendor) {
-        return repo.count(vendor);
+    public int count(Vendor vendor) {
+        return new Long(repo.count(vendor)).intValue();
     }
     
 }

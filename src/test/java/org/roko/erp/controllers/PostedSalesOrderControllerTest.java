@@ -23,11 +23,9 @@ public class PostedSalesOrderControllerTest {
 
     private static final String TEST_CODE = "test-code";
 
-    private static final Long TEST_PAGE = 123l;
-
-    private static final long TEST_COUNT = 234l;
-
-    private static final Long TEST_LINE_COUNT = 345l;
+    private static final int TEST_PAGE = 123;
+    private static final int TEST_COUNT = 234;
+    private static final int TEST_LINE_COUNT = 345;
 
     private List<PostedSalesOrder> postedSalesOrders = new ArrayList<>();
 
@@ -68,7 +66,7 @@ public class PostedSalesOrderControllerTest {
         when(lineSvcMock.count(postedSalesOrderMock)).thenReturn(TEST_LINE_COUNT);
 
         when(pagingSvcMock.generate("postedSalesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedSalesOrderLine", null, TEST_LINE_COUNT)).thenReturn(linePagingDataMock);
+        when(pagingSvcMock.generate("postedSalesOrderLine", 1, TEST_LINE_COUNT)).thenReturn(linePagingDataMock);
 
         controller = new PostedSalesOrderController(svcMock, lineSvcMock, pagingSvcMock);
     }

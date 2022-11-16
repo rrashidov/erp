@@ -12,6 +12,6 @@ public interface PostedPurchaseCreditMemoService {
 
     public List<PostedPurchaseCreditMemo> list();
 
-    public long count();
+    public int count();
     
 }

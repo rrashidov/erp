@@ -8,16 +8,16 @@ public class PagingServiceImpl implements PagingService {
     private static final int RECORDS_PER_PAGE = 20;
 
     @Override
-    public PagingData generate(String objectName, Long page, long recordCount) {
+    public PagingData generate(String objectName, int page, int recordCount) {
         PagingData result = new PagingData();
 
         result.setObjectName(objectName);
 
-        if (page == null){
-            page = new Long(1);
+        if (page == 0){
+            page = 1;
         }
 
-        long maxPageCount = recordCount / RECORDS_PER_PAGE;
+        int maxPageCount = recordCount / RECORDS_PER_PAGE;
 
         if ((recordCount % RECORDS_PER_PAGE) > 0){
             maxPageCount++;
@@ -28,21 +28,21 @@ public class PagingServiceImpl implements PagingService {
         }
 
         if (page > maxPageCount) {
-            page = new Long(maxPageCount);
+            page = maxPageCount;
         }
 
-        long prevPage = page - 1;
+        int prevPage = page - 1;
         if (prevPage < 1) {
-            prevPage = new Long(1);
+            prevPage = 1;
         }
 
-        long nextPage = page + 1;
+        int nextPage = page + 1;
         if (nextPage > maxPageCount) {
             nextPage = maxPageCount;
         }
 
-        result.setFirstActive(page.longValue() > 1);
-        result.setPrevActive(page.longValue() > 1);
+        result.setFirstActive(page > 1);
+        result.setPrevActive(page > 1);
 
         result.setPrevPage(prevPage);
         result.setCurrentPage(page);
@@ -50,8 +50,8 @@ public class PagingServiceImpl implements PagingService {
         result.setLastPage(maxPageCount);
         result.setMaxPageCount(maxPageCount);
 
-        result.setNextActive(page.longValue() < maxPageCount);
-        result.setLastActive(page.longValue() < maxPageCount);
+        result.setNextActive(page < maxPageCount);
+        result.setLastActive(page < maxPageCount);
 
         return result;
     }

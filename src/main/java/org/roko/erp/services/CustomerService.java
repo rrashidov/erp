@@ -16,5 +16,5 @@ public interface CustomerService {
 
     public List<Customer> list();
 
-    public long count();
+    public int count();
 }

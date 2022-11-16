@@ -28,16 +28,15 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class VendorControllerTest {
 
-    private static final Long TEST_PAGE = 123l;
-
-    private static final long TEST_RECORD_COUNT = 234l;
+    private static final int TEST_PAGE = 123;
+    private static final int TEST_RECORD_COUNT = 234;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
     private static final String TEST_ADDRESS = "test-address";
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
-    private static final long TEST_VENDOR_LEDGER_ENTRY_COUNT = 123;
+    private static final int TEST_VENDOR_LEDGER_ENTRY_COUNT = 123;
 
     private List<Vendor> vendorList = new ArrayList<>();
 
@@ -110,7 +109,7 @@ public class VendorControllerTest {
         when(vendorSvcMock.get(TEST_CODE)).thenReturn(vendorMock);
 
         when(pagingSvcMock.generate("vendor", TEST_PAGE, TEST_RECORD_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("vendorLedgerEntry", null, TEST_VENDOR_LEDGER_ENTRY_COUNT)).thenReturn(vendorLedgerEntryPagingDataMock);
+        when(pagingSvcMock.generate("vendorLedgerEntry", 1, TEST_VENDOR_LEDGER_ENTRY_COUNT)).thenReturn(vendorLedgerEntryPagingDataMock);
 
         controller = new VendorController(vendorSvcMock, pagingSvcMock, paymentMethodSvcMock, vendorLedgerEntrySvcMock);
     }

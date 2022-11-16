@@ -23,9 +23,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class GeneralJournalBatchControllerTest {
 
-    private static final Long TEST_PAGE = 123l;
-
-    private static final long TEST_COUNT = 234l;
+    private static final int TEST_PAGE = 123;
+    private static final int TEST_COUNT = 234;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";

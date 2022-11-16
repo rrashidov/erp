@@ -29,8 +29,8 @@ public class PostedPurchaseCreditMemoLineServiceImpl implements PostedPurchaseCr
     }
 
     @Override
-    public long count(PostedPurchaseCreditMemo postedPurchaseCreditMemo) {
-        return repo.count(postedPurchaseCreditMemo);
+    public int count(PostedPurchaseCreditMemo postedPurchaseCreditMemo) {
+        return new Long(repo.count(postedPurchaseCreditMemo)).intValue();
     }
     
 }

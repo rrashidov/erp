@@ -56,8 +56,8 @@ public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineServic
     }
 
     @Override
-    public long count(SalesCreditMemo salesCreditMemo) {
-        return repo.countForSalesCreditMemo(salesCreditMemo);
+    public int count(SalesCreditMemo salesCreditMemo) {
+        return new Long(repo.countForSalesCreditMemo(salesCreditMemo)).intValue();
     }
     
     private void transferFields(SalesCreditMemoLine source,

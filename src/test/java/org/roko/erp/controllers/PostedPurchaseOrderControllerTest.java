@@ -21,11 +21,10 @@ import org.springframework.ui.Model;
 
 public class PostedPurchaseOrderControllerTest {
 
-    private static final Long TEST_COUNT = 123l;
-
     private static final String TEST_CODE = "test-code";
 
-    private static final Long TEST_LINE_COUNT = 234l;
+    private static final int TEST_COUNT = 123;
+    private static final int TEST_LINE_COUNT = 234;
 
     private List<PostedPurchaseOrder> postedPurchaseOrders = new ArrayList<>();
 
@@ -65,8 +64,8 @@ public class PostedPurchaseOrderControllerTest {
         when(postedPurchaseOrderLineSvcMock.list(postedPurchaseOrderMock)).thenReturn(postedPurchaseOrderLines);
         when(postedPurchaseOrderLineSvcMock.count(postedPurchaseOrderMock)).thenReturn(TEST_LINE_COUNT);
 
-        when(pagingSvcMock.generate("postedPurchaseOrder", null, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedPurchaseOrderLine", null, TEST_LINE_COUNT))
+        when(pagingSvcMock.generate("postedPurchaseOrder", 1, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("postedPurchaseOrderLine", 1, TEST_LINE_COUNT))
                 .thenReturn(postedPurchaseOrderLinePagingDataMock);
 
         controller = new PostedPurchaseOrderController(svcMock, postedPurchaseOrderLineSvcMock, pagingSvcMock);

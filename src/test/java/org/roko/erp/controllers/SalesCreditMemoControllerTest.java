@@ -41,11 +41,10 @@ public class SalesCreditMemoControllerTest {
 
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
-    private static final Long TEST_PAGE = 123l;
+    private static final int TEST_PAGE = 123;
+    private static final int TEST_COUNT = 234;
 
-    private static final Long TEST_COUNT = 234l;
-
-    private static final long TEST_SALES_CREDIT_MEMO_LINE_COUNT = 123l;
+    private static final int TEST_SALES_CREDIT_MEMO_LINE_COUNT = 123;
 
     private List<SalesCreditMemo> salesCreditMemos = new ArrayList<>();
 
@@ -141,7 +140,7 @@ public class SalesCreditMemoControllerTest {
         when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(TEST_SALES_CREDIT_MEMO_LINE_COUNT);
 
         when(pagingSvcMock.generate("salesCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("salesCreditMemoLine", null, TEST_SALES_CREDIT_MEMO_LINE_COUNT)).thenReturn(salesCreditMemoLinePagingMock);
+        when(pagingSvcMock.generate("salesCreditMemoLine", 1, TEST_SALES_CREDIT_MEMO_LINE_COUNT)).thenReturn(salesCreditMemoLinePagingMock);
 
         controller = new SalesCreditMemoController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvcMock, salesCreditMemoLineSvcMock, salesCreditMemoPostSvcMock);
     }

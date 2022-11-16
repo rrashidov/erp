@@ -16,5 +16,5 @@ public interface CodeSerieService {
 
     public List<CodeSerie> list();
 
-    public long count();
+    public int count();
 }

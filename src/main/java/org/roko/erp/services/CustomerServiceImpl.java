@@ -61,8 +61,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public long count() {
-        return repo.count();
+    public int count() {
+        return new Long(repo.count()).intValue();
     }
 
     private void transferFields(Customer target, Customer source) {

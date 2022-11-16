@@ -36,7 +36,7 @@ public class VendorController {
     }
 
     @GetMapping("/vendorList")
-    public String list(@RequestParam(name = "page", required = false) Long page, Model model) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         PagingData pagingData = pagingSvc.generate("vendor", page, vendorSvc.count());
         List<Vendor> vendors = vendorSvc.list();
 
@@ -59,7 +59,7 @@ public class VendorController {
             vendorModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
 
             model.addAttribute("vendorLedgerEntries", vendorLedgerEntrySvc.findFor(vendor));
-            model.addAttribute("paging", pagingSvc.generate("vendorLedgerEntry", null, vendorLedgerEntrySvc.count(vendor)));
+            model.addAttribute("paging", pagingSvc.generate("vendorLedgerEntry", 1, vendorLedgerEntrySvc.count(vendor)));
         }
 
         model.addAttribute("vendor", vendorModel);

@@ -16,5 +16,5 @@ public interface ItemService {
 
     public List<Item> list();
 
-    public long count();
+    public int count();
 }

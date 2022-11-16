@@ -56,8 +56,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     @Override
-    public long count() {
-        return repo.count();
+    public int count() {
+        return new Long(repo.count()).intValue();
     }
     
     private void transferFields(PurchaseOrder source, PurchaseOrder target) {

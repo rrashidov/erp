@@ -27,13 +27,13 @@ public class BankAccountControllerTest {
 
     private static final String OBJECT_NAME = "bankAccount";
 
-    private static final Long TEST_PAGE = 0l;
+    private static final int TEST_PAGE = 0;
 
     private static final String EXPECTED_BANK_ACCOUNT_LIST_TEMPLATE = "bankAccountList.html";
     private static final String EXPECTED_BANK_ACCOUNT_CARD_TEMPLATE = "bankAccountCard.html";
 
-    private static final long TEST_RECORD_COUNT = 123123l;
-    private static final Long TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT = 123l;
+    private static final int TEST_RECORD_COUNT = 123123;
+    private static final int TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT = 123;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
@@ -76,7 +76,7 @@ public class BankAccountControllerTest {
         when(bankAccountMock.getName()).thenReturn(TEST_NAME);
 
         when(pagingSvcMock.generate(OBJECT_NAME, TEST_PAGE, TEST_RECORD_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("bankAccountLedgerEntry", null, TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT))
+        when(pagingSvcMock.generate("bankAccountLedgerEntry", 1, TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT))
                 .thenReturn(bankAccountLedgerEntriesPagingDataMock);
 
         when(svcMock.list()).thenReturn(bankAccountList);

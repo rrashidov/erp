@@ -56,8 +56,8 @@ public class GeneralJournalBatchServiceImpl implements GeneralJournalBatchServic
     }
 
     @Override
-    public long count() {
-        return repo.count();
+    public int count() {
+        return new Long(repo.count()).intValue();
     }
     
     private void transferFields(GeneralJournalBatch source,

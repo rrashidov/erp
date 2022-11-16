@@ -41,12 +41,12 @@ public class PurchaseOrderControllerTest {
     private static final String TEST_VENDOR_CODE = "test-vendor-code";
     private static final String TEST_VENDOR_NAME = "test-vendor-name";
 
-    private static final Long TEST_PAGE = 123l;
-    private static final long TEST_COUNT = 234l;
+    private static final int TEST_PAGE = 123;
+    private static final int TEST_COUNT = 234;
 
     private static final Date TEST_DATE = new Date();
 
-    private static final long TEST_LINES_COUNT = 23l;
+    private static final int TEST_LINES_COUNT = 23;
 
     private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
 
@@ -140,7 +140,7 @@ public class PurchaseOrderControllerTest {
         when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(TEST_LINES_COUNT);
 
         when(pagingSvcMock.generate("purchaseOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("purchaseOrderLine", null, TEST_LINES_COUNT)).thenReturn(purchaseOrderLinePagingMock);
+        when(pagingSvcMock.generate("purchaseOrderLine", 1, TEST_LINES_COUNT)).thenReturn(purchaseOrderLinePagingMock);
 
         controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, vendorSvcMock, paymentMethodSvcMock, pagingSvcMock, purchaseOrderPostSvcMock);
     }

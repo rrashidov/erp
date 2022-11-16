@@ -58,8 +58,8 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
     }
 
     @Override
-    public long count(SalesOrder salesOrder) {
-        return repo.countForSalesOrder(salesOrder);
+    public int count(SalesOrder salesOrder) {
+        return new Long(repo.countForSalesOrder(salesOrder)).intValue();
     }
 
     private void transferFields(SalesOrderLine source, SalesOrderLine target) {

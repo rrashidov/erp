@@ -7,11 +7,11 @@ public class PagingData {
     private boolean firstActive;
     private boolean prevActive;
 
-    private Long prevPage;
-    private Long currentPage;
-    private Long maxPageCount;
-    private Long nextPage;
-    private Long lastPage;
+    private int prevPage;
+    private int currentPage;
+    private int maxPageCount;
+    private int nextPage;
+    private int lastPage;
 
     private boolean nextActive;
     private boolean lastActive;
@@ -40,40 +40,41 @@ public class PagingData {
     public void setLastActive(boolean lastActive) {
         this.lastActive = lastActive;
     }
-    public Long getCurrentPage() {
-        return currentPage;
-    }
-    public void setCurrentPage(Long currentPage) {
-        this.currentPage = currentPage;
-    }
     public String getObjectName() {
         return objectName;
     }
     public void setObjectName(String objectName) {
         this.objectName = objectName;
     }
-    public Long getPrevPage() {
+    public int getPrevPage() {
         return prevPage;
     }
-    public void setPrevPage(Long prevPage) {
+    public void setPrevPage(int prevPage) {
         this.prevPage = prevPage;
     }
-    public Long getNextPage() {
-        return nextPage;
+    public int getCurrentPage() {
+        return currentPage;
     }
-    public void setNextPage(Long nextPage) {
-        this.nextPage = nextPage;
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
-    public Long getLastPage() {
-        return lastPage;
-    }
-    public void setLastPage(Long lastPage) {
-        this.lastPage = lastPage;
-    }
-    public Long getMaxPageCount() {
+    public int getMaxPageCount() {
         return maxPageCount;
     }
-    public void setMaxPageCount(Long maxPageCount) {
+    public void setMaxPageCount(int maxPageCount) {
         this.maxPageCount = maxPageCount;
-    }            
+    }
+    public int getNextPage() {
+        return nextPage;
+    }
+    public void setNextPage(int nextPage) {
+        this.nextPage = nextPage;
+    }
+    public int getLastPage() {
+        return lastPage;
+    }
+    public void setLastPage(int lastPage) {
+        this.lastPage = lastPage;
+    }
+    
 }

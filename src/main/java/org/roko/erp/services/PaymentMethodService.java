@@ -16,5 +16,5 @@ public interface PaymentMethodService {
 
     public List<PaymentMethod> list();
 
-    public long count();
+    public int count();
 }

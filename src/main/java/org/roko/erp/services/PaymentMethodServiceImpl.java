@@ -56,8 +56,8 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
-    public long count() {
-        return repo.count();
+    public int count() {
+        return new Long(repo.count()).intValue();
     }
     
     private void transferFields(PaymentMethod source, PaymentMethod target) {

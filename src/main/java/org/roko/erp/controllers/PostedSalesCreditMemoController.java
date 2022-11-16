@@ -30,9 +30,9 @@ public class PostedSalesCreditMemoController {
     }
 
     @GetMapping("/postedSalesCreditMemoList")
-    public String list(@RequestParam(name = "page", required = false) Long page, Model model) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         List<PostedSalesCreditMemo> postedSalesCreditMemos = svc.list();
-        PagingData pagingData = pagingSvc.generate("postedSalesCreditMemo", null, svc.count());
+        PagingData pagingData = pagingSvc.generate("postedSalesCreditMemo", page, svc.count());
 
         model.addAttribute("postedSalesCreditMemos", postedSalesCreditMemos);
         model.addAttribute("paging", pagingData);
@@ -44,7 +44,7 @@ public class PostedSalesCreditMemoController {
     public String card(@RequestParam(name = "code") String code, Model model) {
         PostedSalesCreditMemo postedSalesCreditMemo = svc.get(code);
         List<PostedSalesCreditMemoLine> postedSalesCreditMemoLines = postedSalesCreditMemoLineSvc.list(postedSalesCreditMemo);
-        PagingData pagingData = pagingSvc.generate("postedSalesCreditMemoLine", null, postedSalesCreditMemoLineSvc.count(postedSalesCreditMemo));
+        PagingData pagingData = pagingSvc.generate("postedSalesCreditMemoLine", 1, postedSalesCreditMemoLineSvc.count(postedSalesCreditMemo));
 
         model.addAttribute("postedSalesCreditMemo", postedSalesCreditMemo);
         model.addAttribute("postedSalesCreditMemoLines", postedSalesCreditMemoLines);

@@ -11,5 +11,5 @@ public interface BankAccountLedgerEntryService {
 
     public List<BankAccountLedgerEntry> findFor(BankAccount bankAccount);
 
-    public long count(BankAccount bankAccount);
+    public int count(BankAccount bankAccount);
 }

@@ -63,8 +63,8 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public long count() {
-        return repo.count();
+    public int count() {
+        return new Long(repo.count()).intValue();
     }
     
     private void transferFields(BankAccount source, BankAccount target) {

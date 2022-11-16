@@ -38,7 +38,7 @@ public class PurchaseCreditMemoLineControllerTest {
     private static final Double TEST_PRICE = 23.45;
     private static final Double TEST_AMOUNT = 123.12;
 
-    private static final Long TEST_LINE_COUNT = 123l;
+    private static final int TEST_LINE_COUNT = 123;
     private static final int TEST_LINE_NO = 234;
 
     private List<Item> items = new ArrayList<>();

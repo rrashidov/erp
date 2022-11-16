@@ -54,8 +54,8 @@ public class CodeSerieServiceImpl implements CodeSerieService {
     }
 
     @Override
-    public long count() {
-        return repo.count();
+    public int count() {
+        return new Long(repo.count()).intValue();
     }
 
     private void transferFields(CodeSerie source, CodeSerie target) {

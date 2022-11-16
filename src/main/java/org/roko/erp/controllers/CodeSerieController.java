@@ -26,7 +26,7 @@ public class CodeSerieController {
     }
     
     @GetMapping("/codeSerieList")
-    public String list(@RequestParam(name="page", required=false) Long page, Model model) {
+    public String list(@RequestParam(name="page", required=false, defaultValue = "1") int page, Model model) {
         List<CodeSerie> codeSeries = svc.list();
         PagingData pagingData = pagingSvc.generate("codeSerie", page, svc.count());
 

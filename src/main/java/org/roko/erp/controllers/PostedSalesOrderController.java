@@ -29,7 +29,7 @@ public class PostedSalesOrderController {
     }
 
     @GetMapping("/postedSalesOrderList")
-    public String list(@RequestParam(name = "page", required = false) Long page, Model model) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         List<PostedSalesOrder> postedSalesOrders = svc.list();
         PagingData pagingData = pagingSvc.generate("postedSalesOrder", page, svc.count());
 
@@ -43,7 +43,7 @@ public class PostedSalesOrderController {
     public String card(@RequestParam(name="code") String code, Model model) {
         PostedSalesOrder postedSalesOrder = svc.get(code);
         List<PostedSalesOrderLine> postedSalesOrderLines = lineSvc.list(postedSalesOrder);
-        PagingData pagingData = pagingSvc.generate("postedSalesOrderLine", null, lineSvc.count(postedSalesOrder));
+        PagingData pagingData = pagingSvc.generate("postedSalesOrderLine", 1, lineSvc.count(postedSalesOrder));
 
         model.addAttribute("postedSalesOrder", postedSalesOrder);
         model.addAttribute("postedSalesOrderLines", postedSalesOrderLines);

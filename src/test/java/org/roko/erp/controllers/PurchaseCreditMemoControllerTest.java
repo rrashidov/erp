@@ -39,12 +39,12 @@ public class PurchaseCreditMemoControllerTest {
     private static final String TEST_VENDOR_NAME = "test-vendor-name";
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
-    private static final Long TEST_PAGE = 123l;
+    private static final int TEST_PAGE = 123;
+    private static final int TEST_COUNT = 234;
 
-    private static final long TEST_COUNT = 234l;
     private static final Date TEST_DATE = new Date();
 
-    private static final Long TEST_LINE_COUNT = 12l;
+    private static final int TEST_LINE_COUNT = 12;
 
     private List<PurchaseCreditMemo> purchaseCreditMemos = new ArrayList<>();
 
@@ -123,7 +123,7 @@ public class PurchaseCreditMemoControllerTest {
         when(svcMock.get(TEST_PURCHASE_CREDIT_MEMO_CODE)).thenReturn(purchaseCreditMemoMock);
 
         when(pagingSvcMock.generate("purchaseCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("purchaseCreditMemoLine", null, TEST_LINE_COUNT))
+        when(pagingSvcMock.generate("purchaseCreditMemoLine", 1, TEST_LINE_COUNT))
                 .thenReturn(purchaseCreditMemoLinePagingData);
 
         when(vendorMock.getCode()).thenReturn(TEST_VENDOR_CODE);

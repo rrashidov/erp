@@ -56,8 +56,8 @@ public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService 
     }
 
     @Override
-    public long count() {
-        return repo.count();
+    public int count() {
+        return new Long(repo.count()).intValue();
     }
 
     private void transferFields(PurchaseCreditMemo source, PurchaseCreditMemo target) {

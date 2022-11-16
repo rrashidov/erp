@@ -2,7 +2,7 @@ package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,8 +33,8 @@ public class ItemControllerTest {
     private static final double TEST_ITEM_SALES_PRICE = 12.12;
     private static final double TEST_ITEM_PURCHASE_PRICE = 23.23;
 
-    private static final long TEST_ITEM_COUNT = 123123l;
-    private static final long TEST_ITEM_LEDGER_ENTRY_COUNT = 123l;
+    private static final int TEST_ITEM_COUNT = 123123;
+    private static final int TEST_ITEM_LEDGER_ENTRY_COUNT = 123;
 
     private static final String EXPECTED_ITEM_LIST_TEMPLATE = "itemList.html";
     private static final String EXPECTED_ITEM_CARD_TEMPLATE = "itemCard.html";
@@ -88,15 +88,15 @@ public class ItemControllerTest {
         when(itemLedgerEntrySvcMock.list(itemMock)).thenReturn(itemLedgerEntries);
         when(itemLedgerEntrySvcMock.count(itemMock)).thenReturn(TEST_ITEM_LEDGER_ENTRY_COUNT);
 
-        when(pagingServiceMock.generate(eq("item"), anyLong(), eq(TEST_ITEM_COUNT))).thenReturn(pagingDataMock);
-        when(pagingServiceMock.generate("itemLedgerEntry", null, TEST_ITEM_LEDGER_ENTRY_COUNT)).thenReturn(itemLedgerEntryPagingDataMock);
+        when(pagingServiceMock.generate(eq("item"), anyInt(), eq(TEST_ITEM_COUNT))).thenReturn(pagingDataMock);
+        when(pagingServiceMock.generate("itemLedgerEntry", 1, TEST_ITEM_LEDGER_ENTRY_COUNT)).thenReturn(itemLedgerEntryPagingDataMock);
 
         controller = new ItemController(itemServiceMock, pagingServiceMock, itemLedgerEntrySvcMock);
     }
 
     @Test 
     public void listReturnsProperTemplate(){
-        String returnedTemplate = controller.list(0l, modelMock);
+        String returnedTemplate = controller.list(0, modelMock);
 
         assertEquals(EXPECTED_ITEM_LIST_TEMPLATE, returnedTemplate);
 

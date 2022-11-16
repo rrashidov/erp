@@ -11,6 +11,6 @@ public interface ItemLedgerEntryService {
 
     public List<ItemLedgerEntry> list(Item item);
 
-    public long count(Item item);
+    public int count(Item item);
     
 }

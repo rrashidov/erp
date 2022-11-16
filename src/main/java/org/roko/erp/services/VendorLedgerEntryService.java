@@ -11,5 +11,5 @@ public interface VendorLedgerEntryService {
 
     public List<VendorLedgerEntry> findFor(Vendor vendor);
 
-    public long count(Vendor vendor);
+    public int count(Vendor vendor);
 }

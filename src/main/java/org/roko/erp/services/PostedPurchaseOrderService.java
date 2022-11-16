@@ -12,5 +12,5 @@ public interface PostedPurchaseOrderService {
 
     public List<PostedPurchaseOrder> list();
 
-    public long count();
+    public int count();
 }

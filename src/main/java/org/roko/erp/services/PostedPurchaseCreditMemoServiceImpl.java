@@ -40,8 +40,8 @@ public class PostedPurchaseCreditMemoServiceImpl implements PostedPurchaseCredit
     }
 
     @Override
-    public long count() {
-        return repo.count();
+    public int count() {
+        return new Long(repo.count()).intValue();
     }
     
 }

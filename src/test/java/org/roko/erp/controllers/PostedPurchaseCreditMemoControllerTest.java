@@ -23,9 +23,8 @@ public class PostedPurchaseCreditMemoControllerTest {
     
     private static final String TEST_CODE = "test-code";
 
-    private static final Long TEST_COUNT = 123l;
-
-    private static final Long TEST_LINE_COUNT = 234l;
+    private static final int TEST_COUNT = 123;
+    private static final int TEST_LINE_COUNT = 234;
 
     private List<PostedPurchaseCreditMemo> postedPurchaseCreditMemos = new ArrayList<>();
 
@@ -65,8 +64,8 @@ public class PostedPurchaseCreditMemoControllerTest {
         when(postedPurchaseCreditMemoLineSvcMock.list(postedPurchaseCreditMemoMock)).thenReturn(postedPurchaseCreditMemoLines);
         when(postedPurchaseCreditMemoLineSvcMock.count(postedPurchaseCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
 
-        when(pagingSvcMock.generate("postedPurchaseCreditMemo", null, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedPurchaseCreditMemoLine", null, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
+        when(pagingSvcMock.generate("postedPurchaseCreditMemo", 1, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("postedPurchaseCreditMemoLine", 1, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
 
         controller = new PostedPurchaseCreditMemoController(svcMock, postedPurchaseCreditMemoLineSvcMock, pagingSvcMock);
     }

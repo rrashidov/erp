@@ -37,7 +37,7 @@ public class PurchaseOrderLineControllerTest {
     private static final Double TEST_QTY = 10.00d;
     private static final Double TEST_PRICE = 12.00d;
 
-    private static final Long TEST_LINE_COUNT = 123l;
+    private static final int TEST_LINE_COUNT = 123;
     private static final int TEST_LINE_NO = 2;
 
     private List<Item> items = new ArrayList<>();

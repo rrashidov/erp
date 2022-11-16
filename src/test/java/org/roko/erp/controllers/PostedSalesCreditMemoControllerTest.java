@@ -21,11 +21,10 @@ import org.springframework.ui.Model;
 
 public class PostedSalesCreditMemoControllerTest {
     
-    private static final Long TEST_COUNT = 123l;
-
     private static final String TEST_CODE = "test-code";
 
-    private static final long TEST_LINE_COUNT = 123l;
+    private static final int TEST_COUNT = 123;
+    private static final int TEST_LINE_COUNT = 123;
 
     private List<PostedSalesCreditMemo> postedSalesCreditMemos = new ArrayList<>();
 
@@ -65,15 +64,15 @@ public class PostedSalesCreditMemoControllerTest {
         when(postedSalesCreditMemoLineSvcMock.list(postedSalesCreditMemoMock)).thenReturn(postedSalesCreditMemoLines);
         when(postedSalesCreditMemoLineSvcMock.count(postedSalesCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
 
-        when(pagingSvcMock.generate("postedSalesCreditMemo", null, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedSalesCreditMemoLine", null, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
+        when(pagingSvcMock.generate("postedSalesCreditMemo", 1, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("postedSalesCreditMemoLine", 1, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
 
         controller = new PostedSalesCreditMemoController(svcMock, postedSalesCreditMemoLineSvcMock, pagingSvcMock);
     }
 
     @Test
     public void list_returnsProperTemplate() {
-        String template = controller.list(null, modelMock);
+        String template = controller.list(1, modelMock);
 
         assertEquals("postedSalesCreditMemoList.html", template);
 

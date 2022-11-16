@@ -16,22 +16,9 @@ public class PagingServiceTest {
         svc = new PagingServiceImpl();
     }
 
-    @Test 
-    public void leftNavigationHasProperState_whenNoPageSpecified(){
-        PagingData pagingData = svc.generate("item", null, 120);
-
-        assertFalse(pagingData.isFirstActive());
-        assertFalse(pagingData.isPrevActive());
-
-        assertEquals(1, pagingData.getPrevPage());
-        assertEquals(1, pagingData.getCurrentPage());
-
-        assertEquals(6, pagingData.getMaxPageCount());
-    }
-
     @Test
     public void leftNavigationHasProperState_whenPageOneProvided(){
-        PagingData pagingData = svc.generate("item", new Long(1), 120);
+        PagingData pagingData = svc.generate("item", 1, 120);
 
         assertFalse(pagingData.isFirstActive());
         assertFalse(pagingData.isPrevActive());
@@ -44,7 +31,7 @@ public class PagingServiceTest {
 
     @Test
     public void leftNavigationHasProperState_whenPageTwoProvided(){
-        PagingData pagingData = svc.generate("item", new Long(2), 120);
+        PagingData pagingData = svc.generate("item", 2, 120);
 
         assertTrue(pagingData.isFirstActive());
         assertTrue(pagingData.isPrevActive());
@@ -60,7 +47,7 @@ public class PagingServiceTest {
         // records per page: 20
         // max page count: 6
 
-        PagingData pagingData = svc.generate("item", new Long(6), 120);
+        PagingData pagingData = svc.generate("item", 6, 120);
 
         assertFalse(pagingData.isNextActive());
         assertFalse(pagingData.isLastActive());
@@ -77,7 +64,7 @@ public class PagingServiceTest {
         // records per page: 20
         // max page count: 6
 
-        PagingData pagingData = svc.generate("item", new Long(5), 120);
+        PagingData pagingData = svc.generate("item", 5, 120);
 
         assertTrue(pagingData.isNextActive());
         assertTrue(pagingData.isLastActive());
@@ -94,7 +81,7 @@ public class PagingServiceTest {
         // records per page: 20
         // max page count: 6
 
-        PagingData pagingData = svc.generate("item", new Long(10), 120);
+        PagingData pagingData = svc.generate("item", 10, 120);
 
         assertFalse(pagingData.isNextActive());
         assertFalse(pagingData.isLastActive());
@@ -111,7 +98,7 @@ public class PagingServiceTest {
         // records per page: 20
         // max page count: 7
 
-        PagingData pagingData = svc.generate("item", null, 121);
+        PagingData pagingData = svc.generate("item", 1, 121);
 
         assertEquals(7, pagingData.getMaxPageCount());
     }
@@ -119,7 +106,7 @@ public class PagingServiceTest {
 
     @Test
     public void navigationHasProperState_whenNoRecords(){
-        PagingData pagingData = svc.generate("item", null, 0);
+        PagingData pagingData = svc.generate("item", 1, 0);
 
         assertFalse(pagingData.isFirstActive());
         assertFalse(pagingData.isPrevActive());
@@ -136,7 +123,7 @@ public class PagingServiceTest {
 
     @Test
     public void navigationHasProperState_whenNoRecordsAndPageProvided(){
-        PagingData pagingData = svc.generate("item", new Long(12), 0);
+        PagingData pagingData = svc.generate("item", 12, 0);
 
         assertFalse(pagingData.isFirstActive());
         assertFalse(pagingData.isPrevActive());
