@@ -3,9 +3,11 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.SalesOrder;
 import org.roko.erp.repositories.SalesOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,11 +16,11 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     private SalesOrderRepository repo;
 
     @Autowired
-	public SalesOrderServiceImpl(SalesOrderRepository repo) {
-		this.repo = repo;
-	}
+    public SalesOrderServiceImpl(SalesOrderRepository repo) {
+        this.repo = repo;
+    }
 
-	@Override
+    @Override
     public void create(SalesOrder salesOrder) {
         repo.save(salesOrder);
     }
@@ -32,7 +34,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         repo.save(salesOrderFromDB);
     }
 
-	@Override
+    @Override
     public void delete(String code) {
         SalesOrder salesOrder = repo.findById(code).get();
 
@@ -56,6 +58,11 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     @Override
+    public List<SalesOrder> list(int page) {
+        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+    }
+
+    @Override
     public int count() {
         return new Long(repo.count()).intValue();
     }
@@ -64,5 +71,5 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         source.setCustomer(target.getCustomer());
         source.setDate(target.getDate());
         source.setPaymentMethod(target.getPaymentMethod());
-	}
+    }
 }

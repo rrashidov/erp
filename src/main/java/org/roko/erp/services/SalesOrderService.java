@@ -16,6 +16,8 @@ public interface SalesOrderService {
 
     public List<SalesOrder> list();
 
+    public List<SalesOrder> list(int page);
+
     public int count();
 
 }

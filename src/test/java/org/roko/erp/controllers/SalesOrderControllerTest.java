@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class SalesOrderControllerTest {
     private static final int TEST_COUNT = 234;
     private static final int TEST_SALES_ORDER_LINE_COUNT = 789;
 
-    private List<SalesOrder> salesOrderList = new ArrayList<>();
+    private List<SalesOrder> salesOrderList;
 
     private List<Customer> customerList = new ArrayList<>();
 
@@ -126,6 +127,8 @@ public class SalesOrderControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        salesOrderList = Arrays.asList(salesOrderMock);
+
         when(salesOrderMock.getCode()).thenReturn(TEST_CODE);
         when(salesOrderMock.getCustomer()).thenReturn(customerMock);
         when(salesOrderMock.getDate()).thenReturn(dateMock);
@@ -150,7 +153,7 @@ public class SalesOrderControllerTest {
         when(salesOrderLineSvcMock.list(salesOrderMock)).thenReturn(salesOrderLineList);
         when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(TEST_SALES_ORDER_LINE_COUNT);
 
-        when(svcMock.list()).thenReturn(salesOrderList);
+        when(svcMock.list(TEST_PAGE)).thenReturn(salesOrderList);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(salesOrderMock);
         when(svcMock.get(SalesOrderModelRule.TEST_SALES_ORDER_CODE)).thenReturn(salesOrderMock);
