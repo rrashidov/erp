@@ -36,8 +36,8 @@
                         <td th:text="${vendor.address}"></td>
                         <td th:text="${vendor.paymentMethod.name}"></td>
                         <td th:text="${vendor.balance}"></td>
-                        <td><a th:href="@{/vendorCard?code={code}(code=${vendor.code})}">edit</a> <a
-                                th:href="@{/deleteVendor?code={code}(code=${vendor.code})}">delete</a></td>
+                        <td><a class="btn btn-primary" th:href="@{/vendorCard?code={code}(code=${vendor.code})}">edit</a> <a
+                            class="btn btn-primary" th:href="@{/deleteVendor?code={code}(code=${vendor.code})}">delete</a></td>
                     </tr>
                 </tbody>
             </table>
