@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,7 @@ public class PaymentMethodControllerTest {
 
     private List<BankAccount> bankAccountList = new ArrayList<>();
 
-    private List<PaymentMethod> paymentMethodList = new ArrayList<>();
+    private List<PaymentMethod> paymentMethodList;
 
     @Mock
     private PagingData pagingDataMock;
@@ -75,6 +76,8 @@ public class PaymentMethodControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        paymentMethodList = Arrays.asList(paymentMethodMock);
+
         when(bankAccountMock.getCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
 
         when(paymentMethodMock.getCode()).thenReturn(TEST_CODE);
@@ -85,7 +88,7 @@ public class PaymentMethodControllerTest {
         when(paymentMethodModelMock.getName()).thenReturn(TEST_NAME);
         when(paymentMethodModelMock.getBankAccountCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
 
-        when(svcMock.list()).thenReturn(paymentMethodList);
+        when(svcMock.list(TEST_PAGE)).thenReturn(paymentMethodList);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(paymentMethodMock);
 

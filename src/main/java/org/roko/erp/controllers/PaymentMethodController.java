@@ -35,7 +35,7 @@ public class PaymentMethodController {
     @GetMapping("/paymentMethodList")
     public String list(@RequestParam(name="page", required = false, defaultValue = "1") int page, Model model){
         PagingData pagingData = pagingSvc.generate("paymentMethod", page, svc.count());
-        List<PaymentMethod> paymentMethodList = svc.list();
+        List<PaymentMethod> paymentMethodList = svc.list(page);
 
         model.addAttribute("paging", pagingData);
         model.addAttribute("paymentMethods", paymentMethodList);

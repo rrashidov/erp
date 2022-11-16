@@ -16,5 +16,7 @@ public interface PaymentMethodService {
 
     public List<PaymentMethod> list();
 
+    public List<PaymentMethod> list(int page);
+
     public int count();
 }

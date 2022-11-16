@@ -3,9 +3,11 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.repositories.PaymentMethodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,9 +18,9 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Autowired
     public PaymentMethodServiceImpl(PaymentMethodRepository repo) {
         this.repo = repo;
-	}
+    }
 
-	@Override
+    @Override
     public void create(PaymentMethod paymentMethod) {
         repo.save(paymentMethod);
     }
@@ -56,10 +58,15 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
+    public List<PaymentMethod> list(int page) {
+        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+    }
+
+    @Override
     public int count() {
         return new Long(repo.count()).intValue();
     }
-    
+
     private void transferFields(PaymentMethod source, PaymentMethod target) {
         target.setName(source.getName());
         target.setBankAccount(source.getBankAccount());
