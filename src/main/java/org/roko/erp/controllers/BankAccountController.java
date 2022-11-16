@@ -45,7 +45,8 @@ public class BankAccountController {
     @GetMapping(BANK_ACCOUNT_LIST_URL)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         PagingData pagingData = pagingSvc.generate(OBJECT_NAME, page, svc.count());
-        List<BankAccount> bankAccounts = svc.list();
+        
+        List<BankAccount> bankAccounts = svc.list(page);
 
         model.addAttribute(PAGING_MODEL_NAME, pagingData);
         model.addAttribute(LIST_MODEL_NAME, bankAccounts);

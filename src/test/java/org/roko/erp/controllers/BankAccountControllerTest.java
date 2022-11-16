@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,7 @@ public class BankAccountControllerTest {
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
 
-    private List<BankAccount> bankAccountList = new ArrayList<>();
+    private List<BankAccount> bankAccountList;
 
     private List<BankAccountLedgerEntry> bankAccountLedgerEntries = new ArrayList<>();
 
@@ -79,7 +80,9 @@ public class BankAccountControllerTest {
         when(pagingSvcMock.generate("bankAccountLedgerEntry", 1, TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT))
                 .thenReturn(bankAccountLedgerEntriesPagingDataMock);
 
-        when(svcMock.list()).thenReturn(bankAccountList);
+        bankAccountList = Arrays.asList(bankAccountMock);
+
+        when(svcMock.list(TEST_PAGE)).thenReturn(bankAccountList);
         when(svcMock.count()).thenReturn(TEST_RECORD_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
 

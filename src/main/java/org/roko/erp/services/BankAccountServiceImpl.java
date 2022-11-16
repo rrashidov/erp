@@ -3,9 +3,11 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.BankAccount;
 import org.roko.erp.repositories.BankAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -54,12 +56,22 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public List<BankAccount> list() {
-        List<BankAccount> customers = repo.findAll();
+        List<BankAccount> bankAccounts = repo.findAll();
 
-        customers.stream()
+        bankAccounts.stream()
             .forEach(customer -> customer.setBalance(repo.balance(customer)));
 
-        return customers;
+        return bankAccounts;
+    }
+
+    @Override
+    public List<BankAccount> list(int page) {
+        List<BankAccount> bankAccounts = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+
+        bankAccounts.stream()
+            .forEach(customer -> customer.setBalance(repo.balance(customer)));
+
+        return bankAccounts;
     }
 
     @Override

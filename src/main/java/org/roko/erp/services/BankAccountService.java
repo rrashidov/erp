@@ -16,5 +16,7 @@ public interface BankAccountService {
 
     public List<BankAccount> list();
 
+    public List<BankAccount> list(int page);
+
     public int count();
 }
