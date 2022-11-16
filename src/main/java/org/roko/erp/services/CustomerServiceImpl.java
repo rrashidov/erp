@@ -3,9 +3,11 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.Customer;
 import org.roko.erp.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -43,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer get(String code) {
         Optional<Customer> customerOptional = repo.findById(code);
 
-        if (customerOptional.isPresent()){
+        if (customerOptional.isPresent()) {
             return customerOptional.get();
         }
 
@@ -54,10 +56,15 @@ public class CustomerServiceImpl implements CustomerService {
     public List<Customer> list() {
         List<Customer> customers = repo.findAll();
         customers.stream()
-            .forEach(c -> {
-                c.setBalance(repo.balance(c));
-            });
+                .forEach(c -> {
+                    c.setBalance(repo.balance(c));
+                });
         return customers;
+    }
+
+    @Override
+    public List<Customer> list(int page) {
+        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
     }
 
     @Override
@@ -70,6 +77,5 @@ public class CustomerServiceImpl implements CustomerService {
         target.setAddress(source.getAddress());
         target.setPaymentMethod(source.getPaymentMethod());
     }
-
 
 }

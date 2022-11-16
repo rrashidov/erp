@@ -41,9 +41,8 @@ public class CustomerController {
 
     @GetMapping("/customerList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
+        List<Customer> customerList = svc.list(page);
         PagingData pagingData = pagingSvc.generate(CUSTOMER_OBJECT_NAME, page, svc.count());
-
-        List<Customer> customerList = svc.list();
 
         model.addAttribute(MODEL_ATTR_PAGING, pagingData);
         model.addAttribute(MODEL_ATTR_CUSTOMERS, customerList);

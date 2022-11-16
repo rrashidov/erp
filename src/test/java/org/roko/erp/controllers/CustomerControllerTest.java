@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,7 @@ public class CustomerControllerTest {
 
     private List<PaymentMethod> paymentMethodList = new ArrayList<>();
 
-    private List<Customer> customerList = new ArrayList<>();
+    private List<Customer> customerList;
 
     private List<CustomerLedgerEntry> customerLedgerEntries = new ArrayList<>();
 
@@ -87,6 +88,8 @@ public class CustomerControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        customerList = Arrays.asList(customerMock);
+
         when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
         when(customerMock.getCode()).thenReturn(TEST_CODE);
@@ -105,7 +108,7 @@ public class CustomerControllerTest {
         when(pagingServiceMock.generate(CUSTOMER_OBJECT_NAME, TEST_PAGE, TEST_CUSTOMER_COUNT)).thenReturn(pagingDataMock);
 
         when(customerSvcMock.count()).thenReturn(TEST_CUSTOMER_COUNT);
-        when(customerSvcMock.list()).thenReturn(customerList);
+        when(customerSvcMock.list(TEST_PAGE)).thenReturn(customerList);
         when(customerSvcMock.get(TEST_CODE)).thenReturn(customerMock);
 
         controller = new CustomerController(customerSvcMock, pagingServiceMock, paymentMethodSvcMock,

@@ -16,5 +16,7 @@ public interface CustomerService {
 
     public List<Customer> list();
 
+    public List<Customer> list(int page);
+
     public int count();
 }
