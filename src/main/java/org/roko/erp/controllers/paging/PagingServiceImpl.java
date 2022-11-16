@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PagingServiceImpl implements PagingService {
 
-    private static final int RECORDS_PER_PAGE = 10;
+    public static final int RECORDS_PER_PAGE = 10;
 
     @Override
     public PagingData generate(String objectName, int page, int recordCount) {
