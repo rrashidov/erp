@@ -31,7 +31,7 @@ public class ItemController {
 
     @GetMapping("/itemList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model){
-        model.addAttribute("items", svc.list());
+        model.addAttribute("items", svc.list(page));
 
         PagingData generate = pagingSvc.generate("item", page, svc.count());
 

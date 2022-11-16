@@ -16,5 +16,7 @@ public interface ItemService {
 
     public List<Item> list();
 
+    public List<Item> list(int page);
+
     public int count();
 }

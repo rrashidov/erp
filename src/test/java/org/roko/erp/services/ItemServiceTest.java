@@ -2,6 +2,7 @@ package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -10,14 +11,24 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.Item;
 import org.roko.erp.repositories.ItemRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public class ItemServiceTest {
 
+    private static final int TEST_PAGE = 2;
+
     private static final String TEST_ID = "test-id";
+
+    @Captor
+    private ArgumentCaptor<Pageable> pageAbleArgumentCaptor;
 
     @Mock
     private Item itemFromDBMock;
@@ -32,6 +43,9 @@ public class ItemServiceTest {
     private Item itemMock2;
 
     @Mock
+    private Page<Item> pageMock;
+
+    @Mock
     private ItemRepository repoMock;
 
     private ItemService svc;
@@ -40,8 +54,11 @@ public class ItemServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        when(pageMock.toList()).thenReturn(Arrays.asList(itemMock, itemMock1, itemMock2));
+
         when(repoMock.findById(TEST_ID)).thenReturn(Optional.of(itemFromDBMock));
         when(repoMock.findAll()).thenReturn(Arrays.asList(itemMock, itemMock1, itemMock2));
+        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
 
         svc = new ItemServiceImpl(repoMock);
     }
@@ -91,6 +108,18 @@ public class ItemServiceTest {
         verify(repoMock).inventory(itemMock);
         verify(repoMock).inventory(itemMock1);
         verify(repoMock).inventory(itemMock2);
+    }
+
+    @Test
+    public void listWithPage_delegatesToRepo() {
+        svc.list(TEST_PAGE);
+
+        verify(repoMock).findAll(pageAbleArgumentCaptor.capture());
+
+        Pageable pageable = pageAbleArgumentCaptor.getValue();
+
+        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
+        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
     }
 
     @Test

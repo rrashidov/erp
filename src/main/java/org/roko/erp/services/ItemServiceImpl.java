@@ -3,8 +3,10 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.Item;
 import org.roko.erp.repositories.ItemRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -52,7 +54,17 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = repo.findAll();
 
         items.stream()
-            .forEach(item -> item.setInventory(repo.inventory(item)));
+                .forEach(item -> item.setInventory(repo.inventory(item)));
+
+        return items;
+    }
+
+    @Override
+    public List<Item> list(int page) {
+        List<Item> items = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+
+        items.stream()
+                .forEach(item -> item.setInventory(repo.inventory(item)));
 
         return items;
     }
