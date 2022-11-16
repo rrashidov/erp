@@ -18,7 +18,7 @@ public class VendorLedgerEntry {
 	@ManyToOne
 	private Vendor vendor;
 
-	private VendorLedterEntryType type;
+	private VendorLedgerEntryType type;
 
 	private double amount;
 
@@ -38,10 +38,10 @@ public class VendorLedgerEntry {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	public VendorLedterEntryType getType() {
+	public VendorLedgerEntryType getType() {
 		return type;
 	}
-	public void setType(VendorLedterEntryType type) {
+	public void setType(VendorLedgerEntryType type) {
 		this.type = type;
 	}
 	public double getAmount() {

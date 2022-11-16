@@ -1,6 +1,6 @@
 package org.roko.erp.model;
 
-public enum VendorLedterEntryType {
+public enum VendorLedgerEntryType {
 
 	PURCHASE_ORDER,
 	PURCHASE_CREDIT_MEMO,

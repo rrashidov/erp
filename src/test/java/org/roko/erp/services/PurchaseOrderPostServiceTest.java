@@ -30,7 +30,7 @@ import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.model.VendorLedgerEntry;
-import org.roko.erp.model.VendorLedterEntryType;
+import org.roko.erp.model.VendorLedgerEntryType;
 import org.roko.erp.model.jpa.PurchaseOrderLineId;
 
 public class PurchaseOrderPostServiceTest {
@@ -217,7 +217,7 @@ public class PurchaseOrderPostServiceTest {
     private void verifyPaymentVendorLedgerEntry(VendorLedgerEntry paymentVendorLedgerEntry,
             PostedPurchaseOrder postedPurchaseOrder) {
         assertEquals(vendorMock, paymentVendorLedgerEntry.getVendor());
-        assertEquals(VendorLedterEntryType.PAYMENT, paymentVendorLedgerEntry.getType());
+        assertEquals(VendorLedgerEntryType.PAYMENT, paymentVendorLedgerEntry.getType());
         assertEquals(-(TEST_AMOUNT * 2), paymentVendorLedgerEntry.getAmount());
         assertEquals(postedPurchaseOrder.getCode(), paymentVendorLedgerEntry.getDocumentCode());
     }
@@ -225,7 +225,7 @@ public class PurchaseOrderPostServiceTest {
     private void verifyDocumentVendorLedgerEntry(VendorLedgerEntry documentVendorLedgerEntry,
             PostedPurchaseOrder postedPurchaseOrder) {
         assertEquals(vendorMock, documentVendorLedgerEntry.getVendor());
-        assertEquals(VendorLedterEntryType.PURCHASE_ORDER, documentVendorLedgerEntry.getType());
+        assertEquals(VendorLedgerEntryType.PURCHASE_ORDER, documentVendorLedgerEntry.getType());
         assertEquals(TEST_AMOUNT * 2, documentVendorLedgerEntry.getAmount());
         assertEquals(postedPurchaseOrder.getCode(), documentVendorLedgerEntry.getDocumentCode());
     }

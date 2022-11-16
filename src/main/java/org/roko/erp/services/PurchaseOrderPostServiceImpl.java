@@ -15,7 +15,7 @@ import org.roko.erp.model.PostedPurchaseOrderLine;
 import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.VendorLedgerEntry;
-import org.roko.erp.model.VendorLedterEntryType;
+import org.roko.erp.model.VendorLedgerEntryType;
 import org.roko.erp.model.jpa.PostedPurchaseOrderLineId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -111,7 +111,7 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
     private void createPaymentVendorLedgerEntry(PostedPurchaseOrder postedPurchaseOrder, Double amount) {
         VendorLedgerEntry vendorLedgerEntry = new VendorLedgerEntry();
         vendorLedgerEntry.setVendor(postedPurchaseOrder.getVendor());
-        vendorLedgerEntry.setType(VendorLedterEntryType.PAYMENT);
+        vendorLedgerEntry.setType(VendorLedgerEntryType.PAYMENT);
         vendorLedgerEntry.setAmount(-amount);
         vendorLedgerEntry.setDate(new Date());
         vendorLedgerEntry.setDocumentCode(postedPurchaseOrder.getCode());
@@ -122,7 +122,7 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
     private void createDocumentVendorLedgerEntry(PostedPurchaseOrder postedPurchaseOrder, Double amount) {
         VendorLedgerEntry vendorLedgerEntry = new VendorLedgerEntry();
         vendorLedgerEntry.setVendor(postedPurchaseOrder.getVendor());
-        vendorLedgerEntry.setType(VendorLedterEntryType.PURCHASE_ORDER);
+        vendorLedgerEntry.setType(VendorLedgerEntryType.PURCHASE_ORDER);
         vendorLedgerEntry.setAmount(amount);
         vendorLedgerEntry.setDate(new Date());
         vendorLedgerEntry.setDocumentCode(postedPurchaseOrder.getCode());
