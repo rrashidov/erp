@@ -189,7 +189,7 @@ public class PurchaseCreditMemoPostServiceTest {
 
         assertEquals(bankAccountMock, bankAccountLedgerEntry.getBankAccount());
         assertEquals(BankAccountLedgerEntryType.VENDOR_REFUND, bankAccountLedgerEntry.getType());
-        assertEquals(-(TEST_AMOUNT * 2), bankAccountLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT * 2, bankAccountLedgerEntry.getAmount());
         assertEquals(postedPurchaseCreditMemo.getCode(), bankAccountLedgerEntry.getDocumentCode());
     }
 

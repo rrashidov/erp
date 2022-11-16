@@ -85,7 +85,7 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
         BankAccountLedgerEntry bankAccountLedgerEntry = new BankAccountLedgerEntry();
         bankAccountLedgerEntry.setBankAccount(postedPurchaseCreditMemo.getPaymentMethod().getBankAccount());
         bankAccountLedgerEntry.setType(BankAccountLedgerEntryType.VENDOR_REFUND);
-        bankAccountLedgerEntry.setAmount(-amount.get());
+        bankAccountLedgerEntry.setAmount(amount.get());
         bankAccountLedgerEntry.setDate(new Date());
         bankAccountLedgerEntry.setDocumentCode(postedPurchaseCreditMemo.getCode());
 
