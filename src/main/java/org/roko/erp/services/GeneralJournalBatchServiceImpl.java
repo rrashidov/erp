@@ -3,9 +3,11 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.GeneralJournalBatch;
 import org.roko.erp.repositories.GeneralJournalBatchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,6 +55,11 @@ public class GeneralJournalBatchServiceImpl implements GeneralJournalBatchServic
     @Override
     public List<GeneralJournalBatch> list() {
         return repo.findAll();
+    }
+
+    @Override
+    public List<GeneralJournalBatch> list(int page) {
+        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
     }
 
     @Override

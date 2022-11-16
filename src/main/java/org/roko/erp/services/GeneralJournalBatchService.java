@@ -16,5 +16,7 @@ public interface GeneralJournalBatchService {
 
     public List<GeneralJournalBatch> list();
 
+    public List<GeneralJournalBatch> list(int page);
+
     public int count();
 }

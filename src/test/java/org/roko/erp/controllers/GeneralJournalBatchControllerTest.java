@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ public class GeneralJournalBatchControllerTest {
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
 
-    private List<GeneralJournalBatch> generalJournalBatchList = new ArrayList<>();
+    private List<GeneralJournalBatch> generalJournalBatchList;
 
     @Mock
     private GeneralJournalBatch generalJournalBatchMock;
@@ -55,12 +56,14 @@ public class GeneralJournalBatchControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        generalJournalBatchList = Arrays.asList(generalJournalBatchMock);
+
         when(generalJournalBatchMock.getCode()).thenReturn(TEST_CODE);
         when(generalJournalBatchMock.getName()).thenReturn(TEST_NAME);
 
         when(pagingSvcMock.generate("generalJournalBatch", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
 
-        when(svcMock.list()).thenReturn(generalJournalBatchList);
+        when(svcMock.list(TEST_PAGE)).thenReturn(generalJournalBatchList);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(generalJournalBatchMock);
 

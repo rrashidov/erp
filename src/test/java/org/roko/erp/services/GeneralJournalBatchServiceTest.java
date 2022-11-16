@@ -1,6 +1,8 @@
 package org.roko.erp.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -8,15 +10,29 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.GeneralJournalBatch;
 import org.roko.erp.repositories.GeneralJournalBatchRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public class GeneralJournalBatchServiceTest {
 
     private static final String TEST_CODE = "test-code";
+
     private static final String NON_EXISTING_CODE = "non-existing-code";
+
+    private static final int TEST_PAGE = 12;
+
+    @Captor
+    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
+
+    @Mock
+    private Page<GeneralJournalBatch> pageMock;
 
     @Mock
     private GeneralJournalBatch generalJournalBatchMock;
@@ -31,6 +47,7 @@ public class GeneralJournalBatchServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(generalJournalBatchRepoMock.findById(TEST_CODE)).thenReturn(Optional.of(generalJournalBatchMock));
+        when(generalJournalBatchRepoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
 
         svc = new GeneralJournalBatchServiceImpl(generalJournalBatchRepoMock);
     }
@@ -76,6 +93,18 @@ public class GeneralJournalBatchServiceTest {
         svc.list();
 
         verify(generalJournalBatchRepoMock).findAll();
+    }
+
+    @Test
+    public void listWithPage_delegatesToRepo() {
+        svc.list(TEST_PAGE);
+
+        verify(generalJournalBatchRepoMock).findAll(pageableArgumentCaptor.capture());
+
+        Pageable pageable = pageableArgumentCaptor.getValue();
+
+        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
+        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
     }
 
     @Test

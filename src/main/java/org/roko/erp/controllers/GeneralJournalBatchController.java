@@ -29,7 +29,7 @@ public class GeneralJournalBatchController {
 
     @GetMapping("/generalJournalBatchList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<GeneralJournalBatch> generalJournalBatches = svc.list();
+        List<GeneralJournalBatch> generalJournalBatches = svc.list(page);
         PagingData pagingData = pagingSvc.generate("generalJournalBatch", page, svc.count());
 
         model.addAttribute("generalJournalBatches", generalJournalBatches);
