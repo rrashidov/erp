@@ -2,11 +2,13 @@ package org.roko.erp.components;
 
 import org.roko.erp.model.BankAccount;
 import org.roko.erp.model.Customer;
+import org.roko.erp.model.GeneralJournalBatch;
 import org.roko.erp.model.Item;
 import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.BankAccountService;
 import org.roko.erp.services.CustomerService;
+import org.roko.erp.services.GeneralJournalBatchService;
 import org.roko.erp.services.ItemService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.VendorService;
@@ -23,12 +25,15 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
   private CustomerService customerService;
   private VendorService vendorService;
   private ItemService itemSvc;
+  private GeneralJournalBatchService generalJournalBatchSvc;
 
   @Autowired
   public TestDataInitialization(BankAccountService bankAccountSvc, PaymentMethodService paymentMethodSvc,
+      GeneralJournalBatchService generalJournalBatchSvc,
       CustomerService customerService, VendorService vendorService, ItemService itemSvc) {
     this.bankAccountSvc = bankAccountSvc;
     this.paymentMethodSvc = paymentMethodSvc;
+    this.generalJournalBatchSvc = generalJournalBatchSvc;
     this.customerService = customerService;
     this.vendorService = vendorService;
     this.itemSvc = itemSvc;
@@ -46,6 +51,8 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     ba02.setCode("BA02");
     ba02.setName("Bank");
     bankAccountSvc.create(ba02);
+
+    initBulkBankAccounts();
 
     // init payment methods
     PaymentMethod pm01 = new PaymentMethod();
@@ -65,6 +72,10 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     pm03.setBankAccount(ba02);
     paymentMethodSvc.create(pm03);
 
+    initBulkPaymentMethods();
+
+    initBulkGeneralJournalBatches();
+
     // init customers
     Customer c1 = new Customer();
     c1.setCode("CUST01");
@@ -72,6 +83,22 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     c1.setAddress("Test address");
     c1.setPaymentMethod(pm01);
     customerService.create(c1);
+
+    Customer c2 = new Customer();
+    c2.setCode("CUST02");
+    c2.setName("Customer 02");
+    c2.setAddress("Test address");
+    c2.setPaymentMethod(pm02);
+    customerService.create(c2);
+
+    Customer c3 = new Customer();
+    c3.setCode("CUST03");
+    c3.setName("Customer 03");
+    c3.setAddress("Test address");
+    c3.setPaymentMethod(pm03);
+    customerService.create(c3);
+
+    initBulkCustomers(pm03);
 
     // init vendors
     Vendor v1 = new Vendor();
@@ -95,8 +122,60 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     v3.setPaymentMethod(pm03);
     vendorService.create(v3);
 
+    initBulkVendors(pm03);
+
     // init items
     initItems();
+  }
+
+  private void initBulkVendors(PaymentMethod pm01) {
+    for (int i = 0; i < 100; i++) {
+      Vendor v1 = new Vendor();
+      v1.setCode("VEND000" + i);
+      v1.setName("Vendor " + i);
+      v1.setAddress("Address " + i);
+      v1.setPaymentMethod(pm01);
+      vendorService.create(v1);  
+    }
+  }
+
+  private void initBulkCustomers(PaymentMethod pm01) {
+    for (int i = 0; i < 100; i++) {
+      Customer c1 = new Customer();
+      c1.setCode("CUST00" + i);
+      c1.setName("Customer " + i);
+      c1.setAddress("Test address");
+      c1.setPaymentMethod(pm01);
+      customerService.create(c1);  
+    }
+  }
+
+  private void initBulkGeneralJournalBatches() {
+    for (int i = 0; i < 110; i++) {
+      GeneralJournalBatch genJournalBatch = new GeneralJournalBatch();
+      genJournalBatch.setCode("GEN" + i);
+      genJournalBatch.setName("General Journal Batch " + i);
+      
+      generalJournalBatchSvc.create(genJournalBatch);
+    }
+  }
+
+  private void initBulkPaymentMethods() {
+    for (int i = 0; i < 100; i++) {
+      PaymentMethod pm01 = new PaymentMethod();
+      pm01.setCode("PM00" + i);
+      pm01.setName("Payment Method " + i);
+      paymentMethodSvc.create(pm01);
+    }
+  }
+
+  private void initBulkBankAccounts() {
+    for (int i = 0; i < 100; i++) {
+      BankAccount ba01 = new BankAccount();
+      ba01.setCode("BA00" + i);
+      ba01.setName("Bank Account " + i);
+      bankAccountSvc.create(ba01);
+    }
   }
 
   private void initItems() {
