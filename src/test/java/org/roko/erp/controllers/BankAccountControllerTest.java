@@ -77,7 +77,7 @@ public class BankAccountControllerTest {
         when(bankAccountMock.getName()).thenReturn(TEST_NAME);
 
         when(pagingSvcMock.generate(OBJECT_NAME, TEST_PAGE, TEST_RECORD_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("bankAccountLedgerEntry", 1, TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT))
+        when(pagingSvcMock.generate("bankAccountCard", TEST_CODE, 1, TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT))
                 .thenReturn(bankAccountLedgerEntriesPagingDataMock);
 
         bankAccountList = Arrays.asList(bankAccountMock);
@@ -86,7 +86,7 @@ public class BankAccountControllerTest {
         when(svcMock.count()).thenReturn(TEST_RECORD_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
 
-        when(bankAccountLedgerEntrySvcMock.findFor(bankAccountMock)).thenReturn(bankAccountLedgerEntries);
+        when(bankAccountLedgerEntrySvcMock.findFor(bankAccountMock, 1)).thenReturn(bankAccountLedgerEntries);
         when(bankAccountLedgerEntrySvcMock.count(bankAccountMock)).thenReturn(TEST_BANK_ACCOUNT_LEDGER_ENTRIES_COUNT);
 
         controller = new BankAccountController(svcMock, pagingSvcMock, bankAccountLedgerEntrySvcMock);
@@ -104,7 +104,7 @@ public class BankAccountControllerTest {
 
     @Test
     public void cardReturnsProperTemplate(){
-        String returnedTemplate = controller.card(null, modelMock);
+        String returnedTemplate = controller.card(null, 1, modelMock);
 
         assertEquals(EXPECTED_BANK_ACCOUNT_CARD_TEMPLATE, returnedTemplate);
 
@@ -118,7 +118,7 @@ public class BankAccountControllerTest {
 
     @Test
     public void cardReturnsProperData_whenCalledForExistingBankAccount(){
-        controller.card(TEST_CODE, modelMock);
+        controller.card(TEST_CODE, 1, modelMock);
 
         verify(modelMock).addAttribute(eq("bankAccount"), bankAccountCaptor.capture());
         verify(modelMock).addAttribute("bankAccountLedgerEntries", bankAccountLedgerEntries);

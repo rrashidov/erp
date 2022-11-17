@@ -45,7 +45,7 @@ public class BankAccountController {
     @GetMapping(BANK_ACCOUNT_LIST_URL)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         PagingData pagingData = pagingSvc.generate(OBJECT_NAME, page, svc.count());
-        
+
         List<BankAccount> bankAccounts = svc.list(page);
 
         model.addAttribute(PAGING_MODEL_NAME, pagingData);
@@ -55,15 +55,17 @@ public class BankAccountController {
     }
 
     @GetMapping("/bankAccountCard")
-    public String card(@RequestParam(name = "code", required = false) String code, Model model) {
+    public String card(@RequestParam(name = "code", required = false) String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            Model model) {
         BankAccount bankAccount = new BankAccount();
 
         if (code != null) {
             bankAccount = svc.get(code);
 
-            model.addAttribute("bankAccountLedgerEntries", bankAccountLedgerEntrySvc.findFor(bankAccount));
+            model.addAttribute("bankAccountLedgerEntries", bankAccountLedgerEntrySvc.findFor(bankAccount, page));
             model.addAttribute("paging",
-                    pagingSvc.generate("bankAccountLedgerEntry", 1, bankAccountLedgerEntrySvc.count(bankAccount)));
+                    pagingSvc.generate("bankAccountCard", code, page, bankAccountLedgerEntrySvc.count(bankAccount)));
         }
 
         model.addAttribute("bankAccount", bankAccount);
