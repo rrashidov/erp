@@ -23,6 +23,7 @@ public class PostedPurchaseOrderControllerTest {
 
     private static final String TEST_CODE = "test-code";
 
+    private static final int TEST_PAGE = 23;
     private static final int TEST_COUNT = 123;
     private static final int TEST_LINE_COUNT = 234;
 
@@ -57,14 +58,14 @@ public class PostedPurchaseOrderControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(svcMock.list()).thenReturn(postedPurchaseOrders);
+        when(svcMock.list(TEST_PAGE)).thenReturn(postedPurchaseOrders);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(postedPurchaseOrderMock);
 
         when(postedPurchaseOrderLineSvcMock.list(postedPurchaseOrderMock)).thenReturn(postedPurchaseOrderLines);
         when(postedPurchaseOrderLineSvcMock.count(postedPurchaseOrderMock)).thenReturn(TEST_LINE_COUNT);
 
-        when(pagingSvcMock.generate("postedPurchaseOrder", 1, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("postedPurchaseOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
         when(pagingSvcMock.generate("postedPurchaseOrderLine", 1, TEST_LINE_COUNT))
                 .thenReturn(postedPurchaseOrderLinePagingDataMock);
 
@@ -73,7 +74,7 @@ public class PostedPurchaseOrderControllerTest {
 
     @Test
     public void list_returnsProperTemplate() {
-        String template = controller.list(modelMock);
+        String template = controller.list(TEST_PAGE, modelMock);
 
         assertEquals("postedPurchaseOrderList.html", template);
 

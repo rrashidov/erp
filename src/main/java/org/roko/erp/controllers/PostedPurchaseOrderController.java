@@ -30,9 +30,9 @@ public class PostedPurchaseOrderController {
     }
 
     @GetMapping("/postedPurchaseOrderList")
-    public String list(Model model) {
-        List<PostedPurchaseOrder> postedPurchaseOrders = svc.list();
-        PagingData pagingData = pagingSvc.generate("postedPurchaseOrder", 1, svc.count());
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
+        List<PostedPurchaseOrder> postedPurchaseOrders = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("postedPurchaseOrder", page, svc.count());
 
         model.addAttribute("postedPurchaseOrders", postedPurchaseOrders);
         model.addAttribute("paging", pagingData);
@@ -44,12 +44,13 @@ public class PostedPurchaseOrderController {
     public String card(@RequestParam(name = "code") String code, Model model) {
         PostedPurchaseOrder postedPurchaseOrder = svc.get(code);
         List<PostedPurchaseOrderLine> postedPurchaseOrderLines = postedPurchaseOrderLineSvc.list(postedPurchaseOrder);
-        PagingData pagingData = pagingSvc.generate("postedPurchaseOrderLine", 1, postedPurchaseOrderLineSvc.count(postedPurchaseOrder));
+        PagingData pagingData = pagingSvc.generate("postedPurchaseOrderLine", 1,
+                postedPurchaseOrderLineSvc.count(postedPurchaseOrder));
 
         model.addAttribute("postedPurchaseOrder", postedPurchaseOrder);
         model.addAttribute("postedPurchaseOrderLines", postedPurchaseOrderLines);
         model.addAttribute("paging", pagingData);
-        
+
         return "postedPurchaseOrderCard.html";
     }
 }
