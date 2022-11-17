@@ -3,9 +3,11 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.repositories.PurchaseOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,6 +55,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public List<PurchaseOrder> list() {
         return repo.findAll();
+    }
+
+    @Override
+    public List<PurchaseOrder> list(int page) {
+        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
     }
 
     @Override

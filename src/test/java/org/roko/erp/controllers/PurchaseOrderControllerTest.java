@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class PurchaseOrderControllerTest {
 
     private static final int TEST_LINES_COUNT = 23;
 
-    private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
+    private List<PurchaseOrder> purchaseOrders;
 
     private List<Vendor> vendors = new ArrayList<>();
 
@@ -110,6 +111,8 @@ public class PurchaseOrderControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        purchaseOrders = Arrays.asList(purchaseOrderMock);
+
         when(purchaseOrderMock.getCode()).thenReturn(TEST_CODE);
         when(purchaseOrderMock.getVendor()).thenReturn(vendorMock);
         when(purchaseOrderMock.getPaymentMethod()).thenReturn(paymentMethodMock);
@@ -132,7 +135,7 @@ public class PurchaseOrderControllerTest {
         when(vendorSvcMock.list()).thenReturn(vendors);
         when(vendorSvcMock.get(TEST_VENDOR_CODE)).thenReturn(vendorMock);
 
-        when(svcMock.list()).thenReturn(purchaseOrders);
+        when(svcMock.list(TEST_PAGE)).thenReturn(purchaseOrders);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(purchaseOrderMock);
 
