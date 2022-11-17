@@ -16,6 +16,8 @@ public interface PurchaseCreditMemoService {
 
     public List<PurchaseCreditMemo> list();
 
+    public List<PurchaseCreditMemo> list(int page);
+
     public int count();
     
 }

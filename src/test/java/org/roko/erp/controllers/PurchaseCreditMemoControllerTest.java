@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -108,6 +109,8 @@ public class PurchaseCreditMemoControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        purchaseCreditMemos = Arrays.asList(purchaseCreditMemoMock);
+
         when(purchaseCreditMemoModelMock.getCode()).thenReturn("");
         when(purchaseCreditMemoModelMock.getVendorCode()).thenReturn(TEST_VENDOR_CODE);
         when(purchaseCreditMemoModelMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
@@ -118,7 +121,7 @@ public class PurchaseCreditMemoControllerTest {
         when(purchaseCreditMemoMock.getPaymentMethod()).thenReturn(paymentMethodMock);
         when(purchaseCreditMemoMock.getDate()).thenReturn(TEST_DATE);
 
-        when(svcMock.list()).thenReturn(purchaseCreditMemos);
+        when(svcMock.list(TEST_PAGE)).thenReturn(purchaseCreditMemos);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_PURCHASE_CREDIT_MEMO_CODE)).thenReturn(purchaseCreditMemoMock);
 
