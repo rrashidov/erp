@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ public class CodeSerieControllerTest {
     private static final String TEST_FIRST_CODE = "test-first-code";
     private static final String TEST_LAST_CODE = "test-last-code";
 
-    private List<CodeSerie> codeSeries = new ArrayList<>();
+    private List<CodeSerie> codeSeries;
 
     @Mock
     private CodeSerie codeSerieMock;
@@ -58,12 +59,14 @@ public class CodeSerieControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        codeSeries = Arrays.asList(codeSerieMock);
+
         when(codeSerieMock.getCode()).thenReturn(TEST_CODE);
         when(codeSerieMock.getName()).thenReturn(TEST_NAME);
         when(codeSerieMock.getFirstCode()).thenReturn(TEST_FIRST_CODE);
         when(codeSerieMock.getLastCode()).thenReturn(TEST_LAST_CODE);
 
-        when(svcMock.list()).thenReturn(codeSeries);
+        when(svcMock.list(TEST_PAGE)).thenReturn(codeSeries);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(codeSerieMock);
 

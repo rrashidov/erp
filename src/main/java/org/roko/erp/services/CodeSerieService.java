@@ -16,5 +16,7 @@ public interface CodeSerieService {
 
     public List<CodeSerie> list();
 
+    public List<CodeSerie> list(int page);
+
     public int count();
 }

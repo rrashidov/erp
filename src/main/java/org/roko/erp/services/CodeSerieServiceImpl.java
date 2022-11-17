@@ -3,8 +3,10 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.CodeSerie;
 import org.roko.erp.repositories.CodeSerieRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,9 +16,9 @@ public class CodeSerieServiceImpl implements CodeSerieService {
 
     public CodeSerieServiceImpl(CodeSerieRepository repo) {
         this.repo = repo;
-	}
+    }
 
-	@Override
+    @Override
     public void create(CodeSerie codeSerie) {
         repo.save(codeSerie);
     }
@@ -51,6 +53,11 @@ public class CodeSerieServiceImpl implements CodeSerieService {
     @Override
     public List<CodeSerie> list() {
         return repo.findAll();
+    }
+
+    @Override
+    public List<CodeSerie> list(int page) {
+        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
     }
 
     @Override
