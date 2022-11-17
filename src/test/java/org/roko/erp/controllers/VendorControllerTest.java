@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,7 @@ public class VendorControllerTest {
 
     private static final int TEST_VENDOR_LEDGER_ENTRY_COUNT = 123;
 
-    private List<Vendor> vendorList = new ArrayList<>();
+    private List<Vendor> vendorList;
 
     private List<PaymentMethod> paymentMethodList = new ArrayList<>();
 
@@ -86,6 +87,8 @@ public class VendorControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        vendorList = Arrays.asList(vendorMock);
+
         when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
         when(vendorMock.getCode()).thenReturn(TEST_CODE);
@@ -104,7 +107,7 @@ public class VendorControllerTest {
         when(vendorLedgerEntrySvcMock.findFor(vendorMock)).thenReturn(vendorLedgerEntries);
         when(vendorLedgerEntrySvcMock.count(vendorMock)).thenReturn(TEST_VENDOR_LEDGER_ENTRY_COUNT);
 
-        when(vendorSvcMock.list()).thenReturn(vendorList);
+        when(vendorSvcMock.list(TEST_PAGE)).thenReturn(vendorList);
         when(vendorSvcMock.count()).thenReturn(TEST_RECORD_COUNT);
         when(vendorSvcMock.get(TEST_CODE)).thenReturn(vendorMock);
 

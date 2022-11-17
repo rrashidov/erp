@@ -37,8 +37,8 @@ public class VendorController {
 
     @GetMapping("/vendorList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
+        List<Vendor> vendors = vendorSvc.list(page);
         PagingData pagingData = pagingSvc.generate("vendor", page, vendorSvc.count());
-        List<Vendor> vendors = vendorSvc.list();
 
         model.addAttribute("vendors", vendors);
         model.addAttribute("paging", pagingData);

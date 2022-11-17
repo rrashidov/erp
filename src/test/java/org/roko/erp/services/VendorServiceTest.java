@@ -2,6 +2,7 @@ package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -10,14 +11,27 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.repositories.VendorRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public class VendorServiceTest {
 
     private static final String TEST_CODE = "test-code";
+
+    private static final int TEST_PAGE = 12;
+
+    @Captor
+    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
+
+    @Mock
+    private Page<Vendor> pageMock;
 
     @Mock
     private Vendor vendorMock;
@@ -37,8 +51,11 @@ public class VendorServiceTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        when(pageMock.toList()).thenReturn(Arrays.asList(vendorMock, vendorMock1, vendorMock2));
+
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(vendorMock));
         when(repoMock.findAll()).thenReturn(Arrays.asList(vendorMock, vendorMock1, vendorMock2));
+        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
 
         svc = new VendorServiceImpl(repoMock);
     }
@@ -88,6 +105,18 @@ public class VendorServiceTest {
         verify(repoMock).balance(vendorMock);
         verify(repoMock).balance(vendorMock1);
         verify(repoMock).balance(vendorMock2);
+    }
+
+    @Test
+    public void listWithPage_delegatesToRepo() {
+        svc.list(TEST_PAGE);
+
+        verify(repoMock).findAll(pageableArgumentCaptor.capture());
+
+        Pageable pageable = pageableArgumentCaptor.getValue();
+
+        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
+        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
     }
 
     @Test

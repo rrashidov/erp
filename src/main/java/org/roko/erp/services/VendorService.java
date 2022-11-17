@@ -16,5 +16,7 @@ public interface VendorService {
 
     public List<Vendor> list();
 
+    public List<Vendor> list(int page);
+
     public int count();
 }

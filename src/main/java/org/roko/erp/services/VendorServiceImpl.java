@@ -3,9 +3,11 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.repositories.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,6 +55,16 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public List<Vendor> list() {
         List<Vendor> vendors = repo.findAll();
+
+        vendors.stream()
+            .forEach(v -> v.setBalance(repo.balance(v)));
+
+        return vendors;
+    }
+
+    @Override
+    public List<Vendor> list(int page) {
+        List<Vendor> vendors = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
 
         vendors.stream()
             .forEach(v -> v.setBalance(repo.balance(v)));
