@@ -138,4 +138,11 @@ public class PagingServiceTest {
         assertFalse(pagingData.isLastActive());
     }
 
+    @Test
+    public void subListPagingDataIsProperlyGenerated() {
+        PagingData pagingData = svc.generate("itemCard", "test-item-code", 1, 1200);
+
+        assertEquals("test-item-code", pagingData.getCode());
+        assertEquals("itemCard", pagingData.getObjectName());
+    }
 }

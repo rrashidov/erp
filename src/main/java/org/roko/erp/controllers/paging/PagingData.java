@@ -3,6 +3,8 @@ package org.roko.erp.controllers.paging;
 public class PagingData {
 
     private String objectName;
+
+    private String code;
     
     private boolean firstActive;
     private boolean prevActive;
@@ -76,5 +78,10 @@ public class PagingData {
     public void setLastPage(int lastPage) {
         this.lastPage = lastPage;
     }
-    
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

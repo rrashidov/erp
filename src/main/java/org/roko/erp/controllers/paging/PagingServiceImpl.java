@@ -55,5 +55,14 @@ public class PagingServiceImpl implements PagingService {
 
         return result;
     }
-    
+
+    @Override
+    public PagingData generate(String objectName, String code, int page, int recordCount) {
+        PagingData pagingData = generate(objectName, page, recordCount);
+
+        pagingData.setCode(code);
+
+        return pagingData;
+    }
+
 }
