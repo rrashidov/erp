@@ -3,11 +3,13 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.SalesOrder;
 import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.model.jpa.SalesOrderLineId;
 import org.roko.erp.repositories.SalesOrderLineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,9 +20,9 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
     @Autowired
     public SalesOrderLineServiceImpl(SalesOrderLineRepository repo) {
         this.repo = repo;
-	}
+    }
 
-	@Override
+    @Override
     public void create(SalesOrderLine salesOrderLine) {
         repo.save(salesOrderLine);
     }
@@ -55,6 +57,12 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
     @Override
     public List<SalesOrderLine> list(SalesOrder salesOrder) {
         return repo.findForSalesOrder(salesOrder);
+    }
+
+    @Override
+    public List<SalesOrderLine> list(SalesOrder salesOrder, int page) {
+        return repo.findForSalesOrder(salesOrder, PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE))
+                .toList();
     }
 
     @Override
