@@ -30,7 +30,7 @@ public class PostedSalesOrderController {
 
     @GetMapping("/postedSalesOrderList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<PostedSalesOrder> postedSalesOrders = svc.list();
+        List<PostedSalesOrder> postedSalesOrders = svc.list(page);
         PagingData pagingData = pagingSvc.generate("postedSalesOrder", page, svc.count());
 
         model.addAttribute("postedSalesOrders", postedSalesOrders);

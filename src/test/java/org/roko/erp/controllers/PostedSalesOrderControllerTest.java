@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ public class PostedSalesOrderControllerTest {
     private static final int TEST_COUNT = 234;
     private static final int TEST_LINE_COUNT = 345;
 
-    private List<PostedSalesOrder> postedSalesOrders = new ArrayList<>();
+    private List<PostedSalesOrder> postedSalesOrders;
 
     private List<PostedSalesOrderLine> postedSalesOrderLines = new ArrayList<>();
 
@@ -58,7 +59,9 @@ public class PostedSalesOrderControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(svcMock.list()).thenReturn(postedSalesOrders);
+        postedSalesOrders = Arrays.asList(postedSalesOrderMock);
+
+        when(svcMock.list(TEST_PAGE)).thenReturn(postedSalesOrders);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(postedSalesOrderMock);
 
