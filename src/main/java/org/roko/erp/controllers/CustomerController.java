@@ -51,7 +51,9 @@ public class CustomerController {
     }
 
     @GetMapping("/customerCard")
-    public String card(@RequestParam(name = "code", required = false) String code, Model model) {
+    public String card(@RequestParam(name = "code", required = false) String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            Model model) {
         CustomerModel customerModel = new CustomerModel();
 
         if (code != null) {
@@ -61,8 +63,9 @@ public class CustomerController {
             customerModel.setAddress(customer.getAddress());
             customerModel.setPaymentMethodCode(customer.getPaymentMethod().getCode());
 
-            model.addAttribute("customerLedgerEntries", customerLedgerEntrySvc.findFor(customer));
-            model.addAttribute("paging", pagingSvc.generate("customerLedgerEntry", 1, customerLedgerEntrySvc.count(customer)));
+            model.addAttribute("customerLedgerEntries", customerLedgerEntrySvc.findFor(customer, page));
+            model.addAttribute("paging",
+                    pagingSvc.generate("customerCard", code, page, customerLedgerEntrySvc.count(customer)));
         }
 
         model.addAttribute("customer", customerModel);
