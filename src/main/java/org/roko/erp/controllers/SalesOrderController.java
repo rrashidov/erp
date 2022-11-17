@@ -112,10 +112,12 @@ public class SalesOrderController {
     }
 
     @GetMapping("/salesOrderCard")
-    public String card(@RequestParam(name="code") String code, Model model) {
+    public String card(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         SalesOrder salesOrder = svc.get(code);
-        List<SalesOrderLine> salesOrderLineList = salesOrderLineSvc.list(salesOrder);
-        PagingData salesOrderLinePagingData = pagingSvc.generate("salesOrderLine", 1, salesOrderLineSvc.count(salesOrder));
+        List<SalesOrderLine> salesOrderLineList = salesOrderLineSvc.list(salesOrder, page);
+        PagingData salesOrderLinePagingData = pagingSvc.generate("salesOrderCard", code, page,
+                salesOrderLineSvc.count(salesOrder));
 
         model.addAttribute("salesOrder", salesOrder);
         model.addAttribute("salesOrderLines", salesOrderLineList);

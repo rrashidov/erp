@@ -159,7 +159,7 @@ public class SalesOrderControllerTest {
         when(svcMock.get(SalesOrderModelRule.TEST_SALES_ORDER_CODE)).thenReturn(salesOrderMock);
 
         when(pagingSvcMock.generate("salesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("salesOrderLine", 1, TEST_SALES_ORDER_LINE_COUNT)).thenReturn(salesOrderLinePagingMock);
+        when(pagingSvcMock.generate("salesOrderCard", TEST_CODE, 1, TEST_SALES_ORDER_LINE_COUNT)).thenReturn(salesOrderLinePagingMock);
 
         controller = new SalesOrderController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvc, salesOrderLineSvcMock, salesOrderPostSvcMock);
     }
@@ -262,7 +262,7 @@ public class SalesOrderControllerTest {
 
     @Test
     public void salesOrderCard_returnsProperTemplate(){
-        String template = controller.card(TEST_CODE, modelMock);
+        String template = controller.card(TEST_CODE, 1, modelMock);
 
         assertEquals("salesOrderCard.html", template);
 
