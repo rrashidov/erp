@@ -1,6 +1,8 @@
 package org.roko.erp.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -8,16 +10,29 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.PostedSalesCreditMemo;
 import org.roko.erp.repositories.PostedSalesCreditMemoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public class PostedSalesCreditMemoServiceTest {
     
     private static final String NON_EXISTING_CODE = "non-existing-code";
 
     private static final String TEST_CODE = "test-code";
+
+    private static final int TEST_PAGE = 12;
+
+    @Captor
+    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
+
+    @Mock
+    private Page<PostedSalesCreditMemo> pageMock;
 
     @Mock
     private PostedSalesCreditMemo postedSalesCreditMemoMock;
@@ -32,6 +47,7 @@ public class PostedSalesCreditMemoServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(postedSalesCreditMemoMock));
+        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
 
         svc = new PostedSalesCreditMemoServiceImpl(repoMock);
     }
@@ -62,6 +78,18 @@ public class PostedSalesCreditMemoServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+    }
+
+    @Test
+    public void listWithPage_delegatesToRepo() {
+        svc.list(TEST_PAGE);
+
+        verify(repoMock).findAll(pageableArgumentCaptor.capture());
+
+        Pageable pageable = pageableArgumentCaptor.getValue();
+
+        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
+        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
     }
 
     @Test

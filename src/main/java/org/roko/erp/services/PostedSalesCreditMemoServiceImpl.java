@@ -3,9 +3,12 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.h2.mvstore.Page.PageReference;
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.PostedSalesCreditMemo;
 import org.roko.erp.repositories.PostedSalesCreditMemoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,6 +40,11 @@ public class PostedSalesCreditMemoServiceImpl implements PostedSalesCreditMemoSe
     @Override
     public List<PostedSalesCreditMemo> list() {
         return repo.findAll();
+    }
+
+    @Override
+    public List<PostedSalesCreditMemo> list(int page) {
+        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
     }
 
     @Override

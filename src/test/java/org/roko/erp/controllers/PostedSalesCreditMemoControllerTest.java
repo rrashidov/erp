@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,10 +24,11 @@ public class PostedSalesCreditMemoControllerTest {
     
     private static final String TEST_CODE = "test-code";
 
+    private static final int TEST_PAGE = 12;
     private static final int TEST_COUNT = 123;
     private static final int TEST_LINE_COUNT = 123;
 
-    private List<PostedSalesCreditMemo> postedSalesCreditMemos = new ArrayList<>();
+    private List<PostedSalesCreditMemo> postedSalesCreditMemos;
 
     private List<PostedSalesCreditMemoLine> postedSalesCreditMemoLines = new ArrayList<>();
 
@@ -57,14 +59,16 @@ public class PostedSalesCreditMemoControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
-        when(svcMock.list()).thenReturn(postedSalesCreditMemos);
+        postedSalesCreditMemos = Arrays.asList(postedSalesCreditMemoMock);
+
+        when(svcMock.list(TEST_PAGE)).thenReturn(postedSalesCreditMemos);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(postedSalesCreditMemoMock);
 
         when(postedSalesCreditMemoLineSvcMock.list(postedSalesCreditMemoMock)).thenReturn(postedSalesCreditMemoLines);
         when(postedSalesCreditMemoLineSvcMock.count(postedSalesCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
 
-        when(pagingSvcMock.generate("postedSalesCreditMemo", 1, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("postedSalesCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
         when(pagingSvcMock.generate("postedSalesCreditMemoLine", 1, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
 
         controller = new PostedSalesCreditMemoController(svcMock, postedSalesCreditMemoLineSvcMock, pagingSvcMock);
@@ -72,7 +76,7 @@ public class PostedSalesCreditMemoControllerTest {
 
     @Test
     public void list_returnsProperTemplate() {
-        String template = controller.list(1, modelMock);
+        String template = controller.list(TEST_PAGE, modelMock);
 
         assertEquals("postedSalesCreditMemoList.html", template);
 

@@ -31,7 +31,7 @@ public class PostedSalesCreditMemoController {
 
     @GetMapping("/postedSalesCreditMemoList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<PostedSalesCreditMemo> postedSalesCreditMemos = svc.list();
+        List<PostedSalesCreditMemo> postedSalesCreditMemos = svc.list(page);
         PagingData pagingData = pagingSvc.generate("postedSalesCreditMemo", page, svc.count());
 
         model.addAttribute("postedSalesCreditMemos", postedSalesCreditMemos);
