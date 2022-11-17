@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ public class PostedPurchaseCreditMemoControllerTest {
     
     private static final String TEST_CODE = "test-code";
 
+    private static final int TEST_PAGE = 23;
     private static final int TEST_COUNT = 123;
     private static final int TEST_LINE_COUNT = 234;
 
@@ -57,7 +59,9 @@ public class PostedPurchaseCreditMemoControllerTest {
     public void setup () {
         MockitoAnnotations.openMocks(this);
 
-        when(svcMock.list()).thenReturn(postedPurchaseCreditMemos);
+        postedPurchaseCreditMemos = Arrays.asList(postedPurchaseCreditMemoMock);
+
+        when(svcMock.list(TEST_PAGE)).thenReturn(postedPurchaseCreditMemos);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(postedPurchaseCreditMemoMock);
 
@@ -72,7 +76,7 @@ public class PostedPurchaseCreditMemoControllerTest {
 
     @Test
     public void list_returnsProperTemplate() {
-        String template = controller.list(modelMock);
+        String template = controller.list(TEST_PAGE, modelMock);
 
         assertEquals("postedPurchaseCreditMemoList.html", template);
 

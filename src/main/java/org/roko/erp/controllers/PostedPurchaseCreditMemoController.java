@@ -30,8 +30,8 @@ public class PostedPurchaseCreditMemoController {
     }
 
     @GetMapping("/postedPurchaseCreditMemoList")
-    public String list(Model model) {
-        List<PostedPurchaseCreditMemo> postedPurchaseCreditMemos = svc.list();
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
+        List<PostedPurchaseCreditMemo> postedPurchaseCreditMemos = svc.list(page);
         PagingData pagingData = pagingSvc.generate("postedPurchaseCreditMemo", 1, svc.count());
 
         model.addAttribute("postedPurchaseCreditMemos", postedPurchaseCreditMemos);
@@ -43,8 +43,10 @@ public class PostedPurchaseCreditMemoController {
     @GetMapping("/postedPurchaseCreditMemoCard")
     public String card(@RequestParam(name = "code") String code, Model model) {
         PostedPurchaseCreditMemo postedPurchaseCreditMemo = svc.get(code);
-        List<PostedPurchaseCreditMemoLine> postedPurchaseCreditMemoLines = postedPurchaseCreditMemoLineSvc.list(postedPurchaseCreditMemo);
-        PagingData pagingData = pagingSvc.generate("postedPurchaseCreditMemoLine", 1, postedPurchaseCreditMemoLineSvc.count(postedPurchaseCreditMemo));
+        List<PostedPurchaseCreditMemoLine> postedPurchaseCreditMemoLines = postedPurchaseCreditMemoLineSvc
+                .list(postedPurchaseCreditMemo);
+        PagingData pagingData = pagingSvc.generate("postedPurchaseCreditMemoLine", 1,
+                postedPurchaseCreditMemoLineSvc.count(postedPurchaseCreditMemo));
 
         model.addAttribute("postedPurchaseCreditMemo", postedPurchaseCreditMemo);
         model.addAttribute("postedPurchaseCreditMemoLines", postedPurchaseCreditMemoLines);
