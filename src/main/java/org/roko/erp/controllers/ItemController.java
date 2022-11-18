@@ -30,7 +30,7 @@ public class ItemController {
     }
 
     @GetMapping("/itemList")
-    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model){
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         model.addAttribute("items", svc.list(page));
 
         PagingData generate = pagingSvc.generate("item", page, svc.count());
@@ -41,14 +41,15 @@ public class ItemController {
     }
 
     @GetMapping("/itemCard")
-    public String card(@RequestParam(name = "code", required = false) String code, Model model){
+    public String card(@RequestParam(name = "code", required = false) String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         Item item = new Item();
 
-        if (code != null){
+        if (code != null) {
             item = svc.get(code);
 
-            model.addAttribute("itemLedgerEntries", itemLedgerEntrySvc.list(item));
-            model.addAttribute("paging", pagingSvc.generate("itemLedgerEntry", 1, itemLedgerEntrySvc.count(item)));
+            model.addAttribute("itemLedgerEntries", itemLedgerEntrySvc.list(item, page));
+            model.addAttribute("paging", pagingSvc.generate("itemCard", code, page, itemLedgerEntrySvc.count(item)));
         }
 
         model.addAttribute("item", item);
@@ -57,11 +58,11 @@ public class ItemController {
     }
 
     @PostMapping("/itemCard")
-    public RedirectView postCard(@ModelAttribute Item item, Model model, 
-    RedirectAttributes attributes){
+    public RedirectView postCard(@ModelAttribute Item item, Model model,
+            RedirectAttributes attributes) {
         Item itemFromDB = svc.get(item.getCode());
 
-        if (itemFromDB == null){
+        if (itemFromDB == null) {
             itemFromDB = new Item();
             itemFromDB.setCode(item.getCode());
         }
@@ -76,7 +77,7 @@ public class ItemController {
     }
 
     @GetMapping("/deleteItem")
-    public RedirectView delete(@RequestParam(name = "code") String code){
+    public RedirectView delete(@RequestParam(name = "code") String code) {
         svc.delete(code);
 
         return new RedirectView("/itemList");

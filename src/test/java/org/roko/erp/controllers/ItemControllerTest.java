@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,7 @@ public class ItemControllerTest {
     private static final double TEST_ITEM_SALES_PRICE = 12.12;
     private static final double TEST_ITEM_PURCHASE_PRICE = 23.23;
 
+    private static final int TEST_PAGE = 12;
     private static final int TEST_ITEM_COUNT = 123123;
     private static final int TEST_ITEM_LEDGER_ENTRY_COUNT = 123;
 
@@ -48,6 +50,9 @@ public class ItemControllerTest {
 
     @Mock
     private Item itemMock;
+
+    @Mock
+    private ItemLedgerEntry itemLedgerEntryMock;
 
     @Mock
     private Model modelMock;
@@ -76,6 +81,8 @@ public class ItemControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        itemLedgerEntries = Arrays.asList(itemLedgerEntryMock);
+
         when(itemMock.getCode()).thenReturn(TEST_ITEM_CODE);
         when(itemMock.getName()).thenReturn(TEST_ITEM_NAME);
         when(itemMock.getSalesPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
@@ -85,11 +92,11 @@ public class ItemControllerTest {
         when(itemServiceMock.count()).thenReturn(TEST_ITEM_COUNT);
         when(itemServiceMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
-        when(itemLedgerEntrySvcMock.list(itemMock)).thenReturn(itemLedgerEntries);
+        when(itemLedgerEntrySvcMock.list(itemMock, TEST_PAGE)).thenReturn(itemLedgerEntries);
         when(itemLedgerEntrySvcMock.count(itemMock)).thenReturn(TEST_ITEM_LEDGER_ENTRY_COUNT);
 
         when(pagingServiceMock.generate(eq("item"), anyInt(), eq(TEST_ITEM_COUNT))).thenReturn(pagingDataMock);
-        when(pagingServiceMock.generate("itemLedgerEntry", 1, TEST_ITEM_LEDGER_ENTRY_COUNT)).thenReturn(itemLedgerEntryPagingDataMock);
+        when(pagingServiceMock.generate("itemCard", TEST_ITEM_CODE, TEST_PAGE, TEST_ITEM_LEDGER_ENTRY_COUNT)).thenReturn(itemLedgerEntryPagingDataMock);
 
         controller = new ItemController(itemServiceMock, pagingServiceMock, itemLedgerEntrySvcMock);
     }
@@ -106,7 +113,7 @@ public class ItemControllerTest {
 
     @Test
     public void itemCardReturnsProperTemplate(){
-        String returnedTemplate = controller.card(null, modelMock);
+        String returnedTemplate = controller.card(null, TEST_PAGE, modelMock);
 
         assertEquals(EXPECTED_ITEM_CARD_TEMPLATE, returnedTemplate);
 
@@ -115,7 +122,7 @@ public class ItemControllerTest {
 
     @Test
     public void itemCardReturnsProperData_whenCalledWithExistingItem(){
-        String returnedTemplate = controller.card(TEST_ITEM_CODE, modelMock);
+        String returnedTemplate = controller.card(TEST_ITEM_CODE, TEST_PAGE, modelMock);
 
         assertEquals(EXPECTED_ITEM_CARD_TEMPLATE, returnedTemplate);
 

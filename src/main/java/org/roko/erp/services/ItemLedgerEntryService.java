@@ -11,6 +11,8 @@ public interface ItemLedgerEntryService {
 
     public List<ItemLedgerEntry> list(Item item);
 
+    public List<ItemLedgerEntry> list(Item item, int page);
+
     public int count(Item item);
     
 }
