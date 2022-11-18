@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
@@ -50,6 +51,12 @@ public class SalesCreditMemoServiceTest {
     private SalesCreditMemo salesCreditMemoMock;
 
     @Mock
+    private SalesCreditMemo salesCreditMemoMock1;
+
+    @Mock
+    private SalesCreditMemo salesCreditMemoMock2;
+
+    @Mock
     private SalesCreditMemo salesCreditMemoToUpdateMock;
 
     @Mock
@@ -62,6 +69,7 @@ public class SalesCreditMemoServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(salesCreditMemoMock));
+        when(repoMock.findAll()).thenReturn(Arrays.asList(salesCreditMemoMock, salesCreditMemoMock1, salesCreditMemoMock2));
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
 
         when(salesCreditMemoToUpdateMock.getCustomer()).thenReturn(updatedCustomerMock);
@@ -116,6 +124,10 @@ public class SalesCreditMemoServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+
+        verify(repoMock).amount(salesCreditMemoMock);
+        verify(repoMock).amount(salesCreditMemoMock1);
+        verify(repoMock).amount(salesCreditMemoMock2);
     }
 
     @Test

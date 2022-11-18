@@ -54,12 +54,22 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
 
     @Override
     public List<SalesCreditMemo> list() {
-        return repo.findAll();
+        List<SalesCreditMemo> salesCreditMemos = repo.findAll();
+
+        salesCreditMemos.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return salesCreditMemos;
     }
 
     @Override
     public List<SalesCreditMemo> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+        List<SalesCreditMemo> salesCreditMemos = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+
+        salesCreditMemos.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return salesCreditMemos;
     }
 
     @Override
