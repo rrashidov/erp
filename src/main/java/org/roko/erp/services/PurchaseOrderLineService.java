@@ -17,6 +17,8 @@ public interface PurchaseOrderLineService {
     public PurchaseOrderLine get(PurchaseOrderLineId id);
 
     public List<PurchaseOrderLine> list(PurchaseOrder purchaseOrder);
-    
+
+    public List<PurchaseOrderLine> list(PurchaseOrder purchaseOrder, int page);
+
     public int count(PurchaseOrder purchaseOrder);
 }

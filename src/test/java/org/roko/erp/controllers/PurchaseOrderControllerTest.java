@@ -73,6 +73,9 @@ public class PurchaseOrderControllerTest {
     private PurchaseOrder purchaseOrderMock;
 
     @Mock
+    private PurchaseOrderLine purchaseOrderLineMock;
+
+    @Mock
     private PaymentMethod paymentMethodMock;
 
     @Mock
@@ -113,6 +116,8 @@ public class PurchaseOrderControllerTest {
 
         purchaseOrders = Arrays.asList(purchaseOrderMock);
 
+        purchaseOrderLines = Arrays.asList(purchaseOrderLineMock);
+
         when(purchaseOrderMock.getCode()).thenReturn(TEST_CODE);
         when(purchaseOrderMock.getVendor()).thenReturn(vendorMock);
         when(purchaseOrderMock.getPaymentMethod()).thenReturn(paymentMethodMock);
@@ -139,11 +144,11 @@ public class PurchaseOrderControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(purchaseOrderMock);
 
-        when(purchaseOrderLineSvcMock.list(purchaseOrderMock)).thenReturn(purchaseOrderLines);
+        when(purchaseOrderLineSvcMock.list(purchaseOrderMock, TEST_PAGE)).thenReturn(purchaseOrderLines);
         when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(TEST_LINES_COUNT);
 
         when(pagingSvcMock.generate("purchaseOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("purchaseOrderLine", 1, TEST_LINES_COUNT)).thenReturn(purchaseOrderLinePagingMock);
+        when(pagingSvcMock.generate("purchaseOrderCard", TEST_CODE, TEST_PAGE, TEST_LINES_COUNT)).thenReturn(purchaseOrderLinePagingMock);
 
         controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, vendorSvcMock, paymentMethodSvcMock, pagingSvcMock, purchaseOrderPostSvcMock);
     }
@@ -245,7 +250,7 @@ public class PurchaseOrderControllerTest {
 
     @Test
     public void card_returnsProperTemplate(){
-        String template = controller.card(TEST_CODE, modelMock);
+        String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
 
         assertEquals("purchaseOrderCard.html", template);
 

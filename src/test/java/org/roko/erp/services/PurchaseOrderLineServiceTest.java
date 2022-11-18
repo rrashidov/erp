@@ -1,6 +1,9 @@
 package org.roko.erp.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -8,14 +11,27 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.repositories.PurchaseOrderLineRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public class PurchaseOrderLineServiceTest {
+
+    private static final int TEST_PAGE = 12;
+
+    @Captor
+    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
+
+    @Mock
+    private Page<PurchaseOrderLine> pageMock;
 
     @Mock
     private PurchaseOrder purchaseOrderMock;
@@ -39,6 +55,7 @@ public class PurchaseOrderLineServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findById(purchaseOrderLineIdMock)).thenReturn(Optional.of(purchaseOrderLineMock));
+        when(repoMock.listForPurchaseOrder(eq(purchaseOrderMock), any(Pageable.class))).thenReturn(pageMock);
 
         svc = new PurchaseOrderLineServiceImpl(repoMock);
     }
@@ -84,6 +101,18 @@ public class PurchaseOrderLineServiceTest {
         svc.list(purchaseOrderMock);
 
         verify(repoMock).listForPurchaseOrder(purchaseOrderMock);
+    }
+
+    @Test
+    public void listWithPage_delegatesToRepo(){
+        svc.list(purchaseOrderMock, TEST_PAGE);
+
+        verify(repoMock).listForPurchaseOrder(eq(purchaseOrderMock), pageableArgumentCaptor.capture());
+
+        Pageable pageable = pageableArgumentCaptor.getValue();
+
+        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
+        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
     }
 
     @Test

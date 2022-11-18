@@ -3,11 +3,13 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.repositories.PurchaseOrderLineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,10 +60,16 @@ public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
     }
 
     @Override
+    public List<PurchaseOrderLine> list(PurchaseOrder purchaseOrder, int page) {
+        return repo.listForPurchaseOrder(purchaseOrder, PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE))
+                .toList();
+    }
+
+    @Override
     public int count(PurchaseOrder purchaseOrder) {
         return new Long(repo.countForPurchaseOrder(purchaseOrder)).intValue();
     }
-    
+
     private void transferFields(PurchaseOrderLine source, PurchaseOrderLine target) {
         target.setItem(source.getItem());
         target.setQuantity(source.getQuantity());

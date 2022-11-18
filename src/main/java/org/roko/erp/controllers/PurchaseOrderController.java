@@ -35,8 +35,10 @@ public class PurchaseOrderController {
     private PurchaseOrderPostService purchaseOrderPostSvc;
 
     @Autowired
-    public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc, VendorService vendorSvc,
-            PaymentMethodService paymentMethodSvc, PagingService pagingSvc, PurchaseOrderPostService purchaseOrderPostSvc) {
+    public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc,
+            VendorService vendorSvc,
+            PaymentMethodService paymentMethodSvc, PagingService pagingSvc,
+            PurchaseOrderPostService purchaseOrderPostSvc) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.vendorSvc = vendorSvc;
@@ -60,11 +62,11 @@ public class PurchaseOrderController {
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
         PurchaseOrderModel purchaseOrderModel = new PurchaseOrderModel();
 
-        if (code != null){
+        if (code != null) {
             PurchaseOrder purchaseOrder = svc.get(code);
             toModel(purchaseOrder, purchaseOrderModel);
         }
-        
+
         List<Vendor> vendors = vendorSvc.list();
 
         model.addAttribute("purchaseOrderModel", purchaseOrderModel);
@@ -108,29 +110,30 @@ public class PurchaseOrderController {
     }
 
     @GetMapping("/deletePurchaseOrder")
-    public RedirectView delete(@RequestParam(name="code") String code) {
+    public RedirectView delete(@RequestParam(name = "code") String code) {
         svc.delete(code);
-        
+
         return new RedirectView("/purchaseOrderList");
     }
 
     @GetMapping("/purchaseOrderCard")
-    public String card(@RequestParam(name="code") String code, Model model) {
+    public String card(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         PurchaseOrder purchaseOrder = svc.get(code);
-        List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineSvc.list(purchaseOrder);
-        PagingData pagingData = pagingSvc.generate("purchaseOrderLine", 1, purchaseOrderLineSvc.count(purchaseOrder));
+        List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineSvc.list(purchaseOrder, page);
+        PagingData pagingData = pagingSvc.generate("purchaseOrderCard", code, page, purchaseOrderLineSvc.count(purchaseOrder));
 
         model.addAttribute("purchaseOrder", purchaseOrder);
         model.addAttribute("purchaseOrderLines", purchaseOrderLines);
         model.addAttribute("paging", pagingData);
-        
+
         return "purchaseOrderCard.html";
     }
 
     @GetMapping("/postPurchaseOrder")
-    public RedirectView post(@RequestParam(name="code") String code) {
+    public RedirectView post(@RequestParam(name = "code") String code) {
         purchaseOrderPostSvc.post(code);
-        
+
         return new RedirectView("/purchaseOrderList");
     }
 
@@ -148,6 +151,7 @@ public class PurchaseOrderController {
         purchaseOrder.setDate(purchaseOrderModel.getDate());
         purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
     }
+
     private void toModel(PurchaseOrder purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
         purchaseOrderModel.setCode(purchaseOrder.getCode());
         purchaseOrderModel.setDate(purchaseOrder.getDate());
