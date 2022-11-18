@@ -36,6 +36,9 @@ public class PostedSalesOrderControllerTest {
     private PostedSalesOrder postedSalesOrderMock;
 
     @Mock
+    private PostedSalesOrderLine postedSalesOrderLineMock;
+
+    @Mock
     private PagingData pagingDataMock;
 
     @Mock
@@ -59,17 +62,19 @@ public class PostedSalesOrderControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        postedSalesOrderLines = Arrays.asList(postedSalesOrderLineMock);
+
         postedSalesOrders = Arrays.asList(postedSalesOrderMock);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(postedSalesOrders);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(postedSalesOrderMock);
 
-        when(lineSvcMock.list(postedSalesOrderMock)).thenReturn(postedSalesOrderLines);
+        when(lineSvcMock.list(postedSalesOrderMock, TEST_PAGE)).thenReturn(postedSalesOrderLines);
         when(lineSvcMock.count(postedSalesOrderMock)).thenReturn(TEST_LINE_COUNT);
 
         when(pagingSvcMock.generate("postedSalesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedSalesOrderLine", 1, TEST_LINE_COUNT)).thenReturn(linePagingDataMock);
+        when(pagingSvcMock.generate("postedSalesOrderCard", TEST_CODE, TEST_PAGE, TEST_LINE_COUNT)).thenReturn(linePagingDataMock);
 
         controller = new PostedSalesOrderController(svcMock, lineSvcMock, pagingSvcMock);
     }
@@ -86,7 +91,7 @@ public class PostedSalesOrderControllerTest {
 
     @Test
     public void card_returnsProperTemplate() {
-        String template = controller.card(TEST_CODE, modelMock);
+        String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
 
         assertEquals("postedSalesOrderCard.html", template);
 

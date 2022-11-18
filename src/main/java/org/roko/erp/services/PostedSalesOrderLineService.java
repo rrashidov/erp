@@ -11,5 +11,7 @@ public interface PostedSalesOrderLineService {
 
     public List<PostedSalesOrderLine> list(PostedSalesOrder PostedSalesOrder);
 
+    public List<PostedSalesOrderLine> list(PostedSalesOrder PostedSalesOrder, int page);
+
     public int count(PostedSalesOrder postedSalesOrder);
 }

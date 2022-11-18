@@ -22,7 +22,8 @@ public class PostedSalesOrderController {
     private PostedSalesOrderLineService lineSvc;
 
     @Autowired
-    public PostedSalesOrderController(PostedSalesOrderService svc, PostedSalesOrderLineService lineSvc, PagingService pagingSvc) {
+    public PostedSalesOrderController(PostedSalesOrderService svc, PostedSalesOrderLineService lineSvc,
+            PagingService pagingSvc) {
         this.svc = svc;
         this.lineSvc = lineSvc;
         this.pagingSvc = pagingSvc;
@@ -40,15 +41,16 @@ public class PostedSalesOrderController {
     }
 
     @GetMapping("/postedSalesOrderCard")
-    public String card(@RequestParam(name="code") String code, Model model) {
+    public String card(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         PostedSalesOrder postedSalesOrder = svc.get(code);
-        List<PostedSalesOrderLine> postedSalesOrderLines = lineSvc.list(postedSalesOrder);
-        PagingData pagingData = pagingSvc.generate("postedSalesOrderLine", 1, lineSvc.count(postedSalesOrder));
+        List<PostedSalesOrderLine> postedSalesOrderLines = lineSvc.list(postedSalesOrder, page);
+        PagingData pagingData = pagingSvc.generate("postedSalesOrderCard", code, page, lineSvc.count(postedSalesOrder));
 
         model.addAttribute("postedSalesOrder", postedSalesOrder);
         model.addAttribute("postedSalesOrderLines", postedSalesOrderLines);
         model.addAttribute("paging", pagingData);
-        
+
         return "postedSalesOrderCard.html";
     }
 }
