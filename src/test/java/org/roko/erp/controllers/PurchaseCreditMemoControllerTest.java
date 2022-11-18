@@ -71,6 +71,9 @@ public class PurchaseCreditMemoControllerTest {
     private PurchaseCreditMemo purchaseCreditMemoMock;
 
     @Mock
+    private PurchaseCreditMemoLine purchaseCreditMemoLineMock;
+
+    @Mock
     private PaymentMethod paymentMethodMock;
 
     @Mock
@@ -110,6 +113,8 @@ public class PurchaseCreditMemoControllerTest {
         MockitoAnnotations.openMocks(this);
 
         purchaseCreditMemos = Arrays.asList(purchaseCreditMemoMock);
+        
+        purchaseCreditMemoLines = Arrays.asList(purchaseCreditMemoLineMock);
 
         when(purchaseCreditMemoModelMock.getCode()).thenReturn("");
         when(purchaseCreditMemoModelMock.getVendorCode()).thenReturn(TEST_VENDOR_CODE);
@@ -126,7 +131,7 @@ public class PurchaseCreditMemoControllerTest {
         when(svcMock.get(TEST_PURCHASE_CREDIT_MEMO_CODE)).thenReturn(purchaseCreditMemoMock);
 
         when(pagingSvcMock.generate("purchaseCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("purchaseCreditMemoLine", 1, TEST_LINE_COUNT))
+        when(pagingSvcMock.generate("purchaseCreditMemoCard", TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_PAGE, TEST_LINE_COUNT))
                 .thenReturn(purchaseCreditMemoLinePagingData);
 
         when(vendorMock.getCode()).thenReturn(TEST_VENDOR_CODE);
@@ -141,7 +146,7 @@ public class PurchaseCreditMemoControllerTest {
         when(paymentMethodSvcMock.list()).thenReturn(paymentMethods);
         when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
 
-        when(purchaseCreditMemoLineSvcMock.list(purchaseCreditMemoMock)).thenReturn(purchaseCreditMemoLines);
+        when(purchaseCreditMemoLineSvcMock.list(purchaseCreditMemoMock, TEST_PAGE)).thenReturn(purchaseCreditMemoLines);
         when(purchaseCreditMemoLineSvcMock.count(purchaseCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
 
         controller = new PurchaseCreditMemoController(svcMock, pagingSvcMock, vendorSvcMock, paymentMethodSvcMock,
@@ -247,7 +252,7 @@ public class PurchaseCreditMemoControllerTest {
 
     @Test
     public void card_returnsProperTemplate() {
-        String template = controller.card(TEST_PURCHASE_CREDIT_MEMO_CODE, modelMock);
+        String template = controller.card(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_PAGE, modelMock);
 
         assertEquals("purchaseCreditMemoCard.html", template);
 

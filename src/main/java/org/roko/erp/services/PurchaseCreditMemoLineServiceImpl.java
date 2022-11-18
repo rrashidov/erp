@@ -3,11 +3,13 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.PurchaseCreditMemo;
 import org.roko.erp.model.PurchaseCreditMemoLine;
 import org.roko.erp.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.repositories.PurchaseCreditMemoLineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,7 +46,7 @@ public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLine
     public PurchaseCreditMemoLine get(PurchaseCreditMemoLineId id) {
         Optional<PurchaseCreditMemoLine> purchaseCreditMemoLineOptional = repo.findById(id);
 
-        if (purchaseCreditMemoLineOptional.isPresent()){
+        if (purchaseCreditMemoLineOptional.isPresent()) {
             return purchaseCreditMemoLineOptional.get();
         }
 
@@ -57,10 +59,15 @@ public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLine
     }
 
     @Override
+    public List<PurchaseCreditMemoLine> list(PurchaseCreditMemo purchaseCreditMemo, int page) {
+        return repo.findFor(purchaseCreditMemo, PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+    }
+
+    @Override
     public int count(PurchaseCreditMemo purchaseCreditMemo) {
         return new Long(repo.count(purchaseCreditMemo)).intValue();
     }
-    
+
     private void transferFields(PurchaseCreditMemoLine source,
             PurchaseCreditMemoLine target) {
         target.setItem(source.getItem());

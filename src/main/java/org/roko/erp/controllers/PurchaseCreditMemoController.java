@@ -112,10 +112,11 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/purchaseCreditMemoCard")
-    public String card(@RequestParam(name = "code") String code, Model model) {
+    public String card(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
-        List<PurchaseCreditMemoLine> purchaseCreditMemoLines = purchaseCreditMemoLineSvc.list(purchaseCreditMemo);
-        PagingData pagingData = pagingSvc.generate("purchaseCreditMemoLine", 1,
+        List<PurchaseCreditMemoLine> purchaseCreditMemoLines = purchaseCreditMemoLineSvc.list(purchaseCreditMemo, page);
+        PagingData pagingData = pagingSvc.generate("purchaseCreditMemoCard", code, page,
                 purchaseCreditMemoLineSvc.count(purchaseCreditMemo));
 
         model.addAttribute("purchaseCreditMemo", purchaseCreditMemo);
@@ -128,7 +129,7 @@ public class PurchaseCreditMemoController {
     @GetMapping("/postPurchaseCreditMemo")
     public RedirectView post(@RequestParam(name = "code") String code) {
         purchaseCreditMemoPostSvc.post(code);
-        
+
         return new RedirectView("/purchaseCreditMemoList");
     }
 
