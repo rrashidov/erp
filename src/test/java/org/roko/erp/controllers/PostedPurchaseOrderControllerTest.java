@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,12 @@ public class PostedPurchaseOrderControllerTest {
     private List<PostedPurchaseOrderLine> postedPurchaseOrderLines = new ArrayList<>();
 
     @Mock
+    private PostedPurchaseOrder postedPurchaseOrderMock;
+
+    @Mock
+    private PostedPurchaseOrderLine postedPurchaseOrderLineMock;
+
+    @Mock
     private Model modelMock;
 
     @Mock
@@ -51,22 +58,21 @@ public class PostedPurchaseOrderControllerTest {
 
     private PostedPurchaseOrderController controller;
 
-    @Mock
-    private PostedPurchaseOrder postedPurchaseOrderMock;
-
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        postedPurchaseOrderLines = Arrays.asList(postedPurchaseOrderLineMock);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(postedPurchaseOrders);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(postedPurchaseOrderMock);
 
-        when(postedPurchaseOrderLineSvcMock.list(postedPurchaseOrderMock)).thenReturn(postedPurchaseOrderLines);
+        when(postedPurchaseOrderLineSvcMock.list(postedPurchaseOrderMock, TEST_PAGE)).thenReturn(postedPurchaseOrderLines);
         when(postedPurchaseOrderLineSvcMock.count(postedPurchaseOrderMock)).thenReturn(TEST_LINE_COUNT);
 
         when(pagingSvcMock.generate("postedPurchaseOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedPurchaseOrderLine", 1, TEST_LINE_COUNT))
+        when(pagingSvcMock.generate("postedPurchaseOrderCard", TEST_CODE, TEST_PAGE, TEST_LINE_COUNT))
                 .thenReturn(postedPurchaseOrderLinePagingDataMock);
 
         controller = new PostedPurchaseOrderController(svcMock, postedPurchaseOrderLineSvcMock, pagingSvcMock);
@@ -84,7 +90,7 @@ public class PostedPurchaseOrderControllerTest {
 
     @Test
     public void card_returnsProperTemplate() {
-        String template = controller.card(TEST_CODE, modelMock);
+        String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
 
         assertEquals("postedPurchaseOrderCard.html", template);
 
