@@ -49,6 +49,9 @@ public class VendorControllerTest {
     private Vendor vendorMock;
 
     @Mock
+    private VendorLedgerEntry vendorLedgerentryMock;
+
+    @Mock
     private PaymentMethod paymentMethodMock;
 
     @Mock
@@ -89,6 +92,8 @@ public class VendorControllerTest {
 
         vendorList = Arrays.asList(vendorMock);
 
+        vendorLedgerEntries = Arrays.asList(vendorLedgerentryMock);
+
         when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
         when(vendorMock.getCode()).thenReturn(TEST_CODE);
@@ -104,7 +109,7 @@ public class VendorControllerTest {
         when(paymentMethodSvcMock.list()).thenReturn(paymentMethodList);
         when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
 
-        when(vendorLedgerEntrySvcMock.findFor(vendorMock)).thenReturn(vendorLedgerEntries);
+        when(vendorLedgerEntrySvcMock.findFor(vendorMock, TEST_PAGE)).thenReturn(vendorLedgerEntries);
         when(vendorLedgerEntrySvcMock.count(vendorMock)).thenReturn(TEST_VENDOR_LEDGER_ENTRY_COUNT);
 
         when(vendorSvcMock.list(TEST_PAGE)).thenReturn(vendorList);
@@ -112,7 +117,7 @@ public class VendorControllerTest {
         when(vendorSvcMock.get(TEST_CODE)).thenReturn(vendorMock);
 
         when(pagingSvcMock.generate("vendor", TEST_PAGE, TEST_RECORD_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("vendorLedgerEntry", 1, TEST_VENDOR_LEDGER_ENTRY_COUNT)).thenReturn(vendorLedgerEntryPagingDataMock);
+        when(pagingSvcMock.generate("vendorCard", TEST_CODE, TEST_PAGE, TEST_VENDOR_LEDGER_ENTRY_COUNT)).thenReturn(vendorLedgerEntryPagingDataMock);
 
         controller = new VendorController(vendorSvcMock, pagingSvcMock, paymentMethodSvcMock, vendorLedgerEntrySvcMock);
     }
@@ -129,7 +134,7 @@ public class VendorControllerTest {
 
     @Test
     public void cardReturnsProperTemplate_whenCalledForNewVendor(){
-        String template = controller.card(null, modelMock);
+        String template = controller.card(null, TEST_PAGE, modelMock);
 
         assertEquals("vendorCard.html", template);
 
@@ -146,7 +151,7 @@ public class VendorControllerTest {
 
     @Test
     public void cardReturnsProperTemplate_whenCalledForExistingVendor(){
-        String template = controller.card(TEST_CODE, modelMock);
+        String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
 
         assertEquals("vendorCard.html", template);
 

@@ -47,10 +47,11 @@ public class VendorController {
     }
 
     @GetMapping("/vendorCard")
-    public String card(@RequestParam(name = "code", required = false) String code, Model model) {
+    public String card(@RequestParam(name = "code", required = false) String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         VendorModel vendorModel = new VendorModel();
 
-        if (code != null){
+        if (code != null) {
             Vendor vendor = vendorSvc.get(code);
 
             vendorModel.setCode(vendor.getCode());
@@ -58,8 +59,9 @@ public class VendorController {
             vendorModel.setAddress(vendor.getAddress());
             vendorModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
 
-            model.addAttribute("vendorLedgerEntries", vendorLedgerEntrySvc.findFor(vendor));
-            model.addAttribute("paging", pagingSvc.generate("vendorLedgerEntry", 1, vendorLedgerEntrySvc.count(vendor)));
+            model.addAttribute("vendorLedgerEntries", vendorLedgerEntrySvc.findFor(vendor, page));
+            model.addAttribute("paging",
+                    pagingSvc.generate("vendorCard", code, page, vendorLedgerEntrySvc.count(vendor)));
         }
 
         model.addAttribute("vendor", vendorModel);
@@ -69,7 +71,7 @@ public class VendorController {
     }
 
     @PostMapping("/vendorCard")
-    public RedirectView post(@ModelAttribute VendorModel vendorModel){
+    public RedirectView post(@ModelAttribute VendorModel vendorModel) {
         Vendor vendor = new Vendor();
 
         vendor.setCode(vendorModel.getCode());
@@ -83,9 +85,9 @@ public class VendorController {
     }
 
     @GetMapping("/deleteVendor")
-    public RedirectView delete(@RequestParam(name="code", required = true) String code){
+    public RedirectView delete(@RequestParam(name = "code", required = true) String code) {
         vendorSvc.delete(code);
-        
+
         return new RedirectView("/vendorList");
     }
 }
