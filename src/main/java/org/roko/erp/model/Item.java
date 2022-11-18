@@ -7,14 +7,14 @@ import javax.persistence.Id;
 public class Item {
 
 	@Id
-	private String code;
+	private String code = "";
 	
-	private String name;
+	private String name = "";
 	
-	private double salesPrice;
-	private double purchasePrice;
+	private double salesPrice = 0.00;
+	private double purchasePrice = 0.00;
 	
-	private double inventory;
+	private double inventory = 0.00;
 	
 	public String getCode() {
 		return code;

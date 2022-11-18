@@ -54,7 +54,7 @@
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
 
-                    <div class="container-fluid">
+                    <div th:if="*{code} != ''" class="container-fluid">
                         <ul class="nav nav-tabs">
                           <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">Ledger Entries</a>
