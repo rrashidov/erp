@@ -65,11 +65,11 @@ public class PostedPurchaseCreditMemoControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(postedPurchaseCreditMemoMock);
 
-        when(postedPurchaseCreditMemoLineSvcMock.list(postedPurchaseCreditMemoMock)).thenReturn(postedPurchaseCreditMemoLines);
+        when(postedPurchaseCreditMemoLineSvcMock.list(postedPurchaseCreditMemoMock, TEST_PAGE)).thenReturn(postedPurchaseCreditMemoLines);
         when(postedPurchaseCreditMemoLineSvcMock.count(postedPurchaseCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
 
         when(pagingSvcMock.generate("postedPurchaseCreditMemo", 1, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedPurchaseCreditMemoLine", 1, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
+        when(pagingSvcMock.generate("postedPurchaseCreditMemoCard", TEST_CODE, TEST_PAGE, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
 
         controller = new PostedPurchaseCreditMemoController(svcMock, postedPurchaseCreditMemoLineSvcMock, pagingSvcMock);
     }
@@ -86,7 +86,7 @@ public class PostedPurchaseCreditMemoControllerTest {
 
     @Test
     public void card_returnsProperTemplate() {
-        String template = controller.card(TEST_CODE, modelMock);
+        String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
 
         assertEquals("postedPurchaseCreditMemoCard.html", template);
 
