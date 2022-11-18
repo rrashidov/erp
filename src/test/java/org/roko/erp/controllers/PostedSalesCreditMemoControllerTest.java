@@ -30,7 +30,10 @@ public class PostedSalesCreditMemoControllerTest {
 
     private List<PostedSalesCreditMemo> postedSalesCreditMemos;
 
-    private List<PostedSalesCreditMemoLine> postedSalesCreditMemoLines = new ArrayList<>();
+    private List<PostedSalesCreditMemoLine> postedSalesCreditMemoLines;
+
+    @Mock
+    private PostedSalesCreditMemoLine postedSalesCreditMemoLineMock;
 
     @Mock
     private PostedSalesCreditMemo postedSalesCreditMemoMock;
@@ -59,17 +62,19 @@ public class PostedSalesCreditMemoControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
+        postedSalesCreditMemoLines = Arrays.asList(postedSalesCreditMemoLineMock);
+
         postedSalesCreditMemos = Arrays.asList(postedSalesCreditMemoMock);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(postedSalesCreditMemos);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(postedSalesCreditMemoMock);
 
-        when(postedSalesCreditMemoLineSvcMock.list(postedSalesCreditMemoMock)).thenReturn(postedSalesCreditMemoLines);
+        when(postedSalesCreditMemoLineSvcMock.list(postedSalesCreditMemoMock, TEST_PAGE)).thenReturn(postedSalesCreditMemoLines);
         when(postedSalesCreditMemoLineSvcMock.count(postedSalesCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
 
         when(pagingSvcMock.generate("postedSalesCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedSalesCreditMemoLine", 1, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
+        when(pagingSvcMock.generate("postedSalesCreditMemoCard", TEST_CODE, TEST_PAGE, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
 
         controller = new PostedSalesCreditMemoController(svcMock, postedSalesCreditMemoLineSvcMock, pagingSvcMock);
     }
@@ -86,7 +91,7 @@ public class PostedSalesCreditMemoControllerTest {
 
     @Test
     public void card_returnsProperTemplate(){
-        String template = controller.card(TEST_CODE, modelMock);
+        String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
 
         assertEquals("postedSalesCreditMemoCard.html", template);
 

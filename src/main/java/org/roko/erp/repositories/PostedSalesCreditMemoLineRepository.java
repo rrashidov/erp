@@ -5,6 +5,8 @@ import java.util.List;
 import org.roko.erp.model.PostedSalesCreditMemo;
 import org.roko.erp.model.PostedSalesCreditMemoLine;
 import org.roko.erp.model.jpa.PostedSalesCreditMemoLineId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +19,10 @@ public interface PostedSalesCreditMemoLineRepository
         @Query("SELECT postedSalesCreditMemoLine FROM PostedSalesCreditMemoLine postedSalesCreditMemoLine WHERE postedSalesCreditMemoLine.postedSalesCreditMemo = :postedSalesCreditMemo")
         public List<PostedSalesCreditMemoLine> findFor(
                         @Param("postedSalesCreditMemo") PostedSalesCreditMemo postedSalesCreditMemo);
+
+        @Query("SELECT postedSalesCreditMemoLine FROM PostedSalesCreditMemoLine postedSalesCreditMemoLine WHERE postedSalesCreditMemoLine.postedSalesCreditMemo = :postedSalesCreditMemo")
+        public Page<PostedSalesCreditMemoLine> findFor(
+                        @Param("postedSalesCreditMemo") PostedSalesCreditMemo postedSalesCreditMemo, Pageable pageable);
 
         @Query("SELECT COUNT(postedSalesCreditMemoLine) FROM PostedSalesCreditMemoLine postedSalesCreditMemoLine WHERE postedSalesCreditMemoLine.postedSalesCreditMemo = :postedSalesCreditMemo")
         public long count(
