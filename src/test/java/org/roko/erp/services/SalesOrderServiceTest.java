@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,12 @@ public class SalesOrderServiceTest {
 	private SalesOrder salesOrderMock;
 
     @Mock
+    private SalesOrder salesOrderMock1;
+
+    @Mock
+    private SalesOrder salesOrderMock2;
+
+    @Mock
     private SalesOrderRepository repoMock;
     
     private SalesOrderService svc;
@@ -46,6 +53,7 @@ public class SalesOrderServiceTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
         
+        when(repoMock.findAll()).thenReturn(Arrays.asList(salesOrderMock, salesOrderMock1, salesOrderMock2));
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(salesOrderMock));
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
 
@@ -93,6 +101,10 @@ public class SalesOrderServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+
+        verify(repoMock).amount(salesOrderMock);
+        verify(repoMock).amount(salesOrderMock1);
+        verify(repoMock).amount(salesOrderMock2);
     }
 
     @Test

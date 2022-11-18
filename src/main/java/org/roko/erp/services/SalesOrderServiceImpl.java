@@ -54,12 +54,22 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 
     @Override
     public List<SalesOrder> list() {
-        return repo.findAll();
+        List<SalesOrder> salesOrders = repo.findAll();
+
+        salesOrders.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return salesOrders;
     }
 
     @Override
     public List<SalesOrder> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+        List<SalesOrder> salesOrders = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+
+        salesOrders.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return salesOrders;
     }
 
     @Override
