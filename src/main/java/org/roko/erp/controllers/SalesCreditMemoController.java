@@ -96,7 +96,7 @@ public class SalesCreditMemoController {
             redirectAttributesMock.addAttribute("code", createSalesCreditMemo.getCode());
         } else {
             updateSalesCreditMemo(salesCreditMemoModel);
-            
+
             redirectAttributesMock.addAttribute("code", salesCreditMemoModel.getCode());
         }
 
@@ -111,22 +111,24 @@ public class SalesCreditMemoController {
     }
 
     @GetMapping("/salesCreditMemoCard")
-    public String card(@RequestParam(name="code") String code, Model model) {
+    public String card(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         SalesCreditMemo salesCreditMemo = svc.get(code);
-        List<SalesCreditMemoLine> salesCreditMemoLines = salesCreditMemoLineSvc.list(salesCreditMemo);
-        PagingData pagingData = pagingSvc.generate("salesCreditMemoLine", 1, salesCreditMemoLineSvc.count(salesCreditMemo));
+        List<SalesCreditMemoLine> salesCreditMemoLines = salesCreditMemoLineSvc.list(salesCreditMemo, page);
+        PagingData pagingData = pagingSvc.generate("salesCreditMemoCard", code, page,
+                salesCreditMemoLineSvc.count(salesCreditMemo));
 
         model.addAttribute("salesCreditMemo", salesCreditMemo);
         model.addAttribute("salesCreditMemoLines", salesCreditMemoLines);
         model.addAttribute("paging", pagingData);
-        
+
         return "salesCreditMemoCard.html";
     }
 
     @GetMapping("/postSalesCreditMemo")
-    public RedirectView post(@RequestParam(name="code") String code) {
+    public RedirectView post(@RequestParam(name = "code") String code) {
         salesCreditMemoPostSvc.post(code);
-        
+
         return new RedirectView("/salesCreditMemoList");
     }
 

@@ -18,5 +18,7 @@ public interface SalesCreditMemoLineService {
 
     public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo);
 
+    public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo, int page);
+
     public int count(SalesCreditMemo salesCreditMemo);
 }

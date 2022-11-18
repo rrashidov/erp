@@ -34,7 +34,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesCreditMemoControllerTest {
 
-
     private static final String TEST_SALES_CREDIT_MEMO_CODE = "test-code";
 
     private static final String TEST_CUSTOMER_CODE = "test-customer-code";
@@ -109,7 +108,7 @@ public class SalesCreditMemoControllerTest {
     private SalesCreditMemoController controller;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
         salesCreditMemos = Arrays.asList(salesCreditMemoMock);
@@ -143,13 +142,15 @@ public class SalesCreditMemoControllerTest {
         when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(TEST_SALES_CREDIT_MEMO_LINE_COUNT);
 
         when(pagingSvcMock.generate("salesCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("salesCreditMemoLine", 1, TEST_SALES_CREDIT_MEMO_LINE_COUNT)).thenReturn(salesCreditMemoLinePagingMock);
+        when(pagingSvcMock.generate("salesCreditMemoCard", TEST_SALES_CREDIT_MEMO_CODE, TEST_PAGE,
+                TEST_SALES_CREDIT_MEMO_LINE_COUNT)).thenReturn(salesCreditMemoLinePagingMock);
 
-        controller = new SalesCreditMemoController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvcMock, salesCreditMemoLineSvcMock, salesCreditMemoPostSvcMock);
+        controller = new SalesCreditMemoController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvcMock,
+                salesCreditMemoLineSvcMock, salesCreditMemoPostSvcMock);
     }
 
     @Test
-    public void listReturnsProperTemplate(){
+    public void listReturnsProperTemplate() {
         String template = controller.list(TEST_PAGE, modelMock);
 
         assertEquals("salesCreditMemoList.html", template);
@@ -159,7 +160,7 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void wizardReturnsProperTemplate_whenCalledForNew(){
+    public void wizardReturnsProperTemplate_whenCalledForNew() {
         String template = controller.wizard(null, modelMock);
 
         assertEquals("salesCreditMemoWizardFirstPage.html", template);
@@ -176,7 +177,7 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void wizardReturnsProperTemplate_whenCalledForExisting(){
+    public void wizardReturnsProperTemplate_whenCalledForExisting() {
         String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, modelMock);
 
         assertEquals("salesCreditMemoWizardFirstPage.html", template);
@@ -194,7 +195,7 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void postWizardFirstPage_returnsProperTemplate(){
+    public void postWizardFirstPage_returnsProperTemplate() {
         String template = controller.postWizardFirstPage(salesCreditMemoModelMock, modelMock);
 
         assertEquals("salesCreditMemoWizardSecondPage.html", template);
@@ -206,7 +207,7 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void postWizardSecondPage_createsSalesCreditMemoAndReturnsProperTemplate_whenCalledForNew(){
+    public void postWizardSecondPage_createsSalesCreditMemoAndReturnsProperTemplate_whenCalledForNew() {
         RedirectView redirectView = controller.postWizardSecondPage(salesCreditMemoModelMock, redirectAttributesMock);
 
         assertEquals("/salesCreditMemoCard", redirectView.getUrl());
@@ -233,7 +234,7 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void delete_deletesSalesCreditMemo(){
+    public void delete_deletesSalesCreditMemo() {
         RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE);
 
         assertEquals("/salesCreditMemoList", redirectView.getUrl());
@@ -242,8 +243,8 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void card_returnsProperTemplate(){
-        String template = controller.card(TEST_SALES_CREDIT_MEMO_CODE, modelMock);
+    public void card_returnsProperTemplate() {
+        String template = controller.card(TEST_SALES_CREDIT_MEMO_CODE, TEST_PAGE, modelMock);
 
         assertEquals("salesCreditMemoCard.html", template);
 

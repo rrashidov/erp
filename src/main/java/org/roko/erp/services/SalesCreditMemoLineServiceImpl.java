@@ -3,10 +3,12 @@ package org.roko.erp.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.controllers.paging.PagingServiceImpl;
 import org.roko.erp.model.SalesCreditMemo;
 import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.repositories.SalesCreditMemoLineRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,6 +55,11 @@ public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineServic
     @Override
     public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo) {
         return repo.findForSalesCreditMemo(salesCreditMemo);
+    }
+
+    @Override
+    public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo, int page) {
+        return repo.findForSalesCreditMemo(salesCreditMemo, PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
     }
 
     @Override
