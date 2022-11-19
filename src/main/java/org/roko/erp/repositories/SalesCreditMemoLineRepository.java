@@ -14,13 +14,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SalesCreditMemoLineRepository extends JpaRepository<SalesCreditMemoLine, SalesCreditMemoLineId> {
-    
+
     @Query("SELECT salesCreditMemoLine FROM SalesCreditMemoLine salesCreditMemoLine WHERE salesCreditMemoLine.salesCreditMemo = :salesCreditMemo")
     public List<SalesCreditMemoLine> findForSalesCreditMemo(@Param("salesCreditMemo") SalesCreditMemo salesCreditMemo);
 
     @Query("SELECT salesCreditMemoLine FROM SalesCreditMemoLine salesCreditMemoLine WHERE salesCreditMemoLine.salesCreditMemo = :salesCreditMemo")
-    public Page<SalesCreditMemoLine> findForSalesCreditMemo(@Param("salesCreditMemo") SalesCreditMemo salesCreditMemo, Pageable pageable);
+    public Page<SalesCreditMemoLine> findForSalesCreditMemo(@Param("salesCreditMemo") SalesCreditMemo salesCreditMemo,
+            Pageable pageable);
 
     @Query("SELECT COUNT(salesCreditMemoLine) FROM SalesCreditMemoLine salesCreditMemoLine WHERE salesCreditMemoLine.salesCreditMemo = :salesCreditMemo")
     public long countForSalesCreditMemo(@Param("salesCreditMemo") SalesCreditMemo salesCreditMemo);
+
+    @Query("SELECT COALESCE(MAX(salesCreditMemoLine.salesCreditMemoLineId.lineNo), 0) FROM SalesCreditMemoLine salesCreditMemoLine WHERE salesCreditMemoLine.salesCreditMemo = :salesCreditMemo")
+    public int maxLineNo(@Param("salesCreditMemo") SalesCreditMemo salesCreditMemo);
 }

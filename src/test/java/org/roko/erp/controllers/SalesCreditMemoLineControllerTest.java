@@ -111,7 +111,7 @@ public class SalesCreditMemoLineControllerTest {
         when(salesCreditMemoLineModelMock.getPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
         when(salesCreditMemoLineModelMock.getAmount()).thenReturn(TEST_QTY * TEST_ITEM_SALES_PRICE);
 
-        when(svcMock.count(salesCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
+        when(svcMock.maxLineNo(salesCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
         when(svcMock.get(salesCreditMemoLineId)).thenReturn(salesCreditMemoLineMock);
 
         controller = new SalesCreditMemoLineController(svcMock, salesCreditMemoSvcMock, itemSvcMock);

@@ -125,7 +125,7 @@ public class SalesCreditMemoLineController {
 
     private void create(SalesCreditMemo salesCreditMemo, SalesCreditMemoLineModel salesCreditMemoLineModel) {
         SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
-        salesCreditMemoLineId.setLineNo((int) (svc.count(salesCreditMemo) + 1));
+        salesCreditMemoLineId.setLineNo((int) (svc.maxLineNo(salesCreditMemo) + 1));
         salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
 
         SalesCreditMemoLine salesCreditMemoLine = new SalesCreditMemoLine();        

@@ -66,7 +66,12 @@ public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineServic
     public int count(SalesCreditMemo salesCreditMemo) {
         return new Long(repo.countForSalesCreditMemo(salesCreditMemo)).intValue();
     }
-    
+
+    @Override
+    public int maxLineNo(SalesCreditMemo salesCreditMemo) {
+        return repo.maxLineNo(salesCreditMemo);
+    }
+
     private void transferFields(SalesCreditMemoLine source,
             SalesCreditMemoLine target) {
         target.setItem(source.getItem());
