@@ -54,12 +54,22 @@ public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService 
 
     @Override
     public List<PurchaseCreditMemo> list() {
-        return repo.findAll();
+        List<PurchaseCreditMemo> purchaseCreditMemos = repo.findAll();
+
+        purchaseCreditMemos.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return purchaseCreditMemos;
     }
 
     @Override
     public List<PurchaseCreditMemo> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+        List<PurchaseCreditMemo> purchaseCreditMemos = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+
+        purchaseCreditMemos.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return purchaseCreditMemos;
     }
 
     @Override

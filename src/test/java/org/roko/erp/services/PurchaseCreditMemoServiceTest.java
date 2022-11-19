@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,12 @@ public class PurchaseCreditMemoServiceTest {
     private PurchaseCreditMemo purchaseCreditMemoMock;
 
     @Mock
+    private PurchaseCreditMemo purchaseCreditMemoMock1;
+
+    @Mock
+    private PurchaseCreditMemo purchaseCreditMemoMock2;
+
+    @Mock
     private PurchaseCreditMemoRepository repoMock;
 
     private PurchaseCreditMemoService svc;
@@ -46,6 +53,7 @@ public class PurchaseCreditMemoServiceTest {
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(purchaseCreditMemoMock));
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
+        when(repoMock.findAll()).thenReturn(Arrays.asList(purchaseCreditMemoMock, purchaseCreditMemoMock1, purchaseCreditMemoMock2));
 
         svc = new PurchaseCreditMemoServiceImpl(repoMock);
     }
@@ -91,6 +99,10 @@ public class PurchaseCreditMemoServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+
+        verify(repoMock).amount(purchaseCreditMemoMock);
+        verify(repoMock).amount(purchaseCreditMemoMock1);
+        verify(repoMock).amount(purchaseCreditMemoMock2);
     }
 
     @Test
