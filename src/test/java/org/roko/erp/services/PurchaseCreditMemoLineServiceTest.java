@@ -121,4 +121,11 @@ public class PurchaseCreditMemoLineServiceTest {
 
         verify(repoMock).count(purchaseCreditMemoMock);
     }
+
+    @Test
+    public void maxLineNo_delegatesToRepo() {
+        svc.maxLineNo(purchaseCreditMemoMock);
+
+        verify(repoMock).maxLineNo(purchaseCreditMemoMock);
+    }
 }

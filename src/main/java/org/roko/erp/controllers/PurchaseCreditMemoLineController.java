@@ -136,7 +136,7 @@ public class PurchaseCreditMemoLineController {
             PurchaseCreditMemo purchaseCreditMemo) {
         PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
         purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemo);
-        purchaseCreditMemoLineId.setLineNo((int) (svc.count(purchaseCreditMemo) + 1));
+        purchaseCreditMemoLineId.setLineNo(svc.maxLineNo(purchaseCreditMemo) + 1);
    
         PurchaseCreditMemoLine purchaseCreditMemoLine = new PurchaseCreditMemoLine();
         purchaseCreditMemoLine.setPurchaseCreditMemoLineId(purchaseCreditMemoLineId);

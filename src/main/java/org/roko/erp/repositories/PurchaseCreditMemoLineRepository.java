@@ -20,8 +20,12 @@ public interface PurchaseCreditMemoLineRepository
     public List<PurchaseCreditMemoLine> findFor(@Param("purchaseCreditMemo") PurchaseCreditMemo purchaseCreditMemo);
 
     @Query("SELECT purchaseCreditMemoLine FROM PurchaseCreditMemoLine purchaseCreditMemoLine WHERE purchaseCreditMemoLine.purchaseCreditMemo = :purchaseCreditMemo")
-    public Page<PurchaseCreditMemoLine> findFor(@Param("purchaseCreditMemo") PurchaseCreditMemo purchaseCreditMemo, Pageable pageable);
+    public Page<PurchaseCreditMemoLine> findFor(@Param("purchaseCreditMemo") PurchaseCreditMemo purchaseCreditMemo,
+            Pageable pageable);
 
     @Query("SELECT COUNT(purchaseCreditMemoLine) FROM PurchaseCreditMemoLine purchaseCreditMemoLine WHERE purchaseCreditMemoLine.purchaseCreditMemo = :purchaseCreditMemo")
     public long count(@Param("purchaseCreditMemo") PurchaseCreditMemo purchaseCreditMemo);
+
+    @Query("SELECT COALESCE(MAX(purchaseCreditMemoLine.purchaseCreditMemoLineId.lineNo), 0) FROM PurchaseCreditMemoLine purchaseCreditMemoLine WHERE purchaseCreditMemoLine.purchaseCreditMemo = :purchaseCreditMemo")
+    public int maxLineNo(@Param("purchaseCreditMemo") PurchaseCreditMemo purchaseCreditMemo);
 }

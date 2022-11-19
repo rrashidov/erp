@@ -68,6 +68,11 @@ public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLine
         return new Long(repo.count(purchaseCreditMemo)).intValue();
     }
 
+    @Override
+    public int maxLineNo(PurchaseCreditMemo purchaseCreditMemo) {
+        return repo.maxLineNo(purchaseCreditMemo);
+    }
+
     private void transferFields(PurchaseCreditMemoLine source,
             PurchaseCreditMemoLine target) {
         target.setItem(source.getItem());
