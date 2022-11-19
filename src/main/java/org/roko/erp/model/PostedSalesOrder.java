@@ -23,6 +23,8 @@ public class PostedSalesOrder {
 	private String orderCode;
 
 	private Date orderDate;
+
+	private double amount;
 	
 	public String getCode() {
 		return code;
@@ -59,6 +61,12 @@ public class PostedSalesOrder {
 	}
 	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
+	}
+	public double getAmount() {
+		return amount;
+	}
+	public void setAmount(double amount) {
+		this.amount = amount;
 	}
 	
 }
