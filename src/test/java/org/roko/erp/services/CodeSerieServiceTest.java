@@ -22,6 +22,10 @@ import org.springframework.data.domain.Pageable;
 
 public class CodeSerieServiceTest {
 
+    private static final String TEST_LAST_CODE =            "CODE000023";
+    private static final String ALL_ZEROS_TEST_LAST_CODE =  "CODE000000";
+    private static final String LAST_CODE_WITH_NO_ZEROS =   "CODE121212";
+
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 12;
@@ -43,6 +47,8 @@ public class CodeSerieServiceTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
+
+        when(codeSerieMock.getLastCode()).thenReturn(TEST_LAST_CODE);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(codeSerieMock));
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
@@ -111,4 +117,39 @@ public class CodeSerieServiceTest {
 
         verify(repoMock).count();
     }
+
+    @Test
+    public void generate_generatesProperCode(){
+        String generatedCode = svc.generate(TEST_CODE);
+
+        assertEquals("CODE000024", generatedCode);
+
+        verify(repoMock).findById(TEST_CODE);
+        verify(repoMock).save(codeSerieMock);
+    }
+
+    @Test
+    public void generate_generatesProperCode_whenStartsWithZeros(){
+        when(codeSerieMock.getLastCode()).thenReturn(ALL_ZEROS_TEST_LAST_CODE);
+
+        String generatedCode = svc.generate(TEST_CODE);
+
+        assertEquals("CODE000001", generatedCode);
+
+        verify(repoMock).findById(TEST_CODE);
+        verify(repoMock).save(codeSerieMock);
+    }
+
+    @Test
+    public void generate_generatesProperCode_whenNoZeros(){
+        when(codeSerieMock.getLastCode()).thenReturn(LAST_CODE_WITH_NO_ZEROS);
+
+        String generatedCode = svc.generate(TEST_CODE);
+
+        assertEquals("CODE121213", generatedCode);
+
+        verify(repoMock).findById(TEST_CODE);
+        verify(repoMock).save(codeSerieMock);
+    }
+
 }
