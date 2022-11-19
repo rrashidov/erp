@@ -109,7 +109,7 @@ public class PurchaseOrderLineControllerTest {
         when(itemSvcMock.list()).thenReturn(items);
         when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
-        when(svcMock.count(purchaseOrderMock)).thenReturn(TEST_LINE_COUNT);
+        when(svcMock.maxLineNo(purchaseOrderMock)).thenReturn(TEST_LINE_COUNT);
         when(svcMock.get(purchaseOrderLineId)).thenReturn(purchaseOrderLineMock);
 
         controller = new PurchaseOrderLineController(svcMock, purchaseOrderSvcMock, itemSvcMock);

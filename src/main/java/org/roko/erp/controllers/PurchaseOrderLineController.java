@@ -134,7 +134,7 @@ public class PurchaseOrderLineController {
         
         PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
         purchaseOrderLineId.setPurchaseOrder(purchaseOrder);
-        purchaseOrderLineId.setLineNo((int) (svc.count(purchaseOrder) + 1));
+        purchaseOrderLineId.setLineNo(svc.maxLineNo(purchaseOrder) + 1);
 
         PurchaseOrderLine purchaseOrderLine = new PurchaseOrderLine();
         purchaseOrderLine.setPurchaseOrderLineId(purchaseOrderLineId);

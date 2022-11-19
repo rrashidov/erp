@@ -24,4 +24,7 @@ public interface PurchaseOrderLineRepository extends JpaRepository<PurchaseOrder
 
     @Query("SELECT COUNT(purchaseOrderLine) FROM PurchaseOrderLine purchaseOrderLine WHERE purchaseOrderLine.purchaseOrder = :purchaseOrder")
     public long countForPurchaseOrder(@Param("purchaseOrder") PurchaseOrder purchaseOrder);
+
+    @Query("SELECT COALESCE(MAX(purchaseOrderLine.purchaseOrderLineId.lineNo), 0) FROM PurchaseOrderLine purchaseOrderLine WHERE purchaseOrderLine.purchaseOrder = :purchaseOrder")
+    public int maxLineNo(@Param("purchaseOrder") PurchaseOrder purchaseOrder);
 }

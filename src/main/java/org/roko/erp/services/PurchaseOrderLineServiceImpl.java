@@ -70,6 +70,11 @@ public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
         return new Long(repo.countForPurchaseOrder(purchaseOrder)).intValue();
     }
 
+    @Override
+    public int maxLineNo(PurchaseOrder purchaseOrder) {
+        return repo.maxLineNo(purchaseOrder);
+    }
+
     private void transferFields(PurchaseOrderLine source, PurchaseOrderLine target) {
         target.setItem(source.getItem());
         target.setQuantity(source.getQuantity());

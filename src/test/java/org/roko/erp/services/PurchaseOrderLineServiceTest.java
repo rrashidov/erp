@@ -121,4 +121,11 @@ public class PurchaseOrderLineServiceTest {
 
         verify(repoMock).countForPurchaseOrder(purchaseOrderMock);
     }
+
+    @Test
+    public void maxLineNo_delegatesToRepo() {
+        svc.maxLineNo(purchaseOrderMock);
+
+        verify(repoMock).maxLineNo(purchaseOrderMock);
+    }
 }
