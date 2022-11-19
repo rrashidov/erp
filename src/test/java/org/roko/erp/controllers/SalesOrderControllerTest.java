@@ -28,6 +28,7 @@ import org.roko.erp.model.jpa.SalesOrderLineId;
 import org.roko.erp.rules.sales.SalesOrderModelRule;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesOrderLineService;
 import org.roko.erp.services.SalesOrderPostService;
 import org.roko.erp.services.SalesOrderService;
@@ -42,6 +43,8 @@ public class SalesOrderControllerTest {
     private static final String TEST_CODE = "test-code";
     private static final String TEST_CUSTOMER_CODE = "test-customer-code";
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
+
+    private static final String TEST_NEW_SALES_ORDER_CODE = "test-new-sales-order-code";
 
     private static final int TEST_PAGE = 123;
 
@@ -119,12 +122,15 @@ public class SalesOrderControllerTest {
     @Mock
     private SalesOrderPostService salesOrderPostSvcMock;
 
+    @Mock
+    private SalesCodeSeriesService salesCodeSeriesSvcMock;
+
     private SalesOrderModelRule salesOrderModelRule = new SalesOrderModelRule();
 
     private SalesOrderController controller;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
         salesOrderList = Arrays.asList(salesOrderMock);
@@ -159,13 +165,17 @@ public class SalesOrderControllerTest {
         when(svcMock.get(SalesOrderModelRule.TEST_SALES_ORDER_CODE)).thenReturn(salesOrderMock);
 
         when(pagingSvcMock.generate("salesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("salesOrderCard", TEST_CODE, 1, TEST_SALES_ORDER_LINE_COUNT)).thenReturn(salesOrderLinePagingMock);
+        when(pagingSvcMock.generate("salesOrderCard", TEST_CODE, 1, TEST_SALES_ORDER_LINE_COUNT))
+                .thenReturn(salesOrderLinePagingMock);
 
-        controller = new SalesOrderController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvc, salesOrderLineSvcMock, salesOrderPostSvcMock);
+        when(salesCodeSeriesSvcMock.orderCode()).thenReturn(TEST_NEW_SALES_ORDER_CODE);
+
+        controller = new SalesOrderController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvc,
+                salesOrderLineSvcMock, salesOrderPostSvcMock, salesCodeSeriesSvcMock);
     }
 
     @Test
-    public void listReturnsProperTemplate(){
+    public void listReturnsProperTemplate() {
         String template = controller.list(TEST_PAGE, modelMock);
 
         assertEquals("salesOrderList.html", template);
@@ -175,7 +185,7 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void salesOrderWizardReturnsProperTemplate_whenCalledForNewSalesOrder(){
+    public void salesOrderWizardReturnsProperTemplate_whenCalledForNewSalesOrder() {
         String template = controller.wizard(null, modelMock);
 
         assertEquals("salesOrderWizardFirstPage.html", template);
@@ -190,7 +200,7 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void salesOrderWizardReturnsProperTemplate_whenCalledForExistingSalesOrder(){
+    public void salesOrderWizardReturnsProperTemplate_whenCalledForExistingSalesOrder() {
         String template = controller.wizard(TEST_CODE, modelMock);
 
         assertEquals("salesOrderWizardFirstPage.html", template);
@@ -205,7 +215,7 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void postSalesOrderWizardFirstPage_returnsProperTemplate(){
+    public void postSalesOrderWizardFirstPage_returnsProperTemplate() {
         String template = controller.postWizardFirstPage(salesOrderModelMock, modelMock);
 
         assertEquals("salesOrderWizardSecondPage.html", template);
@@ -218,9 +228,9 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void postSalesOrderWizardSecondPage_createsSalesOrder(){
+    public void postSalesOrderWizardSecondPage_createsSalesOrder() {
         salesOrderModelRule.stubSalesOrderModelForNewSalesOrder();
-        
+
         RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock, redirectAttributesMock);
 
         assertEquals("/salesOrderCard", redirectView.getUrl());
@@ -229,13 +239,14 @@ public class SalesOrderControllerTest {
 
         SalesOrder createdSalesOrder = salesOrderArgumentCaptor.getValue();
 
+        assertEquals(TEST_NEW_SALES_ORDER_CODE, createdSalesOrder.getCode());
         assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, createdSalesOrder.getCustomer().getCode());
         assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, createdSalesOrder.getPaymentMethod().getCode());
         assertEquals(SalesOrderModelRule.TEST_DATE, createdSalesOrder.getDate());
     }
 
     @Test
-    public void postSalesOrderWizardSecondPage_updatesSalesOrder_whenCalledWithExistingCode(){
+    public void postSalesOrderWizardSecondPage_updatesSalesOrder_whenCalledWithExistingCode() {
         RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock, redirectAttributesMock);
 
         assertEquals("/salesOrderCard", redirectView.getUrl());
@@ -252,7 +263,7 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void deleteSalesOrder_deletesSalesOrder(){
+    public void deleteSalesOrder_deletesSalesOrder() {
         RedirectView redirectView = controller.delete(TEST_CODE);
 
         assertEquals("/salesOrderList", redirectView.getUrl());
@@ -261,7 +272,7 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void salesOrderCard_returnsProperTemplate(){
+    public void salesOrderCard_returnsProperTemplate() {
         String template = controller.card(TEST_CODE, 1, modelMock);
 
         assertEquals("salesOrderCard.html", template);
@@ -272,7 +283,7 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void post_callsRespectiveService(){
+    public void post_callsRespectiveService() {
         RedirectView redirectView = controller.post(TEST_CODE);
 
         assertEquals("/salesOrderList", redirectView.getUrl());

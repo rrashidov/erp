@@ -11,6 +11,7 @@ import org.roko.erp.model.SalesOrder;
 import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesOrderLineService;
 import org.roko.erp.services.SalesOrderPostService;
 import org.roko.erp.services.SalesOrderService;
@@ -33,17 +34,19 @@ public class SalesOrderController {
     private PaymentMethodService paymentMethodSvc;
     private SalesOrderLineService salesOrderLineSvc;
     private SalesOrderPostService salesOrderPostService;
+    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, PagingService pagingSvc, CustomerService customerSvc,
             PaymentMethodService paymentMethodSvc, SalesOrderLineService salesOrderLineSvc,
-            SalesOrderPostService salesOrderPostService) {
+            SalesOrderPostService salesOrderPostService, SalesCodeSeriesService salesCodeSeriesSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.customerSvc = customerSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.salesOrderPostService = salesOrderPostService;
+        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @GetMapping("/salesOrderList")
@@ -135,7 +138,7 @@ public class SalesOrderController {
 
     private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {
         SalesOrder salesOrder = new SalesOrder();
-        salesOrder.setCode("SO" + System.currentTimeMillis());
+        salesOrder.setCode(salesCodeSeriesSvc.orderCode());
         salesOrder.setCustomer(customerSvc.get(salesOrderModelMock.getCustomerCode()));
         salesOrder.setDate(salesOrderModelMock.getDate());
         salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModelMock.getPaymentMethodCode()));
