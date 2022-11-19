@@ -24,6 +24,8 @@ public class PostedPurchaseOrder {
 
 	private Date orderDate;
 
+	private double amount;
+
 	public String getCode() {
 		return code;
 	}
@@ -59,6 +61,12 @@ public class PostedPurchaseOrder {
 	}
 	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
+	}
+	public double getAmount() {
+		return amount;
+	}
+	public void setAmount(double amount) {
+		this.amount = amount;
 	}
 	
 }

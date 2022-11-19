@@ -38,12 +38,22 @@ public class PostedPurchaseOrderServiceImpl implements PostedPurchaseOrderServic
 
     @Override
     public List<PostedPurchaseOrder> list() {
-        return repo.findAll();
+        List<PostedPurchaseOrder> postedPurchaseOrders = repo.findAll();
+
+        postedPurchaseOrders.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return postedPurchaseOrders;
     }
 
     @Override
     public List<PostedPurchaseOrder> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+        List<PostedPurchaseOrder> postedPurchaseOrders = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+
+        postedPurchaseOrders.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return postedPurchaseOrders;
     }
 
     @Override

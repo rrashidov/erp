@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +38,12 @@ public class PostedPurchaseOrderServiceTest {
     private PostedPurchaseOrder postedPurchaseOrderMock;
 
     @Mock
+    private PostedPurchaseOrder postedPurchaseOrderMock1;
+
+    @Mock
+    private PostedPurchaseOrder postedPurchaseOrderMock2;
+
+    @Mock
     private PostedPurchaseOrderRepository repoMock;
 
     private PostedPurchaseOrderService svc;
@@ -45,6 +53,7 @@ public class PostedPurchaseOrderServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
+        when(repoMock.findAll()).thenReturn(Arrays.asList(postedPurchaseOrderMock, postedPurchaseOrderMock1, postedPurchaseOrderMock2));
 
         svc = new PostedPurchaseOrderServiceImpl(repoMock);
     }
@@ -75,6 +84,10 @@ public class PostedPurchaseOrderServiceTest {
         svc.list();
 
         verify(repoMock).findAll();
+
+        verify(repoMock).amount(postedPurchaseOrderMock);
+        verify(repoMock).amount(postedPurchaseOrderMock1);
+        verify(repoMock).amount(postedPurchaseOrderMock2);
     }
 
     @Test

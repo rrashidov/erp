@@ -25,6 +25,7 @@
                         <th scope="col">Customer</th>
                         <th scope="col">Date</th>
                         <th scope="col">Payment Method</th>
+                        <th scope="col">Amount</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -34,6 +35,7 @@
                         <td th:text="${postedPurchaseOrder.vendor.name}"></td>
                         <td th:text="${postedPurchaseOrder.date}"></td>
                         <td th:text="${postedPurchaseOrder.paymentMethod.name}"></td>
+                        <td th:text="${postedPurchaseOrder.amount}"></td>
                         <td><a class="btn btn-primary" th:href="@{/postedPurchaseOrderCard?code={code}(code=${postedPurchaseOrder.code})}">Card</a> </td>
                     </tr>
 
