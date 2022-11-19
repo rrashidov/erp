@@ -19,6 +19,8 @@ public class PurchaseOrder {
 
 	@ManyToOne
 	private PaymentMethod paymentMethod;
+
+	private double amount;
 	
 	public String getCode() {
 		return code;
@@ -44,4 +46,11 @@ public class PurchaseOrder {
 	public void setPaymentMethod(PaymentMethod paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
+	public double getAmount() {
+		return amount;
+	}
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+	
 }

@@ -54,12 +54,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     public List<PurchaseOrder> list() {
-        return repo.findAll();
+        List<PurchaseOrder> purchaseOrders = repo.findAll();
+
+        purchaseOrders.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return purchaseOrders;
     }
 
     @Override
     public List<PurchaseOrder> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+        List<PurchaseOrder> purchaseOrders = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+
+        purchaseOrders.stream()
+            .forEach(x -> x.setAmount(repo.amount(x)));
+
+        return purchaseOrders;
     }
 
     @Override
