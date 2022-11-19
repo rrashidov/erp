@@ -11,6 +11,7 @@ import org.roko.erp.model.SalesCreditMemo;
 import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesCreditMemoLineService;
 import org.roko.erp.services.SalesCreditMemoPostService;
 import org.roko.erp.services.SalesCreditMemoService;
@@ -33,17 +34,19 @@ public class SalesCreditMemoController {
     private PaymentMethodService paymentMethodSvc;
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
     private SalesCreditMemoPostService salesCreditMemoPostSvc;
+    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
     public SalesCreditMemoController(SalesCreditMemoService svc, PagingService pagingSvc, CustomerService customerSvc,
             PaymentMethodService paymentMethodSvc, SalesCreditMemoLineService salesCreditMemoLineSvc,
-            SalesCreditMemoPostService salesCreditMemoPostSvc) {
+            SalesCreditMemoPostService salesCreditMemoPostSvc, SalesCodeSeriesService salesCodeSeriesSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.customerSvc = customerSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
         this.salesCreditMemoPostSvc = salesCreditMemoPostSvc;
+        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @GetMapping("/salesCreditMemoList")
@@ -134,7 +137,7 @@ public class SalesCreditMemoController {
 
     private SalesCreditMemo createSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
         SalesCreditMemo salesCreditMemo = new SalesCreditMemo();
-        salesCreditMemo.setCode("SCM" + System.currentTimeMillis());
+        salesCreditMemo.setCode(salesCodeSeriesSvc.creditMemoCode());
         salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
         salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));

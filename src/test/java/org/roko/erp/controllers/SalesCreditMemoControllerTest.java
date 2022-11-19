@@ -25,6 +25,7 @@ import org.roko.erp.model.SalesCreditMemo;
 import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesCreditMemoLineService;
 import org.roko.erp.services.SalesCreditMemoPostService;
 import org.roko.erp.services.SalesCreditMemoService;
@@ -33,6 +34,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesCreditMemoControllerTest {
+
+    private static final String TEST_NEW_SALES_CREDIT_MEMO_CODE = "test-new-sales-credit-memo-code";
 
     private static final String TEST_SALES_CREDIT_MEMO_CODE = "test-code";
 
@@ -105,6 +108,9 @@ public class SalesCreditMemoControllerTest {
     @Mock
     private SalesCreditMemoPostService salesCreditMemoPostSvcMock;
 
+    @Mock
+    private SalesCodeSeriesService salesCodeSeriesSvcMock;
+
     private SalesCreditMemoController controller;
 
     @BeforeEach
@@ -145,8 +151,10 @@ public class SalesCreditMemoControllerTest {
         when(pagingSvcMock.generate("salesCreditMemoCard", TEST_SALES_CREDIT_MEMO_CODE, TEST_PAGE,
                 TEST_SALES_CREDIT_MEMO_LINE_COUNT)).thenReturn(salesCreditMemoLinePagingMock);
 
+        when(salesCodeSeriesSvcMock.creditMemoCode()).thenReturn(TEST_NEW_SALES_CREDIT_MEMO_CODE);
+
         controller = new SalesCreditMemoController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvcMock,
-                salesCreditMemoLineSvcMock, salesCreditMemoPostSvcMock);
+                salesCreditMemoLineSvcMock, salesCreditMemoPostSvcMock, salesCodeSeriesSvcMock);
     }
 
     @Test
@@ -216,6 +224,7 @@ public class SalesCreditMemoControllerTest {
 
         SalesCreditMemo createdSalesCreditMemo = salesCreditMemoArgumentCaptor.getValue();
 
+        assertEquals(TEST_NEW_SALES_CREDIT_MEMO_CODE, createdSalesCreditMemo.getCode());
         assertEquals(customerMock, createdSalesCreditMemo.getCustomer());
         assertEquals(paymentMethodMock, createdSalesCreditMemo.getPaymentMethod());
     }
