@@ -30,12 +30,13 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     private ItemLedgerEntryService itemLedgerEntrySvc;
     private CustomerLedgerEntryService customerLedgerEntrySvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
+    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
     public SalesOrderPostServiceImpl(SalesOrderService salesOrderSvc, SalesOrderLineService salesOrderLineSvc,
             PostedSalesOrderService postedSalesOrderSvc, PostedSalesOrderLineService postedSalesOrderLineSvc,
             ItemLedgerEntryService itemLedgerEntrySvc, CustomerLedgerEntryService customerLedgerEntrySvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc) {
+            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, SalesCodeSeriesService salesCodeSeriesSvc) {
         this.salesOrderSvc = salesOrderSvc;
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.postedSalesOrderSvc = postedSalesOrderSvc;
@@ -43,6 +44,7 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
         this.customerLedgerEntrySvc = customerLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
+        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @Override
@@ -78,10 +80,10 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     }
 
     private void createBankAccountLedgerEntries(SalesOrder salesOrder, PostedSalesOrder postedSalesOrder) {
-        if (salesOrder.getPaymentMethod().getBankAccount() == null){
+        if (salesOrder.getPaymentMethod().getBankAccount() == null) {
             return;
         }
-        
+
         List<SalesOrderLine> salesOrderLines = salesOrderLineSvc.list(salesOrder);
 
         Optional<Double> amount = salesOrderLines.stream()
@@ -158,7 +160,7 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
 
     private PostedSalesOrder createPostedSalesOrder(SalesOrder salesOrder) {
         PostedSalesOrder postedSalesOrder = new PostedSalesOrder();
-        postedSalesOrder.setCode("PSO" + System.currentTimeMillis());
+        postedSalesOrder.setCode(salesCodeSeriesSvc.postedOrderCode());
         postedSalesOrder.setCustomer(salesOrder.getCustomer());
         postedSalesOrder.setDate(new Date());
         postedSalesOrder.setOrderCode(salesOrder.getCode());

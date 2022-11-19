@@ -36,6 +36,8 @@ import org.roko.erp.model.jpa.SalesOrderLineId;
 
 public class SalesOrderPostServiceTest {
 
+    private static final String TEST_POSTED_SALES_ORDER_CODE = "test-posted-sales-order-code";
+
     private static final String TEST_CODE = "test-code";
 
     private static final Date TEST_DATE = new Date();
@@ -100,6 +102,9 @@ public class SalesOrderPostServiceTest {
     @Mock
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvcMock;
 
+    @Mock
+    private SalesCodeSeriesService salesCodeSeriesSvcMock;
+
     private SalesOrderPostService svc;
 
     @BeforeEach
@@ -128,8 +133,10 @@ public class SalesOrderPostServiceTest {
         when(salesOrderLineSvcMock.list(salesOrderMock))
                 .thenReturn(Arrays.asList(salesOrderLineMock, salesOrderLineMock));
 
+        when(salesCodeSeriesSvcMock.postedOrderCode()).thenReturn(TEST_POSTED_SALES_ORDER_CODE);
+
         svc = new SalesOrderPostServiceImpl(salesOrderSvcMock, salesOrderLineSvcMock, postedSalesOrderSvcMock,
-                postedSalesOrderLineSvcMock, itemLedgerEntrySvcMock, customerLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock);
+                postedSalesOrderLineSvcMock, itemLedgerEntrySvcMock, customerLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, salesCodeSeriesSvcMock);
     }
 
     @Test
@@ -254,6 +261,7 @@ public class SalesOrderPostServiceTest {
 
         PostedSalesOrder postedSalesOrder = postedSalesOrderArgumentCaptor.getValue();
 
+        assertEquals(TEST_POSTED_SALES_ORDER_CODE, postedSalesOrder.getCode());
         assertEquals(customerMock, postedSalesOrder.getCustomer());
         assertEquals(paymentMethodMock, postedSalesOrder.getPaymentMethod());
         assertEquals(TEST_CODE, postedSalesOrder.getOrderCode());
