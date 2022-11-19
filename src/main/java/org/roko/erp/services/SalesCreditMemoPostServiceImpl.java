@@ -28,13 +28,14 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
     private ItemLedgerEntryService itemLedgerEntrySvc;
     private CustomerLedgerEntryService customerLedgerEntrySvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
+    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
     public SalesCreditMemoPostServiceImpl(SalesCreditMemoService salesCreditMemoSvc,
             SalesCreditMemoLineService salesCreditMemoLineSvc, PostedSalesCreditMemoService postedSalesCreditMemoSvc,
             PostedSalesCreditMemoLineService postedSalesCreditMemoLineSvc, ItemLedgerEntryService itemLedgerEntrySvc,
             CustomerLedgerEntryService customerLedgerEntrySvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc) {
+            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, SalesCodeSeriesService salesCodeSeriesSvc) {
         this.salesCreditMemoSvc = salesCreditMemoSvc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
         this.postedSalesCreditMemoSvc = postedSalesCreditMemoSvc;
@@ -42,6 +43,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
         this.customerLedgerEntrySvc = customerLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
+        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @Override
@@ -182,7 +184,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
 
     private PostedSalesCreditMemo createPostedSalesCreditMemo(SalesCreditMemo salesCreditMemo) {
         PostedSalesCreditMemo postedSalesCreditMemo = new PostedSalesCreditMemo();
-        postedSalesCreditMemo.setCode("PSCM" + System.currentTimeMillis());
+        postedSalesCreditMemo.setCode(salesCodeSeriesSvc.postedCreditMemoCode());
         postedSalesCreditMemo.setCustomer(salesCreditMemo.getCustomer());
         postedSalesCreditMemo.setDate(new Date());
         postedSalesCreditMemo.setPaymentMethod(salesCreditMemo.getPaymentMethod());
