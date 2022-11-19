@@ -70,6 +70,11 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
         return new Long(repo.countForSalesOrder(salesOrder)).intValue();
     }
 
+    @Override
+    public int maxLineNo(SalesOrder salesOrder) {
+        return repo.maxLineNo(salesOrder);
+    }
+
     private void transferFields(SalesOrderLine source, SalesOrderLine target) {
         target.setItem(source.getItem());
         target.setQuantity(source.getQuantity());

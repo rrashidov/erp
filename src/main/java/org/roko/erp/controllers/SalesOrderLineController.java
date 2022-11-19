@@ -106,7 +106,7 @@ public class SalesOrderLineController {
             salesOrderLineSvc.update(salesOrderLineId, salesOrderLineToUpdate);
         } else {
             //create
-            long lineNo = salesOrderLineSvc.count(salesOrder) + 1;
+            long lineNo = salesOrderLineSvc.maxLineNo(salesOrder) + 1;
 
             SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
             salesOrderLineId.setSalesOrder(salesOrder);

@@ -24,4 +24,7 @@ public interface SalesOrderLineRepository
 
     @Query("SELECT COUNT(salesOrderLine) FROM SalesOrderLine salesOrderLine WHERE salesOrderLine.salesOrder = :salesOrder")
     public long countForSalesOrder(@Param("salesOrder") SalesOrder salesOrder);
+
+    @Query("SELECT COALESCE(MAX(salesOrderLine.salesOrderLineId.lineNo), 0) FROM SalesOrderLine salesOrderLine WHERE salesOrderLine.salesOrder = :salesOrder")
+    public int maxLineNo(@Param("salesOrder") SalesOrder salesOrder);
 }

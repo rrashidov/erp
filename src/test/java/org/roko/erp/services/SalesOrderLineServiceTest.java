@@ -142,4 +142,10 @@ public class SalesOrderLineServiceTest {
 
         verify(repoMock).countForSalesOrder(salesOrderMock);
     }
+
+    @Test
+    public void maxLineNo_delegatesToRepo() {
+        svc.maxLineNo(salesOrderMock);
+
+    }
 }

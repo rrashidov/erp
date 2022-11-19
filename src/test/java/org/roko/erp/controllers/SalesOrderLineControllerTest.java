@@ -100,7 +100,7 @@ public class SalesOrderLineControllerTest {
         when(salesOrderLineMock.getAmount()).thenReturn(TEST_SALES_ORDER_LINE_AMOUNT);
 
         when(salesOrderLineSvcMock.list(salesOrderMock)).thenReturn(salesOrderLineList);
-        when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(TEST_SALES_ORDER_LINE_COUNT);
+        when(salesOrderLineSvcMock.maxLineNo(salesOrderMock)).thenReturn(TEST_SALES_ORDER_LINE_COUNT);
         when(salesOrderLineSvcMock.get(salesOrderLineId)).thenReturn(salesOrderLineMock);
 
         when(salesOrderLineModelMock.getSalesOrderCode()).thenReturn(TEST_CODE);

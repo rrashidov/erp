@@ -22,4 +22,5 @@ public interface SalesOrderLineService {
 
     public int count(SalesOrder salesOrder);
 
+    public int maxLineNo(SalesOrder salesOrder);
 }
