@@ -9,6 +9,7 @@ import org.roko.erp.model.PurchaseCreditMemo;
 import org.roko.erp.model.PurchaseCreditMemoLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseCreditMemoLineService;
 import org.roko.erp.services.PurchaseCreditMemoPostService;
 import org.roko.erp.services.PurchaseCreditMemoService;
@@ -32,18 +33,20 @@ public class PurchaseCreditMemoController {
     private PaymentMethodService paymentMethodSvc;
     private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
     private PurchaseCreditMemoPostService purchaseCreditMemoPostSvc;
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     @Autowired
     public PurchaseCreditMemoController(PurchaseCreditMemoService svc, PagingService pagingSvc,
             VendorService vendorSvc, PaymentMethodService paymentMethodSvc,
             PurchaseCreditMemoLineService purchaseCreditMemoLineSvc,
-            PurchaseCreditMemoPostService purchaseCreditMemoPostSvc) {
+            PurchaseCreditMemoPostService purchaseCreditMemoPostSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.vendorSvc = vendorSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
         this.purchaseCreditMemoPostSvc = purchaseCreditMemoPostSvc;
+        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @GetMapping("/purchaseCreditMemoList")
@@ -135,7 +138,7 @@ public class PurchaseCreditMemoController {
 
     private String createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
         PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
-        purchaseCreditMemo.setCode("PCM" + System.currentTimeMillis());
+        purchaseCreditMemo.setCode(purchaseCodeSeriesSvc.creditMemoCode());
         fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
         svc.create(purchaseCreditMemo);
 
