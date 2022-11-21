@@ -35,6 +35,8 @@ import org.roko.erp.model.jpa.PurchaseCreditMemoLineId;
 
 public class PurchaseCreditMemoPostServiceTest {
 
+    private static final String TEST_NEW_CODE = "test-new-code";
+
     private static final String TEST_CODE = "test-code";
 
     private static final Date TEST_DATE = new Date();
@@ -101,6 +103,9 @@ public class PurchaseCreditMemoPostServiceTest {
     @Mock
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvcMock;
 
+    @Mock
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
+
     private PurchaseCreditMemoPostService svc;
 
     @BeforeEach
@@ -129,9 +134,11 @@ public class PurchaseCreditMemoPostServiceTest {
         when(purchaseCreditMemoLineSvcMock.list(purchaseCreditMemoMock))
                 .thenReturn(Arrays.asList(purchaseCreditMemoLineMock, purchaseCreditMemoLineMock));
 
+        when(purchaseCodeSeriesSvcMock.postedCreditMemoCode()).thenReturn(TEST_NEW_CODE);
+
         svc = new PurchaseCreditMemoPostServiceImpl(purchaseCreditMemoSvcMock, purchaseCreditMemoLineSvcMock,
                 postedPurchaseCreditMemoSvcMock, postedPurchaseCreditMemoLineSvcMock, itemLedgerEntrySvcMock,
-                vendorLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock);
+                vendorLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, purchaseCodeSeriesSvcMock);
     }
 
     @Test
@@ -262,6 +269,7 @@ public class PurchaseCreditMemoPostServiceTest {
 
         PostedPurchaseCreditMemo postedPurchaseCreditMemo = posteedPurchaseCreditMemoArgumentCaptor.getValue();
 
+        assertEquals(TEST_NEW_CODE, postedPurchaseCreditMemo.getCode());
         assertEquals(vendorMock, postedPurchaseCreditMemo.getVendor());
         assertEquals(paymentMethodMock, postedPurchaseCreditMemo.getPaymentMethod());
         assertEquals(TEST_CODE, postedPurchaseCreditMemo.getOrderCode());

@@ -27,13 +27,14 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
     private ItemLedgerEntryService itemLedgerEntrySvc;
     private VendorLedgerEntryService vendorLedgerEntrySvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     public PurchaseCreditMemoPostServiceImpl(PurchaseCreditMemoService purchaseCreditMemoSvc,
             PurchaseCreditMemoLineService purchaseCreditMemoLineSvc,
             PostedPurchaseCreditMemoService postedPurchaseCreditMemoSvc,
             PostedPurchaseCreditMemoLineService postedPurchaseCreditMemoLineSvc,
             ItemLedgerEntryService itemLedgerEntrySvc, VendorLedgerEntryService vendorLedgerEntrySvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc) {
+            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.purchaseCreditMemoSvc = purchaseCreditMemoSvc;
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
         this.postedPurchaseCreditMemoSvc = postedPurchaseCreditMemoSvc;
@@ -41,6 +42,7 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
         this.vendorLedgerEntrySvc = vendorLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
+        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @Override
@@ -168,7 +170,7 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
 
     private PostedPurchaseCreditMemo createPostedPurchaseCreditMemo(PurchaseCreditMemo purchaseCreditMemo) {
         PostedPurchaseCreditMemo postedPurchaseCreditMemo = new PostedPurchaseCreditMemo();
-        postedPurchaseCreditMemo.setCode("PPCM" + System.currentTimeMillis());
+        postedPurchaseCreditMemo.setCode(purchaseCodeSeriesSvc.postedCreditMemoCode());
         postedPurchaseCreditMemo.setVendor(purchaseCreditMemo.getVendor());
         postedPurchaseCreditMemo.setPaymentMethod(purchaseCreditMemo.getPaymentMethod());
         postedPurchaseCreditMemo.setDate(new Date());
