@@ -30,12 +30,14 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
     private ItemLedgerEntryService itemLedgerEntrySvc;
     private VendorLedgerEntryService vendorLedgerEntrySvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     @Autowired
     public PurchaseOrderPostServiceImpl(PurchaseOrderService purchaseOrderSvc,
             PurchaseOrderLineService purchaseOrderLineSvc, PostedPurchaseOrderService postedPurchaseOrderSvc,
             PostedPurchaseOrderLineService postedPurchaseOrderLineSvc, ItemLedgerEntryService itemLedgerEntrySvc,
-            VendorLedgerEntryService vendorLedgerEntrySvc, BankAccountLedgerEntryService bankAccountLedgerEntrySvc) {
+            VendorLedgerEntryService vendorLedgerEntrySvc, BankAccountLedgerEntryService bankAccountLedgerEntrySvc,
+            PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.purchaseOrderSvc = purchaseOrderSvc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.postedPurchaseOrderSvc = postedPurchaseOrderSvc;
@@ -43,6 +45,7 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
         this.vendorLedgerEntrySvc = vendorLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
+        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @Override
@@ -171,7 +174,7 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
 
     private PostedPurchaseOrder createPostedPurchaseOrder(PurchaseOrder purchaseOrder) {
         PostedPurchaseOrder postedPurchaseOrder = new PostedPurchaseOrder();
-        postedPurchaseOrder.setCode("PPO" + System.currentTimeMillis());
+        postedPurchaseOrder.setCode(purchaseCodeSeriesSvc.postedOrderCode());
         postedPurchaseOrder.setVendor(purchaseOrder.getVendor());
         postedPurchaseOrder.setDate(new Date());
         postedPurchaseOrder.setPaymentMethod(purchaseOrder.getPaymentMethod());
