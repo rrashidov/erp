@@ -3,6 +3,8 @@ package org.roko.erp.controllers;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.roko.erp.controllers.model.SalesOrderModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
@@ -10,11 +12,13 @@ import org.roko.erp.model.Customer;
 import org.roko.erp.model.SalesOrder;
 import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.services.CustomerService;
+import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesOrderLineService;
 import org.roko.erp.services.SalesOrderPostService;
 import org.roko.erp.services.SalesOrderService;
+import org.roko.erp.services.util.FeedbackType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +31,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class SalesOrderController {
-    
+
     private SalesOrderService svc;
     private PagingService pagingSvc;
     private CustomerService customerSvc;
@@ -35,11 +39,13 @@ public class SalesOrderController {
     private SalesOrderLineService salesOrderLineSvc;
     private SalesOrderPostService salesOrderPostService;
     private SalesCodeSeriesService salesCodeSeriesSvc;
+    private FeedbackService feedbackSvc;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, PagingService pagingSvc, CustomerService customerSvc,
             PaymentMethodService paymentMethodSvc, SalesOrderLineService salesOrderLineSvc,
-            SalesOrderPostService salesOrderPostService, SalesCodeSeriesService salesCodeSeriesSvc) {
+            SalesOrderPostService salesOrderPostService, SalesCodeSeriesService salesCodeSeriesSvc,
+            FeedbackService feedbackSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.customerSvc = customerSvc;
@@ -47,31 +53,34 @@ public class SalesOrderController {
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.salesOrderPostService = salesOrderPostService;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
+        this.feedbackSvc = feedbackSvc;
     }
 
     @GetMapping("/salesOrderList")
-    public String list(@RequestParam(name="page", required=false, defaultValue = "1") int page, Model model){
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model,
+            HttpSession httpSession) {
         List<SalesOrder> salesOrders = svc.list(page);
         PagingData pagingData = pagingSvc.generate("salesOrder", page, svc.count());
 
         model.addAttribute("salesOrders", salesOrders);
         model.addAttribute("paging", pagingData);
+        model.addAttribute("feedback", feedbackSvc.get(httpSession));
 
         return "salesOrderList.html";
     }
 
     @GetMapping("/salesOrderWizard")
-    public String wizard(@RequestParam(name="code", required=false) String code, Model model){
+    public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
         SalesOrderModel salesOrderModel = new SalesOrderModel();
 
-        if (code != null){
+        if (code != null) {
             SalesOrder salesOrder = svc.get(code);
             toModel(salesOrder, salesOrderModel);
         }
 
         model.addAttribute("salesOrderModel", salesOrderModel);
         model.addAttribute("customers", customerSvc.list());
-        
+
         return "salesOrderWizardFirstPage.html";
     }
 
@@ -90,7 +99,8 @@ public class SalesOrderController {
     }
 
     @PostMapping("/salesOrderWizardSecondPage")
-    public RedirectView postWizardSecondPage(@ModelAttribute SalesOrderModel salesOrderModel, RedirectAttributes redirectAttributes){
+    public RedirectView postWizardSecondPage(@ModelAttribute SalesOrderModel salesOrderModel,
+            RedirectAttributes redirectAttributes) {
         if (salesOrderModel.getCode().isEmpty()) {
             SalesOrder salesOrderToCreate = fromModel(salesOrderModel);
             svc.create(salesOrderToCreate);
@@ -130,8 +140,10 @@ public class SalesOrderController {
     }
 
     @GetMapping("/postSalesOrder")
-    public RedirectView post(@RequestParam(name="code") String code){
+    public RedirectView post(@RequestParam(name = "code") String code, HttpSession httpSession) {
         salesOrderPostService.post(code);
+
+        feedbackSvc.give(FeedbackType.INFO, "Sales Order " + code + " posted.", httpSession);
 
         return new RedirectView("/salesOrderList");
     }

@@ -4,7 +4,9 @@ import javax.servlet.http.HttpSession;
 
 import org.roko.erp.services.util.Feedback;
 import org.roko.erp.services.util.FeedbackType;
+import org.springframework.stereotype.Service;
 
+@Service
 public class FeedbackServiceImpl implements FeedbackService {
 
     private static final String ATTRIBUTE_NAME_FEEDBACK_PRESENT = "feedback_present";
@@ -14,7 +16,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public void give(FeedbackType type, String msg, HttpSession httpSession) {
         httpSession.setAttribute(ATTRIBUTE_NAME_FEEDBACK_PRESENT, "true");
-        httpSession.setAttribute(ATTRIBUTE_NAME_FEEDBACK_TYPE, type);
+        httpSession.setAttribute(ATTRIBUTE_NAME_FEEDBACK_TYPE, type.name());
         httpSession.setAttribute(ATTRIBUTE_NAME_FEEDBACK_MSG, msg);
     }
 
@@ -25,12 +27,16 @@ public class FeedbackServiceImpl implements FeedbackService {
         Feedback feedback = new Feedback();
 
         if (feedbackPresent == null){
-            feedback.setFound(false);
             return feedback;
         }
 
-        feedback.setFound(true);
-        feedback.setType((FeedbackType) httpSession.getAttribute(ATTRIBUTE_NAME_FEEDBACK_TYPE));
+        String feedbackType = (String) httpSession.getAttribute(ATTRIBUTE_NAME_FEEDBACK_TYPE);
+        if (feedbackType.equals("INFO")) {
+            feedback.setInfoFeedbackFound(true);
+        } else {
+            feedback.setErrorFeedbackFound(true);
+        }
+
         feedback.setMsg((String) httpSession.getAttribute(ATTRIBUTE_NAME_FEEDBACK_MSG));
 
         httpSession.removeAttribute(ATTRIBUTE_NAME_FEEDBACK_PRESENT);

@@ -1,6 +1,8 @@
 package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,20 +39,20 @@ public class FeedbackServiceTest {
         svc.give(FeedbackType.INFO, "Some info message", httpSessionMock);
 
         verify(httpSessionMock).setAttribute(ATTRIBUTE_FEEDBACK_PRESENT, "true");
-        verify(httpSessionMock).setAttribute(ATTRIBUTE_FEEDBACK_TYPE, FeedbackType.INFO);
+        verify(httpSessionMock).setAttribute(ATTRIBUTE_FEEDBACK_TYPE, FeedbackType.INFO.name());
         verify(httpSessionMock).setAttribute(ATTRIBUTE_FEEDBACK_MSG, "Some info message");
     }
 
     @Test
     public void feedbackReceived_whenPresent(){
         when(httpSessionMock.getAttribute(ATTRIBUTE_FEEDBACK_PRESENT)).thenReturn("true");
-        when(httpSessionMock.getAttribute(ATTRIBUTE_FEEDBACK_TYPE)).thenReturn(FeedbackType.ERROR);
+        when(httpSessionMock.getAttribute(ATTRIBUTE_FEEDBACK_TYPE)).thenReturn(FeedbackType.ERROR.name());
         when(httpSessionMock.getAttribute(ATTRIBUTE_FEEDBACK_MSG)).thenReturn("Some test msg");
 
         Feedback feedback = svc.get(httpSessionMock);
 
-        assertEquals(true, feedback.isFound());
-        assertEquals(FeedbackType.ERROR, feedback.getType());
+        assertFalse(feedback.isInfoFeedbackFound());
+        assertTrue(feedback.isErrorFeedbackFound());
         assertEquals("Some test msg", feedback.getMsg());
 
         verify(httpSessionMock).removeAttribute(ATTRIBUTE_FEEDBACK_PRESENT);
@@ -66,7 +68,8 @@ public class FeedbackServiceTest {
 
         Feedback feedback = svc.get(httpSessionMock);
 
-        assertEquals(false, feedback.isFound());
+        assertFalse(feedback.isInfoFeedbackFound());
+        assertFalse(feedback.isErrorFeedbackFound());
 
         verify(httpSessionMock, never()).removeAttribute(ATTRIBUTE_FEEDBACK_PRESENT);
         verify(httpSessionMock, never()).removeAttribute(ATTRIBUTE_FEEDBACK_TYPE);
