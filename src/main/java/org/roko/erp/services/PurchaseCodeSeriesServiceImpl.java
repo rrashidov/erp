@@ -1,5 +1,8 @@
 package org.roko.erp.services;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class PurchaseCodeSeriesServiceImpl implements PurchaseCodeSeriesService {
 
     private SetupService setupSvc;

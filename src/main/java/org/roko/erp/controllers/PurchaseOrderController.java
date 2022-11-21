@@ -10,6 +10,7 @@ import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderPostService;
 import org.roko.erp.services.PurchaseOrderService;
@@ -33,18 +34,20 @@ public class PurchaseOrderController {
     private PaymentMethodService paymentMethodSvc;
     private PurchaseOrderLineService purchaseOrderLineSvc;
     private PurchaseOrderPostService purchaseOrderPostSvc;
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     @Autowired
     public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc,
             VendorService vendorSvc,
             PaymentMethodService paymentMethodSvc, PagingService pagingSvc,
-            PurchaseOrderPostService purchaseOrderPostSvc) {
+            PurchaseOrderPostService purchaseOrderPostSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.vendorSvc = vendorSvc;
         this.paymentMethodSvc = paymentMethodSvc;
         this.pagingSvc = pagingSvc;
         this.purchaseOrderPostSvc = purchaseOrderPostSvc;
+        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @GetMapping("/purchaseOrderList")
@@ -139,7 +142,7 @@ public class PurchaseOrderController {
 
     private PurchaseOrder fromModel(PurchaseOrderModel purchaseOrderModel) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setCode("PO" + System.currentTimeMillis());
+        purchaseOrder.setCode(purchaseCodeSeriesSvc.orderCode());
         purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
         purchaseOrder.setDate(purchaseOrderModel.getDate());
         purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
