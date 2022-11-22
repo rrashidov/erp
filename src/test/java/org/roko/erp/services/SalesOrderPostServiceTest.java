@@ -136,11 +136,12 @@ public class SalesOrderPostServiceTest {
         when(salesCodeSeriesSvcMock.postedOrderCode()).thenReturn(TEST_POSTED_SALES_ORDER_CODE);
 
         svc = new SalesOrderPostServiceImpl(salesOrderSvcMock, salesOrderLineSvcMock, postedSalesOrderSvcMock,
-                postedSalesOrderLineSvcMock, itemLedgerEntrySvcMock, customerLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, salesCodeSeriesSvcMock);
+                postedSalesOrderLineSvcMock, itemLedgerEntrySvcMock, customerLedgerEntrySvcMock,
+                bankAccountLedgerEntrySvcMock, salesCodeSeriesSvcMock);
     }
 
     @Test
-    public void allRelatedInteractionsAreDone() {
+    public void allRelatedInteractionsAreDone() throws PostFailedException {
         svc.post(TEST_CODE);
 
         PostedSalesOrder postedSalesOrder = verifyPostedSalesOrderCreated();
@@ -159,7 +160,7 @@ public class SalesOrderPostServiceTest {
     }
 
     @Test
-    public void noPaymentRelatedEntriesAreCreated_whenPaymentMethodDoesNotHaveCorrespondingBankAccount() {
+    public void noPaymentRelatedEntriesAreCreated_whenPaymentMethodDoesNotHaveCorrespondingBankAccount() throws PostFailedException {
         when(paymentMethodMock.getBankAccount()).thenReturn(null);
         
         svc.post(TEST_CODE);
@@ -206,7 +207,8 @@ public class SalesOrderPostServiceTest {
             expectedNumberOfCustomerLedgerEntries++;
         }
 
-        verify(customerLedgerEntrySvcMock, times(expectedNumberOfCustomerLedgerEntries)).create(customerLedgerEntryArgumentCaptor.capture());
+        verify(customerLedgerEntrySvcMock, times(expectedNumberOfCustomerLedgerEntries))
+                .create(customerLedgerEntryArgumentCaptor.capture());
 
         List<CustomerLedgerEntry> customerLedgerEntries = customerLedgerEntryArgumentCaptor.getAllValues();
 

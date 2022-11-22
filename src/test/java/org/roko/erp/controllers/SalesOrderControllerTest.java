@@ -1,7 +1,9 @@
 package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,6 +33,7 @@ import org.roko.erp.rules.sales.SalesOrderModelRule;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PostFailedException;
 import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesOrderLineService;
 import org.roko.erp.services.SalesOrderPostService;
@@ -300,7 +303,7 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void post_callsRespectiveService() {
+    public void post_callsRespectiveService() throws PostFailedException {
         RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
         assertEquals("/salesOrderList", redirectView.getUrl());
@@ -309,4 +312,18 @@ public class SalesOrderControllerTest {
 
         verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales Order " + TEST_CODE + " posted.", httpSessionMock);
     }
+
+    @Test
+    public void postReturnsErrorFeedback_whenPostingFails() throws PostFailedException {
+        doThrow(new PostFailedException("")).when(salesOrderPostSvcMock).post(TEST_CODE);
+
+        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
+
+        assertEquals("/salesOrderList", redirectView.getUrl());
+
+        verify(salesOrderPostSvcMock).post(TEST_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.ERROR, "Sales Order " + TEST_CODE + " post failed.", httpSessionMock);
+    }
+
 }

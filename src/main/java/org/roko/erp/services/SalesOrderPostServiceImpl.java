@@ -48,8 +48,8 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     }
 
     @Override
-    @Transactional
-    public void post(String code) {
+    @Transactional(rollbackOn = PostFailedException.class)
+    public void post(String code) throws PostFailedException {
         SalesOrder salesOrder = salesOrderSvc.get(code);
 
         PostedSalesOrder postedSalesOrder = createPostedSalesOrder(salesOrder);

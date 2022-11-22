@@ -14,6 +14,7 @@ import org.roko.erp.model.SalesOrderLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PostFailedException;
 import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesOrderLineService;
 import org.roko.erp.services.SalesOrderPostService;
@@ -141,9 +142,13 @@ public class SalesOrderController {
 
     @GetMapping("/postSalesOrder")
     public RedirectView post(@RequestParam(name = "code") String code, HttpSession httpSession) {
-        salesOrderPostService.post(code);
+        try {
+            salesOrderPostService.post(code);
 
-        feedbackSvc.give(FeedbackType.INFO, "Sales Order " + code + " posted.", httpSession);
+            feedbackSvc.give(FeedbackType.INFO, "Sales Order " + code + " posted.", httpSession);
+        } catch (PostFailedException e) {
+            feedbackSvc.give(FeedbackType.ERROR, "Sales Order " + code + " post failed.", httpSession);
+        }
 
         return new RedirectView("/salesOrderList");
     }
