@@ -14,6 +14,7 @@ import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PostFailedException;
 import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesCreditMemoLineService;
 import org.roko.erp.services.SalesCreditMemoPostService;
@@ -45,7 +46,8 @@ public class SalesCreditMemoController {
     @Autowired
     public SalesCreditMemoController(SalesCreditMemoService svc, PagingService pagingSvc, CustomerService customerSvc,
             PaymentMethodService paymentMethodSvc, SalesCreditMemoLineService salesCreditMemoLineSvc,
-            SalesCreditMemoPostService salesCreditMemoPostSvc, SalesCodeSeriesService salesCodeSeriesSvc, FeedbackService feedbackSvc) {
+            SalesCreditMemoPostService salesCreditMemoPostSvc, SalesCodeSeriesService salesCodeSeriesSvc,
+            FeedbackService feedbackSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.customerSvc = customerSvc;
@@ -140,9 +142,13 @@ public class SalesCreditMemoController {
 
     @GetMapping("/postSalesCreditMemo")
     public RedirectView post(@RequestParam(name = "code") String code, HttpSession httpSession) {
-        salesCreditMemoPostSvc.post(code);
+        try {
+            salesCreditMemoPostSvc.post(code);
 
-        feedbackSvc.give(FeedbackType.INFO, "Sales credit memo " + code + " posted.", httpSession);
+            feedbackSvc.give(FeedbackType.INFO, "Sales credit memo " + code + " posted.", httpSession);
+        } catch (PostFailedException e) {
+            feedbackSvc.give(FeedbackType.ERROR, "Sales credit memo " + code + " post failed.", httpSession);
+        }
 
         return new RedirectView("/salesCreditMemoList");
     }

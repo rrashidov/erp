@@ -47,7 +47,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
     }
 
     @Override
-    public void post(String code) {
+    public void post(String code) throws PostFailedException {
         SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(code);
 
         PostedSalesCreditMemo postedSalesCreditMemo = createPostedSalesCreditMemo(salesCreditMemo);

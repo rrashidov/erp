@@ -141,7 +141,7 @@ public class SalesCreditMemoPostServiceTest {
     }
 
     @Test
-    public void allRelatedInteractionsAreDone() {
+    public void allRelatedInteractionsAreDone() throws PostFailedException {
         svc.post(TEST_CODE);
 
         PostedSalesCreditMemo postedSalesCreditMemo = verifyPostedSalesCreditMemoCreated();
@@ -160,7 +160,7 @@ public class SalesCreditMemoPostServiceTest {
     }
 
     @Test
-    public void allRelatednoPaymentRelatedEntriesAreCreated_whenPaymentMethodDoesNotHaveCorrespondingBankAccountInteractionsAreDone() {
+    public void allRelatednoPaymentRelatedEntriesAreCreated_whenPaymentMethodDoesNotHaveCorrespondingBankAccountInteractionsAreDone() throws PostFailedException {
         when(paymentMethodMock.getBankAccount()).thenReturn(null);
 
         svc.post(TEST_CODE);
@@ -204,7 +204,8 @@ public class SalesCreditMemoPostServiceTest {
         if (postedSalesCreditMemo.getPaymentMethod().getBankAccount() != null) {
             expectedNumberOfCustomerLedgerEntries++;
         }
-        verify(customerLedgerEntrySvcMock, times(expectedNumberOfCustomerLedgerEntries)).create(customerLedgerEntryArgumentCaptor.capture());
+        verify(customerLedgerEntrySvcMock, times(expectedNumberOfCustomerLedgerEntries))
+                .create(customerLedgerEntryArgumentCaptor.capture());
 
         List<CustomerLedgerEntry> customerLedgerEntries = customerLedgerEntryArgumentCaptor.getAllValues();
 

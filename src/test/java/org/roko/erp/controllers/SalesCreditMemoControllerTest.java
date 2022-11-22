@@ -2,6 +2,7 @@ package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +29,7 @@ import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.services.CustomerService;
 import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PostFailedException;
 import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesCreditMemoLineService;
 import org.roko.erp.services.SalesCreditMemoPostService;
@@ -280,13 +282,28 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void post_returnsProperTemplate() {
+    public void post_returnsProperTemplate() throws PostFailedException {
         RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
 
         assertEquals("/salesCreditMemoList", redirectView.getUrl());
 
         verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
 
-        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " posted.", httpSessionMock);
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " posted.",
+                httpSessionMock);
+    }
+
+    @Test
+    public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
+        doThrow(new PostFailedException("")).when(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
+
+        RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
+
+        assertEquals("/salesCreditMemoList", redirectView.getUrl());
+
+        verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.ERROR,
+                "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post failed.", httpSessionMock);
     }
 }
