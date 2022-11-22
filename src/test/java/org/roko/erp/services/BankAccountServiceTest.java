@@ -86,6 +86,8 @@ public class BankAccountServiceTest {
         BankAccount retrievedBankAccount = svc.get(TEST_CODE);
 
         assertEquals(bankAccountMock, retrievedBankAccount);
+
+        verify(repoMock).balance(bankAccountMock);
     }
 
     @Test

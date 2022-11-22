@@ -48,7 +48,9 @@ public class BankAccountServiceImpl implements BankAccountService {
         Optional<BankAccount> bankAccountOptional = repo.findById(code);
 
         if (bankAccountOptional.isPresent()){
-            return bankAccountOptional.get();
+            BankAccount bankAccount = bankAccountOptional.get();
+            bankAccount.setBalance(repo.balance(bankAccount));
+            return bankAccount;
         }
 
         return null;
