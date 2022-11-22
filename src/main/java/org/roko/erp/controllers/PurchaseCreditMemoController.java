@@ -12,6 +12,7 @@ import org.roko.erp.model.PurchaseCreditMemoLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PostFailedException;
 import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseCreditMemoLineService;
 import org.roko.erp.services.PurchaseCreditMemoPostService;
@@ -141,9 +142,13 @@ public class PurchaseCreditMemoController {
 
     @GetMapping("/postPurchaseCreditMemo")
     public RedirectView post(@RequestParam(name = "code") String code, HttpSession httpSessionMock) {
-        purchaseCreditMemoPostSvc.post(code);
+        try {
+            purchaseCreditMemoPostSvc.post(code);
 
-        feedbackSvc.give(FeedbackType.INFO, "Purchase credit memo " + code + " posted.", httpSessionMock);
+            feedbackSvc.give(FeedbackType.INFO, "Purchase credit memo " + code + " posted.", httpSessionMock);
+        } catch (PostFailedException e) {
+            feedbackSvc.give(FeedbackType.ERROR, "Purchase credit memo " + code + " post failed.", httpSessionMock);
+        }
 
         return new RedirectView("/purchaseCreditMemoList");
     }

@@ -2,6 +2,7 @@ package org.roko.erp.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +28,7 @@ import org.roko.erp.model.PurchaseCreditMemoLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PostFailedException;
 import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseCreditMemoLineService;
 import org.roko.erp.services.PurchaseCreditMemoPostService;
@@ -291,7 +293,7 @@ public class PurchaseCreditMemoControllerTest {
     }
 
     @Test
-    public void post_returnsProperTemplate() {
+    public void post_returnsProperTemplate() throws PostFailedException {
         RedirectView redirectView = controller.post(TEST_PURCHASE_CREDIT_MEMO_CODE, httpSessionMock);
 
         assertEquals("/purchaseCreditMemoList", redirectView.getUrl());
@@ -299,5 +301,18 @@ public class PurchaseCreditMemoControllerTest {
         verify(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
         verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " posted.", httpSessionMock);
+    }
+
+    @Test
+    public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
+        doThrow(new PostFailedException("")).when(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
+
+        RedirectView redirectView = controller.post(TEST_PURCHASE_CREDIT_MEMO_CODE, httpSessionMock);
+
+        assertEquals("/purchaseCreditMemoList", redirectView.getUrl());
+
+        verify(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.ERROR, "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " post failed.", httpSessionMock);
     }
 }

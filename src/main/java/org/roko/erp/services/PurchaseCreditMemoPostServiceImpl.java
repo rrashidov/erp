@@ -46,7 +46,7 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
     }
 
     @Override
-    public void post(String code) {
+    public void post(String code) throws PostFailedException {
         PurchaseCreditMemo purchaseCreditMemo = purchaseCreditMemoSvc.get(code);
         List<PurchaseCreditMemoLine> purchaseCreditMemoLines = purchaseCreditMemoLineSvc.list(purchaseCreditMemo);
 
