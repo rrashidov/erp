@@ -3,6 +3,7 @@ package org.roko.erp.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +29,7 @@ import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PostFailedException;
 import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderPostService;
@@ -289,7 +291,7 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
-    public void post_returnsProperTemplate() {
+    public void post_returnsProperTemplate() throws PostFailedException {
         RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
         assertEquals("/purchaseOrderList", redirectView.getUrl());
@@ -298,4 +300,18 @@ public class PurchaseOrderControllerTest {
 
         verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase order " + TEST_CODE + " posted.", httpSessionMock);
     }
+
+    @Test
+    public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
+        doThrow(new PostFailedException("")).when(purchaseOrderPostSvcMock).post(TEST_CODE);
+
+        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
+
+        assertEquals("/purchaseOrderList", redirectView.getUrl());
+
+        verify(purchaseOrderPostSvcMock).post(TEST_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.ERROR, "Purchase order " + TEST_CODE + " post failed.", httpSessionMock);
+    }
+
 }

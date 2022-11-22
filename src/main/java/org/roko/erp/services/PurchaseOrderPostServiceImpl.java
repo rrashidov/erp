@@ -50,7 +50,7 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
 
     @Override
     @Transactional
-    public void post(String code) {
+    public void post(String code) throws PostFailedException {
         PurchaseOrder purchaseOrder = purchaseOrderSvc.get(code);
         List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineSvc.list(purchaseOrder);
 

@@ -13,6 +13,7 @@ import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
+import org.roko.erp.services.PostFailedException;
 import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderPostService;
@@ -147,9 +148,13 @@ public class PurchaseOrderController {
 
     @GetMapping("/postPurchaseOrder")
     public RedirectView post(@RequestParam(name = "code") String code, HttpSession httpSessionMock) {
-        purchaseOrderPostSvc.post(code);
+        try {
+            purchaseOrderPostSvc.post(code);
 
-        feedbackSvc.give(FeedbackType.INFO, "Purchase order " + code + " posted.", httpSessionMock);
+            feedbackSvc.give(FeedbackType.INFO, "Purchase order " + code + " posted.", httpSessionMock);
+        } catch (PostFailedException e) {
+            feedbackSvc.give(FeedbackType.ERROR, "Purchase order " + code + " post failed.", httpSessionMock);
+        }
 
         return new RedirectView("/purchaseOrderList");
     }

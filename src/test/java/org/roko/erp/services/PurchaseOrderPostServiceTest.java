@@ -142,7 +142,7 @@ public class PurchaseOrderPostServiceTest {
     }
 
     @Test
-    public void allRelatedInteractionsAreDone() {
+    public void allRelatedInteractionsAreDone() throws PostFailedException {
         svc.post(TEST_CODE);
 
         PostedPurchaseOrder postedPurchaseOrder = verifyPostedPurchaseOrderCreated();
@@ -161,7 +161,7 @@ public class PurchaseOrderPostServiceTest {
     }
 
     @Test
-    public void paymentRelatedEntriesNotCreated_whenPaymentMethodDoesNotHaveBankAccount() {
+    public void paymentRelatedEntriesNotCreated_whenPaymentMethodDoesNotHaveBankAccount() throws PostFailedException {
         when(paymentMethodMock.getBankAccount()).thenReturn(null);
 
         svc.post(TEST_CODE);
