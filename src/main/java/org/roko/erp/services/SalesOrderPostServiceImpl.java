@@ -10,6 +10,7 @@ import org.roko.erp.model.BankAccountLedgerEntry;
 import org.roko.erp.model.BankAccountLedgerEntryType;
 import org.roko.erp.model.CustomerLedgerEntry;
 import org.roko.erp.model.CustomerLedgerEntryType;
+import org.roko.erp.model.Item;
 import org.roko.erp.model.ItemLedgerEntry;
 import org.roko.erp.model.ItemLedgerEntryType;
 import org.roko.erp.model.PostedSalesOrder;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SalesOrderPostServiceImpl implements SalesOrderPostService {
 
+    private static final String NOT_ENOUGH_INVENTORY_MSG = "Item %s has inventory %.2f. Can not sell %.2f";
+
     private SalesOrderService salesOrderSvc;
     private SalesOrderLineService salesOrderLineSvc;
     private PostedSalesOrderService postedSalesOrderSvc;
@@ -31,16 +34,18 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     private CustomerLedgerEntryService customerLedgerEntrySvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
+    private ItemService itemSvc;
 
     @Autowired
     public SalesOrderPostServiceImpl(SalesOrderService salesOrderSvc, SalesOrderLineService salesOrderLineSvc,
             PostedSalesOrderService postedSalesOrderSvc, PostedSalesOrderLineService postedSalesOrderLineSvc,
-            ItemLedgerEntryService itemLedgerEntrySvc, CustomerLedgerEntryService customerLedgerEntrySvc,
+            ItemService itemSvc, ItemLedgerEntryService itemLedgerEntrySvc, CustomerLedgerEntryService customerLedgerEntrySvc,
             BankAccountLedgerEntryService bankAccountLedgerEntrySvc, SalesCodeSeriesService salesCodeSeriesSvc) {
         this.salesOrderSvc = salesOrderSvc;
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.postedSalesOrderSvc = postedSalesOrderSvc;
         this.postedSalesOrderLineSvc = postedSalesOrderLineSvc;
+        this.itemSvc = itemSvc;
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
         this.customerLedgerEntrySvc = customerLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
@@ -139,7 +144,7 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
         customerLedgerEntrySvc.create(customerLedgerEntry);
     }
 
-    private void createItemLedgerEntries(SalesOrder salesOrder, PostedSalesOrder postedSalesOrder) {
+    private void createItemLedgerEntries(SalesOrder salesOrder, PostedSalesOrder postedSalesOrder) throws PostFailedException {
         List<SalesOrderLine> salesOrderLines = salesOrderLineSvc.list(salesOrder);
 
         for (SalesOrderLine salesOrderLine : salesOrderLines) {
@@ -147,7 +152,15 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
         }
     }
 
-    private void createItemLedgerEntry(SalesOrderLine salesOrderLine, PostedSalesOrder postedSalesOrder) {
+    private void createItemLedgerEntry(SalesOrderLine salesOrderLine, PostedSalesOrder postedSalesOrder) throws PostFailedException {
+        Item item = itemSvc.get(salesOrderLine.getItem().getCode());
+
+        double inventory = item.getInventory();
+
+        if (salesOrderLine.getQuantity() > inventory){
+            throw new PostFailedException(String.format(NOT_ENOUGH_INVENTORY_MSG, salesOrderLine.getItem().getCode(), inventory, salesOrderLine.getQuantity()));
+        }
+        
         ItemLedgerEntry itemLedgerEntry = new ItemLedgerEntry();
         itemLedgerEntry.setItem(salesOrderLine.getItem());
         itemLedgerEntry.setType(ItemLedgerEntryType.SALES_ORDER);

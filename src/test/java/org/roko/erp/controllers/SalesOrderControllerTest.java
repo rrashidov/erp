@@ -46,6 +46,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesOrderControllerTest {
 
+    private static final String TEST_POST_FAILED_EXCEPTION_MSG = "test-post-failed-exception-msg";
+
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
     private static final String TEST_CODE = "test-code";
@@ -315,7 +317,7 @@ public class SalesOrderControllerTest {
 
     @Test
     public void postReturnsErrorFeedback_whenPostingFails() throws PostFailedException {
-        doThrow(new PostFailedException("")).when(salesOrderPostSvcMock).post(TEST_CODE);
+        doThrow(new PostFailedException(TEST_POST_FAILED_EXCEPTION_MSG)).when(salesOrderPostSvcMock).post(TEST_CODE);
 
         RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
@@ -323,7 +325,8 @@ public class SalesOrderControllerTest {
 
         verify(salesOrderPostSvcMock).post(TEST_CODE);
 
-        verify(feedbackSvcMock).give(FeedbackType.ERROR, "Sales Order " + TEST_CODE + " post failed.", httpSessionMock);
+        verify(feedbackSvcMock).give(FeedbackType.ERROR,
+                "Sales Order " + TEST_CODE + " post failed: " + TEST_POST_FAILED_EXCEPTION_MSG, httpSessionMock);
     }
 
 }

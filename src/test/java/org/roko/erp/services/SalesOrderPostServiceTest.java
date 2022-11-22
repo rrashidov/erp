@@ -1,6 +1,7 @@
 package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -40,6 +41,8 @@ public class SalesOrderPostServiceTest {
 
     private static final String TEST_CODE = "test-code";
 
+    private static final String ITEM_CODE = "item-code";
+
     private static final Date TEST_DATE = new Date();
 
     private static final Double TEST_QTY = 10.00;
@@ -47,6 +50,8 @@ public class SalesOrderPostServiceTest {
     private static final Double TEST_AMOUNT = 120.00;
 
     private static final Integer TEST_LINE_NO = 123;
+
+    private static final Double TEST_ITEM_INVENTORY = 12.00;
 
     @Captor
     private ArgumentCaptor<PostedSalesOrder> postedSalesOrderArgumentCaptor;
@@ -94,6 +99,9 @@ public class SalesOrderPostServiceTest {
     private PostedSalesOrderLineService postedSalesOrderLineSvcMock;
 
     @Mock
+    private ItemService itemSvcMock;
+
+    @Mock
     private ItemLedgerEntryService itemLedgerEntrySvcMock;
 
     @Mock
@@ -112,6 +120,9 @@ public class SalesOrderPostServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(paymentMethodMock.getBankAccount()).thenReturn(bankAccountMock);
+
+        when(itemMock.getCode()).thenReturn(ITEM_CODE);
+        when(itemMock.getInventory()).thenReturn(TEST_ITEM_INVENTORY);
 
         when(salesOrderMock.getCode()).thenReturn(TEST_CODE);
         when(salesOrderMock.getCustomer()).thenReturn(customerMock);
@@ -135,8 +146,10 @@ public class SalesOrderPostServiceTest {
 
         when(salesCodeSeriesSvcMock.postedOrderCode()).thenReturn(TEST_POSTED_SALES_ORDER_CODE);
 
+        when(itemSvcMock.get(ITEM_CODE)).thenReturn(itemMock);
+
         svc = new SalesOrderPostServiceImpl(salesOrderSvcMock, salesOrderLineSvcMock, postedSalesOrderSvcMock,
-                postedSalesOrderLineSvcMock, itemLedgerEntrySvcMock, customerLedgerEntrySvcMock,
+                postedSalesOrderLineSvcMock, itemSvcMock, itemLedgerEntrySvcMock, customerLedgerEntrySvcMock,
                 bankAccountLedgerEntrySvcMock, salesCodeSeriesSvcMock);
     }
 
@@ -170,6 +183,13 @@ public class SalesOrderPostServiceTest {
         verifyCustomerLedgerEntryCreated(postedSalesOrder);
 
         verifyNoBankAccountLedgerEntryCreated();
+    }
+
+    @Test
+    public void postingFails_whenItemDoesNotHaveEnoughInventory() {
+        when(itemMock.getInventory()).thenReturn(0.0);
+
+        assertThrows(PostFailedException.class, () -> {svc.post(TEST_CODE);});
     }
 
     private void verifyNoBankAccountLedgerEntryCreated() {

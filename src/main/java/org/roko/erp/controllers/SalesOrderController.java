@@ -147,7 +147,8 @@ public class SalesOrderController {
 
             feedbackSvc.give(FeedbackType.INFO, "Sales Order " + code + " posted.", httpSession);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Sales Order " + code + " post failed.", httpSession);
+            feedbackSvc.give(FeedbackType.ERROR, "Sales Order " + code + " post failed: " + e.getMessage(),
+                    httpSession);
         }
 
         return new RedirectView("/salesOrderList");
