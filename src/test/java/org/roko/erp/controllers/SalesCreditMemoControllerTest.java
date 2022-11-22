@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,11 +26,14 @@ import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.SalesCreditMemo;
 import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.services.CustomerService;
+import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.SalesCodeSeriesService;
 import org.roko.erp.services.SalesCreditMemoLineService;
 import org.roko.erp.services.SalesCreditMemoPostService;
 import org.roko.erp.services.SalesCreditMemoService;
+import org.roko.erp.services.util.Feedback;
+import org.roko.erp.services.util.FeedbackType;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -111,6 +116,15 @@ public class SalesCreditMemoControllerTest {
     @Mock
     private SalesCodeSeriesService salesCodeSeriesSvcMock;
 
+    @Mock
+    private FeedbackService feedbackSvcMock;
+
+    @Mock
+    private HttpSession httpSessionMock;
+
+    @Mock
+    private Feedback feedbackMock;
+
     private SalesCreditMemoController controller;
 
     @BeforeEach
@@ -153,18 +167,21 @@ public class SalesCreditMemoControllerTest {
 
         when(salesCodeSeriesSvcMock.creditMemoCode()).thenReturn(TEST_NEW_SALES_CREDIT_MEMO_CODE);
 
+        when(feedbackSvcMock.get(httpSessionMock)).thenReturn(feedbackMock);
+
         controller = new SalesCreditMemoController(svcMock, pagingSvcMock, customerSvcMock, paymentMethodSvcMock,
-                salesCreditMemoLineSvcMock, salesCreditMemoPostSvcMock, salesCodeSeriesSvcMock);
+                salesCreditMemoLineSvcMock, salesCreditMemoPostSvcMock, salesCodeSeriesSvcMock, feedbackSvcMock);
     }
 
     @Test
     public void listReturnsProperTemplate() {
-        String template = controller.list(TEST_PAGE, modelMock);
+        String template = controller.list(TEST_PAGE, modelMock, httpSessionMock);
 
         assertEquals("salesCreditMemoList.html", template);
 
         verify(modelMock).addAttribute("salesCreditMemos", salesCreditMemos);
         verify(modelMock).addAttribute("paging", pagingDataMock);
+        verify(modelMock).addAttribute("feedback", feedbackMock);
     }
 
     @Test
@@ -264,10 +281,12 @@ public class SalesCreditMemoControllerTest {
 
     @Test
     public void post_returnsProperTemplate() {
-        RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE);
+        RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
 
         assertEquals("/salesCreditMemoList", redirectView.getUrl());
 
         verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " posted.", httpSessionMock);
     }
 }

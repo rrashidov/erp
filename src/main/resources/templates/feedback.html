@@ -1,0 +1,9 @@
+<div th:if="${feedback.infoFeedbackFound}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${feedback.msg}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div th:if="${feedback.errorFeedbackFound}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${feedback.msg}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
