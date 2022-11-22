@@ -46,7 +46,9 @@ public class VendorServiceImpl implements VendorService {
         Optional<Vendor> vendorOptional = repo.findById(code);
 
         if (vendorOptional.isPresent()) {
-            return vendorOptional.get();
+            Vendor vendor = vendorOptional.get();
+            vendor.setBalance(repo.balance(vendor));
+            return vendor;
         }
 
         return null;

@@ -87,6 +87,8 @@ public class VendorServiceTest {
         Vendor vendor = svc.get(TEST_CODE);
 
         assertEquals(vendorMock, vendor);
+
+        verify(repoMock).balance(vendorMock);
     }
 
     @Test
