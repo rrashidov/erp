@@ -40,10 +40,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item get(String id) {
-        Optional<Item> item = repo.findById(id);
+        Optional<Item> itemOptional = repo.findById(id);
 
-        if (item.isPresent()) {
-            return item.get();
+        if (itemOptional.isPresent()) {
+            Item item = itemOptional.get();
+            item.setInventory(repo.inventory(item));
+            return item;
         }
 
         return null;

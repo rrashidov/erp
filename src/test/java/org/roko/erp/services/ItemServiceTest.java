@@ -90,6 +90,8 @@ public class ItemServiceTest {
         Item retrievedItem = svc.get(TEST_ID);
 
         assertEquals(itemFromDBMock, retrievedItem);
+
+        verify(repoMock).inventory(itemFromDBMock);
     }
 
     @Test
