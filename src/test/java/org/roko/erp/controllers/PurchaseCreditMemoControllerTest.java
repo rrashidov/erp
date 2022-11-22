@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -23,12 +25,15 @@ import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.PurchaseCreditMemo;
 import org.roko.erp.model.PurchaseCreditMemoLine;
 import org.roko.erp.model.Vendor;
+import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseCreditMemoLineService;
 import org.roko.erp.services.PurchaseCreditMemoPostService;
 import org.roko.erp.services.PurchaseCreditMemoService;
 import org.roko.erp.services.VendorService;
+import org.roko.erp.services.util.Feedback;
+import org.roko.erp.services.util.FeedbackType;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -112,6 +117,15 @@ public class PurchaseCreditMemoControllerTest {
     @Mock
     private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
 
+    @Mock
+    private FeedbackService feedbackSvcMock;
+
+    @Mock
+    private HttpSession httpSessionMock;
+
+    @Mock
+    private Feedback feedbackMock;
+
     private PurchaseCreditMemoController controller;
 
     @BeforeEach
@@ -119,7 +133,7 @@ public class PurchaseCreditMemoControllerTest {
         MockitoAnnotations.openMocks(this);
 
         purchaseCreditMemos = Arrays.asList(purchaseCreditMemoMock);
-        
+
         purchaseCreditMemoLines = Arrays.asList(purchaseCreditMemoLineMock);
 
         when(purchaseCreditMemoModelMock.getCode()).thenReturn("");
@@ -137,7 +151,8 @@ public class PurchaseCreditMemoControllerTest {
         when(svcMock.get(TEST_PURCHASE_CREDIT_MEMO_CODE)).thenReturn(purchaseCreditMemoMock);
 
         when(pagingSvcMock.generate("purchaseCreditMemo", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("purchaseCreditMemoCard", TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_PAGE, TEST_LINE_COUNT))
+        when(pagingSvcMock.generate("purchaseCreditMemoCard", TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_PAGE,
+                TEST_LINE_COUNT))
                 .thenReturn(purchaseCreditMemoLinePagingData);
 
         when(vendorMock.getCode()).thenReturn(TEST_VENDOR_CODE);
@@ -157,18 +172,22 @@ public class PurchaseCreditMemoControllerTest {
 
         when(purchaseCodeSeriesSvcMock.creditMemoCode()).thenReturn(TEST_NEW_CREDIT_MEMO_CODE);
 
+        when(feedbackSvcMock.get(httpSessionMock)).thenReturn(feedbackMock);
+
         controller = new PurchaseCreditMemoController(svcMock, pagingSvcMock, vendorSvcMock, paymentMethodSvcMock,
-                purchaseCreditMemoLineSvcMock, purchaseCreditMemoPostSvcMock, purchaseCodeSeriesSvcMock);
+                purchaseCreditMemoLineSvcMock, purchaseCreditMemoPostSvcMock, purchaseCodeSeriesSvcMock,
+                feedbackSvcMock);
     }
 
     @Test
     public void list_returnsProperTemplate() {
-        String template = controller.list(TEST_PAGE, modelMock);
+        String template = controller.list(TEST_PAGE, modelMock, httpSessionMock);
 
         assertEquals("purchaseCreditMemoList.html", template);
 
         verify(modelMock).addAttribute("purchaseCreditMemos", purchaseCreditMemos);
         verify(modelMock).addAttribute("paging", pagingDataMock);
+        verify(modelMock).addAttribute("feedback", feedbackMock);
     }
 
     @Test
@@ -223,7 +242,8 @@ public class PurchaseCreditMemoControllerTest {
 
     @Test
     public void postingWizardSecondPage_createsNewEntity_andReturnsProperTemplate_whenCalledForNew() {
-        RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock, redirectAttributesMock);
+        RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock,
+                redirectAttributesMock);
 
         assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
@@ -272,10 +292,12 @@ public class PurchaseCreditMemoControllerTest {
 
     @Test
     public void post_returnsProperTemplate() {
-        RedirectView redirectView = controller.post(TEST_PURCHASE_CREDIT_MEMO_CODE);
+        RedirectView redirectView = controller.post(TEST_PURCHASE_CREDIT_MEMO_CODE, httpSessionMock);
 
         assertEquals("/purchaseCreditMemoList", redirectView.getUrl());
 
         verify(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " posted.", httpSessionMock);
     }
 }

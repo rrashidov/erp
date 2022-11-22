@@ -2,18 +2,23 @@ package org.roko.erp.controllers;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.roko.erp.controllers.model.PurchaseCreditMemoModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PurchaseCreditMemo;
 import org.roko.erp.model.PurchaseCreditMemoLine;
 import org.roko.erp.model.Vendor;
+import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseCreditMemoLineService;
 import org.roko.erp.services.PurchaseCreditMemoPostService;
 import org.roko.erp.services.PurchaseCreditMemoService;
 import org.roko.erp.services.VendorService;
+import org.roko.erp.services.util.Feedback;
+import org.roko.erp.services.util.FeedbackType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,12 +39,14 @@ public class PurchaseCreditMemoController {
     private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
     private PurchaseCreditMemoPostService purchaseCreditMemoPostSvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
+    private FeedbackService feedbackSvc;
 
     @Autowired
     public PurchaseCreditMemoController(PurchaseCreditMemoService svc, PagingService pagingSvc,
             VendorService vendorSvc, PaymentMethodService paymentMethodSvc,
             PurchaseCreditMemoLineService purchaseCreditMemoLineSvc,
-            PurchaseCreditMemoPostService purchaseCreditMemoPostSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
+            PurchaseCreditMemoPostService purchaseCreditMemoPostSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc,
+            FeedbackService feedbackSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
         this.vendorSvc = vendorSvc;
@@ -47,15 +54,18 @@ public class PurchaseCreditMemoController {
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
         this.purchaseCreditMemoPostSvc = purchaseCreditMemoPostSvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
+        this.feedbackSvc = feedbackSvc;
     }
 
     @GetMapping("/purchaseCreditMemoList")
-    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model, HttpSession httpSession) {
         List<PurchaseCreditMemo> purchaseCreditMemos = svc.list(page);
         PagingData pagingData = pagingSvc.generate("purchaseCreditMemo", page, svc.count());
+        Feedback feedback = feedbackSvc.get(httpSession);
 
         model.addAttribute("purchaseCreditMemos", purchaseCreditMemos);
         model.addAttribute("paging", pagingData);
+        model.addAttribute("feedback", feedback);
 
         return "purchaseCreditMemoList.html";
     }
@@ -130,8 +140,10 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/postPurchaseCreditMemo")
-    public RedirectView post(@RequestParam(name = "code") String code) {
+    public RedirectView post(@RequestParam(name = "code") String code, HttpSession httpSessionMock) {
         purchaseCreditMemoPostSvc.post(code);
+
+        feedbackSvc.give(FeedbackType.INFO, "Purchase credit memo " + code + " posted.", httpSessionMock);
 
         return new RedirectView("/purchaseCreditMemoList");
     }
