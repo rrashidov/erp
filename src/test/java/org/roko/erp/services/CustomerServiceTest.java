@@ -88,6 +88,8 @@ public class CustomerServiceTest {
         Customer retrievedCustomer = svc.get(TEST_CODE);
 
         assertEquals(customerMock, retrievedCustomer);
+
+        verify(repoMock).balance(customerMock);
     }
 
     @Test 

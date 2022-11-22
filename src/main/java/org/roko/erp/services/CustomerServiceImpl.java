@@ -46,7 +46,9 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Customer> customerOptional = repo.findById(code);
 
         if (customerOptional.isPresent()) {
-            return customerOptional.get();
+            Customer customer = customerOptional.get();
+            customer.setBalance(repo.balance(customer));
+            return customer;
         }
 
         return null;
