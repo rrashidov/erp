@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,12 +26,15 @@ import org.roko.erp.model.PaymentMethod;
 import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
+import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderPostService;
 import org.roko.erp.services.PurchaseOrderService;
 import org.roko.erp.services.VendorService;
+import org.roko.erp.services.util.Feedback;
+import org.roko.erp.services.util.FeedbackType;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -114,6 +119,15 @@ public class PurchaseOrderControllerTest {
     @Mock
     private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
 
+    @Mock
+    private FeedbackService feedbackSvcMock;
+
+    @Mock
+    private HttpSession httpSessionMock;
+
+    @Mock
+    private Feedback feedbackMock;
+
     private PurchaseOrderController controller;
 
     @BeforeEach
@@ -159,18 +173,21 @@ public class PurchaseOrderControllerTest {
 
         when(purchaseCodeSeriesSvcMock.orderCode()).thenReturn(TEST_NEW_PURCHASE_ORDER_CODE);
 
+        when(feedbackSvcMock.get(httpSessionMock)).thenReturn(feedbackMock);
+
         controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, vendorSvcMock, paymentMethodSvcMock,
-                pagingSvcMock, purchaseOrderPostSvcMock, purchaseCodeSeriesSvcMock);
+                pagingSvcMock, purchaseOrderPostSvcMock, purchaseCodeSeriesSvcMock, feedbackSvcMock);
     }
 
     @Test
     public void list_returnsProperTemplate() {
-        String template = controller.list(TEST_PAGE, modelMock);
+        String template = controller.list(TEST_PAGE, modelMock, httpSessionMock);
 
         assertEquals("purchaseOrderList.html", template);
 
         verify(modelMock).addAttribute("purchaseOrders", purchaseOrders);
         verify(modelMock).addAttribute("paging", pagingDataMock);
+        verify(modelMock).addAttribute("feedback", feedbackMock);
     }
 
     @Test
@@ -273,10 +290,12 @@ public class PurchaseOrderControllerTest {
 
     @Test
     public void post_returnsProperTemplate() {
-        RedirectView redirectView = controller.post(TEST_CODE);
+        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
         assertEquals("/purchaseOrderList", redirectView.getUrl());
 
         verify(purchaseOrderPostSvcMock).post(TEST_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase order " + TEST_CODE + " posted.", httpSessionMock);
     }
 }

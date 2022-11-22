@@ -3,18 +3,23 @@ package org.roko.erp.controllers;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.roko.erp.controllers.model.PurchaseOrderModel;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.PurchaseOrder;
 import org.roko.erp.model.PurchaseOrderLine;
 import org.roko.erp.model.Vendor;
+import org.roko.erp.services.FeedbackService;
 import org.roko.erp.services.PaymentMethodService;
 import org.roko.erp.services.PurchaseCodeSeriesService;
 import org.roko.erp.services.PurchaseOrderLineService;
 import org.roko.erp.services.PurchaseOrderPostService;
 import org.roko.erp.services.PurchaseOrderService;
 import org.roko.erp.services.VendorService;
+import org.roko.erp.services.util.Feedback;
+import org.roko.erp.services.util.FeedbackType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,12 +40,14 @@ public class PurchaseOrderController {
     private PurchaseOrderLineService purchaseOrderLineSvc;
     private PurchaseOrderPostService purchaseOrderPostSvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
+    private FeedbackService feedbackSvc;
 
     @Autowired
     public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc,
             VendorService vendorSvc,
             PaymentMethodService paymentMethodSvc, PagingService pagingSvc,
-            PurchaseOrderPostService purchaseOrderPostSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
+            PurchaseOrderPostService purchaseOrderPostSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc,
+            FeedbackService feedbackSvc) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.vendorSvc = vendorSvc;
@@ -48,15 +55,19 @@ public class PurchaseOrderController {
         this.pagingSvc = pagingSvc;
         this.purchaseOrderPostSvc = purchaseOrderPostSvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
+        this.feedbackSvc = feedbackSvc;
     }
 
     @GetMapping("/purchaseOrderList")
-    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model,
+            HttpSession httpSession) {
         List<PurchaseOrder> purchaseOrders = svc.list(page);
         PagingData pagingData = pagingSvc.generate("purchaseOrder", page, svc.count());
+        Feedback feedback = feedbackSvc.get(httpSession);
 
         model.addAttribute("purchaseOrders", purchaseOrders);
         model.addAttribute("paging", pagingData);
+        model.addAttribute("feedback", feedback);
 
         return "purchaseOrderList.html";
     }
@@ -124,7 +135,8 @@ public class PurchaseOrderController {
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         PurchaseOrder purchaseOrder = svc.get(code);
         List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineSvc.list(purchaseOrder, page);
-        PagingData pagingData = pagingSvc.generate("purchaseOrderCard", code, page, purchaseOrderLineSvc.count(purchaseOrder));
+        PagingData pagingData = pagingSvc.generate("purchaseOrderCard", code, page,
+                purchaseOrderLineSvc.count(purchaseOrder));
 
         model.addAttribute("purchaseOrder", purchaseOrder);
         model.addAttribute("purchaseOrderLines", purchaseOrderLines);
@@ -134,8 +146,10 @@ public class PurchaseOrderController {
     }
 
     @GetMapping("/postPurchaseOrder")
-    public RedirectView post(@RequestParam(name = "code") String code) {
+    public RedirectView post(@RequestParam(name = "code") String code, HttpSession httpSessionMock) {
         purchaseOrderPostSvc.post(code);
+
+        feedbackSvc.give(FeedbackType.INFO, "Purchase order " + code + " posted.", httpSessionMock);
 
         return new RedirectView("/purchaseOrderList");
     }
