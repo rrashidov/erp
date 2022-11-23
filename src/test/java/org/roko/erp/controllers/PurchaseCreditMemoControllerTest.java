@@ -42,6 +42,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseCreditMemoControllerTest {
 
+    private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
+
     private static final String TEST_NEW_CREDIT_MEMO_CODE = "TEST_NEW_CREDIT_MEMO_CODE";
 
     private static final String TEST_PURCHASE_CREDIT_MEMO_CODE = "test-purchase-credit-memo-code";
@@ -300,12 +302,14 @@ public class PurchaseCreditMemoControllerTest {
 
         verify(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-        verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " posted.", httpSessionMock);
+        verify(feedbackSvcMock).give(FeedbackType.INFO,
+                "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " posted.", httpSessionMock);
     }
 
     @Test
     public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
-        doThrow(new PostFailedException("")).when(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
+        doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(purchaseCreditMemoPostSvcMock)
+                .post(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
         RedirectView redirectView = controller.post(TEST_PURCHASE_CREDIT_MEMO_CODE, httpSessionMock);
 
@@ -313,6 +317,8 @@ public class PurchaseCreditMemoControllerTest {
 
         verify(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-        verify(feedbackSvcMock).give(FeedbackType.ERROR, "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " post failed.", httpSessionMock);
+        verify(feedbackSvcMock).give(FeedbackType.ERROR,
+                "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " post failed: " + TEST_POST_FAILED_MSG,
+                httpSessionMock);
     }
 }

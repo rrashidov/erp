@@ -1,6 +1,7 @@
 package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -34,6 +35,9 @@ import org.roko.erp.model.VendorLedgerEntryType;
 import org.roko.erp.model.jpa.PurchaseCreditMemoLineId;
 
 public class PurchaseCreditMemoPostServiceTest {
+
+    private static final String TEST_ITEM_CODE = "test-item-code";
+    private static final Double TEST_ITEM_INVENTORY = 30.00;
 
     private static final String TEST_NEW_CODE = "test-new-code";
 
@@ -98,6 +102,9 @@ public class PurchaseCreditMemoPostServiceTest {
     private ItemLedgerEntryService itemLedgerEntrySvcMock;
 
     @Mock
+    private ItemService itemSvcMock;
+
+    @Mock
     private VendorLedgerEntryService vendorLedgerEntrySvcMock;
 
     @Mock
@@ -136,9 +143,14 @@ public class PurchaseCreditMemoPostServiceTest {
 
         when(purchaseCodeSeriesSvcMock.postedCreditMemoCode()).thenReturn(TEST_NEW_CODE);
 
+        when(itemMock.getCode()).thenReturn(TEST_ITEM_CODE);
+        when(itemMock.getInventory()).thenReturn(TEST_ITEM_INVENTORY);
+        when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
+
         svc = new PurchaseCreditMemoPostServiceImpl(purchaseCreditMemoSvcMock, purchaseCreditMemoLineSvcMock,
                 postedPurchaseCreditMemoSvcMock, postedPurchaseCreditMemoLineSvcMock, itemLedgerEntrySvcMock,
-                vendorLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, purchaseCodeSeriesSvcMock);
+                itemSvcMock, vendorLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, 
+                purchaseCodeSeriesSvcMock);
     }
 
     @Test
@@ -171,6 +183,13 @@ public class PurchaseCreditMemoPostServiceTest {
         verifyVendorLedgerEntriesCreated(postedPurchaseCreditMemo);
 
         verifyNoBankAccountLedgerEntriesCreated();
+    }
+
+    @Test
+    public void postFails_whenItemHasNotEnoughInventory() throws PostFailedException {
+        when(itemMock.getInventory()).thenReturn(0.0);
+
+        assertThrows(PostFailedException.class, () -> {svc.post(TEST_CODE);});
     }
 
     private void verifyNoBankAccountLedgerEntriesCreated() {

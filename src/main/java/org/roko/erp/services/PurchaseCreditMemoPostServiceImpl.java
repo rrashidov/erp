@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.roko.erp.model.BankAccountLedgerEntry;
 import org.roko.erp.model.BankAccountLedgerEntryType;
+import org.roko.erp.model.Item;
 import org.roko.erp.model.ItemLedgerEntry;
 import org.roko.erp.model.ItemLedgerEntryType;
 import org.roko.erp.model.PostedPurchaseCreditMemo;
@@ -16,9 +17,12 @@ import org.roko.erp.model.VendorLedgerEntry;
 import org.roko.erp.model.VendorLedgerEntryType;
 import org.roko.erp.model.jpa.PostedPurchaseCreditMemoLineId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPostService {
+
+    private static final String NOT_ENOUGH_ITEM_INVENTORY_MSG = "Item %s has inventory %.2f. Can not return %.2f";
 
     private PurchaseCreditMemoService purchaseCreditMemoSvc;
     private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
@@ -28,24 +32,28 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
     private VendorLedgerEntryService vendorLedgerEntrySvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
+    private ItemService itemSvc;
 
     public PurchaseCreditMemoPostServiceImpl(PurchaseCreditMemoService purchaseCreditMemoSvc,
             PurchaseCreditMemoLineService purchaseCreditMemoLineSvc,
             PostedPurchaseCreditMemoService postedPurchaseCreditMemoSvc,
             PostedPurchaseCreditMemoLineService postedPurchaseCreditMemoLineSvc,
-            ItemLedgerEntryService itemLedgerEntrySvc, VendorLedgerEntryService vendorLedgerEntrySvc,
+            ItemLedgerEntryService itemLedgerEntrySvc, ItemService itemSvc,
+            VendorLedgerEntryService vendorLedgerEntrySvc,
             BankAccountLedgerEntryService bankAccountLedgerEntrySvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.purchaseCreditMemoSvc = purchaseCreditMemoSvc;
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
         this.postedPurchaseCreditMemoSvc = postedPurchaseCreditMemoSvc;
         this.postedPurchaseCreditMemoLineSvc = postedPurchaseCreditMemoLineSvc;
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
+        this.itemSvc = itemSvc;
         this.vendorLedgerEntrySvc = vendorLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @Override
+    @Transactional(rollbackFor = PostFailedException.class)
     public void post(String code) throws PostFailedException {
         PurchaseCreditMemo purchaseCreditMemo = purchaseCreditMemoSvc.get(code);
         List<PurchaseCreditMemoLine> purchaseCreditMemoLines = purchaseCreditMemoLineSvc.list(purchaseCreditMemo);
@@ -130,16 +138,26 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
     }
 
     private void createItemLedgerEntries(PostedPurchaseCreditMemo postedPurchaseCreditMemo,
-            List<PurchaseCreditMemoLine> purchaseCreditMemoLines) {
-        purchaseCreditMemoLines.stream()
-                .forEach(x -> createItemLedgerEntry(x, postedPurchaseCreditMemo));
+            List<PurchaseCreditMemoLine> purchaseCreditMemoLines) throws PostFailedException {
+
+        for (PurchaseCreditMemoLine purchaseCreditMemoLine: purchaseCreditMemoLines) {
+            createItemLedgerEntry(purchaseCreditMemoLine, postedPurchaseCreditMemo);
+        }
     }
 
-    private void createItemLedgerEntry(PurchaseCreditMemoLine x, PostedPurchaseCreditMemo postedPurchaseCreditMemo) {
+    private void createItemLedgerEntry(PurchaseCreditMemoLine purchaseCreditMemoLine,
+            PostedPurchaseCreditMemo postedPurchaseCreditMemo) throws PostFailedException {
+        Item item = itemSvc.get(purchaseCreditMemoLine.getItem().getCode());
+
+        if (item.getInventory() < purchaseCreditMemoLine.getQuantity()) {
+            throw new PostFailedException(String.format(NOT_ENOUGH_ITEM_INVENTORY_MSG, item.getCode(),
+                    item.getInventory(), purchaseCreditMemoLine.getQuantity()));
+        }
+
         ItemLedgerEntry itemLedgerEntry = new ItemLedgerEntry();
-        itemLedgerEntry.setItem(x.getItem());
+        itemLedgerEntry.setItem(purchaseCreditMemoLine.getItem());
         itemLedgerEntry.setType(ItemLedgerEntryType.PURCHASE_CREDIT_MEMO);
-        itemLedgerEntry.setQuantity(-x.getQuantity());
+        itemLedgerEntry.setQuantity(-purchaseCreditMemoLine.getQuantity());
         itemLedgerEntry.setDate(new Date());
         itemLedgerEntry.setDocumentCode(postedPurchaseCreditMemo.getCode());
 

@@ -59,7 +59,8 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/purchaseCreditMemoList")
-    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model, HttpSession httpSession) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model,
+            HttpSession httpSession) {
         List<PurchaseCreditMemo> purchaseCreditMemos = svc.list(page);
         PagingData pagingData = pagingSvc.generate("purchaseCreditMemo", page, svc.count());
         Feedback feedback = feedbackSvc.get(httpSession);
@@ -147,7 +148,8 @@ public class PurchaseCreditMemoController {
 
             feedbackSvc.give(FeedbackType.INFO, "Purchase credit memo " + code + " posted.", httpSessionMock);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Purchase credit memo " + code + " post failed.", httpSessionMock);
+            feedbackSvc.give(FeedbackType.ERROR, "Purchase credit memo " + code + " post failed: " + e.getMessage(),
+                    httpSessionMock);
         }
 
         return new RedirectView("/purchaseCreditMemoList");
