@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.roko.erp.model.BankAccount;
 import org.roko.erp.model.BankAccountLedgerEntry;
 import org.roko.erp.model.BankAccountLedgerEntryType;
 import org.roko.erp.model.ItemLedgerEntry;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
 
+    private static final String NOT_ENOUGH_BANK_ACCOUNT_BALANCE_MSG = "Bank account %s has balance %.2f. Can not pay %.2f";;
     private PurchaseOrderService purchaseOrderSvc;
     private PurchaseOrderLineService purchaseOrderLineSvc;
     private PostedPurchaseOrderService postedPurchaseOrderSvc;
@@ -31,13 +33,14 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
     private VendorLedgerEntryService vendorLedgerEntrySvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
+    private BankAccountService bankAccountSvc;
 
     @Autowired
     public PurchaseOrderPostServiceImpl(PurchaseOrderService purchaseOrderSvc,
             PurchaseOrderLineService purchaseOrderLineSvc, PostedPurchaseOrderService postedPurchaseOrderSvc,
             PostedPurchaseOrderLineService postedPurchaseOrderLineSvc, ItemLedgerEntryService itemLedgerEntrySvc,
             VendorLedgerEntryService vendorLedgerEntrySvc, BankAccountLedgerEntryService bankAccountLedgerEntrySvc,
-            PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
+            BankAccountService bankAccountSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.purchaseOrderSvc = purchaseOrderSvc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.postedPurchaseOrderSvc = postedPurchaseOrderSvc;
@@ -45,11 +48,12 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
         this.vendorLedgerEntrySvc = vendorLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
+        this.bankAccountSvc = bankAccountSvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackOn = PostFailedException.class)
     public void post(String code) throws PostFailedException {
         PurchaseOrder purchaseOrder = purchaseOrderSvc.get(code);
         List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineSvc.list(purchaseOrder);
@@ -79,7 +83,7 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
     }
 
     private void createBankAccountLedgerEntry(List<PurchaseOrderLine> purchaseOrderLines,
-            PostedPurchaseOrder postedPurchaseOrder) {
+            PostedPurchaseOrder postedPurchaseOrder) throws PostFailedException {
         if (postedPurchaseOrder.getPaymentMethod().getBankAccount() == null) {
             return;
         }
@@ -87,6 +91,13 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
         Optional<Double> amount = purchaseOrderLines.stream()
                 .map(PurchaseOrderLine::getAmount)
                 .reduce((x, y) -> x + y);
+
+        BankAccount bankAccount = bankAccountSvc.get(postedPurchaseOrder.getPaymentMethod().getBankAccount().getCode());
+
+        if (bankAccount.getBalance() < amount.get()) {
+            throw new PostFailedException(String.format(NOT_ENOUGH_BANK_ACCOUNT_BALANCE_MSG, bankAccount.getCode(),
+                    bankAccount.getBalance(), amount.get()));
+        }
 
         BankAccountLedgerEntry bankAccountLedgerEntry = new BankAccountLedgerEntry();
         bankAccountLedgerEntry.setBankAccount(postedPurchaseOrder.getPaymentMethod().getBankAccount());

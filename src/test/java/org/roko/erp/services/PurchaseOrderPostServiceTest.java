@@ -1,6 +1,7 @@
 package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -34,6 +35,9 @@ import org.roko.erp.model.VendorLedgerEntryType;
 import org.roko.erp.model.jpa.PurchaseOrderLineId;
 
 public class PurchaseOrderPostServiceTest {
+
+    private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
+    private static final double TEST_BANK_ACCOUNT_BALANCE = 250.00;
 
     private static final String NEW_POSTED_ORDER_CODE = "new-posted-order-code";
 
@@ -104,6 +108,9 @@ public class PurchaseOrderPostServiceTest {
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvcMock;
 
     @Mock
+    private BankAccountService bankAccountSvcMock;
+
+    @Mock
     private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
 
     private PurchaseOrderPostService svc;
@@ -136,9 +143,14 @@ public class PurchaseOrderPostServiceTest {
 
         when(purchaseCodeSeriesSvcMock.postedOrderCode()).thenReturn(NEW_POSTED_ORDER_CODE);
 
+        when(bankAccountMock.getCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
+        when(bankAccountMock.getBalance()).thenReturn(TEST_BANK_ACCOUNT_BALANCE);
+        when(bankAccountSvcMock.get(TEST_BANK_ACCOUNT_CODE)).thenReturn(bankAccountMock);
+
         svc = new PurchaseOrderPostServiceImpl(purchaseOrderSvcMock, purchaseOrderLineSvcMock,
                 postedPurchaseOrderSvcMock, postedPurchaseOrderLineSvcMock, itemLedgerEntrySvcMock,
-                vendorLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, purchaseCodeSeriesSvcMock);
+                vendorLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, bankAccountSvcMock, 
+                purchaseCodeSeriesSvcMock);
     }
 
     @Test
@@ -173,6 +185,12 @@ public class PurchaseOrderPostServiceTest {
         verifyNoBankAccountLedgerEntiresCreated();
     }
 
+    @Test
+    public void postingFails_whenBankAccountDoesNotHaveEnoughBalance () throws PostFailedException {
+        when(bankAccountMock.getBalance()).thenReturn(0.0);
+
+        assertThrows(PostFailedException.class, () -> {svc.post(TEST_CODE);});
+    }
 
     private void verifyNoBankAccountLedgerEntiresCreated() {
         verify(bankAccountLedgerEntrySvcMock, never()).create(any(BankAccountLedgerEntry.class));

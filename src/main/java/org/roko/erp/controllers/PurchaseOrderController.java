@@ -153,7 +153,8 @@ public class PurchaseOrderController {
 
             feedbackSvc.give(FeedbackType.INFO, "Purchase order " + code + " posted.", httpSessionMock);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Purchase order " + code + " post failed.", httpSessionMock);
+            feedbackSvc.give(FeedbackType.ERROR, "Purchase order " + code + " post failed: " + e.getMessage(),
+                    httpSessionMock);
         }
 
         return new RedirectView("/purchaseOrderList");
