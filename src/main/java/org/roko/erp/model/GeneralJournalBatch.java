@@ -8,6 +8,7 @@ public class GeneralJournalBatch {
 
 	@Id
 	private String code = "";
+	
 	private String name = "";
 	
 	public String getCode() {

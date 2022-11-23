@@ -2,37 +2,35 @@ package org.roko.erp.model;
 
 import java.util.Date;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+
+import org.roko.erp.model.jpa.GeneralJournalBatchLineId;
+
+@Entity
 public class GeneralJournalBatchLine {
 
-	private String id;
-	private String genJnlBatchCode;
-	private int lineNo;
+	@Id
+	@Embedded
+	private GeneralJournalBatchLineId generalJournalBatchLineId;
+
+	@MapsId("generalJournalBatch")
+	@ManyToOne
+	private GeneralJournalBatch generalJournalBatch;
+
 	private GeneralJournalBatchLineType sourceType;
 	private String sourceCode;
 	private GeneralJournalBatchLineOperationType operationType;
+	private String documentCode;
 	private Date date;
 	private double amount;
-	private GeneralJournalBatchLineType targetType;
-	private String targetCode;
+
+	@ManyToOne
+	private BankAccount target;
 	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getGenJnlBatchCode() {
-		return genJnlBatchCode;
-	}
-	public void setGenJnlBatchCode(String genJnlBatchCode) {
-		this.genJnlBatchCode = genJnlBatchCode;
-	}
-	public int getLineNo() {
-		return lineNo;
-	}
-	public void setLineNo(int lineNo) {
-		this.lineNo = lineNo;
-	}
 	public GeneralJournalBatchLineType getSourceType() {
 		return sourceType;
 	}
@@ -63,16 +61,29 @@ public class GeneralJournalBatchLine {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	public GeneralJournalBatchLineType getTargetType() {
-		return targetType;
+	public GeneralJournalBatchLineId getGeneralJournalBatchLineId() {
+		return generalJournalBatchLineId;
 	}
-	public void setTargetType(GeneralJournalBatchLineType targetType) {
-		this.targetType = targetType;
+	public void setGeneralJournalBatchLineId(GeneralJournalBatchLineId generalJournalBatchLineId) {
+		this.generalJournalBatchLineId = generalJournalBatchLineId;
 	}
-	public String getTargetCode() {
-		return targetCode;
+	public GeneralJournalBatch getGeneralJournalBatch() {
+		return generalJournalBatch;
 	}
-	public void setTargetCode(String targetCode) {
-		this.targetCode = targetCode;
+	public void setGeneralJournalBatch(GeneralJournalBatch generalJournalBatch) {
+		this.generalJournalBatch = generalJournalBatch;
 	}
+	public String getDocumentCode() {
+		return documentCode;
+	}
+	public void setDocumentCode(String documentCode) {
+		this.documentCode = documentCode;
+	}
+	public BankAccount getTarget() {
+		return target;
+	}
+	public void setTarget(BankAccount target) {
+		this.target = target;
+	}
+	
 }
