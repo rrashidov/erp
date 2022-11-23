@@ -147,7 +147,7 @@ public class SalesCreditMemoController {
 
             feedbackSvc.give(FeedbackType.INFO, "Sales credit memo " + code + " posted.", httpSession);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Sales credit memo " + code + " post failed.", httpSession);
+            feedbackSvc.give(FeedbackType.ERROR, "Sales credit memo " + code + " post failed: " + e.getMessage(), httpSession);
         }
 
         return new RedirectView("/salesCreditMemoList");

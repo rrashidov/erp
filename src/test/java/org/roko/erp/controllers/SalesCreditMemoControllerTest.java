@@ -42,6 +42,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesCreditMemoControllerTest {
 
+    private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
+
     private static final String TEST_NEW_SALES_CREDIT_MEMO_CODE = "test-new-sales-credit-memo-code";
 
     private static final String TEST_SALES_CREDIT_MEMO_CODE = "test-code";
@@ -295,7 +297,8 @@ public class SalesCreditMemoControllerTest {
 
     @Test
     public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
-        doThrow(new PostFailedException("")).when(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
+        doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(salesCreditMemoPostSvcMock)
+                .post(TEST_SALES_CREDIT_MEMO_CODE);
 
         RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
 
@@ -304,6 +307,7 @@ public class SalesCreditMemoControllerTest {
         verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
 
         verify(feedbackSvcMock).give(FeedbackType.ERROR,
-                "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post failed.", httpSessionMock);
+                "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post failed: " + TEST_POST_FAILED_MSG,
+                httpSessionMock);
     }
 }

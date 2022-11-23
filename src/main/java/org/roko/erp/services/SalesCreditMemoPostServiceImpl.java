@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.roko.erp.model.BankAccount;
 import org.roko.erp.model.BankAccountLedgerEntry;
 import org.roko.erp.model.BankAccountLedgerEntryType;
 import org.roko.erp.model.CustomerLedgerEntry;
@@ -17,9 +18,12 @@ import org.roko.erp.model.SalesCreditMemoLine;
 import org.roko.erp.model.jpa.PostedSalesCreditMemoLineId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostService {
+
+    private static final String NOT_ENOUGH_BANK_ACCOUNT_BALANCE_MSG_TEMPLATE = "Bank account %s has balance %.2f. Can not refund %.2f";
 
     private SalesCreditMemoService salesCreditMemoSvc;
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
@@ -29,13 +33,15 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
     private CustomerLedgerEntryService customerLedgerEntrySvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
+    private BankAccountService bankAccountSvc;
 
     @Autowired
     public SalesCreditMemoPostServiceImpl(SalesCreditMemoService salesCreditMemoSvc,
             SalesCreditMemoLineService salesCreditMemoLineSvc, PostedSalesCreditMemoService postedSalesCreditMemoSvc,
             PostedSalesCreditMemoLineService postedSalesCreditMemoLineSvc, ItemLedgerEntryService itemLedgerEntrySvc,
             CustomerLedgerEntryService customerLedgerEntrySvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, SalesCodeSeriesService salesCodeSeriesSvc) {
+            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, BankAccountService bankAccountSvc,
+            SalesCodeSeriesService salesCodeSeriesSvc) {
         this.salesCreditMemoSvc = salesCreditMemoSvc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
         this.postedSalesCreditMemoSvc = postedSalesCreditMemoSvc;
@@ -43,10 +49,12 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
         this.customerLedgerEntrySvc = customerLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
+        this.bankAccountSvc = bankAccountSvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @Override
+    @Transactional(rollbackFor = PostFailedException.class)
     public void post(String code) throws PostFailedException {
         SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(code);
 
@@ -77,7 +85,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
     }
 
     private void createBankAccountLedgerEntries(SalesCreditMemo salesCreditMemo,
-            PostedSalesCreditMemo postedSalesCreditMemo) {
+            PostedSalesCreditMemo postedSalesCreditMemo) throws PostFailedException {
         List<SalesCreditMemoLine> salesCreditMemoLines = salesCreditMemoLineSvc.list(salesCreditMemo);
 
         Optional<Double> amount = salesCreditMemoLines.stream()
@@ -88,11 +96,19 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
     }
 
     private void createBankAccountLedgerEntry(PostedSalesCreditMemo postedSalesCreditMemo,
-            Optional<Double> amount) {
+            Optional<Double> amount) throws PostFailedException {
         if (postedSalesCreditMemo.getPaymentMethod().getBankAccount() == null) {
             return;
         }
-        
+
+        BankAccount bankAccount = bankAccountSvc
+                .get(postedSalesCreditMemo.getPaymentMethod().getBankAccount().getCode());
+
+        if (bankAccount.getBalance() < amount.get()) {
+            throw new PostFailedException(String.format(NOT_ENOUGH_BANK_ACCOUNT_BALANCE_MSG_TEMPLATE,
+                    bankAccount.getCode(), bankAccount.getBalance(), amount.get()));
+        }
+
         BankAccountLedgerEntry bankAccountLedgerEntry = new BankAccountLedgerEntry();
         bankAccountLedgerEntry.setBankAccount(postedSalesCreditMemo.getPaymentMethod().getBankAccount());
         bankAccountLedgerEntry.setType(BankAccountLedgerEntryType.CUSTOMER_REFUND);
@@ -112,7 +128,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
                 .reduce((x, y) -> x + y);
 
         createSalesCreditMemoCustomerLedgerEntry(postedSalesCreditMemo, amount.get());
-        if (salesCreditMemo.getPaymentMethod().getBankAccount() != null){
+        if (salesCreditMemo.getPaymentMethod().getBankAccount() != null) {
             createRefundCustomerLedgerEntry(postedSalesCreditMemo, amount.get());
         }
     }

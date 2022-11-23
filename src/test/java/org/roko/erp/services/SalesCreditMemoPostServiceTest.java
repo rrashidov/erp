@@ -1,6 +1,7 @@
 package org.roko.erp.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -46,6 +47,9 @@ public class SalesCreditMemoPostServiceTest {
     private static final Double TEST_AMOUNT = 120.00;
 
     private static final int TEST_LINE_NO = 123;
+
+    private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
+    private static final Double TEST_BANK_ACCOUNT_BALANCE = 250.00;
 
     @Captor
     private ArgumentCaptor<PostedSalesCreditMemo> postedSalesCreditMemoArgumentCaptor;
@@ -102,6 +106,9 @@ public class SalesCreditMemoPostServiceTest {
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvcMock;
 
     @Mock
+    private BankAccountService bankAccountSvcMock;
+
+    @Mock
     private SalesCodeSeriesService salesCodeSeriesSvcMock;
 
     private SalesCreditMemoPostService svc;
@@ -135,9 +142,15 @@ public class SalesCreditMemoPostServiceTest {
 
         when(salesCodeSeriesSvcMock.postedCreditMemoCode()).thenReturn(TEST_POSTED_SALES_CREDIT_MEMO_CODE);
 
+        when(bankAccountMock.getCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
+        when(bankAccountMock.getBalance()).thenReturn(TEST_BANK_ACCOUNT_BALANCE);
+
+        when(bankAccountSvcMock.get(TEST_BANK_ACCOUNT_CODE)).thenReturn(bankAccountMock);
+
         svc = new SalesCreditMemoPostServiceImpl(salesCreditMemoSvcMock, salesCreditMemoLineSvcMock,
                 postedSalesCreditMemoSvcMock, postedSalesCreditMemoLineSvcMock, itemLedgerEntrySvcMock,
-                customerLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, salesCodeSeriesSvcMock);
+                customerLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, bankAccountSvcMock, 
+                salesCodeSeriesSvcMock);
     }
 
     @Test
@@ -170,6 +183,13 @@ public class SalesCreditMemoPostServiceTest {
         verifyCustomerLedgerEntriesCreated(postedSalesCreditMemo);
 
         verifyNoBankAccountLedgerEntryCreated();
+    }
+
+    @Test
+    public void postFails_whenBankAccountBalanceIsNotEnough() throws PostFailedException {
+        when(bankAccountMock.getBalance()).thenReturn(0.0);
+
+        assertThrows(PostFailedException.class, () -> {svc.post(TEST_CODE);});
     }
 
     private void verifyNoBankAccountLedgerEntryCreated() {
