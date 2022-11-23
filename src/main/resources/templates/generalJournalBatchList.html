@@ -32,9 +32,9 @@
                     <tr th:each="generalJournalBatch : ${generalJournalBatches}">
                         <td th:text="${generalJournalBatch.code}"></td>
                         <td th:text="${generalJournalBatch.name}"></td>
-                        <td><a
+                        <td><a class="btn btn-primary"
                                 th:href="@{/generalJournalBatchCard?code={code}(code=${generalJournalBatch.code})}">edit</a>
-                            <a
+                            <a class="btn btn-primary"
                                 th:href="@{/deleteGeneralJournalBatch?code={code}(code=${generalJournalBatch.code})}">delete</a>
                         </td>
                     </tr>
