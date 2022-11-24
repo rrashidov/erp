@@ -11,16 +11,16 @@ import org.roko.erp.model.GeneralJournalBatch;
 public class GeneralJournalBatchLineId implements Serializable {
 
     @ManyToOne
-    private GeneralJournalBatch generalJournalbatch;
+    private GeneralJournalBatch generalJournalBatch;
 
     private int lineNo;
 
-    public GeneralJournalBatch getGeneralJournalbatch() {
-        return generalJournalbatch;
+    public GeneralJournalBatch getGeneralJournalBatch() {
+        return generalJournalBatch;
     }
 
-    public void setGeneralJournalbatch(GeneralJournalBatch generalJournalbatch) {
-        this.generalJournalbatch = generalJournalbatch;
+    public void setGeneralJournalBatch(GeneralJournalBatch generalJournalBatch) {
+        this.generalJournalBatch = generalJournalBatch;
     }
 
     public int getLineNo() {
@@ -35,7 +35,7 @@ public class GeneralJournalBatchLineId implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((generalJournalbatch == null) ? 0 : generalJournalbatch.hashCode());
+        result = prime * result + ((generalJournalBatch == null) ? 0 : generalJournalBatch.hashCode());
         result = prime * result + lineNo;
         return result;
     }
@@ -49,14 +49,13 @@ public class GeneralJournalBatchLineId implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         GeneralJournalBatchLineId other = (GeneralJournalBatchLineId) obj;
-        if (generalJournalbatch == null) {
-            if (other.generalJournalbatch != null)
+        if (generalJournalBatch == null) {
+            if (other.generalJournalBatch != null)
                 return false;
-        } else if (!generalJournalbatch.equals(other.generalJournalbatch))
+        } else if (!generalJournalBatch.equals(other.generalJournalBatch))
             return false;
         if (lineNo != other.lineNo)
             return false;
         return true;
     }
-    
 }
