@@ -12,9 +12,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GeneralJournalBatchLineRepository
-        extends JpaRepository<GeneralJournalBatchLine, GeneralJournalBatchLineId> {
+                extends JpaRepository<GeneralJournalBatchLine, GeneralJournalBatchLineId> {
 
-    @Query("SELECT generalJournalBatchLine FROM GeneralJournalBatchLine generalJournalBatchLine WHERE generalJournalBatchLine.generalJournalBatch = :generalJournalbatch")
-    public Page<GeneralJournalBatchLine> findFor(@Param("generalJournalbatch") GeneralJournalBatch generalJournalBatch,
-            Pageable pageable);
+        @Query("SELECT generalJournalBatchLine FROM GeneralJournalBatchLine generalJournalBatchLine WHERE generalJournalBatchLine.generalJournalBatch = :generalJournalBatch")
+        public Page<GeneralJournalBatchLine> findFor(
+                        @Param("generalJournalBatch") GeneralJournalBatch generalJournalBatch,
+                        Pageable pageable);
+
+        @Query("SELECT COUNT(generalJournalBatchLine) FROM GeneralJournalBatchLine generalJournalBatchLine WHERE generalJournalBatchLine.generalJournalBatch = :generalJournalBatch")
+        public int count(@Param("generalJournalBatch") GeneralJournalBatch generalJournalBatch);
 }

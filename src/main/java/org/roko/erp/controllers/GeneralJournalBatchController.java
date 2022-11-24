@@ -5,6 +5,8 @@ import java.util.List;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.GeneralJournalBatch;
+import org.roko.erp.model.GeneralJournalBatchLine;
+import org.roko.erp.services.GeneralJournalBatchLineService;
 import org.roko.erp.services.GeneralJournalBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,10 +22,13 @@ public class GeneralJournalBatchController {
 
     private GeneralJournalBatchService svc;
     private PagingService pagingSvc;
+    private GeneralJournalBatchLineService generalJournalBatchLineSvc;
 
     @Autowired
-    public GeneralJournalBatchController(GeneralJournalBatchService svc, PagingService pagingSvc) {
+    public GeneralJournalBatchController(GeneralJournalBatchService svc,
+            GeneralJournalBatchLineService generalJournalBatchLineSvc, PagingService pagingSvc) {
         this.svc = svc;
+        this.generalJournalBatchLineSvc = generalJournalBatchLineSvc;
         this.pagingSvc = pagingSvc;
     }
 
@@ -39,11 +44,18 @@ public class GeneralJournalBatchController {
     }
 
     @GetMapping("/generalJournalBatchCard")
-    public String card(@RequestParam(name = "code", required = false) String code, Model model) {
+    public String card(@RequestParam(name = "code", required = false) String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
         GeneralJournalBatch generalJournalBatch = new GeneralJournalBatch();
 
-        if (code != null){
+        if (code != null) {
             generalJournalBatch = svc.get(code);
+
+            List<GeneralJournalBatchLine> generalJournalBatchLines = generalJournalBatchLineSvc.list(generalJournalBatch, page);
+            PagingData pagingData = pagingSvc.generate("generalJournalBatchCard", code, page, generalJournalBatchLineSvc.count(generalJournalBatch));
+
+            model.addAttribute("generalJournalBatchLines", generalJournalBatchLines);
+            model.addAttribute("paging", pagingData);
         }
 
         model.addAttribute("generalJournalBatch", generalJournalBatch);
@@ -52,16 +64,16 @@ public class GeneralJournalBatchController {
     }
 
     @PostMapping("/generalJournalBatchCard")
-    public RedirectView post(@ModelAttribute GeneralJournalBatch generalJournalBatch){
+    public RedirectView post(@ModelAttribute GeneralJournalBatch generalJournalBatch) {
         svc.create(generalJournalBatch);
-        
+
         return new RedirectView("/generalJournalBatchList");
     }
 
     @GetMapping("/deleteGeneralJournalBatch")
-    public RedirectView delete(@RequestParam(name="code") String code) {
+    public RedirectView delete(@RequestParam(name = "code") String code) {
         svc.delete(code);
-        
+
         return new RedirectView("/generalJournalBatchList");
     }
 }

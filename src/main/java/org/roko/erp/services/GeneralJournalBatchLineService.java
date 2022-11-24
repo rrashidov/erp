@@ -17,4 +17,6 @@ public interface GeneralJournalBatchLineService {
     public List<GeneralJournalBatchLine> list(GeneralJournalBatch generalJournalBatch, int page);
 
     public void delete(GeneralJournalBatchLineId generalJournalBatchLineId);
+
+    public int count(GeneralJournalBatch generalJournalBatch);
 }

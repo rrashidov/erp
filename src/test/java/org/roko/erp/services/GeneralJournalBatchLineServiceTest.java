@@ -107,4 +107,11 @@ public class GeneralJournalBatchLineServiceTest {
 
         verify(repoMock).delete(generalJournalBatchLineMock);
     }
+
+    @Test
+    public void count_delegatesToRepo() {
+        svc.count(generalJournalBatchMock);
+
+        verify(repoMock).count(generalJournalBatchMock);
+    }
 }

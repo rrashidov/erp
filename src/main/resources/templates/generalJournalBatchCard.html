@@ -38,6 +38,65 @@
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
 
+                    <div th:if="*{code} != ''" class="container-fluid">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#">Lines</a>
+                            </li>
+                        </ul>
+
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Line No</th>
+                                    <th scope="col">Source Type</th>
+                                    <th scope="col">Source Name</th>
+                                    <th scope="col">Operation Type</th>
+                                    <th scope="col">Document Code</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Target</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="generalJournalBatchLine : ${generalJournalBatchLines}">
+                                    <td th:text="${generalJournalBatchLines.generalJournalBatchLinesId.lineNo}"></td>
+                                    <td th:text="${generalJournalBatchLines.sourceType}"></td>
+                                    <td th:text="${generalJournalBatchLines.sourceName}"></td>
+                                    <td th:text="${generalJournalBatchLines.operationType}"></td>
+                                    <td th:text="${generalJournalBatchLines.documentCode}"></td>
+                                    <td th:text="${generalJournalBatchLines.date}"></td>
+                                    <td th:text="${generalJournalBatchLines.amount}"></td>
+                                    <td th:text="${generalJournalBatchLines.target.name}"></td>
+                                    <td><a class="btn btn-primary"
+                                            th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.generalJournalBatchLineId.lineNo})}">Edit</a>
+                                        <a class="btn btn-primary"
+                                            th:href="@{/deleteGeneralJournalBatchLine?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.generalJournalBatchLineId.lineNo})}">Delete</a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><a class="btn btn-primary"
+                                            th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}(code=${generalJournalBatch.code})}"
+                                            role="button">New</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <nav th:replace="subPaging">
+                        </nav>
+
+                    </div>
+
                 </div>
             </form>
         </div>

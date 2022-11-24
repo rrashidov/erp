@@ -17,6 +17,8 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.controllers.paging.PagingData;
 import org.roko.erp.controllers.paging.PagingService;
 import org.roko.erp.model.GeneralJournalBatch;
+import org.roko.erp.model.GeneralJournalBatchLine;
+import org.roko.erp.services.GeneralJournalBatchLineService;
 import org.roko.erp.services.GeneralJournalBatchService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
@@ -30,6 +32,8 @@ public class GeneralJournalBatchControllerTest {
     private static final String TEST_NAME = "test-name";
 
     private List<GeneralJournalBatch> generalJournalBatchList;
+
+    private List<GeneralJournalBatchLine> generalJournalBatchLines;
 
     @Mock
     private GeneralJournalBatch generalJournalBatchMock;
@@ -47,8 +51,14 @@ public class GeneralJournalBatchControllerTest {
     private GeneralJournalBatchService svcMock;
 
     @Mock
+    private GeneralJournalBatchLineService generalJournalBatchLineSvcMock;
+
+    @Mock
     private PagingService pagingSvcMock;
 
+    @Mock
+    private GeneralJournalBatchLine generalJournalbatchLineMock;
+    
     private GeneralJournalBatchController controller;
 
     @BeforeEach
@@ -57,16 +67,23 @@ public class GeneralJournalBatchControllerTest {
 
         generalJournalBatchList = Arrays.asList(generalJournalBatchMock);
 
+        generalJournalBatchLines = Arrays.asList(generalJournalbatchLineMock);
+
         when(generalJournalBatchMock.getCode()).thenReturn(TEST_CODE);
         when(generalJournalBatchMock.getName()).thenReturn(TEST_NAME);
 
         when(pagingSvcMock.generate("generalJournalBatch", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("generalJournalBatchCard", TEST_CODE, TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(generalJournalBatchList);
         when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(generalJournalBatchMock);
 
-        controller = new GeneralJournalBatchController(svcMock, pagingSvcMock);
+        when(generalJournalBatchLineSvcMock.list(generalJournalBatchMock, TEST_PAGE)).thenReturn(generalJournalBatchLines);
+        when(generalJournalBatchLineSvcMock.count(generalJournalBatchMock)).thenReturn(TEST_COUNT);
+        when(generalJournalBatchLineSvcMock.list(generalJournalBatchMock, TEST_PAGE)).thenReturn(generalJournalBatchLines);
+
+        controller = new GeneralJournalBatchController(svcMock, generalJournalBatchLineSvcMock, pagingSvcMock);
     }
 
     @Test
@@ -81,7 +98,7 @@ public class GeneralJournalBatchControllerTest {
 
     @Test
     public void cardReturnsProperTemplate_whenCalledForNew(){
-        String template = controller.card(null, modelMock);
+        String template = controller.card(null, TEST_PAGE, modelMock);
 
         assertEquals("generalJournalBatchCard.html", template);
 
@@ -95,11 +112,13 @@ public class GeneralJournalBatchControllerTest {
 
     @Test
     public void cardReturnsProperTemplate_whenCalledForExisting(){
-        String template = controller.card(TEST_CODE, modelMock);
+        String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
 
         assertEquals("generalJournalBatchCard.html", template);
 
         verify(modelMock).addAttribute(eq("generalJournalBatch"), generalJournalBatchArgumentCaptor.capture());
+        verify(modelMock).addAttribute("generalJournalBatchLines", generalJournalBatchLines);
+        verify(modelMock).addAttribute("paging", pagingDataMock);
 
         GeneralJournalBatch generalJournalBatch = generalJournalBatchArgumentCaptor.getValue();
 

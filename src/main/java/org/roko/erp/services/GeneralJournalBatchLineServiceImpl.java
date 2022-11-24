@@ -58,6 +58,11 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
         repo.delete(generalJournalBatchLine);
     }
 
+    @Override
+    public int count(GeneralJournalBatch generalJournalBatch) {
+        return repo.count(generalJournalBatch);
+    }
+
     private void transferFields(GeneralJournalBatchLine source,
             GeneralJournalBatchLine target) {
         target.setSourceType(source.getSourceType());

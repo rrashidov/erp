@@ -23,6 +23,7 @@ public class GeneralJournalBatchLine {
 
 	private GeneralJournalBatchLineType sourceType;
 	private String sourceCode;
+	private String sourceName;
 	private GeneralJournalBatchLineOperationType operationType;
 	private String documentCode;
 	private Date date;
@@ -84,6 +85,12 @@ public class GeneralJournalBatchLine {
 	}
 	public void setTarget(BankAccount target) {
 		this.target = target;
+	}
+	public String getSourceName() {
+		return sourceName;
+	}
+	public void setSourceName(String sourceName) {
+		this.sourceName = sourceName;
 	}
 	
 }
