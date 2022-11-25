@@ -211,9 +211,11 @@ public class GeneralJournalBatchLineControllerTest {
     public void wizard_returnsProperTemplate_whenCalledForExisting() {
         controller.wizard(TEST_CODE, TEST_LINE_NO, modelMock);
 
-        verify(modelMock).addAttribute(eq("generalJournalBatchLine"), generalJournalBatchLineModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute(eq("generalJournalBatchLine"),
+                generalJournalBatchLineModelArgumentCaptor.capture());
 
-        GeneralJournalBatchLineModel generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor.getValue();
+        GeneralJournalBatchLineModel generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor
+                .getValue();
 
         assertEquals(TEST_CODE, generalJournalBatchLineModel.getGeneralJournalBatchCode());
         assertEquals(TEST_LINE_NO, generalJournalBatchLineModel.getLineNo());
@@ -285,8 +287,9 @@ public class GeneralJournalBatchLineControllerTest {
     }
 
     @Test
-    public void postGeneralJournalBatchLineWizardThirdPage_createsAndReturnsProperResult_whenCalledForNew(){
-        RedirectView redirectView = controller.postGeneralJournalBatchLineWizardThirdPage(generalJournalBatchLineModelMock, redirectAttributesMock);
+    public void postGeneralJournalBatchLineWizardThirdPage_createsAndReturnsProperResult_whenCalledForNew() {
+        RedirectView redirectView = controller
+                .postGeneralJournalBatchLineWizardThirdPage(generalJournalBatchLineModelMock, redirectAttributesMock);
 
         assertEquals("/generalJournalBatchCard", redirectView.getUrl());
 
@@ -296,7 +299,8 @@ public class GeneralJournalBatchLineControllerTest {
 
         GeneralJournalBatchLine generalJournalBatchLine = generalJournalBatchLineArgumentCaptor.getValue();
 
-        assertEquals(generalJournalBatchMock, generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
+        assertEquals(generalJournalBatchMock,
+                generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
     }
 
     @Test
@@ -310,6 +314,17 @@ public class GeneralJournalBatchLineControllerTest {
         GeneralJournalBatchLine generalJournalBatchLine = generalJournalBatchLineArgumentCaptor.getValue();
 
         assertEquals(generalJournalBatchMock, generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
+    }
+
+    @Test
+    public void deleteGeneralJournalBatchLine_returnsProperTemplate() {
+        RedirectView redirectView = controller.deleteGeneralJournalBatchLine(TEST_CODE, TEST_LINE_NO, redirectAttributesMock);
+
+        assertEquals("/generalJournalBatchCard", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+
+        verify(svcMock).delete(generalJournalBatchLineId);
     }
 
     private void assertVendors(List<GeneralJournalBatchLineSource> sources) {

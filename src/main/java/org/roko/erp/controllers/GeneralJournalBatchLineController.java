@@ -119,6 +119,20 @@ public class GeneralJournalBatchLineController {
         return new RedirectView("/generalJournalBatchCard");
     }
 
+    @GetMapping("/deleteGeneralJournalBatchLine")
+    public RedirectView deleteGeneralJournalBatchLine(@RequestParam(name = "generalJournalBatchCode") String code,
+            @RequestParam(name = "lineNo") int lineNo, RedirectAttributes redirectAttributes) {
+        GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
+        generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchSvc.get(code));
+        generalJournalBatchLineId.setLineNo(lineNo);
+
+        svc.delete(generalJournalBatchLineId);
+
+        redirectAttributes.addAttribute("code", code);
+
+        return new RedirectView("/generalJournalBatchCard");
+    }
+
     private void create(GeneralJournalBatch generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
         GeneralJournalBatchLineId id = new GeneralJournalBatchLineId();
         id.setGeneralJournalBatch(generalJournalBatch);
@@ -144,7 +158,7 @@ public class GeneralJournalBatchLineController {
         svc.update(id, line);
     }
 
-    public void fromModel(GeneralJournalBatchLine line, GeneralJournalBatchLineModel model){
+    public void fromModel(GeneralJournalBatchLine line, GeneralJournalBatchLineModel model) {
         line.setSourceType(model.getSourceType());
         line.setSourceCode(model.getSourceCode());
         line.setSourceName(model.getSourceName());
@@ -165,7 +179,7 @@ public class GeneralJournalBatchLineController {
         generalJournalBatchLineModel.setDocumentCode(generalJournalBatchLine.getDocumentCode());
         generalJournalBatchLineModel.setDate(generalJournalBatchLine.getDate());
         generalJournalBatchLineModel.setAmount(generalJournalBatchLine.getAmount());
-        if (generalJournalBatchLine.getTarget() != null){
+        if (generalJournalBatchLine.getTarget() != null) {
             generalJournalBatchLineModel.setBankAccountCode(generalJournalBatchLine.getTarget().getCode());
         }
     }
