@@ -66,7 +66,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Customer> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+        List<Customer> customers = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+        customers.stream()
+                .forEach(c -> {
+                    c.setBalance(repo.balance(c));
+                });
+        return customers;
     }
 
     @Override
