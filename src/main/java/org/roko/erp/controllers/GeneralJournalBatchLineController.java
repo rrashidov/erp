@@ -46,9 +46,19 @@ public class GeneralJournalBatchLineController {
     }
 
     @GetMapping("/generalJournalBatchLineWizard")
-    public String wizard(@RequestParam(name="generalJournalBatchCode") String code, Model model) {
+    public String wizard(@RequestParam(name = "generalJournalBatchCode") String code,
+            @RequestParam(name = "lineNo", required = false, defaultValue = "0") int lineNo, Model model) {
         GeneralJournalBatchLineModel generalJournalBatchLineModel = new GeneralJournalBatchLineModel();
         generalJournalBatchLineModel.setGeneralJournalBatchCode(code);
+
+        if (lineNo != 0) {
+            GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
+            generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchSvc.get(code));
+            generalJournalBatchLineId.setLineNo(lineNo);
+
+            GeneralJournalBatchLine generalJournalBatchLine = svc.get(generalJournalBatchLineId);
+            toModel(generalJournalBatchLine, generalJournalBatchLineModel);
+        }
 
         model.addAttribute("generalJournalBatchLine", generalJournalBatchLineModel);
 
@@ -92,30 +102,72 @@ public class GeneralJournalBatchLineController {
 
     @PostMapping("/generalJournalBatchLineWizardThirdPage")
     public RedirectView postGeneralJournalBatchLineWizardThirdPage(
-            @ModelAttribute GeneralJournalBatchLineModel generalJournalBatchLine, RedirectAttributes redirectAttributes) {
+            @ModelAttribute GeneralJournalBatchLineModel generalJournalBatchLine,
+            RedirectAttributes redirectAttributes) {
 
-        GeneralJournalBatch generalJournalBatch = generalJournalBatchSvc.get(generalJournalBatchLine.getGeneralJournalBatchCode());
+        GeneralJournalBatch generalJournalBatch = generalJournalBatchSvc
+                .get(generalJournalBatchLine.getGeneralJournalBatchCode());
 
+        if (generalJournalBatchLine.getLineNo() == 0) {
+            create(generalJournalBatch, generalJournalBatchLine);
+        } else {
+            update(generalJournalBatch, generalJournalBatchLine);
+        }
+
+        redirectAttributes.addAttribute("code", generalJournalBatchLine.getGeneralJournalBatchCode());
+
+        return new RedirectView("/generalJournalBatchCard");
+    }
+
+    private void create(GeneralJournalBatch generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
         GeneralJournalBatchLineId id = new GeneralJournalBatchLineId();
         id.setGeneralJournalBatch(generalJournalBatch);
         id.setLineNo(svc.count(generalJournalBatch) + 1);
 
         GeneralJournalBatchLine line = new GeneralJournalBatchLine();
         line.setGeneralJournalBatchLineId(id);
-        line.setSourceType(generalJournalBatchLine.getSourceType());
-        line.setSourceCode(generalJournalBatchLine.getSourceCode());
-        line.setSourceName(generalJournalBatchLine.getSourceName());
-        line.setOperationType(generalJournalBatchLine.getOperationType());
-        line.setDocumentCode(generalJournalBatchLine.getDocumentCode());
-        line.setDate(generalJournalBatchLine.getDate());
-        line.setAmount(generalJournalBatchLine.getAmount());
-        line.setTarget(bankAccountSvc.get(generalJournalBatchLine.getBankAccountCode()));
+
+        fromModel(line, generalJournalBatchLine);
 
         svc.create(line);
+    }
 
-        redirectAttributes.addAttribute("code", generalJournalBatchLine.getGeneralJournalBatchCode());
+    private void update(GeneralJournalBatch generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
+        GeneralJournalBatchLineId id = new GeneralJournalBatchLineId();
+        id.setGeneralJournalBatch(generalJournalBatch);
+        id.setLineNo(generalJournalBatchLine.getLineNo());
 
-        return new RedirectView("/generalJournalBatchCard");
+        GeneralJournalBatchLine line = svc.get(id);
+
+        fromModel(line, generalJournalBatchLine);
+
+        svc.update(id, line);
+    }
+
+    public void fromModel(GeneralJournalBatchLine line, GeneralJournalBatchLineModel model){
+        line.setSourceType(model.getSourceType());
+        line.setSourceCode(model.getSourceCode());
+        line.setSourceName(model.getSourceName());
+        line.setOperationType(model.getOperationType());
+        line.setDocumentCode(model.getDocumentCode());
+        line.setDate(model.getDate());
+        line.setAmount(model.getAmount());
+        line.setTarget(bankAccountSvc.get(model.getBankAccountCode()));
+    }
+
+    private void toModel(GeneralJournalBatchLine generalJournalBatchLine,
+            GeneralJournalBatchLineModel generalJournalBatchLineModel) {
+        generalJournalBatchLineModel.setLineNo(generalJournalBatchLine.getGeneralJournalBatchLineId().getLineNo());
+        generalJournalBatchLineModel.setSourceType(generalJournalBatchLine.getSourceType());
+        generalJournalBatchLineModel.setSourceCode(generalJournalBatchLine.getSourceCode());
+        generalJournalBatchLineModel.setSourceName(generalJournalBatchLine.getSourceName());
+        generalJournalBatchLineModel.setOperationType(generalJournalBatchLine.getOperationType());
+        generalJournalBatchLineModel.setDocumentCode(generalJournalBatchLine.getDocumentCode());
+        generalJournalBatchLineModel.setDate(generalJournalBatchLine.getDate());
+        generalJournalBatchLineModel.setAmount(generalJournalBatchLine.getAmount());
+        if (generalJournalBatchLine.getTarget() != null){
+            generalJournalBatchLineModel.setBankAccountCode(generalJournalBatchLine.getTarget().getCode());
+        }
     }
 
     private void setSourceName(GeneralJournalBatchLineModel generalJournalBatchLine) {

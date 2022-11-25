@@ -23,10 +23,11 @@
                 th:object="${generalJournalBatchLine}" method="post">
                 <div class="row g-3">
 
-                    <input hidden type="text" class="form-control" id="lineNo" placeholder="" value=""
-                        th:field="*{lineNo}">
                     <input hidden type="text" class="form-control" id="generalJournalBatchCode" placeholder="" value=""
                         th:field="*{generalJournalBatchCode}">
+
+                    <input hidden type="text" class="form-control" id="lineNo" placeholder="" value=""
+                        th:field="*{lineNo}">
 
                     <div class="col-sm-6">
                         <label for="sourceType" class="form-label">Source Type</label>
@@ -43,6 +44,23 @@
                             </option>
                         </select>
                     </div>
+
+                    <input hidden type="text" class="form-control" id="sourceName" placeholder="" value=""
+                        th:field="*{sourceName}">
+
+                    <input hidden type="text" class="form-control" id="operationType" placeholder="" value=""
+                        th:field="*{operationType}">
+
+                    <input hidden type="text" class="form-control" id="date" placeholder="" value="" th:field="*{date}">
+
+                    <input hidden type="text" class="form-control" id="documentCode" placeholder="" value=""
+                        th:field="*{documentCode}">
+
+                    <input hidden type="text" class="form-control" id="amount" placeholder="" value=""
+                        th:field="*{amount}">
+
+                    <input hidden type="text" class="form-control" id="bankAccountCode" placeholder="" value=""
+                        th:field="*{bankAccountCode}">
 
                     <div class="col-sm-6">
                     </div>
