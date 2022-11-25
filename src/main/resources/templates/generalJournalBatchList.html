@@ -15,6 +15,11 @@
     </nav>
 
     <div class="container-fluid">
+
+        <nav th:replace="feedback">
+        </nav>
+
+
         <h2>General Journal Batch List <a class="btn btn-primary" href="/generalJournalBatchCard" role="button">New</a>
         </h2>
 
@@ -36,6 +41,8 @@
                                 th:href="@{/generalJournalBatchCard?code={code}(code=${generalJournalBatch.code})}">Edit</a>
                             <a class="btn btn-primary"
                                 th:href="@{/deleteGeneralJournalBatch?code={code}(code=${generalJournalBatch.code})}">Delete</a>
+                            <a class="btn btn-primary"
+                                th:href="@{/postGeneralJournalBatch?code={code}(code=${generalJournalBatch.code})}">Post</a>
                         </td>
                     </tr>
 
