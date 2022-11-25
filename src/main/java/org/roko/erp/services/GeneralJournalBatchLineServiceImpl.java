@@ -47,6 +47,11 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
     }
 
     @Override
+    public List<GeneralJournalBatchLine> list(GeneralJournalBatch generalJournalBatch) {
+        return repo.findFor(generalJournalBatch);
+    }
+
+    @Override
     public List<GeneralJournalBatchLine> list(GeneralJournalBatch generalJournalBatch, int page) {
         return repo.findFor(generalJournalBatch, PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
     }

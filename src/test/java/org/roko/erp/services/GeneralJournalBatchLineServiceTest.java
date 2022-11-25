@@ -91,6 +91,13 @@ public class GeneralJournalBatchLineServiceTest {
 
     @Test
     public void list_delegatesToRepo() {
+        svc.list(generalJournalBatchMock);
+
+        verify(repoMock).findFor(generalJournalBatchMock);
+    }
+
+    @Test
+    public void listWithPage_delegatesToRepo() {
         svc.list(generalJournalBatchMock, TEST_PAGE);
 
         verify(repoMock).findFor(eq(generalJournalBatchMock), pageableArgumentCaptor.capture());

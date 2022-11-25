@@ -1,5 +1,7 @@
 package org.roko.erp.repositories;
 
+import java.util.List;
+
 import org.roko.erp.model.GeneralJournalBatch;
 import org.roko.erp.model.GeneralJournalBatchLine;
 import org.roko.erp.model.jpa.GeneralJournalBatchLineId;
@@ -18,6 +20,10 @@ public interface GeneralJournalBatchLineRepository
         public Page<GeneralJournalBatchLine> findFor(
                         @Param("generalJournalBatch") GeneralJournalBatch generalJournalBatch,
                         Pageable pageable);
+
+        @Query("SELECT generalJournalBatchLine FROM GeneralJournalBatchLine generalJournalBatchLine WHERE generalJournalBatchLine.generalJournalBatch = :generalJournalBatch")
+        public List<GeneralJournalBatchLine> findFor(
+                        @Param("generalJournalBatch") GeneralJournalBatch generalJournalBatch);
 
         @Query("SELECT COUNT(generalJournalBatchLine) FROM GeneralJournalBatchLine generalJournalBatchLine WHERE generalJournalBatchLine.generalJournalBatch = :generalJournalBatch")
         public int count(@Param("generalJournalBatch") GeneralJournalBatch generalJournalBatch);
