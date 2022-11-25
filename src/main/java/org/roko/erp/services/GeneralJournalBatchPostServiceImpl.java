@@ -72,6 +72,8 @@ public class GeneralJournalBatchPostServiceImpl implements GeneralJournalBatchPo
         if (balanceBankAccountLedgerEntryShouldBeCreated(generalJournalBatchLine)) {
             createBalanceBankAccountLedgerEntry(generalJournalBatchLine);                
         }
+
+        generalJournalBatchLineSvc.delete(generalJournalBatchLine.getGeneralJournalBatchLineId());
     }
 
     private void createBankAccountLedgerEntry(GeneralJournalBatchLine generalJournalBatchLine) {

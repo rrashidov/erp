@@ -29,10 +29,12 @@ import org.roko.erp.model.GeneralJournalBatchLineType;
 import org.roko.erp.model.Vendor;
 import org.roko.erp.model.VendorLedgerEntry;
 import org.roko.erp.model.VendorLedgerEntryType;
+import org.roko.erp.model.jpa.GeneralJournalBatchLineId;
 
 public class GeneralJournalBatchPostServiceTest {
 
     private static final String TEST_CODE = "test-code";
+    private static final int TEST_LINE_NO = 234;
     private static final String TEST_DOCUMENT_CODE = "test-document-code";
     private static final Date TEST_DATE = new Date();
     private static final Double TEST_AMOUNT = 123.45;
@@ -40,6 +42,7 @@ public class GeneralJournalBatchPostServiceTest {
     private static final String TEST_CUSTOMER_CODE = "test-customer-code";
     private static final String TEST_VENDOR_CODE = "test-vendor-code";
     private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
+
 
     @Captor
     private ArgumentCaptor<CustomerLedgerEntry> customerLedgerEntryArgumentCaptor;
@@ -49,6 +52,8 @@ public class GeneralJournalBatchPostServiceTest {
 
     @Captor
     private ArgumentCaptor<BankAccountLedgerEntry> bankAccountLedgerEntryArgumentCaptor;
+
+    private GeneralJournalBatchLineId generalJournalBatchLineId;
 
     @Mock
     private GeneralJournalBatchService generalJournalBatchSvcMock;
@@ -95,6 +100,11 @@ public class GeneralJournalBatchPostServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        generalJournalBatchLineId = new GeneralJournalBatchLineId();
+        generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchMock);
+        generalJournalBatchLineId.setLineNo(TEST_LINE_NO);
+        
+        when(generalJournalBatchLineMock.getGeneralJournalBatchLineId()).thenReturn(generalJournalBatchLineId);
         when(generalJournalBatchLineMock.getDocumentCode()).thenReturn(TEST_DOCUMENT_CODE);
         when(generalJournalBatchLineMock.getDate()).thenReturn(TEST_DATE);
         when(generalJournalBatchLineMock.getAmount()).thenReturn(TEST_AMOUNT);
@@ -527,4 +537,14 @@ public class GeneralJournalBatchPostServiceTest {
         assertEquals(TEST_DOCUMENT_CODE, bankAccountLedgerEntry.getDocumentCode());
     }
 
+    @Test
+    public void generalJournalBatchLinesAreDeleted_whenPost() throws PostFailedException{
+        when(generalJournalBatchLineMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.CUSTOMER);
+        when(generalJournalBatchLineMock.getSourceCode()).thenReturn(TEST_CUSTOMER_CODE);
+        when(generalJournalBatchLineMock.getOperationType()).thenReturn(GeneralJournalBatchLineOperationType.ORDER);
+
+        svc.post(TEST_CODE);
+
+        verify(generalJournalBatchLineSvcMock).delete(generalJournalBatchLineId);
+    }
 }
