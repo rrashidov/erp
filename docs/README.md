@@ -457,6 +457,38 @@ When a card is used for existing object instance, a sublist could also be displa
 
 ![Item-Card-Ledger-Entries](./assets/item-card-ledger-entries.png)
 
+* wizard
+
+There are some objects which can not be created with a single step. This means that values in some fields are populated automatically based on the values selected in other fields - Sales/Purchase Document Line price is populated from the Item selected in the item field. There are other cases, where values that could be populated in a certain field depend on the value selected in other fields - Source Code field in General Journal Batch Line is populated depending on the value selected in the field Source Type. To cover these cases there is a UI element called Wizard. Wizards are composed of different pages. On each page you select a value and then move on to the next one depending on the values selected on the previous page. Example: Sales Order Wizard:
+
+It is triggered by clicking "New" button on the Sales Order List:
+
+![Sales-Order-New](./assets/sales-order-new.png)
+
+Triggering the Sales Order wizard opens its first page. Sales Order customer is selected on the first page of the Sales Order wizard:
+
+![Sales-Order-Wizard-FirstPage](./assets/sales-order-wizard-first-page.png)
+
+Once you select the customer for the sales order, clicking "Next" moves to the second page of the Sales Order wizard:
+
+![Sales-Order-Wizard-SecondPage](./assets/sales-order-wizard-second-page.png)
+
+You can see on the second page you can select the Payment Method for the Sales Order. The value of the Payment Method is populated from the payment method field of the Customer selected on the previous page. This is an example where values in some fields are populated based on values selected in other fields. 
+
+Clicking finish on the last page of the Sales Order Wizard creates a new Sales Order and redirects to the Sales Order Card.
+
+Other objects which are created/updated using wizards are:
+
+- Sales Order
+- Sales Order Line
+- Purchase Order
+- Purchase Order Line
+- Sales Credit Memo
+- Sales Credit Memo Line
+- Purchase Credit Memo
+- Purchase Credit Memo Line
+- General Journal Batch Line 
+
 ## Processes
 
 ## Architecture
