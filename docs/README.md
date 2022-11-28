@@ -517,6 +517,8 @@ There are some checks which are performed during Posting of documents which coul
 
 ## Architecture
 
+![Architecture-v1](./assets/architecture-v1.png)
+
 ## Caveats
 
 ## Roadmap
