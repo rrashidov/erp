@@ -381,6 +381,82 @@ This object holds various configuration options of the system. This object is in
 
 ## UI
 
+The system has several basic UI elements:
+
+* navigation
+
+This is the entrypoint to the system. The navigation tab is displayed on every page of the system. It shows the main functional areas of the system:
+
+![Navigation](./assets/navigation.png)
+
+Clicking on each of the main elements in the navigation tab shows the elements of that functional area.
+
+General Ledger:
+
+![General Ledger](./assets/general-ledger.png)
+
+Inventory:
+
+![Inventory](./assets/inventory.png)
+
+Sales:
+
+![Sales](./assets/sales.png)
+
+Purchases:
+
+![Purchases](./assets/purchases.png)
+
+Admin:
+
+![Admin](./assets/admin.png)
+
+* list 
+
+Clicking on each of the elements in the navigation opens the list of the respective object. Example: Items
+
+![Items](./assets/items.png)
+
+Each list has several building blocks:
+
+Header:
+
+![Items-Header](./assets/items-header.png)
+
+"New" button - this is available only for objects which can be created manualy by the user
+
+![Items-New](./assets/items-new.png)
+
+Table Header - shows the names of the columns (fields) of the object that is listed:
+
+![Items-TableHeader](./assets/items-tableheader.png)
+
+Table Lines - shows the actual data, the values of the respective fields of the object being listed:
+
+![Item-TableRows](./assets/items-tablerows.png)
+
+Actions - this is usually the last column of the list. It contains buttons to perform various actions over the respective instance of the object being listed:
+
+![Item-Actions](./assets/items-actions.png)
+
+Paging - at the bottim of each list there is a section which contains elements to navigate through the pages of the object being listed:
+
+![Item-Paging](./assets/items-paging.png)
+
+* card
+
+Card elements are used to create new and/or update existing instances of a particular object. Example: Item
+
+![Item-Card-New](./assets/item-card-new.png)
+
+As stated above, card element could be used to create new objects or update existing ones. When used for updating existing ones, it is already populated with the data of the object being edited:
+
+![Item-Card-Existing](./assets/item-card-existing.png)
+
+When a card is used for existing object instance, a sublist could also be displayed in the card. This sublist contains information regarding objects related to the main object displayed in the card. Example: in the Item card you see a list of Item Ledger Entries as a sublist:
+
+![Item-Card-Ledger-Entries](./assets/item-card-ledger-entries.png)
+
 ## Processes
 
 ## Architecture
