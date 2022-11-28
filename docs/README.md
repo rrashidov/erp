@@ -519,6 +519,21 @@ There are some checks which are performed during Posting of documents which coul
 
 ![Architecture-v1](./assets/architecture-v1.png)
 
+**erp** is simple monolith application. It handles all the user requests as well as processing the business process of posting various documents and general journal batches. The application has a single dependency which it communcates with. This is the database system where the application stores its data.
+
 ## Caveats
 
+It was described in the Intro section what the main goals of the project are. In order to focus on the main goals, some other features and functionalities were intentionally left out. Here are some of them:
+
+* no sorting/filtering in any of the list UIs;
+* no data validation when creating any of the objects;
+* no user context;
+* no authentication/authorization;
+
 ## Roadmap
+
+The application will be developed through the following stages:
+
+* separate UI and backend;
+* refactor posting to be asynchronous;
+* separate backend into domain-based microservices - inventory, sales, purchases, etc.
