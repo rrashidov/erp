@@ -491,6 +491,30 @@ Other objects which are created/updated using wizards are:
 
 ## Processes
 
+Besides creating, updating, listing and deleting the domain model objects, there is one main action that could be executed in the system - posting. As it was mentioned in the Domain Model section, Sales/Purchase Orders represent the **intent** of a Customer/Vendor to buy/deliver Items. **Posting** a sales/purchase document (order or credit memo) is confirming this intent and materializes it. This is the simplest way to describe the **Posting** process.
+
+When you post a Sales Order, the following actions are performed by the system:
+
+- Posted Sales Order is created using the information from the Sales Order;
+- for each Sales Order Line a corresponding Posted Sales Order Line is created;
+- for each Sales Order Line a corresponding Item Ledger Entry is created;
+- Customer Ledger Entry is created;
+- depending on the Payment Method, payment/refund Customer Ledger is created;
+- depending on the Payment Method, Bank Account Ledger entry is created;
+- Sales Order Lines are deleted;
+- Sales Order is deleted;
+
+All the actions described above are performed in a transaction.
+
+Respective actions are performed when you post Sales Credit Memo, Purchase Order, Purchase Credit Memo and General Journal Batch.
+
+There are some checks which are performed during Posting of documents which could also cause the whole operation (transaction) to fail and be aborted (rollbacked):
+
+- Sales Order - Item inventory is checked. If there is not enough inventory of a given Item to sell to the Customer, Post operation fails;
+- Sales Credit Memo - if the Payment Method selected will cause a Customer Refund to be made, Bank Account balance is checked. If there is not enough balance of a given Bank Account to refund the Customer, Post operation fails;
+- Purchase Order - if the Payment Method selected will cause a Vendor Payment to be made, Bank Account balance is checked. If there is not enough balance of a given Bank Account to pay the Vendor, Post operation fails;
+- Purchase Credit Memo - Item inventory is checked. If there is not enough inventory of a given Item to return to the Vendor, Post operation fails;
+
 ## Architecture
 
 ## Caveats
