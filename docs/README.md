@@ -49,7 +49,7 @@ The application provides the following set of features:
   * manage a catalog of Payment Methods;
   * managet bank accounts operations - payments, refunds, inter balance transfers;
 
-## Domain Model
+## DomainModel
 
 In order to provide the features describe above, the application is centered around a domain model and the objects it is comprised of.
 
