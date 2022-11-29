@@ -1,5 +1,7 @@
 package org.roko.erp.components;
 
+import java.util.Arrays;
+
 import org.roko.erp.model.BankAccount;
 import org.roko.erp.model.CodeSerie;
 import org.roko.erp.model.Customer;
@@ -19,6 +21,7 @@ import org.roko.erp.services.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,12 +35,13 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
   private GeneralJournalBatchService generalJournalBatchSvc;
   private CodeSerieService codeSerieSvc;
   private SetupService setupSvc;
+  private Environment env;
 
   @Autowired
   public TestDataInitialization(BankAccountService bankAccountSvc, PaymentMethodService paymentMethodSvc,
       GeneralJournalBatchService generalJournalBatchSvc,
       CustomerService customerService, VendorService vendorService, ItemService itemSvc,
-      CodeSerieService codeSerieSvc, SetupService setupSvc) {
+      CodeSerieService codeSerieSvc, SetupService setupSvc, Environment env) {
     this.bankAccountSvc = bankAccountSvc;
     this.paymentMethodSvc = paymentMethodSvc;
     this.generalJournalBatchSvc = generalJournalBatchSvc;
@@ -46,10 +50,15 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     this.itemSvc = itemSvc;
     this.codeSerieSvc = codeSerieSvc;
     this.setupSvc = setupSvc;
+    this.env = env;
   }
 
   @Override
   public void onApplicationEvent(ContextRefreshedEvent event) {
+    if (activeProfileSpecified()) {
+      return ;
+    }
+
     // init bank accounts
     BankAccount ba01 = new BankAccount();
     ba01.setCode("BA01");
@@ -138,6 +147,10 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
 
     // init code series
     initCodeSeries();
+  }
+
+  private boolean activeProfileSpecified() {
+    return env.getActiveProfiles().length != 0;
   }
 
   private void initCodeSeries() {
