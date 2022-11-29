@@ -1,7 +1,5 @@
 package org.roko.erp.components;
 
-import java.util.Arrays;
-
 import org.roko.erp.model.BankAccount;
 import org.roko.erp.model.CodeSerie;
 import org.roko.erp.model.Customer;
