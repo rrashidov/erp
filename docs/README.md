@@ -8,6 +8,7 @@
 - [UI](#UI)
 - [Processes](#Processes)
 - [Architecture](#Architecture)
+- [HowToRun](#HowToRun)
 - [Caveats](#Caveats)
 - [Roadmap](#Roadmap)
 
@@ -520,6 +521,48 @@ There are some checks which are performed during Posting of documents which coul
 ![Architecture-v1](./assets/architecture-v1.png)
 
 **erp** is simple monolith application. It handles all the user requests as well as processing the business process of posting various documents and general journal batches. The application has a single dependency which it communcates with. This is the database system where the application stores its data.
+
+## HowToRun
+
+In order to run the application, you have to build it first. Maven is used as a build tool. You should execute simple maven command in the root of the repo in order to build the application:
+
+```
+$ mvn clean install
+```
+
+The minimal maven version required is **3.2.5**.
+
+The result of a successfull maven execution is a jar file located in the **./target** folder:
+
+```
+$ ls ./target
+./target/erp-0.0.1-SNAPSHOT.jar
+```
+
+You can use this jar file to run the application:
+
+```
+java -jar ./target/erp-0.0.1-SNAPSHOT.jar
+```
+
+This runs the application with embeded H2 in-memory database. Moreover, test data is inserted in the database.
+
+The application could be run against MySQL database as well. This could be done by providing some input parameters running the application:
+
+* DB_DRIVER - the MySQL value that should be provided is **com.mysql.cj.jdbc.Driver**;
+* DB_URL - the JDBC URL that will be used to connect to the database;
+* DB_USERNAME - the username to authenticate with;
+* DB_PASSWORD - the password to authenticate with;
+* DB_PLATFORM - the MySQL dialect for Hibernate - **org.hibernate.dialect.MySQL5InnoDBDialect**
+* SRV_PORT - the port to run the embedded server on;
+
+Moreover, you have to specify **prod** profile to run Spring with by specifying **spring.profiles.active** environment variable.
+
+Example:
+
+```
+java -Dspring.profiles.active=prod -DDB_URL=jdbc:mysql://127.0.0.1:4306/erp -DDB_USERNAME=erp -DDB_PASSWORD=*** -DDB_DRIVER=com.mysql.cj.jdbc.Driver -DDB_PLATFORM=org.hibernate.dialect.MySQL5InnoDBDialect -jar erp-0.0.1-SNAPSHOT.jar
+```
 
 ## Caveats
 
