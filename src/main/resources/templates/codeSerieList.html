@@ -34,8 +34,8 @@
                         <td th:text="${codeSerie.name}"></td>
                         <td th:text="${codeSerie.firstCode}"></td>
                         <td th:text="${codeSerie.lastCode}"></td>
-                        <td><a th:href="@{/codeSerieCard?code={code}(code=${codeSerie.code})}">edit</a> <a
-                                th:href="@{/deleteCodeSerie?code={code}(code=${codeSerie.code})}">delete</a></td>
+                        <td><a class="btn btn-primary" th:href="@{/codeSerieCard?code={code}(code=${codeSerie.code})}">edit</a> <a
+                            class="btn btn-primary" th:href="@{/deleteCodeSerie?code={code}(code=${codeSerie.code})}">delete</a></td>
                     </tr>
 
                 </tbody>
