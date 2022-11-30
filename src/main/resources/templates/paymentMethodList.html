@@ -36,8 +36,8 @@
                         </td>
                         <td th:unless="${paymentMethod.bankAccount} != null"></td>
 
-                        <td><a th:href="@{/paymentMethodCard?code={code}(code=${paymentMethod.code})}">edit</a> <a
-                                th:href="@{/deletePaymentMethod?code={code}(code=${paymentMethod.code})}">delete</a>
+                        <td><a class="btn btn-primary" th:href="@{/paymentMethodCard?code={code}(code=${paymentMethod.code})}">edit</a> <a
+                            class="btn btn-primary" th:href="@{/deletePaymentMethod?code={code}(code=${paymentMethod.code})}">delete</a>
                         </td>
                     </tr>
 
