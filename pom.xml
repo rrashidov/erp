@@ -17,6 +17,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>erp</module>
+		<module>erp.app</module>
+		<module>erp.backend</module>
 	</modules>
 </project>
