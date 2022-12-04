@@ -46,7 +46,7 @@ public class BankAccountController {
         return svc.get(code);
     }
 
-    @GetMapping("/{code}/ledgerentries/{page}")
+    @GetMapping("/{code}/ledgerentries/page/{page}")
     public List<BankAccountLedgerEntry> getLedgerEntries(@PathVariable("code") String code,
             @PathVariable("page") int page) {
         BankAccount bankAccount = svc.get(code);
