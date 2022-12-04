@@ -1,12 +1,14 @@
 package org.roko.erp.backend.controllers;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.BankAccount;
+import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
 
 public class BankAccountControllerTest {
@@ -21,13 +23,18 @@ public class BankAccountControllerTest {
     @Mock
     private BankAccountService svcMock;
 
+    @Mock
+    private BankAccountLedgerEntryService bankAccountLedgerEntrySvcMock;
+
     private BankAccountController controller;
 
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
-        controller = new BankAccountController(svcMock);
+        when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
+
+        controller = new BankAccountController(svcMock, bankAccountLedgerEntrySvcMock);
     }
 
     @Test
@@ -49,6 +56,14 @@ public class BankAccountControllerTest {
         controller.get(TEST_CODE);
 
         verify(svcMock).get(TEST_CODE);
+    }
+
+    @Test
+    public void getLedgerEntries_delegatesToRepo() {
+        controller.getLedgerEntries(TEST_CODE, TEST_PAGE);
+
+        verify(svcMock).get(TEST_CODE);
+        verify(bankAccountLedgerEntrySvcMock).findFor(bankAccountMock, TEST_PAGE);
     }
 
     @Test
