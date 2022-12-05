@@ -8,6 +8,7 @@ import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
+import org.roko.erp.model.dto.BankAccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,18 +33,18 @@ public class BankAccountController {
     }
 
     @GetMapping
-    public List<BankAccount> list() {
+    public List<BankAccountDTO> list() {
         return svc.list();
     }
 
     @GetMapping("/page/{page}")
-    public List<BankAccount> list(@PathVariable("page") int page) {
+    public List<BankAccountDTO> list(@PathVariable("page") int page) {
         return svc.list(page);
     }
 
     @GetMapping("/{code}")
-    public BankAccount get(@PathVariable("code") String code) {
-        return svc.get(code);
+    public BankAccountDTO get(@PathVariable("code") String code) {
+        return svc.getDTO(code);
     }
 
     @GetMapping("/{code}/ledgerentries/page/{page}")
@@ -63,13 +64,15 @@ public class BankAccountController {
     }
 
     @PostMapping
-    public String post(@RequestBody BankAccount bankAccount) {
+    public String post(@RequestBody BankAccountDTO bankAccountDTO) {
+        BankAccount bankAccount = svc.fromDTO(bankAccountDTO);
         svc.create(bankAccount);
         return bankAccount.getCode();
     }
 
     @PutMapping("/{code}")
-    public String put(@PathVariable("code") String code, @RequestBody BankAccount bankAccount) {
+    public String put(@PathVariable("code") String code, @RequestBody BankAccountDTO bankAccountDTO) {
+        BankAccount bankAccount = svc.fromDTO(bankAccountDTO);
         svc.update(code, bankAccount);
         return code;
     }

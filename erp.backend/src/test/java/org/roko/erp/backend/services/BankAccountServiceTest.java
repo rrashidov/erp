@@ -17,12 +17,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.repositories.BankAccountRepository;
+import org.roko.erp.model.dto.BankAccountDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class BankAccountServiceTest {
 
     private static final String TEST_CODE = "test-code";
+    private static final String TEST_NAME = "test-name";
 
     private static final int TEST_PAGE = 123;
 
@@ -49,6 +51,9 @@ public class BankAccountServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(bankAccountMock.getCode()).thenReturn(TEST_CODE);
+        when(bankAccountMock.getName()).thenReturn(TEST_NAME);
 
         when(pageMock.toList()).thenReturn(Arrays.asList(bankAccountMock, bankAccountMock1, bankAccountMock2));
 
@@ -94,6 +99,14 @@ public class BankAccountServiceTest {
         BankAccount retrievedBankAccount = svc.get("non-existing-code");
 
         assertNull(retrievedBankAccount);
+    }
+
+    @Test
+    public void getDTOReturnsProperResult(){
+        BankAccountDTO dto = svc.getDTO(TEST_CODE);
+        
+        assertEquals(TEST_CODE, dto.getCode());
+        assertEquals(TEST_NAME, dto.getName());
     }
 
     @Test

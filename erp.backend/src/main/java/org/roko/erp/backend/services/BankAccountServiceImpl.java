@@ -2,9 +2,11 @@ package org.roko.erp.backend.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.repositories.BankAccountRepository;
+import org.roko.erp.model.dto.BankAccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -17,9 +19,9 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Autowired
     public BankAccountServiceImpl(BankAccountRepository repo) {
         this.repo = repo;
-	}
+    }
 
-	@Override
+    @Override
     public void create(BankAccount bankAccount) {
         repo.save(bankAccount);
     }
@@ -46,7 +48,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     public BankAccount get(String code) {
         Optional<BankAccount> bankAccountOptional = repo.findById(code);
 
-        if (bankAccountOptional.isPresent()){
+        if (bankAccountOptional.isPresent()) {
             BankAccount bankAccount = bankAccountOptional.get();
             bankAccount.setBalance(repo.balance(bankAccount));
             return bankAccount;
@@ -56,32 +58,58 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public List<BankAccount> list() {
-        List<BankAccount> bankAccounts = repo.findAll();
-
-        bankAccounts.stream()
-            .forEach(customer -> customer.setBalance(repo.balance(customer)));
-
-        return bankAccounts;
+    public BankAccountDTO getDTO(String code) {
+        return toDTO(get(code));
     }
 
     @Override
-    public List<BankAccount> list(int page) {
+    public List<BankAccountDTO> list() {
+        List<BankAccount> bankAccounts = repo.findAll();
+
+        bankAccounts.stream()
+                .forEach(customer -> customer.setBalance(repo.balance(customer)));
+
+        return bankAccounts.stream()
+                .map(x -> toDTO(x))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BankAccountDTO> list(int page) {
         List<BankAccount> bankAccounts = repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList();
 
         bankAccounts.stream()
-            .forEach(customer -> customer.setBalance(repo.balance(customer)));
+                .forEach(customer -> customer.setBalance(repo.balance(customer)));
 
-        return bankAccounts;
+        return bankAccounts.stream()
+                .map(x -> toDTO(x))
+                .collect(Collectors.toList());
     }
 
     @Override
     public int count() {
         return new Long(repo.count()).intValue();
     }
-    
+
+    @Override
+    public BankAccount fromDTO(BankAccountDTO bankAccountDTO) {
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setCode(bankAccountDTO.getCode());
+        bankAccount.setName(bankAccountDTO.getName());
+        return bankAccount;
+    }
+
     private void transferFields(BankAccount source, BankAccount target) {
         target.setName(source.getName());
     }
 
+    private BankAccountDTO toDTO(BankAccount bankAccount) {
+        if (bankAccount == null) {
+            return null;
+        }
+        BankAccountDTO dto = new BankAccountDTO();
+        dto.setCode(bankAccount.getCode());
+        dto.setName(bankAccount.getName());
+        return dto;
+    }
 }

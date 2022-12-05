@@ -1,5 +1,9 @@
 package org.roko.erp.backend.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -7,18 +11,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
+import org.roko.erp.model.dto.BankAccountDTO;
 
 public class BankAccountControllerTest {
 
     private static final String TEST_CODE = "test-code";
+    private static final String TEST_NAME = "test-name";
 
     private static final int TEST_PAGE = 123;
 
     @Mock
     private BankAccount bankAccountMock;
+
+    @Mock
+    private BankAccountDTO bankAccountDtoMock;
 
     @Mock
     private BankAccountService svcMock;
@@ -33,6 +44,19 @@ public class BankAccountControllerTest {
         MockitoAnnotations.openMocks(this);
 
         when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
+        doAnswer(new Answer<BankAccount>() {
+            @Override
+            public BankAccount answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                BankAccount bankAccount = (BankAccount) args[0];
+                bankAccount.setCode(TEST_CODE);
+                return bankAccount;
+            }
+        }).when(svcMock).create(any(BankAccount.class));
+        when(svcMock.fromDTO(bankAccountDtoMock)).thenReturn(bankAccountMock);
+
+        when(bankAccountDtoMock.getCode()).thenReturn(TEST_CODE);
+        when(bankAccountDtoMock.getName()).thenReturn(TEST_NAME);
 
         controller = new BankAccountController(svcMock, bankAccountLedgerEntrySvcMock);
     }
@@ -55,7 +79,7 @@ public class BankAccountControllerTest {
     public void get_delegatesToRepo() {
         controller.get(TEST_CODE);
 
-        verify(svcMock).get(TEST_CODE);
+        verify(svcMock).getDTO(TEST_CODE);
     }
 
     @Test
@@ -68,14 +92,14 @@ public class BankAccountControllerTest {
 
     @Test
     public void post_delegatesToRepo() {
-        controller.post(bankAccountMock);
+        controller.post(bankAccountDtoMock);
 
         verify(svcMock).create(bankAccountMock);
     }
 
     @Test
     public void put_delegatesToRepo(){
-        controller.put(TEST_CODE, bankAccountMock);
+        controller.put(TEST_CODE, bankAccountDtoMock);
 
         verify(svcMock).update(TEST_CODE, bankAccountMock);
     }
