@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
+import org.roko.erp.model.dto.BankAccountLedgerEntryDTO;
 
 public interface BankAccountLedgerEntryService {
     
@@ -12,6 +13,8 @@ public interface BankAccountLedgerEntryService {
     public List<BankAccountLedgerEntry> findFor(BankAccount bankAccount);
 
     public List<BankAccountLedgerEntry> findFor(BankAccount bankAccount, int page);
+
+    public List<BankAccountLedgerEntryDTO> list(BankAccount bankAccount, int page);
 
     public int count(BankAccount bankAccount);
 }

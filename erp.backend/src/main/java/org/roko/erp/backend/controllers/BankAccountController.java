@@ -9,6 +9,7 @@ import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.model.dto.BankAccountDTO;
+import org.roko.erp.model.dto.BankAccountLedgerEntryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +49,7 @@ public class BankAccountController {
     }
 
     @GetMapping("/{code}/ledgerentries/page/{page}")
-    public List<BankAccountLedgerEntry> getLedgerEntries(@PathVariable("code") String code,
+    public List<BankAccountLedgerEntryDTO> listLedgerEntries(@PathVariable("code") String code,
             @PathVariable("page") int page) {
         BankAccount bankAccount = svc.get(code);
 
@@ -60,7 +61,7 @@ public class BankAccountController {
         bankAccountLedgerEntry.setDocumentCode("BA001");
         bankAccountLedgerEntrySvc.create(bankAccountLedgerEntry);
 
-        return bankAccountLedgerEntrySvc.findFor(bankAccount, page);
+        return bankAccountLedgerEntrySvc.list(bankAccount, page);
     }
 
     @PostMapping

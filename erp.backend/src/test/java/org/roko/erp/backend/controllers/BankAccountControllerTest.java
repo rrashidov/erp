@@ -2,8 +2,6 @@ package org.roko.erp.backend.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -84,10 +82,10 @@ public class BankAccountControllerTest {
 
     @Test
     public void getLedgerEntries_delegatesToRepo() {
-        controller.getLedgerEntries(TEST_CODE, TEST_PAGE);
+        controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
 
         verify(svcMock).get(TEST_CODE);
-        verify(bankAccountLedgerEntrySvcMock).findFor(bankAccountMock, TEST_PAGE);
+        verify(bankAccountLedgerEntrySvcMock).list(bankAccountMock, TEST_PAGE);
     }
 
     @Test
@@ -109,5 +107,12 @@ public class BankAccountControllerTest {
         controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
+    }
+
+    @Test
+    public void listLedgerEntries_delegatesToSvc(){
+        controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
+
+        verify(bankAccountLedgerEntrySvcMock).list(bankAccountMock, TEST_PAGE);
     }
 }

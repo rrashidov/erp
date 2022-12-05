@@ -75,6 +75,18 @@ public class BankAccountLedgerEntryServiceTest {
     }
 
     @Test
+    public void listDTO_delegatesToRepo(){
+        svc.list(bankAccountMock, TEST_PAGE);
+
+        verify(repoMock).findFor(eq(bankAccountMock), pageableArgumentCaptor.capture());
+
+        Pageable pageable = pageableArgumentCaptor.getValue();
+
+        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
+        assertEquals(Constants.RECORDS_PER_PAGE, pageable.getPageSize());
+    }
+
+    @Test
     public void count_delegatesToRepo() {
         svc.count(bankAccountMock);
 
