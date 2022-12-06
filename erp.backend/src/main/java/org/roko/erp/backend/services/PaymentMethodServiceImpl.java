@@ -2,9 +2,11 @@ package org.roko.erp.backend.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.repositories.PaymentMethodRepository;
+import org.roko.erp.model.dto.PaymentMethodDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -52,13 +54,28 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
-    public List<PaymentMethod> list() {
-        return repo.findAll();
+    public PaymentMethodDTO getDTO(String code) {
+        PaymentMethod paymentMethod = get(code);
+
+        if (paymentMethod == null) {
+            return null;
+        }
+
+        return toDto(paymentMethod);
     }
 
     @Override
-    public List<PaymentMethod> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList();
+    public List<PaymentMethodDTO> list() {
+        return repo.findAll().stream()
+            .map(x -> toDto(x))
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PaymentMethodDTO> list(int page) {
+        return repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList().stream()
+            .map(x -> toDto(x))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -69,5 +86,16 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     private void transferFields(PaymentMethod source, PaymentMethod target) {
         target.setName(source.getName());
         target.setBankAccount(source.getBankAccount());
+    }
+
+    private PaymentMethodDTO toDto(PaymentMethod paymentMethod){
+        PaymentMethodDTO dto = new PaymentMethodDTO();
+        dto.setCode(paymentMethod.getCode());
+        dto.setName(paymentMethod.getName());
+        if (paymentMethod.getBankAccount() != null){
+            dto.setBankAccountCode(paymentMethod.getBankAccount().getCode());
+            dto.setBankAccountName(paymentMethod.getBankAccount().getName());
+        }
+        return dto;
     }
 }

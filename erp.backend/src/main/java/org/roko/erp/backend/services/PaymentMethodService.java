@@ -3,6 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.PaymentMethod;
+import org.roko.erp.model.dto.PaymentMethodDTO;
 
 public interface PaymentMethodService {
     
@@ -14,9 +15,11 @@ public interface PaymentMethodService {
 
     public PaymentMethod get(String code);
 
-    public List<PaymentMethod> list();
+    public PaymentMethodDTO getDTO(String code);
 
-    public List<PaymentMethod> list(int page);
+    public List<PaymentMethodDTO> list();
+
+    public List<PaymentMethodDTO> list(int page);
 
     public int count();
 }
