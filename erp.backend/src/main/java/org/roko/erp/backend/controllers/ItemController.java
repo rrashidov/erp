@@ -1,11 +1,16 @@
 package org.roko.erp.backend.controllers;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.Item;
+import org.roko.erp.backend.model.ItemLedgerEntry;
+import org.roko.erp.backend.model.ItemLedgerEntryType;
+import org.roko.erp.backend.services.ItemLedgerEntryService;
 import org.roko.erp.backend.services.ItemService;
 import org.roko.erp.model.dto.ItemDTO;
+import org.roko.erp.model.dto.ItemLedgerEntryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemController {
    
     private ItemService svc;
+    private ItemLedgerEntryService itemLedgerEntrySvc;
 
     @Autowired
-    public ItemController(ItemService svc) {
+    public ItemController(ItemService svc, ItemLedgerEntryService itemLedgerEntrySvc) {
         this.svc = svc;
+        this.itemLedgerEntrySvc = itemLedgerEntrySvc;
 	}
 
     @GetMapping
@@ -44,6 +51,23 @@ public class ItemController {
     @GetMapping("/{code}")
     public ItemDTO get(@PathVariable("code") String code) {
         return svc.toDTO(svc.get(code));
+    }
+
+    @GetMapping("/{code}/ledgerentries/page/{page}")
+    public List<ItemLedgerEntryDTO> ledgerEntries(@PathVariable("code") String code, @PathVariable("page") int page) {
+        Item item = svc.get(code);
+
+        ItemLedgerEntry itemLedgerEntry = new ItemLedgerEntry();
+        itemLedgerEntry.setItem(item);
+        itemLedgerEntry.setType(ItemLedgerEntryType.PURCHASE_ORDER);
+        itemLedgerEntry.setQuantity(12.12);
+        itemLedgerEntry.setDate(new Date());
+        itemLedgerEntry.setDocumentCode("PPO" + System.currentTimeMillis());
+        itemLedgerEntrySvc.create(itemLedgerEntry);
+
+        return itemLedgerEntrySvc.list(item, page).stream()
+            .map(x -> itemLedgerEntrySvc.toDTO(x))
+            .collect(Collectors.toList());
     }
 
     @PostMapping

@@ -14,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import org.roko.erp.backend.model.Item;
+import org.roko.erp.backend.model.ItemLedgerEntry;
+import org.roko.erp.backend.services.ItemLedgerEntryService;
 import org.roko.erp.backend.services.ItemService;
 
 import org.roko.erp.model.dto.ItemDTO;
@@ -34,13 +36,19 @@ public class ItemControllerTest {
     private Item itemMock;
 
     @Mock
+    private ItemLedgerEntry itemLedgerEntryMock;
+
+    @Mock
     private ItemDTO itemDtoMock;
 
     @Mock
     private ItemService svcMock;
 
-    private ItemController controller;
+    @Mock
+    private ItemLedgerEntryService itemLedgerEntrySvcMock;
 
+    private ItemController controller;
+    
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -60,7 +68,9 @@ public class ItemControllerTest {
         when(itemDtoMock.getSalesPrice()).thenReturn(TEST_SALES_PRICE);
         when(itemDtoMock.getPurchasePrice()).thenReturn(TEST_PURCHASE_PRICE);
 
-        controller = new ItemController(svcMock);
+        when(itemLedgerEntrySvcMock.list(itemMock, TEST_PAGE)).thenReturn(Arrays.asList(itemLedgerEntryMock));
+
+        controller = new ItemController(svcMock, itemLedgerEntrySvcMock);
     }
 
     @Test
@@ -78,6 +88,15 @@ public class ItemControllerTest {
 
         verify(svcMock).list(TEST_PAGE);
         verify(svcMock).toDTO(itemMock);
+    }
+
+    @Test
+    public void listLedgerEntries_delegatesToSvc() {
+        controller.ledgerEntries(TEST_CODE, TEST_PAGE);
+
+        verify(svcMock).get(TEST_CODE);
+        verify(itemLedgerEntrySvcMock).list(itemMock, TEST_PAGE);
+        verify(itemLedgerEntrySvcMock).toDTO(itemLedgerEntryMock);
     }
 
     @Test
