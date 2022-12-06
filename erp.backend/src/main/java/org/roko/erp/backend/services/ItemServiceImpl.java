@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.Item;
 import org.roko.erp.backend.repositories.ItemRepository;
+import org.roko.erp.model.dto.ItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -75,6 +76,29 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public int count() {
         return new Long(repo.count()).intValue();
+    }
+
+    
+
+    @Override
+    public Item fromDTO(ItemDTO itemDto) {
+        Item item = new Item();
+        item.setCode(itemDto.getCode());
+        item.setName(itemDto.getName());
+        item.setSalesPrice(itemDto.getSalesPrice());
+        item.setPurchasePrice(itemDto.getPurchasePrice());
+        return item;
+    }
+
+    @Override
+    public ItemDTO toDTO(Item item) {
+        ItemDTO dto = new ItemDTO();
+        dto.setCode(item.getCode());
+        dto.setName(item.getName());
+        dto.setSalesPrice(item.getSalesPrice());
+        dto.setPurchasePrice(item.getPurchasePrice());
+        dto.setInventory(item.getInventory());
+        return dto;
     }
 
     private void transferFields(Item item, Item itemFromDB) {

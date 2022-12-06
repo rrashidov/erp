@@ -3,6 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.Item;
+import org.roko.erp.model.dto.ItemDTO;
 
 public interface ItemService {
     
@@ -19,4 +20,8 @@ public interface ItemService {
     public List<Item> list(int page);
 
     public int count();
+
+    public ItemDTO toDTO(Item item);
+
+    public Item fromDTO(ItemDTO itemDto);
 }

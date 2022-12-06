@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Item;
 import org.roko.erp.backend.repositories.ItemRepository;
+import org.roko.erp.model.dto.ItemDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,6 +26,11 @@ public class ItemServiceTest {
     private static final int TEST_PAGE = 2;
 
     private static final String TEST_ID = "test-id";
+    private static final String TEST_CODE = "test-code";
+    private static final String TEST_NAME = "test-name";
+    private static final double TEST_SALES_PRICE = 123.12;
+    private static final double TEST_PURCHASE_PRICE = 23.45;
+    private static final double TEST_INVENTORY = 45.67;
 
     @Captor
     private ArgumentCaptor<Pageable> pageAbleArgumentCaptor;
@@ -42,6 +48,9 @@ public class ItemServiceTest {
     private Item itemMock2;
 
     @Mock
+    private ItemDTO itemDtoMock;
+
+    @Mock
     private Page<Item> pageMock;
 
     @Mock
@@ -52,6 +61,17 @@ public class ItemServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(itemDtoMock.getCode()).thenReturn(TEST_CODE);
+        when(itemDtoMock.getName()).thenReturn(TEST_NAME);
+        when(itemDtoMock.getSalesPrice()).thenReturn(TEST_SALES_PRICE);
+        when(itemDtoMock.getPurchasePrice()).thenReturn(TEST_PURCHASE_PRICE);
+
+        when(itemMock.getCode()).thenReturn(TEST_CODE);
+        when(itemMock.getName()).thenReturn(TEST_NAME);
+        when(itemMock.getSalesPrice()).thenReturn(TEST_SALES_PRICE);
+        when(itemMock.getPurchasePrice()).thenReturn(TEST_PURCHASE_PRICE);
+        when(itemMock.getInventory()).thenReturn(TEST_INVENTORY);
 
         when(pageMock.toList()).thenReturn(Arrays.asList(itemMock, itemMock1, itemMock2));
 
@@ -128,5 +148,26 @@ public class ItemServiceTest {
         svc.count();
 
         verify(repoMock).count();
+    }
+
+    @Test
+    public void fromDTO_generatesProperResult() {
+        Item item = svc.fromDTO(itemDtoMock);
+
+        assertEquals(TEST_CODE, item.getCode());
+        assertEquals(TEST_NAME, item.getName());
+        assertEquals(TEST_SALES_PRICE, item.getSalesPrice());
+        assertEquals(TEST_PURCHASE_PRICE, item.getPurchasePrice());
+    }
+
+    @Test
+    public void toDTO_generatesProperResult() {
+        ItemDTO itemDto = svc.toDTO(itemMock);
+
+        assertEquals(TEST_CODE, itemDto.getCode());
+        assertEquals(TEST_NAME, itemDto.getName());
+        assertEquals(TEST_SALES_PRICE, itemDto.getSalesPrice());
+        assertEquals(TEST_PURCHASE_PRICE, itemDto.getPurchasePrice());
+        assertEquals(TEST_INVENTORY, itemDto.getInventory());
     }
 }
