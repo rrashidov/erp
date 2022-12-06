@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.Customer;
 import org.roko.erp.backend.repositories.CustomerRepository;
+import org.roko.erp.model.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Component;
 public class CustomerServiceImpl implements CustomerService {
 
     private CustomerRepository repo;
+    private PaymentMethodService paymentMethodSvc;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository repo) {
+    public CustomerServiceImpl(CustomerRepository repo, PaymentMethodService paymentMethodSvc) {
         this.repo = repo;
+        this.paymentMethodSvc = paymentMethodSvc;
     }
 
     @Override
@@ -76,6 +79,28 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public int count() {
         return new Long(repo.count()).intValue();
+    }
+
+    @Override
+    public Customer fromDTO(CustomerDTO customerDTO) {
+        Customer customer = new Customer();
+        customer.setCode(customerDTO.getCode());
+        customer.setName(customerDTO.getName());
+        customer.setAddress(customerDTO.getAddress());
+        customer.setPaymentMethod(paymentMethodSvc.get(customerDTO.getPaymentMethodCode()));
+        return customer;
+    }
+
+    @Override
+    public CustomerDTO toDTO(Customer customer) {
+        CustomerDTO dto = new CustomerDTO();
+        dto.setCode(customer.getCode());
+        dto.setName(customer.getName());
+        dto.setAddress(customer.getAddress());
+        dto.setPaymentMethodCode(customer.getPaymentMethod().getCode());
+        dto.setPaymentMethodName(customer.getPaymentMethod().getName());
+        dto.setBalance(customer.getBalance());
+        return dto;
     }
 
     private void transferFields(Customer target, Customer source) {

@@ -3,6 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.Customer;
+import org.roko.erp.model.dto.CustomerDTO;
 
 public interface CustomerService {
     
@@ -19,4 +20,8 @@ public interface CustomerService {
     public List<Customer> list(int page);
 
     public int count();
+
+    public CustomerDTO toDTO(Customer customer);
+
+    public Customer fromDTO(CustomerDTO customerDTO);
 }
