@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.roko.erp.backend.model.Item;
 import org.roko.erp.backend.model.ItemLedgerEntry;
+import org.roko.erp.model.dto.ItemLedgerEntryDTO;
 
 public interface ItemLedgerEntryService {
 
@@ -14,5 +15,6 @@ public interface ItemLedgerEntryService {
     public List<ItemLedgerEntry> list(Item item, int page);
 
     public int count(Item item);
-    
+
+    public ItemLedgerEntryDTO toDTO(ItemLedgerEntry itemLedgerEntry);
 }

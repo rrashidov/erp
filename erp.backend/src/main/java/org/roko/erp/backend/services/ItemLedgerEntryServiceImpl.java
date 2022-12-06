@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.Item;
 import org.roko.erp.backend.model.ItemLedgerEntry;
 import org.roko.erp.backend.repositories.ItemLedgerEntryRepository;
+import org.roko.erp.model.dto.ItemLedgerEntryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -39,4 +40,15 @@ public class ItemLedgerEntryServiceImpl implements ItemLedgerEntryService {
         return new Long(repo.count(item)).intValue();
     }
 
+    @Override
+    public ItemLedgerEntryDTO toDTO(ItemLedgerEntry itemLedgerEntry) {
+        ItemLedgerEntryDTO dto = new ItemLedgerEntryDTO();
+        dto.setId(itemLedgerEntry.getId());
+        dto.setType(itemLedgerEntry.getType().name());
+        dto.setQuantity(itemLedgerEntry.getQuantity());
+        dto.setDate(itemLedgerEntry.getDate());
+        dto.setDocumentCode(itemLedgerEntry.getDocumentCode());
+        return dto;
+    }
+    
 }

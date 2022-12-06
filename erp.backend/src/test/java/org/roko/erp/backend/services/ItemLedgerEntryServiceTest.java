@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Date;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,11 +16,19 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Item;
 import org.roko.erp.backend.model.ItemLedgerEntry;
+import org.roko.erp.backend.model.ItemLedgerEntryType;
 import org.roko.erp.backend.repositories.ItemLedgerEntryRepository;
+import org.roko.erp.model.dto.ItemLedgerEntryDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class ItemLedgerEntryServiceTest {
+
+    private static final long TEST_ID = 123l;
+    private static final ItemLedgerEntryType TEST_TYPE = ItemLedgerEntryType.PURCHASE_ORDER;
+    private static final double TEST_QUANTITY = 34.56;
+    private static final String TEST_DOCUMENT_CODE = "test-document-code";
+    private static final Date TEST_DATE = new Date();
 
     private static final int TEST_PAGE = 12;
 
@@ -44,6 +54,12 @@ public class ItemLedgerEntryServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findFor(eq(itemMock), any(Pageable.class))).thenReturn(pageMock);
+
+        when(itemLedgerEntryMock.getId()).thenReturn(TEST_ID);
+        when(itemLedgerEntryMock.getType()).thenReturn(TEST_TYPE);
+        when(itemLedgerEntryMock.getQuantity()).thenReturn(TEST_QUANTITY);
+        when(itemLedgerEntryMock.getDate()).thenReturn(TEST_DATE);
+        when(itemLedgerEntryMock.getDocumentCode()).thenReturn(TEST_DOCUMENT_CODE);
         
         svc = new ItemLedgerEntryServiceImpl(repoMock);
     }
@@ -79,5 +95,16 @@ public class ItemLedgerEntryServiceTest {
         svc.count(itemMock);
 
         verify(repoMock).count(itemMock);
+    }
+
+    @Test
+    public void toDTO_returnsProperResult() {
+        ItemLedgerEntryDTO dto = svc.toDTO(itemLedgerEntryMock);
+
+        assertEquals(TEST_ID, dto.getId());
+        assertEquals(TEST_TYPE.name(), dto.getType());
+        assertEquals(TEST_QUANTITY, dto.getQuantity());
+        assertEquals(TEST_DATE, dto.getDate());
+        assertEquals(TEST_DOCUMENT_CODE, dto.getDocumentCode());
     }
 }
