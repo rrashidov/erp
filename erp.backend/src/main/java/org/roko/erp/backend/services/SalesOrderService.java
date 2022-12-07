@@ -3,6 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.SalesOrder;
+import org.roko.erp.model.dto.SalesOrderDTO;
 
 public interface SalesOrderService {
     
@@ -20,4 +21,7 @@ public interface SalesOrderService {
 
     public int count();
 
+    public SalesOrderDTO toDTO(SalesOrder salesOrder);
+
+    public SalesOrder fromDTO(SalesOrderDTO dto);
 }

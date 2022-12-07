@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.repositories.SalesOrderRepository;
+import org.roko.erp.model.dto.SalesOrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,17 @@ import org.springframework.stereotype.Service;
 public class SalesOrderServiceImpl implements SalesOrderService {
 
     private SalesOrderRepository repo;
+    private CustomerService customerSvc;
+    private PaymentMethodService paymentMethodSvc;
+    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
-    public SalesOrderServiceImpl(SalesOrderRepository repo) {
+    public SalesOrderServiceImpl(SalesOrderRepository repo, CustomerService customerSvc,
+            PaymentMethodService paymentMethodSvc, SalesCodeSeriesService salesCodeSeriesSvc) {
         this.repo = repo;
+        this.customerSvc = customerSvc;
+        this.paymentMethodSvc = paymentMethodSvc;
+        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @Override
@@ -74,6 +82,29 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     @Override
     public int count() {
         return new Long(repo.count()).intValue();
+    }
+
+    @Override
+    public SalesOrder fromDTO(SalesOrderDTO dto) {
+        SalesOrder salesOrder = new SalesOrder();
+        salesOrder.setCode(salesCodeSeriesSvc.orderCode());
+        salesOrder.setCustomer(customerSvc.get(dto.getCustomerCode()));
+        salesOrder.setDate(dto.getDate());
+        salesOrder.setPaymentMethod(paymentMethodSvc.get(dto.getPaymentMethodCode()));
+        return salesOrder;
+    }
+
+    @Override
+    public SalesOrderDTO toDTO(SalesOrder salesOrder) {
+        SalesOrderDTO dto = new SalesOrderDTO();
+        dto.setCode(salesOrder.getCode());
+        dto.setCustomerCode(salesOrder.getCustomer().getCode());
+        dto.setCustomerName(salesOrder.getCustomer().getName());
+        dto.setDate(salesOrder.getDate());
+        dto.setPaymentMethodCode(salesOrder.getPaymentMethod().getCode());
+        dto.setPaymentMethodName(salesOrder.getPaymentMethod().getName());
+        dto.setAmount(salesOrder.getAmount());
+        return dto;
     }
 
     private void transferFields(SalesOrder source, SalesOrder target) {
