@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.Customer;
 import org.roko.erp.backend.model.CustomerLedgerEntry;
 import org.roko.erp.backend.repositories.CustomerLedgerEntryRepository;
+import org.roko.erp.model.dto.CustomerLedgerEntryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -38,5 +39,16 @@ public class CustomerLedgerEntryServiceImpl implements CustomerLedgerEntryServic
     public int count(Customer customer) {
         return new Long(repo.count(customer)).intValue();
     }
-    
+
+    @Override
+    public CustomerLedgerEntryDTO toDTO(CustomerLedgerEntry customerLedgerEntry) {
+        CustomerLedgerEntryDTO dto = new CustomerLedgerEntryDTO();
+        dto.setId(customerLedgerEntry.getId());
+        dto.setType(customerLedgerEntry.getType().name());
+        dto.setDocumentCode(customerLedgerEntry.getDocumentCode());
+        dto.setDate(customerLedgerEntry.getDate());
+        dto.setAmount(customerLedgerEntry.getAmount());
+        return dto;
+    }
+        
 }
