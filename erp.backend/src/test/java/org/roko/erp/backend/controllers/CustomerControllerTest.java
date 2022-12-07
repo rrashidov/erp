@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Customer;
+import org.roko.erp.backend.model.CustomerLedgerEntry;
+import org.roko.erp.backend.services.CustomerLedgerEntryService;
 import org.roko.erp.backend.services.CustomerService;
 import org.roko.erp.model.dto.CustomerDTO;
 
@@ -19,13 +21,19 @@ public class CustomerControllerTest {
     private static final String TEST_CODE = "test-code";
 
     @Mock
-    private CustomerService svcMock;
-
-    @Mock
     private Customer customerMock;
 
     @Mock
     private CustomerDTO customerDtoMock;
+
+    @Mock
+    private CustomerService svcMock;
+
+    @Mock
+    private CustomerLedgerEntryService customerLedgerEntrySvcMock;
+
+    @Mock
+    private CustomerLedgerEntry customerLedgerEntryMock;
 
     private CustomerController controller;
 
@@ -38,7 +46,9 @@ public class CustomerControllerTest {
         when(svcMock.get(TEST_CODE)).thenReturn(customerMock);
         when(svcMock.fromDTO(customerDtoMock)).thenReturn(customerMock);
 
-        controller = new CustomerController(svcMock);
+        when(customerLedgerEntrySvcMock.findFor(customerMock, TEST_PAGE)).thenReturn(Arrays.asList(customerLedgerEntryMock));
+
+        controller = new CustomerController(svcMock, customerLedgerEntrySvcMock);
     }
 
     @Test
@@ -55,6 +65,15 @@ public class CustomerControllerTest {
 
         verify(svcMock).list(TEST_PAGE);
         verify(svcMock).toDTO(customerMock);
+    }
+
+    @Test
+    public void listLedgerEntries_delegatesToService() {
+        controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
+
+        verify(svcMock).get(TEST_CODE);
+        verify(customerLedgerEntrySvcMock).findFor(customerMock, TEST_PAGE);
+        verify(customerLedgerEntrySvcMock).toDTO(customerLedgerEntryMock);
     }
 
     @Test

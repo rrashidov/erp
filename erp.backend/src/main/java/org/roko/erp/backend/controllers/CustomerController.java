@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.Customer;
+import org.roko.erp.backend.services.CustomerLedgerEntryService;
 import org.roko.erp.backend.services.CustomerService;
 import org.roko.erp.model.dto.CustomerDTO;
+import org.roko.erp.model.dto.CustomerLedgerEntryDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
     
     private CustomerService svc;
+    private CustomerLedgerEntryService customerLedgerEntrySvc;
 
-    public CustomerController(CustomerService svc) {
+    public CustomerController(CustomerService svc, CustomerLedgerEntryService customerLedgerEntrySvc) {
         this.svc = svc;
+        this.customerLedgerEntrySvc = customerLedgerEntrySvc;
     }
 
     @GetMapping
@@ -37,6 +41,15 @@ public class CustomerController {
         return svc.list(page).stream()
             .map(x -> svc.toDTO(x))
             .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{code}/ledgerentries/page/{page}")
+    public List<CustomerLedgerEntryDTO> listLedgerEntries(@PathVariable("code") String code,
+            @PathVariable("page") int page) {
+        Customer customer = svc.get(code);
+        return customerLedgerEntrySvc.findFor(customer, page).stream()
+                .map(x -> customerLedgerEntrySvc.toDTO(x))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{code}")
