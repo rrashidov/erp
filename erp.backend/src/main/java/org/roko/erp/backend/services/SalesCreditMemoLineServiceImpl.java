@@ -7,7 +7,9 @@ import org.roko.erp.backend.model.SalesCreditMemo;
 import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.backend.repositories.SalesCreditMemoLineRepository;
+import org.roko.erp.model.dto.SalesDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionMessage.ItemsBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,15 @@ import org.springframework.stereotype.Service;
 public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineService {
 
     private SalesCreditMemoLineRepository repo;
+    private SalesCreditMemoService salesCreditMemoSvc;
+    private ItemService itemSvc;
 
     @Autowired
-    public SalesCreditMemoLineServiceImpl(SalesCreditMemoLineRepository repo) {
+    public SalesCreditMemoLineServiceImpl(SalesCreditMemoLineRepository repo, SalesCreditMemoService salesCreditMemoSvc,
+            ItemService itemSvc) {
         this.repo = repo;
+        this.salesCreditMemoSvc = salesCreditMemoSvc;
+        this.itemSvc = itemSvc;
     }
 
     @Override
@@ -71,6 +78,36 @@ public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineServic
     @Override
     public int maxLineNo(SalesCreditMemo salesCreditMemo) {
         return repo.maxLineNo(salesCreditMemo);
+    }
+
+    @Override
+    public SalesCreditMemoLine fromDTO(SalesDocumentLineDTO dto) {
+        SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(dto.getSalesDocumentCode());
+
+        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
+        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
+        salesCreditMemoLineId.setLineNo(dto.getLineNo());
+
+        SalesCreditMemoLine salesCreditMemoLine = new SalesCreditMemoLine();
+        salesCreditMemoLine.setSalesCreditMemoLineId(salesCreditMemoLineId);
+        salesCreditMemoLine.setItem(itemSvc.get(dto.getItemCode()));
+        salesCreditMemoLine.setQuantity(dto.getQuantity());
+        salesCreditMemoLine.setPrice(dto.getPrice());
+        salesCreditMemoLine.setAmount(dto.getAmount());
+        return salesCreditMemoLine;
+    }
+
+    @Override
+    public SalesDocumentLineDTO toDTO(SalesCreditMemoLine salesCreditMemoLine) {
+        SalesDocumentLineDTO dto = new SalesDocumentLineDTO();
+        dto.setSalesDocumentCode(salesCreditMemoLine.getSalesCreditMemoLineId().getSalesCreditMemo().getCode());
+        dto.setLineNo(salesCreditMemoLine.getSalesCreditMemoLineId().getLineNo());
+        dto.setItemCode(salesCreditMemoLine.getItem().getCode());
+        dto.setItemName(salesCreditMemoLine.getItem().getName());
+        dto.setQuantity(salesCreditMemoLine.getQuantity());
+        dto.setPrice(salesCreditMemoLine.getPrice());
+        dto.setAmount(salesCreditMemoLine.getAmount());
+        return dto;
     }
 
     private void transferFields(SalesCreditMemoLine source,

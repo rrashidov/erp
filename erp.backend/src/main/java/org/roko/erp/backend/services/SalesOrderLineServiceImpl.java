@@ -81,7 +81,7 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
 
     @Override
     public SalesOrderLine fromDTO(SalesDocumentLineDTO dto) {
-        SalesOrder salesOrder = salesOrderSvc.get(dto.getSalesOrderCode());
+        SalesOrder salesOrder = salesOrderSvc.get(dto.getSalesDocumentCode());
 
         SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
         salesOrderLineId.setSalesOrder(salesOrder);
@@ -99,7 +99,7 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
     @Override
     public SalesDocumentLineDTO toDTO(SalesOrderLine salesOrderLine) {
         SalesDocumentLineDTO dto = new SalesDocumentLineDTO();
-        dto.setSalesOrderCode(salesOrderLine.getSalesOrder().getCode());
+        dto.setSalesDocumentCode(salesOrderLine.getSalesOrder().getCode());
         dto.setLineNo(salesOrderLine.getSalesOrderLineId().getLineNo());
         dto.setItemCode(salesOrderLine.getItem().getCode());
         dto.setItemName(salesOrderLine.getItem().getName());

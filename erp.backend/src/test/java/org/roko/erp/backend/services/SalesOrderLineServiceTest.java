@@ -88,7 +88,7 @@ public class SalesOrderLineServiceTest {
 
         when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
-        when(salesOrderLineDtoMock.getSalesOrderCode()).thenReturn(TEST_SALES_ORDER_CODE);
+        when(salesOrderLineDtoMock.getSalesDocumentCode()).thenReturn(TEST_SALES_ORDER_CODE);
         when(salesOrderLineDtoMock.getLineNo()).thenReturn(TEST_LINE_NO);
         when(salesOrderLineDtoMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(salesOrderLineDtoMock.getPrice()).thenReturn(TEST_PRICE);
@@ -201,7 +201,7 @@ public class SalesOrderLineServiceTest {
     public void toDTO_returnsProperValue() {
         SalesDocumentLineDTO dto = svc.toDTO(salesOrderLineMock);
 
-        assertEquals(TEST_SALES_ORDER_CODE, dto.getSalesOrderCode());
+        assertEquals(TEST_SALES_ORDER_CODE, dto.getSalesDocumentCode());
         assertEquals(TEST_LINE_NO, dto.getLineNo());
         assertEquals(TEST_ITEM_CODE, dto.getItemCode());
         assertEquals(TEST_ITEM_NAME, dto.getItemName());

@@ -2,7 +2,7 @@ package org.roko.erp.model.dto;
 
 public class SalesDocumentLineDTO {
     
-    private String salesOrderCode;
+    private String salesDocumentCode;
     private int lineNo;
     private String itemCode;
     private String itemName;
@@ -10,11 +10,11 @@ public class SalesDocumentLineDTO {
     private double price;
     private double amount;
 
-    public String getSalesOrderCode() {
-        return salesOrderCode;
+    public String getSalesDocumentCode() {
+        return salesDocumentCode;
     }
-    public void setSalesOrderCode(String salesOrderCode) {
-        this.salesOrderCode = salesOrderCode;
+    public void setSalesDocumentCode(String salesDocumentCode) {
+        this.salesDocumentCode = salesDocumentCode;
     }
     public int getLineNo() {
         return lineNo;
