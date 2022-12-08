@@ -7,6 +7,7 @@ import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.repositories.SalesOrderLineRepository;
+import org.roko.erp.model.dto.SalesOrderLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,14 @@ import org.springframework.stereotype.Service;
 public class SalesOrderLineServiceImpl implements SalesOrderLineService {
 
     private SalesOrderLineRepository repo;
+    private SalesOrderService salesOrderSvc;
+    private ItemService itemSvc;
 
     @Autowired
-    public SalesOrderLineServiceImpl(SalesOrderLineRepository repo) {
+    public SalesOrderLineServiceImpl(SalesOrderLineRepository repo, SalesOrderService salesOrderSvc, ItemService itemSvc) {
         this.repo = repo;
+        this.salesOrderSvc = salesOrderSvc;
+        this.itemSvc = itemSvc;
     }
 
     @Override
@@ -72,6 +77,36 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
     @Override
     public int maxLineNo(SalesOrder salesOrder) {
         return repo.maxLineNo(salesOrder);
+    }
+
+    @Override
+    public SalesOrderLine fromDTO(SalesOrderLineDTO dto) {
+        SalesOrder salesOrder = salesOrderSvc.get(dto.getSalesOrderCode());
+
+        SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
+        salesOrderLineId.setSalesOrder(salesOrder);
+        salesOrderLineId.setLineNo(dto.getLineNo());
+
+        SalesOrderLine salesOrderLine = new SalesOrderLine();
+        salesOrderLine.setSalesOrderLineId(salesOrderLineId);
+        salesOrderLine.setItem(itemSvc.get(dto.getItemCode()));
+        salesOrderLine.setQuantity(dto.getQuantity());
+        salesOrderLine.setPrice(dto.getPrice());
+        salesOrderLine.setAmount(dto.getAmount());
+        return salesOrderLine;
+    }
+
+    @Override
+    public SalesOrderLineDTO toDTO(SalesOrderLine salesOrderLine) {
+        SalesOrderLineDTO dto = new SalesOrderLineDTO();
+        dto.setSalesOrderCode(salesOrderLine.getSalesOrder().getCode());
+        dto.setLineNo(salesOrderLine.getSalesOrderLineId().getLineNo());
+        dto.setItemCode(salesOrderLine.getItem().getCode());
+        dto.setItemName(salesOrderLine.getItem().getName());
+        dto.setQuantity(salesOrderLine.getQuantity());
+        dto.setPrice(salesOrderLine.getPrice());
+        dto.setAmount(salesOrderLine.getAmount());
+        return dto;
     }
 
     private void transferFields(SalesOrderLine source, SalesOrderLine target) {

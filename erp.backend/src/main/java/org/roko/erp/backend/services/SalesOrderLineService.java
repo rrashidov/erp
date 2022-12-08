@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
+import org.roko.erp.model.dto.SalesOrderLineDTO;
 
 public interface SalesOrderLineService {
     
@@ -23,4 +24,8 @@ public interface SalesOrderLineService {
     public int count(SalesOrder salesOrder);
 
     public int maxLineNo(SalesOrder salesOrder);
+
+    public SalesOrderLineDTO toDTO(SalesOrderLine salesOrderLine);
+
+    public SalesOrderLine fromDTO(SalesOrderLineDTO dto);
 }
