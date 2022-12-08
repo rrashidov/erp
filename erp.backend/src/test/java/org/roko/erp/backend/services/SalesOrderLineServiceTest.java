@@ -20,7 +20,7 @@ import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.repositories.SalesOrderLineRepository;
-import org.roko.erp.model.dto.SalesOrderLineDTO;
+import org.roko.erp.model.dto.SalesDocumentLineDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -59,7 +59,7 @@ public class SalesOrderLineServiceTest {
     private SalesOrderLine salesOrderLineMock;
 
     @Mock
-    private SalesOrderLineDTO salesOrderLineDtoMock;
+    private SalesDocumentLineDTO salesOrderLineDtoMock;
 
     @Mock
     private SalesOrderLine existingSalesOrderLineMock;
@@ -199,7 +199,7 @@ public class SalesOrderLineServiceTest {
 
     @Test
     public void toDTO_returnsProperValue() {
-        SalesOrderLineDTO dto = svc.toDTO(salesOrderLineMock);
+        SalesDocumentLineDTO dto = svc.toDTO(salesOrderLineMock);
 
         assertEquals(TEST_SALES_ORDER_CODE, dto.getSalesOrderCode());
         assertEquals(TEST_LINE_NO, dto.getLineNo());

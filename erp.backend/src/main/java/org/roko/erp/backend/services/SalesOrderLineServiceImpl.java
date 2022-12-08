@@ -7,7 +7,7 @@ import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.repositories.SalesOrderLineRepository;
-import org.roko.erp.model.dto.SalesOrderLineDTO;
+import org.roko.erp.model.dto.SalesDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -80,7 +80,7 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
     }
 
     @Override
-    public SalesOrderLine fromDTO(SalesOrderLineDTO dto) {
+    public SalesOrderLine fromDTO(SalesDocumentLineDTO dto) {
         SalesOrder salesOrder = salesOrderSvc.get(dto.getSalesOrderCode());
 
         SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
@@ -97,8 +97,8 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
     }
 
     @Override
-    public SalesOrderLineDTO toDTO(SalesOrderLine salesOrderLine) {
-        SalesOrderLineDTO dto = new SalesOrderLineDTO();
+    public SalesDocumentLineDTO toDTO(SalesOrderLine salesOrderLine) {
+        SalesDocumentLineDTO dto = new SalesDocumentLineDTO();
         dto.setSalesOrderCode(salesOrderLine.getSalesOrder().getCode());
         dto.setLineNo(salesOrderLine.getSalesOrderLineId().getLineNo());
         dto.setItemCode(salesOrderLine.getItem().getCode());

@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.repositories.SalesOrderRepository;
-import org.roko.erp.model.dto.SalesOrderDTO;
+import org.roko.erp.model.dto.SalesDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -85,7 +85,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     @Override
-    public SalesOrder fromDTO(SalesOrderDTO dto) {
+    public SalesOrder fromDTO(SalesDocumentDTO dto) {
         SalesOrder salesOrder = new SalesOrder();
         salesOrder.setCode(salesCodeSeriesSvc.orderCode());
         salesOrder.setCustomer(customerSvc.get(dto.getCustomerCode()));
@@ -95,8 +95,8 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     @Override
-    public SalesOrderDTO toDTO(SalesOrder salesOrder) {
-        SalesOrderDTO dto = new SalesOrderDTO();
+    public SalesDocumentDTO toDTO(SalesOrder salesOrder) {
+        SalesDocumentDTO dto = new SalesDocumentDTO();
         dto.setCode(salesOrder.getCode());
         dto.setCustomerCode(salesOrder.getCustomer().getCode());
         dto.setCustomerName(salesOrder.getCustomer().getName());

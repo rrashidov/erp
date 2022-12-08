@@ -18,8 +18,8 @@ import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.services.SalesOrderLineService;
 import org.roko.erp.backend.services.SalesOrderService;
-import org.roko.erp.model.dto.SalesOrderDTO;
-import org.roko.erp.model.dto.SalesOrderLineDTO;
+import org.roko.erp.model.dto.SalesDocumentDTO;
+import org.roko.erp.model.dto.SalesDocumentLineDTO;
 
 public class SalesOrderControllerTest {
     
@@ -36,7 +36,7 @@ public class SalesOrderControllerTest {
     private SalesOrder salesOrderMock;
     
     @Mock
-    private SalesOrderDTO salesOrderDtoMock;
+    private SalesDocumentDTO salesOrderDtoMock;
 
     @Mock
     private SalesOrderService svcMock;
@@ -49,7 +49,7 @@ public class SalesOrderControllerTest {
 
     private SalesOrderController controller;
 
-    private SalesOrderLineDTO salesOrderLineDtoMock;
+    private SalesDocumentLineDTO salesOrderLineDtoMock;
 
     @BeforeEach
     public void setup(){

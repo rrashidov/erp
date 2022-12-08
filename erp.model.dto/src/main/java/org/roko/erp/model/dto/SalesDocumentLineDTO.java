@@ -1,6 +1,6 @@
 package org.roko.erp.model.dto;
 
-public class SalesOrderLineDTO {
+public class SalesDocumentLineDTO {
     
     private String salesOrderCode;
     private int lineNo;

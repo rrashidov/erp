@@ -2,7 +2,7 @@ package org.roko.erp.model.dto;
 
 import java.util.Date;
 
-public class SalesOrderDTO {
+public class SalesDocumentDTO {
     
     private String code;
     private String customerCode;
