@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.PostedSalesOrder;
 import org.roko.erp.backend.repositories.PostedSalesOrderRepository;
+import org.roko.erp.model.dto.PostedSalesDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -59,5 +60,16 @@ public class PostedSalesOrderServiceImpl implements PostedSalesOrderService {
     public int count() {
         return new Long(repo.count()).intValue();
     }
-    
+
+    @Override
+    public PostedSalesDocumentDTO toDTO(PostedSalesOrder postedSalesOrder) {
+        PostedSalesDocumentDTO dto = new PostedSalesDocumentDTO();
+        dto.setCode(postedSalesOrder.getCode());
+        dto.setCustomerName(postedSalesOrder.getCustomer().getName());
+        dto.setDate(postedSalesOrder.getDate());
+        dto.setPaymentMethodName(postedSalesOrder.getPaymentMethod().getName());
+        dto.setAmount(postedSalesOrder.getAmount());
+        return dto;
+    }
+        
 }
