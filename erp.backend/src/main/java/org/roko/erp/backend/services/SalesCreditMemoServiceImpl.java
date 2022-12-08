@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.SalesCreditMemo;
 import org.roko.erp.backend.repositories.SalesCreditMemoRepository;
+import org.roko.erp.model.dto.SalesDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,17 @@ import org.springframework.stereotype.Service;
 public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
 
     private SalesCreditMemoRepository repo;
+    private PaymentMethodService paymentMethodSvc;
+    private CustomerService customerSvc;
+    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
-    public SalesCreditMemoServiceImpl(SalesCreditMemoRepository repo) {
+    public SalesCreditMemoServiceImpl(SalesCreditMemoRepository repo, SalesCodeSeriesService salesCodeSeriesSvc,
+            CustomerService customerSvc, PaymentMethodService paymentMethodSvc) {
         this.repo = repo;
+        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
+        this.customerSvc = customerSvc;
+        this.paymentMethodSvc = paymentMethodSvc;
     }
 
     @Override
@@ -75,7 +83,30 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
     public int count() {
         return new Long(repo.count()).intValue();
     }
-    
+
+    @Override
+    public SalesCreditMemo fromDTO(SalesDocumentDTO dto) {
+        SalesCreditMemo salesCreditMemo = new SalesCreditMemo();
+        salesCreditMemo.setCode(salesCodeSeriesSvc.creditMemoCode());
+        salesCreditMemo.setCustomer(customerSvc.get(dto.getCustomerCode()));
+        salesCreditMemo.setDate(dto.getDate());
+        salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(dto.getPaymentMethodCode()));
+        return salesCreditMemo;
+    }
+
+    @Override
+    public SalesDocumentDTO toDTO(SalesCreditMemo salesCreditMemo) {
+        SalesDocumentDTO dto = new SalesDocumentDTO();
+        dto.setCode(salesCreditMemo.getCode());
+        dto.setCustomerCode(salesCreditMemo.getCustomer().getCode());
+        dto.setCustomerName(salesCreditMemo.getCustomer().getName());
+        dto.setDate(salesCreditMemo.getDate());
+        dto.setPaymentMethodCode(salesCreditMemo.getPaymentMethod().getCode());
+        dto.setPaymentMethodName(salesCreditMemo.getPaymentMethod().getName());
+        dto.setAmount(salesCreditMemo.getAmount());
+        return dto;
+    }
+
     private void transferFields(SalesCreditMemo source, SalesCreditMemo target) {
         target.setCustomer(source.getCustomer());
         target.setDate(source.getDate());

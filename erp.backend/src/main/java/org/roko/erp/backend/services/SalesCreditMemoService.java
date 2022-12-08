@@ -3,6 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.SalesCreditMemo;
+import org.roko.erp.model.dto.SalesDocumentDTO;
 
 public interface SalesCreditMemoService {
 
@@ -19,5 +20,8 @@ public interface SalesCreditMemoService {
     public List<SalesCreditMemo> list(int page);
 
     public int count();
-    
+
+    public SalesDocumentDTO toDTO(SalesCreditMemo salesCreditMemo);
+
+    public SalesCreditMemo fromDTO(SalesDocumentDTO dto);
 }
