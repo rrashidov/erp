@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.SalesCreditMemo;
+import org.roko.erp.backend.model.SalesCreditMemoLine;
+import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
+import org.roko.erp.backend.services.SalesCreditMemoLineService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
 import org.roko.erp.model.dto.SalesDocumentDTO;
+import org.roko.erp.model.dto.SalesDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SalesCreditMemoController {
     
     private SalesCreditMemoService svc;
+    private SalesCreditMemoLineService salesCreditMemoLineSvc;
 
     @Autowired
-    public SalesCreditMemoController(SalesCreditMemoService svc) {
+    public SalesCreditMemoController(SalesCreditMemoService svc, SalesCreditMemoLineService salesCreditMemoLineSvc) {
         this.svc = svc;
+        this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
 	}
 
 	@GetMapping("/page/{page}")
@@ -37,6 +43,63 @@ public class SalesCreditMemoController {
     @GetMapping("/{code}")
     public SalesDocumentDTO get(@PathVariable("code") String code){
         return svc.toDTO(svc.get(code));
+    }
+
+    @GetMapping("/{code}/lines/page/{page}")
+    public List<SalesDocumentLineDTO> listLines(@PathVariable("code") String code, @PathVariable("page") int page) {
+        SalesCreditMemo salesCreditMemo = svc.get(code);
+        return salesCreditMemoLineSvc.list(salesCreditMemo, page).stream()
+                .map(x -> salesCreditMemoLineSvc.toDTO(x))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{code}/lines/{lineNo}")
+    public SalesDocumentLineDTO getLine(@PathVariable("code") String code, @PathVariable("lineNo") int lineNo) {
+        SalesCreditMemo salesCreditMemo = svc.get(code);
+
+        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
+        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
+        salesCreditMemoLineId.setLineNo(lineNo);
+
+        return salesCreditMemoLineSvc.toDTO(salesCreditMemoLineSvc.get(salesCreditMemoLineId));
+    }
+
+    @PostMapping("/{code}/lines")
+    public int postLine(@PathVariable("code") String code, @RequestBody SalesDocumentLineDTO dto) {
+        SalesCreditMemoLine salesCreditMemoLine = salesCreditMemoLineSvc.fromDTO(dto);
+
+        salesCreditMemoLineSvc.create(salesCreditMemoLine);
+
+        return dto.getLineNo();
+    }
+
+    @PutMapping("/{code}/lines/{lineNo}")
+    public int putLine(@PathVariable("code") String code, @PathVariable("lineNo") int lineNo,
+            @RequestBody SalesDocumentLineDTO dto) {
+        SalesCreditMemo salesCreditMemo = svc.get(code);
+
+        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
+        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
+        salesCreditMemoLineId.setLineNo(lineNo);
+
+        SalesCreditMemoLine salesCreditMemoLine = salesCreditMemoLineSvc.fromDTO(dto);
+
+        salesCreditMemoLineSvc.update(salesCreditMemoLineId, salesCreditMemoLine);
+
+        return lineNo;
+    }
+
+    @DeleteMapping("/{code}/lines/{lineNo}")
+    public int deleteLine(@PathVariable("code") String code, @PathVariable("lineNo") int lineNo) {
+        SalesCreditMemo salesCreditMemo = svc.get(code);
+
+        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
+        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
+        salesCreditMemoLineId.setLineNo(lineNo);
+
+        salesCreditMemoLineSvc.delete(salesCreditMemoLineId);
+
+        return lineNo;
     }
 
     @PostMapping
