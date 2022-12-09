@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.PostedSalesOrder;
+import org.roko.erp.backend.model.PostedSalesOrderLine;
+import org.roko.erp.backend.services.PostedSalesOrderLineService;
 import org.roko.erp.backend.services.PostedSalesOrderService;
 
 public class PostedSalesOrderControllerTest {
@@ -24,16 +26,24 @@ public class PostedSalesOrderControllerTest {
     @Mock
     private PostedSalesOrder postedSalesOrderMock;
 
+    @Mock
+    private PostedSalesOrderLineService postedSalesOrderLineSvcMock;
+
+    @Mock
+    private PostedSalesOrderLine postedSalesOrderLineMock;
+
     private PostedSalesOrderController controller;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        when(postedSalesOrderLineSvcMock.list(postedSalesOrderMock, TEST_PAGE)).thenReturn(Arrays.asList(postedSalesOrderLineMock));
+
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(postedSalesOrderMock));
         when(svcMock.get(TEST_CODE)).thenReturn(postedSalesOrderMock);
 
-        controller = new PostedSalesOrderController(svcMock);
+        controller = new PostedSalesOrderController(svcMock, postedSalesOrderLineSvcMock);
     }
 
     @Test
@@ -55,6 +65,9 @@ public class PostedSalesOrderControllerTest {
     @Test
     public void listLines_delegatesToService() {
         controller.listLines(TEST_CODE, TEST_PAGE);
+
+        verify(postedSalesOrderLineSvcMock).list(postedSalesOrderMock, TEST_PAGE);
+        verify(postedSalesOrderLineSvcMock).toDTO(postedSalesOrderLineMock);
     }
 
 }

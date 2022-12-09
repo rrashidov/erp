@@ -3,9 +3,11 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.model.PostedSalesOrder;
+import org.roko.erp.backend.services.PostedSalesOrderLineService;
 import org.roko.erp.backend.services.PostedSalesOrderService;
 import org.roko.erp.model.dto.PostedSalesDocumentDTO;
-import org.roko.erp.model.dto.SalesDocumentLineDTO;
+import org.roko.erp.model.dto.PostedSalesDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostedSalesOrderController {
     
     private PostedSalesOrderService svc;
+    private PostedSalesOrderLineService postedSalesOrderLineSvc;
 
     @Autowired
-    public PostedSalesOrderController(PostedSalesOrderService svc) {
+    public PostedSalesOrderController(PostedSalesOrderService svc, PostedSalesOrderLineService postedSalesOrderLineSvc) {
         this.svc = svc;
+        this.postedSalesOrderLineSvc = postedSalesOrderLineSvc;
 	}
 
 	@GetMapping("/page/{page}")
@@ -36,7 +40,11 @@ public class PostedSalesOrderController {
     }
 
     @GetMapping("/{code}/lines/page/{page}")
-    public List<SalesDocumentLineDTO> listLines(@PathVariable("code") String code, @PathVariable("page") int page) {
-        return null;
+    public List<PostedSalesDocumentLineDTO> listLines(@PathVariable("code") String code,
+            @PathVariable("page") int page) {
+        PostedSalesOrder postedSalesOrder = svc.get(code);
+        return postedSalesOrderLineSvc.list(postedSalesOrder, page).stream()
+                .map(x -> postedSalesOrderLineSvc.toDTO(x))
+                .collect(Collectors.toList());
     }
 }
