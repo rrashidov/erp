@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.PostedSalesCreditMemo;
 import org.roko.erp.backend.model.PostedSalesCreditMemoLine;
 import org.roko.erp.backend.repositories.PostedSalesCreditMemoLineRepository;
+import org.roko.erp.model.dto.PostedSalesDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,19 @@ public class PostedSalesCreditMemoLineServiceImpl implements PostedSalesCreditMe
     @Override
     public int count(PostedSalesCreditMemo postedSalesCreditMemo) {
         return new Long(repo.count(postedSalesCreditMemo)).intValue();
+    }
+
+    @Override
+    public PostedSalesDocumentLineDTO toDTO(PostedSalesCreditMemoLine postedSalesCreditMemoLine) {
+        PostedSalesDocumentLineDTO dto = new PostedSalesDocumentLineDTO();
+        dto.setSalesDocumentCode(postedSalesCreditMemoLine.getPostedSalesCreditMemoLineId().getPostedSalesCreditMemo().getCode());
+        dto.setLineNo(postedSalesCreditMemoLine.getPostedSalesCreditMemoLineId().getLineNo());
+        dto.setItemCode(postedSalesCreditMemoLine.getItem().getCode());
+        dto.setItemName(postedSalesCreditMemoLine.getItem().getName());
+        dto.setQuantity(postedSalesCreditMemoLine.getQuantity());
+        dto.setPrice(postedSalesCreditMemoLine.getPrice());
+        dto.setAmount(postedSalesCreditMemoLine.getAmount());
+        return dto;
     }
 
 }
