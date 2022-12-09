@@ -3,6 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.PurchaseOrder;
+import org.roko.erp.model.dto.PurchaseDocumentDTO;
 
 public interface PurchaseOrderService {
 
@@ -19,5 +20,8 @@ public interface PurchaseOrderService {
     public List<PurchaseOrder> list(int page);
 
     public int count();
-    
+
+    public PurchaseDocumentDTO toDTO(PurchaseOrder purchaseOrder);
+
+    public PurchaseOrder fromDTO(PurchaseDocumentDTO dto);
 }
