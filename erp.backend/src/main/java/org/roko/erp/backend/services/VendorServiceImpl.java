@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.Vendor;
 import org.roko.erp.backend.repositories.VendorRepository;
+import org.roko.erp.model.dto.VendorDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Service;
 public class VendorServiceImpl implements VendorService {
 
     private VendorRepository repo;
+    private PaymentMethodService paymentMethodSvc;
 
     @Autowired
-    public VendorServiceImpl(VendorRepository repo) {
+    public VendorServiceImpl(VendorRepository repo, PaymentMethodService paymentMethodSvc) {
         this.repo = repo;
+        this.paymentMethodSvc = paymentMethodSvc;
     }
 
     @Override
@@ -76,6 +79,28 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public int count() {
         return new Long(repo.count()).intValue();
+    }
+
+    @Override
+    public Vendor fromDTO(VendorDTO dto) {
+        Vendor vendor = new Vendor();
+        vendor.setCode(dto.getCode());
+        vendor.setName(dto.getName());
+        vendor.setAddress(dto.getAddress());
+        vendor.setPaymentMethod(paymentMethodSvc.get(dto.getPaymentMethodCode()));
+        return vendor;
+    }
+
+    @Override
+    public VendorDTO toDTO(Vendor vendor) {
+        VendorDTO dto = new VendorDTO();
+        dto.setCode(vendor.getCode());
+        dto.setName(vendor.getName());
+        dto.setAddress(vendor.getAddress());
+        dto.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
+        dto.setPaymentMethodName(vendor.getPaymentMethod().getName());
+        dto.setBalance(vendor.getBalance());
+        return dto;
     }
 
     private void transferFields(Vendor source, Vendor target) {

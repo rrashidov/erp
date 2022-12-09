@@ -3,6 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.Vendor;
+import org.roko.erp.model.dto.VendorDTO;
 
 public interface VendorService {
     
@@ -19,4 +20,8 @@ public interface VendorService {
     public List<Vendor> list(int page);
 
     public int count();
+
+    public VendorDTO toDTO(Vendor vendor);
+
+    public Vendor fromDTO(VendorDTO dto);
 }
