@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.roko.erp.backend.services.PostedSalesOrderService;
 import org.roko.erp.model.dto.PostedSalesDocumentDTO;
-import org.roko.erp.model.dto.SalesDocumentDTO;
 import org.roko.erp.model.dto.SalesDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
