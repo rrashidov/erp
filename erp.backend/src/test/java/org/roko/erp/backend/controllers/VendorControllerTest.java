@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Vendor;
+import org.roko.erp.backend.model.VendorLedgerEntry;
+import org.roko.erp.backend.services.VendorLedgerEntryService;
 import org.roko.erp.backend.services.VendorService;
 import org.roko.erp.model.dto.VendorDTO;
 
@@ -28,18 +30,26 @@ public class VendorControllerTest {
     @Mock
     private VendorDTO dtoMock;
 
+    @Mock
+    private VendorLedgerEntryService vendorLedgerEntrySvcMock;
+
+    @Mock
+    private VendorLedgerEntry vendorLedgerEntryMock;
+
     private VendorController controller;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        when(vendorLedgerEntrySvcMock.findFor(vendorMock, TEST_PAGE)).thenReturn(Arrays.asList(vendorLedgerEntryMock));
+
         when(svcMock.list()).thenReturn(Arrays.asList(vendorMock));
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(vendorMock));
         when(svcMock.get(TESST_CODE)).thenReturn(vendorMock);
         when(svcMock.fromDTO(dtoMock)).thenReturn(vendorMock);
         
-        controller = new VendorController(svcMock);
+        controller = new VendorController(svcMock, vendorLedgerEntrySvcMock);
     }
 
     @Test
@@ -85,5 +95,13 @@ public class VendorControllerTest {
         controller.delete(TESST_CODE);
 
         verify(svcMock).delete(TESST_CODE);
+    }
+
+    @Test
+    public void listLedgerEntries_delegatesToService() {
+        controller.listLedgerEntries(TESST_CODE, TEST_PAGE);
+
+        verify(vendorLedgerEntrySvcMock).findFor(vendorMock, TEST_PAGE);
+        verify(vendorLedgerEntrySvcMock).toDTO(vendorLedgerEntryMock);
     }
 }

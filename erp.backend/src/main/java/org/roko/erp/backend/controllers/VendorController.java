@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.Vendor;
+import org.roko.erp.backend.services.VendorLedgerEntryService;
 import org.roko.erp.backend.services.VendorService;
 import org.roko.erp.model.dto.VendorDTO;
+import org.roko.erp.model.dto.VendorLedgerEntryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class VendorController {
 
     private VendorService svc;
+    private VendorLedgerEntryService vendorLedgerEntrySvc;
 
     @Autowired
-    public VendorController(VendorService svc) {
+    public VendorController(VendorService svc, VendorLedgerEntryService vendorLedgerEntrySvc) {
         this.svc = svc;
+        this.vendorLedgerEntrySvc = vendorLedgerEntrySvc;
     }
 
     @GetMapping
@@ -44,6 +48,15 @@ public class VendorController {
     @GetMapping("/{code}")
     public VendorDTO get(@PathVariable("code") String code) {
         return svc.toDTO(svc.get(code));
+    }
+
+    @GetMapping("/{code}/ledgerentries/page/{page}")
+    public List<VendorLedgerEntryDTO> listLedgerEntries(@PathVariable("code") String code,
+            @PathVariable("page") int page) {
+        Vendor vendor = svc.get(code);
+        return vendorLedgerEntrySvc.findFor(vendor, page).stream()
+                .map(x -> vendorLedgerEntrySvc.toDTO(x))
+                .collect(Collectors.toList());
     }
 
     @PostMapping
