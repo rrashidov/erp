@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.PostedSalesCreditMemo;
 import org.roko.erp.backend.repositories.PostedSalesCreditMemoRepository;
+import org.roko.erp.model.dto.PostedSalesDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -61,4 +62,15 @@ public class PostedSalesCreditMemoServiceImpl implements PostedSalesCreditMemoSe
         return new Long(repo.count()).intValue();
     }
 
+    @Override
+    public PostedSalesDocumentDTO toDTO(PostedSalesCreditMemo postedSalesCreditMemo) {
+        PostedSalesDocumentDTO dto = new PostedSalesDocumentDTO();
+        dto.setCode(postedSalesCreditMemo.getCode());
+        dto.setCustomerName(postedSalesCreditMemo.getCustomer().getName());
+        dto.setDate(postedSalesCreditMemo.getDate());
+        dto.setPaymentMethodName(postedSalesCreditMemo.getPaymentMethod().getName());
+        dto.setAmount(postedSalesCreditMemo.getAmount());
+        return dto;
+    }
+        
 }

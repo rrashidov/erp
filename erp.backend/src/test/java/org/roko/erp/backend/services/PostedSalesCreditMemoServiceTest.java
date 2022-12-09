@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,16 +16,26 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.Customer;
+import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.model.PostedSalesCreditMemo;
 import org.roko.erp.backend.repositories.PostedSalesCreditMemoRepository;
+import org.roko.erp.model.dto.PostedSalesDocumentDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class PostedSalesCreditMemoServiceTest {
     
+    private static final String TEST_CUSTOMER_NAME = "test-customer-name";
+
+    private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
+
+    private static final double TEST_AMOUNT = 12.12;
+
     private static final String NON_EXISTING_CODE = "non-existing-code";
 
     private static final String TEST_CODE = "test-code";
+    private static final Date TEST_DATE = new Date();
 
     private static final int TEST_PAGE = 12;
 
@@ -46,11 +57,27 @@ public class PostedSalesCreditMemoServiceTest {
     @Mock
     private PostedSalesCreditMemoRepository repoMock;
 
+    @Mock
+    private Customer customerMock;
+
+    @Mock
+    private PaymentMethod paymentMethodMock;
+
     private PostedSalesCreditMemoService svc;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(customerMock.getName()).thenReturn(TEST_CUSTOMER_NAME);
+
+        when(paymentMethodMock.getName()).thenReturn(TEST_PAYMENT_METHOD_NAME);
+
+        when(postedSalesCreditMemoMock.getCode()).thenReturn(TEST_CODE);
+        when(postedSalesCreditMemoMock.getCustomer()).thenReturn(customerMock);
+        when(postedSalesCreditMemoMock.getDate()).thenReturn(TEST_DATE);
+        when(postedSalesCreditMemoMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+        when(postedSalesCreditMemoMock.getAmount()).thenReturn(TEST_AMOUNT);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(postedSalesCreditMemoMock));
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
@@ -108,5 +135,16 @@ public class PostedSalesCreditMemoServiceTest {
         svc.count();
 
         verify(repoMock).count();
+    }
+
+    @Test
+    public void toDTO_returnsProperValue() {
+        PostedSalesDocumentDTO dto = svc.toDTO(postedSalesCreditMemoMock);
+
+        assertEquals(TEST_CODE, dto.getCode());
+        assertEquals(TEST_CUSTOMER_NAME, dto.getCustomerName());
+        assertEquals(TEST_DATE, dto.getDate());
+        assertEquals(TEST_PAYMENT_METHOD_NAME, dto.getPaymentMethodName());
+        assertEquals(TEST_AMOUNT, dto.getAmount());
     }
 }
