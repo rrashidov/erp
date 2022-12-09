@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.roko.erp.backend.model.Vendor;
 import org.roko.erp.backend.model.VendorLedgerEntry;
+import org.roko.erp.model.dto.VendorLedgerEntryDTO;
 
 public interface VendorLedgerEntryService {
     
@@ -14,4 +15,6 @@ public interface VendorLedgerEntryService {
     public List<VendorLedgerEntry> findFor(Vendor vendor, int page);
 
     public int count(Vendor vendor);
+
+    public VendorLedgerEntryDTO toDTO(VendorLedgerEntry vendorLedgerEntry);
 }

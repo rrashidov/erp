@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.Vendor;
 import org.roko.erp.backend.model.VendorLedgerEntry;
 import org.roko.erp.backend.repositories.VendorLedgerEntryRepository;
+import org.roko.erp.model.dto.VendorLedgerEntryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -39,4 +40,15 @@ public class VendorLedgerEntryServiceImpl implements VendorLedgerEntryService {
         return new Long(repo.count(vendor)).intValue();
     }
 
+    @Override
+    public VendorLedgerEntryDTO toDTO(VendorLedgerEntry vendorLedgerEntry) {
+        VendorLedgerEntryDTO dto = new VendorLedgerEntryDTO();
+        dto.setId(vendorLedgerEntry.getId());
+        dto.setType(vendorLedgerEntry.getType().name());
+        dto.setDocumentCode(vendorLedgerEntry.getDocumentCode());
+        dto.setDate(vendorLedgerEntry.getDate());
+        dto.setAmount(vendorLedgerEntry.getAmount());
+        return dto;
+    }
+    
 }
