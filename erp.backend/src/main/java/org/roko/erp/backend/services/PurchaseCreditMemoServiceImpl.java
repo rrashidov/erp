@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.repositories.PurchaseCreditMemoRepository;
+import org.roko.erp.model.dto.PurchaseDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,17 @@ import org.springframework.stereotype.Service;
 public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService {
 
     private PurchaseCreditMemoRepository repo;
+    private VendorService vendorSvc;
+    private PaymentMethodService paymentMethodSvc;
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     @Autowired
-    public PurchaseCreditMemoServiceImpl(PurchaseCreditMemoRepository repo) {
+    public PurchaseCreditMemoServiceImpl(PurchaseCreditMemoRepository repo, VendorService vendorSvc,
+            PaymentMethodService paymentMethodSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.repo = repo;
+        this.vendorSvc = vendorSvc;
+        this.paymentMethodSvc = paymentMethodSvc;
+        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @Override
@@ -75,6 +83,29 @@ public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService 
     @Override
     public int count() {
         return new Long(repo.count()).intValue();
+    }
+
+    @Override
+    public PurchaseCreditMemo fromDTO(PurchaseDocumentDTO dto) {
+        PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
+        purchaseCreditMemo.setCode(purchaseCodeSeriesSvc.creditMemoCode());
+        purchaseCreditMemo.setVendor(vendorSvc.get(dto.getVendorCode()));
+        purchaseCreditMemo.setDate(dto.getDate());
+        purchaseCreditMemo.setPaymentMethod(paymentMethodSvc.get(dto.getPaymentMethodCode()));
+        return purchaseCreditMemo;
+    }
+
+    @Override
+    public PurchaseDocumentDTO toDTO(PurchaseCreditMemo purchaseCreditMemo) {
+        PurchaseDocumentDTO dto = new PurchaseDocumentDTO();
+        dto.setCode(purchaseCreditMemo.getCode());
+        dto.setVendorCode(purchaseCreditMemo.getVendor().getCode());
+        dto.setVendorName(purchaseCreditMemo.getVendor().getName());
+        dto.setDate(purchaseCreditMemo.getDate());
+        dto.setPaymentMethodCode(purchaseCreditMemo.getPaymentMethod().getCode());
+        dto.setPaymentMethodName(purchaseCreditMemo.getPaymentMethod().getName());
+        dto.setAmount(purchaseCreditMemo.getAmount());
+        return dto;
     }
 
     private void transferFields(PurchaseCreditMemo source, PurchaseCreditMemo target) {
