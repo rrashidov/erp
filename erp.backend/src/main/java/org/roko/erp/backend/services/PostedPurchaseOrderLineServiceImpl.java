@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.PostedPurchaseOrder;
 import org.roko.erp.backend.model.PostedPurchaseOrderLine;
 import org.roko.erp.backend.repositories.PostedPurchaseOrderLineRepository;
+import org.roko.erp.model.dto.PostedPurchaseDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,19 @@ public class PostedPurchaseOrderLineServiceImpl implements PostedPurchaseOrderLi
     @Override
     public int count(PostedPurchaseOrder postedPurchaseOrder) {
         return new Long(repo.count(postedPurchaseOrder)).intValue();
+    }
+
+    @Override
+    public PostedPurchaseDocumentLineDTO toDTO(PostedPurchaseOrderLine postedPurchaseOrderLine) {
+        PostedPurchaseDocumentLineDTO dto = new PostedPurchaseDocumentLineDTO();
+        dto.setPurchaseDocumentCode(postedPurchaseOrderLine.getPostedPurchaseOrderLineId().getPostedPurchaseOrder().getCode());
+        dto.setLineNo(postedPurchaseOrderLine.getPostedPurchaseOrderLineId().getLineNo());
+        dto.setItemCode(postedPurchaseOrderLine.getItem().getCode());
+        dto.setItemName(postedPurchaseOrderLine.getItem().getName());
+        dto.setQuantity(postedPurchaseOrderLine.getQuantity());
+        dto.setPrice(postedPurchaseOrderLine.getPrice());
+        dto.setAmount(postedPurchaseOrderLine.getAmount());
+        return dto;
     }
 
 }
