@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.PostedPurchaseCreditMemo;
 import org.roko.erp.backend.model.PostedPurchaseCreditMemoLine;
 import org.roko.erp.backend.repositories.PostedPurchaseCreditMemoLineRepository;
+import org.roko.erp.model.dto.PostedPurchaseDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -40,4 +41,17 @@ public class PostedPurchaseCreditMemoLineServiceImpl implements PostedPurchaseCr
         return new Long(repo.count(postedPurchaseCreditMemo)).intValue();
     }
 
+    @Override
+    public PostedPurchaseDocumentLineDTO toDTO(PostedPurchaseCreditMemoLine postedPurchaseCreditMemoLine) {
+        PostedPurchaseDocumentLineDTO dto = new PostedPurchaseDocumentLineDTO();
+        dto.setPurchaseDocumentCode(postedPurchaseCreditMemoLine.getPostedPurchaseCreditMemoLineId().getPostedPurchaseCreditMemo().getCode());
+        dto.setLineNo(postedPurchaseCreditMemoLine.getPostedPurchaseCreditMemoLineId().getLineNo());
+        dto.setItemCode(postedPurchaseCreditMemoLine.getItem().getCode());
+        dto.setItemName(postedPurchaseCreditMemoLine.getItem().getName());
+        dto.setQuantity(postedPurchaseCreditMemoLine.getQuantity());
+        dto.setPrice(postedPurchaseCreditMemoLine.getPrice());
+        dto.setAmount(postedPurchaseCreditMemoLine.getAmount());
+        return dto;
+    }
+    
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.roko.erp.backend.model.PostedPurchaseCreditMemo;
 import org.roko.erp.backend.model.PostedPurchaseCreditMemoLine;
+import org.roko.erp.model.dto.PostedPurchaseDocumentLineDTO;
 
 public interface PostedPurchaseCreditMemoLineService {
     
@@ -14,4 +15,6 @@ public interface PostedPurchaseCreditMemoLineService {
     public List<PostedPurchaseCreditMemoLine> list(PostedPurchaseCreditMemo postedPurchaseCreditMemo, int page);
 
     public int count(PostedPurchaseCreditMemo postedPurchaseCreditMemo);
+
+    public PostedPurchaseDocumentLineDTO toDTO(PostedPurchaseCreditMemoLine postedPurchaseCreditMemoLine);
 }
