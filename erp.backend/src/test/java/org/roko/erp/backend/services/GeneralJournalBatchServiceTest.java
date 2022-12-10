@@ -16,12 +16,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.repositories.GeneralJournalBatchRepository;
+import org.roko.erp.model.dto.GeneralJournalBatchDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class GeneralJournalBatchServiceTest {
 
     private static final String TEST_CODE = "test-code";
+    private static final String TEST_NAME = "test-name";
 
     private static final String NON_EXISTING_CODE = "non-existing-code";
 
@@ -39,11 +41,20 @@ public class GeneralJournalBatchServiceTest {
     @Mock
     private GeneralJournalBatchRepository generalJournalBatchRepoMock;
 
+    @Mock
+    private GeneralJournalBatchDTO dtoMock;
+
     private GeneralJournalBatchService svc;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(dtoMock.getCode()).thenReturn(TEST_CODE);
+        when(dtoMock.getName()).thenReturn(TEST_NAME);
+
+        when(generalJournalBatchMock.getCode()).thenReturn(TEST_CODE);
+        when(generalJournalBatchMock.getName()).thenReturn(TEST_NAME);
 
         when(generalJournalBatchRepoMock.findById(TEST_CODE)).thenReturn(Optional.of(generalJournalBatchMock));
         when(generalJournalBatchRepoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
@@ -111,5 +122,21 @@ public class GeneralJournalBatchServiceTest {
         svc.count();
 
         verify(generalJournalBatchRepoMock).count();
+    }
+
+    @Test
+    public void toDTO_returnsProperResult() {
+        GeneralJournalBatchDTO dto = svc.toDTO(generalJournalBatchMock);
+
+        assertEquals(TEST_CODE, dto.getCode());
+        assertEquals(TEST_NAME, dto.getName());
+    }
+
+    @Test
+    public void fromDTO_returnsProperValue() {
+        GeneralJournalBatch generalJournalBatch = svc.fromDTO(dtoMock);
+
+        assertEquals(TEST_CODE, generalJournalBatch.getCode());
+        assertEquals(TEST_NAME, generalJournalBatch.getName());
     }
 }

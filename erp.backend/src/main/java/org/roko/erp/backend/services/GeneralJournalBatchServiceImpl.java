@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.repositories.GeneralJournalBatchRepository;
+import org.roko.erp.model.dto.GeneralJournalBatchDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -66,6 +67,22 @@ public class GeneralJournalBatchServiceImpl implements GeneralJournalBatchServic
         return new Long(repo.count()).intValue();
     }
     
+    @Override
+    public GeneralJournalBatch fromDTO(GeneralJournalBatchDTO dto) {
+        GeneralJournalBatch generalJournalBatch = new GeneralJournalBatch();
+        generalJournalBatch.setCode(dto.getCode());
+        generalJournalBatch.setName(dto.getName());
+        return generalJournalBatch;
+    }
+
+    @Override
+    public GeneralJournalBatchDTO toDTO(GeneralJournalBatch generalJournalBatch) {
+        GeneralJournalBatchDTO dto = new GeneralJournalBatchDTO();
+        dto.setCode(generalJournalBatch.getCode());
+        dto.setName(generalJournalBatch.getName());
+        return dto;
+    }
+
     private void transferFields(GeneralJournalBatch source,
             GeneralJournalBatch target) {
                 target.setName(source.getName());
