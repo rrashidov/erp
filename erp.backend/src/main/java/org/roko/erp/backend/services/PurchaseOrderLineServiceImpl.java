@@ -7,6 +7,7 @@ import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.backend.repositories.PurchaseOrderLineRepository;
+import org.roko.erp.model.dto.PurchaseDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,15 @@ import org.springframework.stereotype.Service;
 public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
 
     private PurchaseOrderLineRepository repo;
+    private PurchaseOrderService purchaseOrderSvc;
+    private ItemService itemSvc;
 
     @Autowired
-    public PurchaseOrderLineServiceImpl(PurchaseOrderLineRepository repo) {
+    public PurchaseOrderLineServiceImpl(PurchaseOrderLineRepository repo, PurchaseOrderService purchaseOrderSvc,
+            ItemService itemSvc) {
         this.repo = repo;
+        this.purchaseOrderSvc = purchaseOrderSvc;
+        this.itemSvc = itemSvc;
     }
 
     @Override
@@ -72,6 +78,36 @@ public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
     @Override
     public int maxLineNo(PurchaseOrder purchaseOrder) {
         return repo.maxLineNo(purchaseOrder);
+    }
+
+    @Override
+    public PurchaseOrderLine fromDTO(PurchaseDocumentLineDTO dto) {
+        PurchaseOrder purchaseOrder = purchaseOrderSvc.get(dto.getPurchaseDocumentCode());
+
+        PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
+        purchaseOrderLineId.setPurchaseOrder(purchaseOrder);
+        purchaseOrderLineId.setLineNo(dto.getLineNo());
+
+        PurchaseOrderLine purchaseOrderLine = new PurchaseOrderLine();
+        purchaseOrderLine.setPurchaseOrderLineId(purchaseOrderLineId);
+        purchaseOrderLine.setItem(itemSvc.get(dto.getItemCode()));
+        purchaseOrderLine.setQuantity(dto.getQuantity());
+        purchaseOrderLine.setPrice(dto.getPrice());
+        purchaseOrderLine.setAmount(dto.getAmount());
+        return purchaseOrderLine;
+    }
+
+    @Override
+    public PurchaseDocumentLineDTO toDTO(PurchaseOrderLine purchaseOrderLine) {
+        PurchaseDocumentLineDTO dto = new PurchaseDocumentLineDTO();
+        dto.setPurchaseDocumentCode(purchaseOrderLine.getPurchaseOrderLineId().getPurchaseOrder().getCode());
+        dto.setLineNo(purchaseOrderLine.getPurchaseOrderLineId().getLineNo());
+        dto.setItemCode(purchaseOrderLine.getItem().getCode());
+        dto.setItemName(purchaseOrderLine.getItem().getName());
+        dto.setQuantity(purchaseOrderLine.getQuantity());
+        dto.setPrice(purchaseOrderLine.getPrice());
+        dto.setAmount(purchaseOrderLine.getAmount());
+        return dto;
     }
 
     private void transferFields(PurchaseOrderLine source, PurchaseOrderLine target) {

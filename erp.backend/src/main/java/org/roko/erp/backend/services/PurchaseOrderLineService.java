@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
+import org.roko.erp.model.dto.PurchaseDocumentLineDTO;
 
 public interface PurchaseOrderLineService {
 
@@ -23,4 +24,8 @@ public interface PurchaseOrderLineService {
     public int count(PurchaseOrder purchaseOrder);
 
     public int maxLineNo(PurchaseOrder purchaseOrder);
+
+    public PurchaseDocumentLineDTO toDTO(PurchaseOrderLine purchaseOrderLine);
+
+    public PurchaseOrderLine fromDTO(PurchaseDocumentLineDTO dto);
 }
