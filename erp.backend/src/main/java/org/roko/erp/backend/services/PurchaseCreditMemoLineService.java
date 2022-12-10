@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
+import org.roko.erp.model.dto.PurchaseDocumentLineDTO;
 
 public interface PurchaseCreditMemoLineService {
     
@@ -23,4 +24,8 @@ public interface PurchaseCreditMemoLineService {
     public int count(PurchaseCreditMemo purchaseCreditMemo);
 
     public int maxLineNo(PurchaseCreditMemo purchaseCreditMemo);
+
+    public PurchaseDocumentLineDTO toDTO(PurchaseCreditMemoLine purchaseCreditMemoLine);
+
+    public PurchaseCreditMemoLine fromDTO(PurchaseDocumentLineDTO dto);
 }

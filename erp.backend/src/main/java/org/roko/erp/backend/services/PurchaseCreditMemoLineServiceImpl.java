@@ -7,6 +7,7 @@ import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.backend.repositories.PurchaseCreditMemoLineRepository;
+import org.roko.erp.model.dto.PurchaseDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,15 @@ import org.springframework.stereotype.Service;
 public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLineService {
 
     private PurchaseCreditMemoLineRepository repo;
+    private PurchaseCreditMemoService purchaseCreditMemoSvc;
+    private ItemService itemSvc;
 
     @Autowired
-    public PurchaseCreditMemoLineServiceImpl(PurchaseCreditMemoLineRepository repo) {
+    public PurchaseCreditMemoLineServiceImpl(PurchaseCreditMemoLineRepository repo,
+            PurchaseCreditMemoService purchaseCreditMemoSvc, ItemService itemSvc) {
         this.repo = repo;
+        this.purchaseCreditMemoSvc = purchaseCreditMemoSvc;
+        this.itemSvc = itemSvc;
     }
 
     @Override
@@ -70,6 +76,34 @@ public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLine
     @Override
     public int maxLineNo(PurchaseCreditMemo purchaseCreditMemo) {
         return repo.maxLineNo(purchaseCreditMemo);
+    }
+
+    @Override
+    public PurchaseCreditMemoLine fromDTO(PurchaseDocumentLineDTO dto) {
+        PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
+        purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemoSvc.get(dto.getPurchaseDocumentCode()));
+        purchaseCreditMemoLineId.setLineNo(dto.getLineNo());
+
+        PurchaseCreditMemoLine purchaseCreditMemoLine = new PurchaseCreditMemoLine();
+        purchaseCreditMemoLine.setPurchaseCreditMemoLineId(purchaseCreditMemoLineId);
+        purchaseCreditMemoLine.setItem(itemSvc.get(dto.getItemCode()));
+        purchaseCreditMemoLine.setQuantity(dto.getQuantity());
+        purchaseCreditMemoLine.setPrice(dto.getPrice());
+        purchaseCreditMemoLine.setAmount(dto.getAmount());
+        return purchaseCreditMemoLine;
+    }
+
+    @Override
+    public PurchaseDocumentLineDTO toDTO(PurchaseCreditMemoLine purchaseCreditMemoLine) {
+        PurchaseDocumentLineDTO dto = new PurchaseDocumentLineDTO();
+        dto.setPurchaseDocumentCode(purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getPurchaseCreditMemo().getCode());
+        dto.setLineNo(purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getLineNo());
+        dto.setItemCode(purchaseCreditMemoLine.getItem().getCode());
+        dto.setItemName(purchaseCreditMemoLine.getItem().getName());
+        dto.setQuantity(purchaseCreditMemoLine.getQuantity());
+        dto.setPrice(purchaseCreditMemoLine.getPrice());
+        dto.setAmount(purchaseCreditMemoLine.getAmount());
+        return dto;
     }
 
     private void transferFields(PurchaseCreditMemoLine source,
