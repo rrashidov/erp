@@ -3,6 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.CodeSerie;
+import org.roko.erp.model.dto.CodeSerieDTO;
 
 public interface CodeSerieService {
     
@@ -21,4 +22,8 @@ public interface CodeSerieService {
     public int count();
 
     public String generate(String code);
+
+    public CodeSerieDTO toDTO(CodeSerie codeSerie);
+
+    public CodeSerie fromDTO(CodeSerieDTO dto);
 }

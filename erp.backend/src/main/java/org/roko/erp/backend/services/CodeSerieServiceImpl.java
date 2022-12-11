@@ -7,6 +7,7 @@ import java.util.OptionalInt;
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.repositories.CodeSerieRepository;
 import org.roko.erp.backend.services.util.Pair;
+import org.roko.erp.model.dto.CodeSerieDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -79,6 +80,26 @@ public class CodeSerieServiceImpl implements CodeSerieService {
         repo.save(codeSerie);
 
         return newCode;
+    }
+
+    @Override
+    public CodeSerie fromDTO(CodeSerieDTO dto) {
+        CodeSerie codeSerie = new CodeSerie();
+        codeSerie.setCode(dto.getCode());
+        codeSerie.setName(dto.getName());
+        codeSerie.setFirstCode(dto.getFirstCode());
+        codeSerie.setLastCode(dto.getLastCode());
+        return codeSerie;
+    }
+
+    @Override
+    public CodeSerieDTO toDTO(CodeSerie codeSerie) {
+        CodeSerieDTO dto = new CodeSerieDTO();
+        dto.setCode(codeSerie.getCode());
+        dto.setName(codeSerie.getName());
+        dto.setFirstCode(codeSerie.getFirstCode());
+        dto.setLastCode(codeSerie.getLastCode());
+        return dto;
     }
 
     private String generateNewCode(CodeSerie codeSerie) {

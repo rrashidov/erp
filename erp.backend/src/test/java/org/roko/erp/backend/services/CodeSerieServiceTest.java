@@ -16,16 +16,20 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.repositories.CodeSerieRepository;
+import org.roko.erp.model.dto.CodeSerieDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class CodeSerieServiceTest {
 
+    private static final String TEST_FIRST_CODE =           "test-first-code";
     private static final String TEST_LAST_CODE =            "CODE000023";
+
     private static final String ALL_ZEROS_TEST_LAST_CODE =  "CODE000000";
     private static final String LAST_CODE_WITH_NO_ZEROS =   "CODE121212";
 
     private static final String TEST_CODE = "test-code";
+    private static final String TEST_NAME = "test-name";
 
     private static final int TEST_PAGE = 12;
 
@@ -41,11 +45,19 @@ public class CodeSerieServiceTest {
     @Mock
     private CodeSerieRepository repoMock;
 
+    @Mock
+    private CodeSerieDTO dtoMock;
+
     private CodeSerieService svc;
 
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
+
+        when(dtoMock.getCode()).thenReturn(TEST_CODE);
+        when(dtoMock.getName()).thenReturn(TEST_NAME);
+        when(dtoMock.getFirstCode()).thenReturn(TEST_FIRST_CODE);
+        when(dtoMock.getLastCode()).thenReturn(TEST_LAST_CODE);
 
         when(codeSerieMock.getLastCode()).thenReturn(TEST_LAST_CODE);
 
@@ -151,4 +163,28 @@ public class CodeSerieServiceTest {
         verify(repoMock).save(codeSerieMock);
     }
 
+    @Test
+    public void toDTO_returnsProperValue() {
+        when(codeSerieMock.getCode()).thenReturn(TEST_CODE);
+        when(codeSerieMock.getName()).thenReturn(TEST_NAME);
+        when(codeSerieMock.getFirstCode()).thenReturn(TEST_FIRST_CODE);
+        when(codeSerieMock.getLastCode()).thenReturn(TEST_LAST_CODE);
+
+        CodeSerieDTO dto = svc.toDTO(codeSerieMock);
+
+        assertEquals(TEST_CODE, dto.getCode());
+        assertEquals(TEST_NAME, dto.getName());
+        assertEquals(TEST_FIRST_CODE, dto.getFirstCode());
+        assertEquals(TEST_LAST_CODE, dto.getLastCode());
+    }
+
+    @Test
+    public void fromDTO_returnsProperValue() {
+        CodeSerie codeSerie = svc.fromDTO(dtoMock);
+
+        assertEquals(TEST_CODE, codeSerie.getCode());
+        assertEquals(TEST_NAME, codeSerie.getName());
+        assertEquals(TEST_FIRST_CODE, codeSerie.getFirstCode());
+        assertEquals(TEST_LAST_CODE, codeSerie.getLastCode());
+    }
 }
