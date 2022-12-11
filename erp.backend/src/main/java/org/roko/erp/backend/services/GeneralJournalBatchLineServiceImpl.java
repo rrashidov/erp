@@ -5,8 +5,11 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
+import org.roko.erp.backend.model.GeneralJournalBatchLineOperationType;
+import org.roko.erp.backend.model.GeneralJournalBatchLineType;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.backend.repositories.GeneralJournalBatchLineRepository;
+import org.roko.erp.model.dto.GeneralJournalBatchLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -15,10 +18,15 @@ import org.springframework.stereotype.Service;
 public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLineService {
 
     private GeneralJournalBatchLineRepository repo;
+    private BankAccountService bankAccountSvc;
+    private GeneralJournalBatchService generalJournalBatchSvc;
 
     @Autowired
-    public GeneralJournalBatchLineServiceImpl(GeneralJournalBatchLineRepository repo) {
+    public GeneralJournalBatchLineServiceImpl(GeneralJournalBatchLineRepository repo,
+            GeneralJournalBatchService generalJournalBatchSvc, BankAccountService bankAccountSvc) {
         this.repo = repo;
+        this.generalJournalBatchSvc = generalJournalBatchSvc;
+        this.bankAccountSvc = bankAccountSvc;
     }
 
     @Override
@@ -65,6 +73,43 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
     @Override
     public int count(GeneralJournalBatch generalJournalBatch) {
         return repo.count(generalJournalBatch);
+    }
+
+    @Override
+    public GeneralJournalBatchLine fromDTO(GeneralJournalBatchLineDTO dto) {
+        GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
+        generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchSvc.get(dto.getGeneralJournalBatchCode()));
+        generalJournalBatchLineId.setLineNo(dto.getLineNo());
+
+        GeneralJournalBatchLine generalJournalBatchLine = new GeneralJournalBatchLine();
+        generalJournalBatchLine.setGeneralJournalBatchLineId(generalJournalBatchLineId);
+        generalJournalBatchLine.setSourceType(GeneralJournalBatchLineType.valueOf(dto.getType()));
+        generalJournalBatchLine.setSourceCode(dto.getCode());
+        generalJournalBatchLine.setSourceName(dto.getName());
+        generalJournalBatchLine.setOperationType(GeneralJournalBatchLineOperationType.valueOf(dto.getOperationType()));
+        generalJournalBatchLine.setDate(dto.getDate());
+        generalJournalBatchLine.setAmount(dto.getAmount());
+        generalJournalBatchLine.setDocumentCode(dto.getDocumentCode());
+        generalJournalBatchLine.setTarget(bankAccountSvc.get(dto.getBankAccountCode()));
+        return generalJournalBatchLine;
+    }
+
+    @Override
+    public GeneralJournalBatchLineDTO toDTO(GeneralJournalBatchLine generalJournalBatchLine) {
+        GeneralJournalBatchLineDTO dto = new GeneralJournalBatchLineDTO();
+        dto.setGeneralJournalBatchCode(
+                generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch().getCode());
+        dto.setLineNo(generalJournalBatchLine.getGeneralJournalBatchLineId().getLineNo());
+        dto.setType(generalJournalBatchLine.getSourceType().name());
+        dto.setCode(generalJournalBatchLine.getSourceCode());
+        dto.setName(generalJournalBatchLine.getSourceName());
+        dto.setDocumentCode(generalJournalBatchLine.getDocumentCode());
+        dto.setOperationType(generalJournalBatchLine.getOperationType().name());
+        dto.setDate(generalJournalBatchLine.getDate());
+        dto.setAmount(generalJournalBatchLine.getAmount());
+        dto.setBankAccountCode(generalJournalBatchLine.getTarget().getCode());
+        dto.setBankAccountName(generalJournalBatchLine.getTarget().getName());
+        return dto;
     }
 
     private void transferFields(GeneralJournalBatchLine source,

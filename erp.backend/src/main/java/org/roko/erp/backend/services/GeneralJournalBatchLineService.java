@@ -5,6 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
+import org.roko.erp.model.dto.GeneralJournalBatchLineDTO;
 
 public interface GeneralJournalBatchLineService {
     
@@ -21,4 +22,8 @@ public interface GeneralJournalBatchLineService {
     public void delete(GeneralJournalBatchLineId generalJournalBatchLineId);
 
     public int count(GeneralJournalBatch generalJournalBatch);
+
+    public GeneralJournalBatchLineDTO toDTO(GeneralJournalBatchLine generalJournalBatchLine);
+
+    public GeneralJournalBatchLine fromDTO(GeneralJournalBatchLineDTO dto);
 }
