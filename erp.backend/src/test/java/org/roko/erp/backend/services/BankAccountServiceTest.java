@@ -116,6 +116,13 @@ public class BankAccountServiceTest {
     }
 
     @Test
+    public void count_delegatesToRepo() {
+        svc.count();
+
+        verify(repoMock).count();
+    }
+
+    @Test
     public void listWithPage_delegatesToRepo(){
         svc.list(TEST_PAGE);
 

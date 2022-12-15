@@ -77,6 +77,11 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
+    public int count() {
+        return new Long(repo.count()).intValue();
+    }
+
+    @Override
     public BankAccountDTO toDTO(BankAccount bankAccount) {
         BankAccountDTO dto = new BankAccountDTO();
         dto.setCode(bankAccount.getCode());
