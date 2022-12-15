@@ -15,10 +15,13 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.repositories.BankAccountLedgerEntryRepository;
+import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class BankAccountLedgerEntryServiceTest {
+
+    private static final long TEST_COUNT = 123123l;
 
     private static final int TEST_PAGE = 12;
 
@@ -44,6 +47,7 @@ public class BankAccountLedgerEntryServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(repoMock.findFor(eq(bankAccountMock), any(Pageable.class))).thenReturn(pageMock);
+        when(repoMock.count(bankAccountMock)).thenReturn(TEST_COUNT);
         
         svc = new BankAccountLedgerEntryServiceImpl(repoMock);
     }
@@ -76,20 +80,9 @@ public class BankAccountLedgerEntryServiceTest {
 
     @Test
     public void listDTO_delegatesToRepo(){
-        svc.list(bankAccountMock, TEST_PAGE);
+        BankAccountLedgerEntryList list = svc.list(bankAccountMock, TEST_PAGE);
 
-        verify(repoMock).findFor(eq(bankAccountMock), pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(Constants.RECORDS_PER_PAGE, pageable.getPageSize());
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
-    @Test
-    public void count_delegatesToRepo() {
-        svc.count(bankAccountMock);
-
-        verify(repoMock).count(bankAccountMock);
-    }
 }

@@ -7,6 +7,7 @@ import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.repositories.BankAccountLedgerEntryRepository;
 import org.roko.erp.dto.BankAccountLedgerEntryDTO;
+import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -37,18 +38,18 @@ public class BankAccountLedgerEntryServiceImpl implements BankAccountLedgerEntry
     }
 
     @Override
-    public List<BankAccountLedgerEntryDTO> list(BankAccount bankAccount, int page) {
-        return repo.findFor(bankAccount, PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList().stream()
-            .map(x -> toDto(x))
-            .collect(Collectors.toList());
+    public BankAccountLedgerEntryList list(BankAccount bankAccount, int page) {
+        List<BankAccountLedgerEntryDTO> data = repo
+                .findFor(bankAccount, PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList().stream()
+                .map(x -> toDto(x))
+                .collect(Collectors.toList());
+        BankAccountLedgerEntryList list = new BankAccountLedgerEntryList();
+        list.setData(data);
+        list.setCount(repo.count(bankAccount));
+        return list;
     }
 
-    @Override
-    public int count(BankAccount bankAccount) {
-        return new Long(repo.count(bankAccount)).intValue();
-    }
-
-    private BankAccountLedgerEntryDTO toDto(BankAccountLedgerEntry bankAccountLedgerEntry){
+    private BankAccountLedgerEntryDTO toDto(BankAccountLedgerEntry bankAccountLedgerEntry) {
         BankAccountLedgerEntryDTO dto = new BankAccountLedgerEntryDTO();
         dto.setId(bankAccountLedgerEntry.getId());
         dto.setType(bankAccountLedgerEntry.getType().name());
