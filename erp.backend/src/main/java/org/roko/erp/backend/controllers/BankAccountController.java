@@ -1,7 +1,6 @@
 package org.roko.erp.backend.controllers;
 
 import java.util.Date;
-import java.util.List;
 
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
@@ -9,7 +8,6 @@ import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.dto.BankAccountDTO;
-import org.roko.erp.dto.BankAccountLedgerEntryDTO;
 import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.beans.factory.annotation.Autowired;
