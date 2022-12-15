@@ -77,7 +77,7 @@ public class BankAccountControllerTest {
     public void get_delegatesToRepo() {
         controller.get(TEST_CODE);
 
-        verify(svcMock).getDTO(TEST_CODE);
+        verify(svcMock).toDTO(bankAccountMock);
     }
 
     @Test

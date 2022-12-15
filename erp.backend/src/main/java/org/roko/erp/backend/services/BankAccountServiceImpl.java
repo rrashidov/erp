@@ -2,12 +2,10 @@ package org.roko.erp.backend.services;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.repositories.BankAccountRepository;
 import org.roko.erp.dto.BankAccountDTO;
-import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -59,42 +57,31 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountDTO getDTO(String code) {
-        return toDTO(get(code));
-    }
-
-    @Override
-    public BankAccountList list() {
+    public List<BankAccount> list() {
         List<BankAccount> bankAccounts = repo.findAll();
 
         bankAccounts.stream()
                 .forEach(customer -> customer.setBalance(repo.balance(customer)));
 
-        List<BankAccountDTO> data = bankAccounts.stream()
-                .map(x -> toDTO(x))
-                .collect(Collectors.toList());
-
-        BankAccountList list = new BankAccountList();
-        list.setData(data);
-        list.setCount(repo.count());
-        return list;
+        return bankAccounts;
     }
 
     @Override
-    public BankAccountList list(int page) {
+    public List<BankAccount> list(int page) {
         List<BankAccount> bankAccounts = repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList();
 
         bankAccounts.stream()
                 .forEach(customer -> customer.setBalance(repo.balance(customer)));
 
-        List<BankAccountDTO> data = bankAccounts.stream()
-                .map(x -> toDTO(x))
-                .collect(Collectors.toList());
+        return bankAccounts;
+    }
 
-        BankAccountList list = new BankAccountList();
-        list.setData(data);
-        list.setCount(repo.count());
-        return list;
+    @Override
+    public BankAccountDTO toDTO(BankAccount bankAccount) {
+        BankAccountDTO dto = new BankAccountDTO();
+        dto.setCode(bankAccount.getCode());
+        dto.setName(bankAccount.getName());
+        return dto;
     }
 
     @Override
@@ -109,13 +96,4 @@ public class BankAccountServiceImpl implements BankAccountService {
         target.setName(source.getName());
     }
 
-    private BankAccountDTO toDTO(BankAccount bankAccount) {
-        if (bankAccount == null) {
-            return null;
-        }
-        BankAccountDTO dto = new BankAccountDTO();
-        dto.setCode(bankAccount.getCode());
-        dto.setName(bankAccount.getName());
-        return dto;
-    }
 }

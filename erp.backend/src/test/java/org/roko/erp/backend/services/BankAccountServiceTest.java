@@ -18,8 +18,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.repositories.BankAccountRepository;
-import org.roko.erp.dto.BankAccountDTO;
-import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -111,27 +109,22 @@ public class BankAccountServiceTest {
     }
 
     @Test
-    public void getDTOReturnsProperResult(){
-        BankAccountDTO dto = svc.getDTO(TEST_CODE);
-        
-        assertEquals(TEST_CODE, dto.getCode());
-        assertEquals(TEST_NAME, dto.getName());
-    }
-
-    @Test
     public void list_delegatesToRepo(){
-        BankAccountList list = svc.list();
+        svc.list();
 
-        assertEquals(bankAccounts.size(), list.getData().size());
-        assertEquals(TEST_COUNT, list.getCount());
+        verify(repoMock).findAll();
     }
 
     @Test
     public void listWithPage_delegatesToRepo(){
-        BankAccountList list = svc.list(TEST_PAGE);
+        svc.list(TEST_PAGE);
 
-        assertEquals(bankAccounts.size(), list.getData().size());
-        assertEquals(TEST_COUNT, list.getCount());
+        verify(repoMock).findAll(pageableArgumentCaptor.capture());
+
+        Pageable page = pageableArgumentCaptor.getValue();
+
+        assertEquals(TEST_PAGE - 1, page.getPageNumber());
+        assertEquals(Constants.RECORDS_PER_PAGE, page.getPageSize());
     }
 
 }
