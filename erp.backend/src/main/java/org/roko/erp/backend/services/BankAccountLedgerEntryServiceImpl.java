@@ -38,18 +38,12 @@ public class BankAccountLedgerEntryServiceImpl implements BankAccountLedgerEntry
     }
 
     @Override
-    public BankAccountLedgerEntryList list(BankAccount bankAccount, int page) {
-        List<BankAccountLedgerEntryDTO> data = repo
-                .findFor(bankAccount, PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList().stream()
-                .map(x -> toDto(x))
-                .collect(Collectors.toList());
-        BankAccountLedgerEntryList list = new BankAccountLedgerEntryList();
-        list.setData(data);
-        list.setCount(repo.count(bankAccount));
-        return list;
+    public int count(BankAccount bankAccount) {
+        return new Long(repo.count(bankAccount)).intValue();
     }
 
-    private BankAccountLedgerEntryDTO toDto(BankAccountLedgerEntry bankAccountLedgerEntry) {
+    @Override
+    public BankAccountLedgerEntryDTO toDTO(BankAccountLedgerEntry bankAccountLedgerEntry) {
         BankAccountLedgerEntryDTO dto = new BankAccountLedgerEntryDTO();
         dto.setId(bankAccountLedgerEntry.getId());
         dto.setType(bankAccountLedgerEntry.getType().name());

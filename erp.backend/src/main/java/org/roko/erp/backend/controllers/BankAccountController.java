@@ -10,6 +10,7 @@ import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.BankAccountLedgerEntryDTO;
 import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,14 @@ public class BankAccountController {
         bankAccountLedgerEntry.setDocumentCode("BA001");
         bankAccountLedgerEntrySvc.create(bankAccountLedgerEntry);
 
-        return bankAccountLedgerEntrySvc.list(bankAccount, page);
+        List<BankAccountLedgerEntryDTO> data = bankAccountLedgerEntrySvc.findFor(bankAccount, page).stream()
+                .map(x -> bankAccountLedgerEntrySvc.toDTO(x))
+                .collect(Collectors.toList());
+
+        BankAccountLedgerEntryList list = new BankAccountLedgerEntryList();
+        list.setData(data);
+        list.setCount(bankAccountLedgerEntrySvc.count(bankAccount));
+        return list;
     }
 
     @PostMapping

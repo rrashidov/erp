@@ -15,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.repositories.BankAccountLedgerEntryRepository;
-import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -79,10 +78,9 @@ public class BankAccountLedgerEntryServiceTest {
     }
 
     @Test
-    public void listDTO_delegatesToRepo(){
-        BankAccountLedgerEntryList list = svc.list(bankAccountMock, TEST_PAGE);
+    public void count_delegatesToRepo() {
+        svc.count(bankAccountMock);
 
-        assertEquals(TEST_COUNT, list.getCount());
+        verify(repoMock).count(bankAccountMock);
     }
-
 }

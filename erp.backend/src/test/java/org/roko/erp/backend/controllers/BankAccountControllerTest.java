@@ -5,16 +5,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.BankAccount;
+import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.BankAccountLedgerEntryDTO;
+import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.roko.erp.dto.list.BankAccountList;
 
 public class BankAccountControllerTest {
@@ -25,6 +27,7 @@ public class BankAccountControllerTest {
     private static final int TEST_PAGE = 123;
 
     private static final int TEST_COUNT = 222;
+    private static final int TEST_LEDGER_ENTRY_COUNT = 333;
 
     @Mock
     private BankAccount bankAccountMock;
@@ -37,6 +40,12 @@ public class BankAccountControllerTest {
 
     @Mock
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvcMock;
+
+    @Mock
+    private BankAccountLedgerEntry bankAccountLedgerEntryMock;
+
+    @Mock
+    private BankAccountLedgerEntryDTO bankAccountLedgerEntryDtoMock;
 
     private BankAccountController controller;
 
@@ -53,6 +62,10 @@ public class BankAccountControllerTest {
 
         when(bankAccountDtoMock.getCode()).thenReturn(TEST_CODE);
         when(bankAccountDtoMock.getName()).thenReturn(TEST_NAME);
+
+        when(bankAccountLedgerEntrySvcMock.count(bankAccountMock)).thenReturn(TEST_LEDGER_ENTRY_COUNT);
+        when(bankAccountLedgerEntrySvcMock.findFor(bankAccountMock, TEST_PAGE)).thenReturn(Arrays.asList(bankAccountLedgerEntryMock));
+        when(bankAccountLedgerEntrySvcMock.toDTO(bankAccountLedgerEntryMock)).thenReturn(bankAccountLedgerEntryDtoMock);
 
         controller = new BankAccountController(svcMock, bankAccountLedgerEntrySvcMock);
     }
@@ -81,14 +94,6 @@ public class BankAccountControllerTest {
     }
 
     @Test
-    public void getLedgerEntries_delegatesToRepo() {
-        controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
-
-        verify(svcMock).get(TEST_CODE);
-        verify(bankAccountLedgerEntrySvcMock).list(bankAccountMock, TEST_PAGE);
-    }
-
-    @Test
     public void post_delegatesToRepo() {
         controller.post(bankAccountDtoMock);
 
@@ -111,8 +116,9 @@ public class BankAccountControllerTest {
 
     @Test
     public void listLedgerEntries_delegatesToSvc(){
-        controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
+        BankAccountLedgerEntryList list = controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
 
-        verify(bankAccountLedgerEntrySvcMock).list(bankAccountMock, TEST_PAGE);
+        assertEquals(TEST_LEDGER_ENTRY_COUNT, list.getCount());
+        assertEquals(bankAccountLedgerEntryDtoMock, list.getData().get(0));
     }
 }
