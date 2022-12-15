@@ -1,7 +1,5 @@
 package org.roko.erp.backend.controllers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -9,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
@@ -42,15 +38,6 @@ public class BankAccountControllerTest {
         MockitoAnnotations.openMocks(this);
 
         when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
-        doAnswer(new Answer<BankAccount>() {
-            @Override
-            public BankAccount answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                BankAccount bankAccount = (BankAccount) args[0];
-                bankAccount.setCode(TEST_CODE);
-                return bankAccount;
-            }
-        }).when(svcMock).create(any(BankAccount.class));
         when(svcMock.fromDTO(bankAccountDtoMock)).thenReturn(bankAccountMock);
 
         when(bankAccountDtoMock.getCode()).thenReturn(TEST_CODE);
