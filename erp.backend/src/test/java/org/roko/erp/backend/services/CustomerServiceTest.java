@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Customer;
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.repositories.CustomerRepository;
-import org.roko.erp.model.dto.CustomerDTO;
+import org.roko.erp.dto.CustomerDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

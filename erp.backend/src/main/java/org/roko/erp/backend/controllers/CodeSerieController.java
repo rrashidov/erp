@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.services.CodeSerieService;
-import org.roko.erp.model.dto.CodeSerieDTO;
+import org.roko.erp.dto.CodeSerieDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

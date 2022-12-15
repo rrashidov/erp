@@ -3,7 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.Vendor;
-import org.roko.erp.model.dto.VendorDTO;
+import org.roko.erp.dto.VendorDTO;
 
 public interface VendorService {
     

@@ -7,7 +7,7 @@ import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.backend.repositories.PurchaseOrderLineRepository;
-import org.roko.erp.model.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

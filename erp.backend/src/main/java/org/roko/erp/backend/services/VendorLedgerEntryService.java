@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.roko.erp.backend.model.Vendor;
 import org.roko.erp.backend.model.VendorLedgerEntry;
-import org.roko.erp.model.dto.VendorLedgerEntryDTO;
+import org.roko.erp.dto.VendorLedgerEntryDTO;
 
 public interface VendorLedgerEntryService {
     

@@ -18,8 +18,8 @@ import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.services.SalesOrderLineService;
 import org.roko.erp.backend.services.SalesOrderService;
-import org.roko.erp.model.dto.SalesDocumentDTO;
-import org.roko.erp.model.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.SalesDocumentDTO;
+import org.roko.erp.dto.SalesDocumentLineDTO;
 
 public class SalesOrderControllerTest {
     

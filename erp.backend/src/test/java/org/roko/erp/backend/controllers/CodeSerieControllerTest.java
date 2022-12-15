@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.services.CodeSerieService;
-import org.roko.erp.model.dto.CodeSerieDTO;
+import org.roko.erp.dto.CodeSerieDTO;
 
 public class CodeSerieControllerTest {
     

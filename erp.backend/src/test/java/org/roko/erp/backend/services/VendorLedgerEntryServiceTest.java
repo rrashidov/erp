@@ -18,7 +18,7 @@ import org.roko.erp.backend.model.Vendor;
 import org.roko.erp.backend.model.VendorLedgerEntry;
 import org.roko.erp.backend.model.VendorLedgerEntryType;
 import org.roko.erp.backend.repositories.VendorLedgerEntryRepository;
-import org.roko.erp.model.dto.VendorLedgerEntryDTO;
+import org.roko.erp.dto.VendorLedgerEntryDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

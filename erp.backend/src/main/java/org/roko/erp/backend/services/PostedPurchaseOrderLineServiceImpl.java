@@ -5,7 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.PostedPurchaseOrder;
 import org.roko.erp.backend.model.PostedPurchaseOrderLine;
 import org.roko.erp.backend.repositories.PostedPurchaseOrderLineRepository;
-import org.roko.erp.model.dto.PostedPurchaseDocumentLineDTO;
+import org.roko.erp.dto.PostedPurchaseDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

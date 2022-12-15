@@ -5,7 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
-import org.roko.erp.model.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.SalesDocumentLineDTO;
 
 public interface SalesOrderLineService {
     

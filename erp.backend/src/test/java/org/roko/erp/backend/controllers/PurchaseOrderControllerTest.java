@@ -14,8 +14,8 @@ import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.backend.services.PurchaseOrderLineService;
 import org.roko.erp.backend.services.PurchaseOrderService;
-import org.roko.erp.model.dto.PurchaseDocumentDTO;
-import org.roko.erp.model.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.PurchaseDocumentLineDTO;
 
 public class PurchaseOrderControllerTest {
     

@@ -3,7 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.SalesCreditMemo;
-import org.roko.erp.model.dto.SalesDocumentDTO;
+import org.roko.erp.dto.SalesDocumentDTO;
 
 public interface SalesCreditMemoService {
 

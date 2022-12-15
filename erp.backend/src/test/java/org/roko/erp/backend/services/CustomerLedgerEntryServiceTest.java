@@ -18,7 +18,7 @@ import org.roko.erp.backend.model.Customer;
 import org.roko.erp.backend.model.CustomerLedgerEntry;
 import org.roko.erp.backend.model.CustomerLedgerEntryType;
 import org.roko.erp.backend.repositories.CustomerLedgerEntryRepository;
-import org.roko.erp.model.dto.CustomerLedgerEntryDTO;
+import org.roko.erp.dto.CustomerLedgerEntryDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

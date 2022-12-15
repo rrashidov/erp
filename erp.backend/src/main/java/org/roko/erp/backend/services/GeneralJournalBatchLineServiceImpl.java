@@ -9,7 +9,7 @@ import org.roko.erp.backend.model.GeneralJournalBatchLineOperationType;
 import org.roko.erp.backend.model.GeneralJournalBatchLineType;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.backend.repositories.GeneralJournalBatchLineRepository;
-import org.roko.erp.model.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

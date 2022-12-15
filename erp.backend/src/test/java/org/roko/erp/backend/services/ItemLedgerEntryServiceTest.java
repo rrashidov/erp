@@ -18,7 +18,7 @@ import org.roko.erp.backend.model.Item;
 import org.roko.erp.backend.model.ItemLedgerEntry;
 import org.roko.erp.backend.model.ItemLedgerEntryType;
 import org.roko.erp.backend.repositories.ItemLedgerEntryRepository;
-import org.roko.erp.model.dto.ItemLedgerEntryDTO;
+import org.roko.erp.dto.ItemLedgerEntryDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

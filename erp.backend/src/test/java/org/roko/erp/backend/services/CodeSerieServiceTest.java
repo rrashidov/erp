@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.repositories.CodeSerieRepository;
-import org.roko.erp.model.dto.CodeSerieDTO;
+import org.roko.erp.dto.CodeSerieDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

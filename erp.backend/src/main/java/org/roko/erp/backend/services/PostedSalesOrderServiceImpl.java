@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.PostedSalesOrder;
 import org.roko.erp.backend.repositories.PostedSalesOrderRepository;
-import org.roko.erp.model.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.PostedSalesDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

@@ -7,7 +7,7 @@ import java.util.OptionalInt;
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.repositories.CodeSerieRepository;
 import org.roko.erp.backend.services.util.Pair;
-import org.roko.erp.model.dto.CodeSerieDTO;
+import org.roko.erp.dto.CodeSerieDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

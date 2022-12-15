@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Item;
 import org.roko.erp.backend.repositories.ItemRepository;
-import org.roko.erp.model.dto.ItemDTO;
+import org.roko.erp.dto.ItemDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

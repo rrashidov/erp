@@ -13,7 +13,7 @@ import org.roko.erp.backend.model.Customer;
 import org.roko.erp.backend.model.CustomerLedgerEntry;
 import org.roko.erp.backend.services.CustomerLedgerEntryService;
 import org.roko.erp.backend.services.CustomerService;
-import org.roko.erp.model.dto.CustomerDTO;
+import org.roko.erp.dto.CustomerDTO;
 
 public class CustomerControllerTest {
 

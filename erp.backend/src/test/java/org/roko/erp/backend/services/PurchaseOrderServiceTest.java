@@ -20,7 +20,7 @@ import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.Vendor;
 import org.roko.erp.backend.repositories.PurchaseOrderRepository;
-import org.roko.erp.model.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

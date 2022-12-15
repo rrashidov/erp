@@ -14,8 +14,8 @@ import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.backend.services.PurchaseCreditMemoLineService;
 import org.roko.erp.backend.services.PurchaseCreditMemoService;
-import org.roko.erp.model.dto.PurchaseDocumentDTO;
-import org.roko.erp.model.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.PurchaseDocumentLineDTO;
 
 public class PurchaseCreditMemoControllerTest {
 

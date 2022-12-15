@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.repositories.GeneralJournalBatchRepository;
-import org.roko.erp.model.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

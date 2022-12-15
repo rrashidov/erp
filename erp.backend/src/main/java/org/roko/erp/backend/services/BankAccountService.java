@@ -3,7 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.BankAccount;
-import org.roko.erp.model.dto.BankAccountDTO;
+import org.roko.erp.dto.BankAccountDTO;
 
 public interface BankAccountService {
     

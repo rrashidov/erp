@@ -17,7 +17,7 @@ import org.roko.erp.backend.model.PostedPurchaseCreditMemo;
 import org.roko.erp.backend.model.PostedPurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PostedPurchaseCreditMemoLineId;
 import org.roko.erp.backend.repositories.PostedPurchaseCreditMemoLineRepository;
-import org.roko.erp.model.dto.PostedPurchaseDocumentLineDTO;
+import org.roko.erp.dto.PostedPurchaseDocumentLineDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

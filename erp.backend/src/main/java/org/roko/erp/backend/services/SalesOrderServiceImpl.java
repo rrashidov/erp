@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.repositories.SalesOrderRepository;
-import org.roko.erp.model.dto.SalesDocumentDTO;
+import org.roko.erp.dto.SalesDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.backend.services.PaymentMethodService;
-import org.roko.erp.model.dto.PaymentMethodDTO;
+import org.roko.erp.dto.PaymentMethodDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

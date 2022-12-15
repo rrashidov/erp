@@ -7,7 +7,7 @@ import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.repositories.SalesOrderLineRepository;
-import org.roko.erp.model.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

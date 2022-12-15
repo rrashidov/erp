@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.roko.erp.backend.model.Item;
 import org.roko.erp.backend.model.ItemLedgerEntry;
-import org.roko.erp.model.dto.ItemLedgerEntryDTO;
+import org.roko.erp.dto.ItemLedgerEntryDTO;
 
 public interface ItemLedgerEntryService {
 

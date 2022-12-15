@@ -3,7 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.GeneralJournalBatch;
-import org.roko.erp.model.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.GeneralJournalBatchDTO;
 
 public interface GeneralJournalBatchService {
     

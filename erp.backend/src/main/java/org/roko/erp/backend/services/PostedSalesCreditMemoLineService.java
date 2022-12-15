@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.roko.erp.backend.model.PostedSalesCreditMemo;
 import org.roko.erp.backend.model.PostedSalesCreditMemoLine;
-import org.roko.erp.model.dto.PostedSalesDocumentLineDTO;
+import org.roko.erp.dto.PostedSalesDocumentLineDTO;
 
 public interface PostedSalesCreditMemoLineService {
     

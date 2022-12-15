@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.PostedPurchaseCreditMemo;
 import org.roko.erp.backend.repositories.PostedPurchaseCreditMemoRepository;
-import org.roko.erp.model.dto.PostedPurchaseDocumentDTO;
+import org.roko.erp.dto.PostedPurchaseDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.Item;
-import org.roko.erp.model.dto.ItemDTO;
+import org.roko.erp.dto.ItemDTO;
 
 public interface ItemService {
     

@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.repositories.GeneralJournalBatchRepository;
-import org.roko.erp.model.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

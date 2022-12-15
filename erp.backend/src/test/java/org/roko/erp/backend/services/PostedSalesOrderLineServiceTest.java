@@ -17,7 +17,7 @@ import org.roko.erp.backend.model.PostedSalesOrder;
 import org.roko.erp.backend.model.PostedSalesOrderLine;
 import org.roko.erp.backend.model.jpa.PostedSalesOrderLineId;
 import org.roko.erp.backend.repositories.PostedSalesOrderLineRepository;
-import org.roko.erp.model.dto.PostedSalesDocumentLineDTO;
+import org.roko.erp.dto.PostedSalesDocumentLineDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

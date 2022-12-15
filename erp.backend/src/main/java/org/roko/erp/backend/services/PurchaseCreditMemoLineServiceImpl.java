@@ -7,7 +7,7 @@ import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.backend.repositories.PurchaseCreditMemoLineRepository;
-import org.roko.erp.model.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

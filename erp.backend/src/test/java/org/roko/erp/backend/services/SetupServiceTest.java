@@ -14,7 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.model.Setup;
 import org.roko.erp.backend.repositories.SetupRepository;
-import org.roko.erp.model.dto.SetupDTO;
+import org.roko.erp.dto.SetupDTO;
 
 public class SetupServiceTest {
 

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.repositories.PaymentMethodRepository;
-import org.roko.erp.model.dto.PaymentMethodDTO;
+import org.roko.erp.dto.PaymentMethodDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;

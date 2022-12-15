@@ -22,7 +22,7 @@
 
 		<dependency>
 			<groupId>org.roko.erp</groupId>
-			<artifactId>model.dto</artifactId>
+			<artifactId>dto</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

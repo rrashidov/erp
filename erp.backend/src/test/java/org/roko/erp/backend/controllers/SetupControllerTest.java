@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Setup;
 import org.roko.erp.backend.services.SetupService;
-import org.roko.erp.model.dto.SetupDTO;
+import org.roko.erp.dto.SetupDTO;
 
 public class SetupControllerTest {
     

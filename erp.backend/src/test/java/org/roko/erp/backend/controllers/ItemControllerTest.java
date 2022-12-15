@@ -18,7 +18,7 @@ import org.roko.erp.backend.model.ItemLedgerEntry;
 import org.roko.erp.backend.services.ItemLedgerEntryService;
 import org.roko.erp.backend.services.ItemService;
 
-import org.roko.erp.model.dto.ItemDTO;
+import org.roko.erp.dto.ItemDTO;
 
 public class ItemControllerTest {
     

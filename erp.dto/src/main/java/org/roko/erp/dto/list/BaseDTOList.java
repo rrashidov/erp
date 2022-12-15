@@ -2,13 +2,13 @@ package org.roko.erp.dto.list;
 
 public class BaseDTOList {
     
-    private int count;
+    private long count;
 
-    public int getCount() {
+    public long getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(long count) {
         this.count = count;
     }
 

@@ -3,7 +3,7 @@ package org.roko.erp.backend.services;
 import java.util.List;
 
 import org.roko.erp.backend.model.Customer;
-import org.roko.erp.model.dto.CustomerDTO;
+import org.roko.erp.dto.CustomerDTO;
 
 public interface CustomerService {
     

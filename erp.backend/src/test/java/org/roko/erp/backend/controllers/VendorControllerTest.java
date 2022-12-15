@@ -13,7 +13,7 @@ import org.roko.erp.backend.model.Vendor;
 import org.roko.erp.backend.model.VendorLedgerEntry;
 import org.roko.erp.backend.services.VendorLedgerEntryService;
 import org.roko.erp.backend.services.VendorService;
-import org.roko.erp.model.dto.VendorDTO;
+import org.roko.erp.dto.VendorDTO;
 
 public class VendorControllerTest {
 

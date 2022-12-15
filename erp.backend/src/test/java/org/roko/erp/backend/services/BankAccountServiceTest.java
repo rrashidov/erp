@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.repositories.BankAccountRepository;
-import org.roko.erp.model.dto.BankAccountDTO;
+import org.roko.erp.dto.BankAccountDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

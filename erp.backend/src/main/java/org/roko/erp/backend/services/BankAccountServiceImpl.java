@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.repositories.BankAccountRepository;
-import org.roko.erp.model.dto.BankAccountDTO;
+import org.roko.erp.dto.BankAccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;

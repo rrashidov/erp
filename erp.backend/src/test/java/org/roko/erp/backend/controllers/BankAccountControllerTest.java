@@ -14,7 +14,7 @@ import org.mockito.stubbing.Answer;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
-import org.roko.erp.model.dto.BankAccountDTO;
+import org.roko.erp.dto.BankAccountDTO;
 
 public class BankAccountControllerTest {
 

@@ -20,7 +20,7 @@ import org.roko.erp.backend.model.Customer;
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.model.PostedSalesCreditMemo;
 import org.roko.erp.backend.repositories.PostedSalesCreditMemoRepository;
-import org.roko.erp.model.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.PostedSalesDocumentDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

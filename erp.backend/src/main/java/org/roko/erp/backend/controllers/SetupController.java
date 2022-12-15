@@ -2,7 +2,7 @@ package org.roko.erp.backend.controllers;
 
 import org.roko.erp.backend.model.Setup;
 import org.roko.erp.backend.services.SetupService;
-import org.roko.erp.model.dto.SetupDTO;
+import org.roko.erp.dto.SetupDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;

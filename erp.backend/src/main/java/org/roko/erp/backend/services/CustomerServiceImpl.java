@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.roko.erp.backend.model.Customer;
 import org.roko.erp.backend.repositories.CustomerRepository;
-import org.roko.erp.model.dto.CustomerDTO;
+import org.roko.erp.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;

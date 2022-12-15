@@ -15,7 +15,7 @@ import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.backend.services.PaymentMethodService;
-import org.roko.erp.model.dto.PaymentMethodDTO;
+import org.roko.erp.dto.PaymentMethodDTO;
 
 public class PaymentMethodControllerTest {
     

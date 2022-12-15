@@ -18,8 +18,8 @@ import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.backend.services.SalesCreditMemoLineService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
-import org.roko.erp.model.dto.SalesDocumentDTO;
-import org.roko.erp.model.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.SalesDocumentDTO;
+import org.roko.erp.dto.SalesDocumentLineDTO;
 
 public class SalesCreditMemoControllerTest {
     

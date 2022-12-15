@@ -14,8 +14,8 @@ import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.backend.services.GeneralJournalBatchLineService;
 import org.roko.erp.backend.services.GeneralJournalBatchService;
-import org.roko.erp.model.dto.GeneralJournalBatchDTO;
-import org.roko.erp.model.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 
 public class GeneralJournalBatchControllerTest {
 

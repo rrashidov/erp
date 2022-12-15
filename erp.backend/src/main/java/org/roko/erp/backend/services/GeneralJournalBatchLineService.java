@@ -5,7 +5,7 @@ import java.util.List;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
-import org.roko.erp.model.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 
 public interface GeneralJournalBatchLineService {
     

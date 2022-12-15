@@ -1,7 +1,7 @@
 package org.roko.erp.backend.services;
 
 import org.roko.erp.backend.model.Setup;
-import org.roko.erp.model.dto.SetupDTO;
+import org.roko.erp.dto.SetupDTO;
 
 public interface SetupService {
 
