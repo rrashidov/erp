@@ -1,7 +1,11 @@
 package org.roko.erp.backend.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +15,7 @@ import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.list.BankAccountList;
 
 public class BankAccountControllerTest {
 
@@ -18,6 +23,8 @@ public class BankAccountControllerTest {
     private static final String TEST_NAME = "test-name";
 
     private static final int TEST_PAGE = 123;
+
+    private static final int TEST_COUNT = 222;
 
     @Mock
     private BankAccount bankAccountMock;
@@ -39,6 +46,10 @@ public class BankAccountControllerTest {
 
         when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
         when(svcMock.fromDTO(bankAccountDtoMock)).thenReturn(bankAccountMock);
+        when(svcMock.list()).thenReturn(Arrays.asList(bankAccountMock));
+        when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(bankAccountMock));
+        when(svcMock.toDTO(bankAccountMock)).thenReturn(bankAccountDtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         when(bankAccountDtoMock.getCode()).thenReturn(TEST_CODE);
         when(bankAccountDtoMock.getName()).thenReturn(TEST_NAME);
@@ -48,16 +59,18 @@ public class BankAccountControllerTest {
 
     @Test
     public void list_delegatesToSvc(){
-        controller.list();
+        BankAccountList list = controller.list();
 
-        verify(svcMock).list();
+        assertEquals(TEST_COUNT, list.getCount());
+        assertEquals(bankAccountDtoMock, list.getData().get(0));
     }
 
     @Test
     public void listWithPage_delegatesToRepo() {
-        controller.list(TEST_PAGE);
+        BankAccountList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
+        assertEquals(TEST_COUNT, list.getCount());
+        assertEquals(bankAccountDtoMock, list.getData().get(0));
     }
 
     @Test
