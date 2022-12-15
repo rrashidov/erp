@@ -1,9 +1,8 @@
 package org.roko.erp.backend.services;
 
-import java.util.List;
-
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.list.BankAccountList;
 
 public interface BankAccountService {
     
@@ -17,11 +16,9 @@ public interface BankAccountService {
 
     public BankAccountDTO getDTO(String code);
 
-    public List<BankAccountDTO> list();
+    public BankAccountList list();
 
-    public List<BankAccountDTO> list(int page);
-
-    public int count();
+    public BankAccountList list(int page);
 
     public BankAccount fromDTO(BankAccountDTO bankAccountDTO);
 

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.repositories.BankAccountRepository;
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -26,7 +28,11 @@ public class BankAccountServiceTest {
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
 
+    private static final long TEST_COUNT = 123123l;
+    
     private static final int TEST_PAGE = 123;
+
+    private List<BankAccount> bankAccounts;
 
     @Captor
     private ArgumentCaptor<Pageable> pageableArgumentCaptor;
@@ -52,14 +58,17 @@ public class BankAccountServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        bankAccounts = Arrays.asList(bankAccountMock, bankAccountMock1, bankAccountMock2);
+
         when(bankAccountMock.getCode()).thenReturn(TEST_CODE);
         when(bankAccountMock.getName()).thenReturn(TEST_NAME);
 
-        when(pageMock.toList()).thenReturn(Arrays.asList(bankAccountMock, bankAccountMock1, bankAccountMock2));
+        when(pageMock.toList()).thenReturn(bankAccounts);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(bankAccountMock));
-        when(repoMock.findAll()).thenReturn(Arrays.asList(bankAccountMock, bankAccountMock1, bankAccountMock2));
+        when(repoMock.findAll()).thenReturn(bankAccounts);
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
+        when(repoMock.count()).thenReturn(TEST_COUNT);
 
         svc = new BankAccountServiceImpl(repoMock);
     }
@@ -111,31 +120,18 @@ public class BankAccountServiceTest {
 
     @Test
     public void list_delegatesToRepo(){
-        svc.list();
+        BankAccountList list = svc.list();
 
-        verify(repoMock).findAll();
-
-        verify(repoMock).balance(bankAccountMock);
-        verify(repoMock).balance(bankAccountMock1);
-        verify(repoMock).balance(bankAccountMock2);
+        assertEquals(bankAccounts.size(), list.getData().size());
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
     public void listWithPage_delegatesToRepo(){
-        svc.list(TEST_PAGE);
+        BankAccountList list = svc.list(TEST_PAGE);
 
-        verify(repoMock).findAll(pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(Constants.RECORDS_PER_PAGE, pageable.getPageSize());
+        assertEquals(bankAccounts.size(), list.getData().size());
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
-    @Test
-    public void count_delegatesToRepo(){
-        svc.count();
-
-        verify(repoMock).count();
-    }
 }

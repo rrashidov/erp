@@ -10,6 +10,7 @@ import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.BankAccountLedgerEntryDTO;
+import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,12 +35,12 @@ public class BankAccountController {
     }
 
     @GetMapping
-    public List<BankAccountDTO> list() {
+    public BankAccountList list() {
         return svc.list();
     }
 
     @GetMapping("/page/{page}")
-    public List<BankAccountDTO> list(@PathVariable("page") int page) {
+    public BankAccountList list(@PathVariable("page") int page) {
         return svc.list(page);
     }
 

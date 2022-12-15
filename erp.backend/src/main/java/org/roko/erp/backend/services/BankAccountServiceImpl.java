@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.repositories.BankAccountRepository;
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -63,32 +64,37 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public List<BankAccountDTO> list() {
+    public BankAccountList list() {
         List<BankAccount> bankAccounts = repo.findAll();
 
         bankAccounts.stream()
                 .forEach(customer -> customer.setBalance(repo.balance(customer)));
 
-        return bankAccounts.stream()
+        List<BankAccountDTO> data = bankAccounts.stream()
                 .map(x -> toDTO(x))
                 .collect(Collectors.toList());
+
+        BankAccountList list = new BankAccountList();
+        list.setData(data);
+        list.setCount(repo.count());
+        return list;
     }
 
     @Override
-    public List<BankAccountDTO> list(int page) {
+    public BankAccountList list(int page) {
         List<BankAccount> bankAccounts = repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList();
 
         bankAccounts.stream()
                 .forEach(customer -> customer.setBalance(repo.balance(customer)));
 
-        return bankAccounts.stream()
+        List<BankAccountDTO> data = bankAccounts.stream()
                 .map(x -> toDTO(x))
                 .collect(Collectors.toList());
-    }
 
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
+        BankAccountList list = new BankAccountList();
+        list.setData(data);
+        list.setCount(repo.count());
+        return list;
     }
 
     @Override
