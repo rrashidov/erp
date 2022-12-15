@@ -8,17 +8,15 @@
 		<version>2.7.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-
 	<groupId>org.roko.erp</groupId>
-	<artifactId>erp</artifactId>
+	<artifactId>dto</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ERP</name>
-	<description>ERP web application</description>
-	<packaging>pom</packaging>
+	<name>ERP - DTO</name>
+	<packaging>jar</packaging>
+	<description>ERP - DTO</description>
 
-	<modules>
-		<module>erp.frontend</module>
-		<module>erp.backend</module>
-		<module>erp.dto</module>
-	</modules>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
 </project>
