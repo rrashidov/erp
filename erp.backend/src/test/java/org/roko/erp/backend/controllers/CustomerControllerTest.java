@@ -1,5 +1,6 @@
 package org.roko.erp.backend.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,9 +15,11 @@ import org.roko.erp.backend.model.CustomerLedgerEntry;
 import org.roko.erp.backend.services.CustomerLedgerEntryService;
 import org.roko.erp.backend.services.CustomerService;
 import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.list.CustomerList;
 
 public class CustomerControllerTest {
 
+    private static final int TEST_COUNT = 222;
     private static final int TEST_PAGE = 12;
     private static final String TEST_CODE = "test-code";
 
@@ -45,6 +48,8 @@ public class CustomerControllerTest {
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(customerMock));
         when(svcMock.get(TEST_CODE)).thenReturn(customerMock);
         when(svcMock.fromDTO(customerDtoMock)).thenReturn(customerMock);
+        when(svcMock.toDTO(customerMock)).thenReturn(customerDtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         when(customerLedgerEntrySvcMock.findFor(customerMock, TEST_PAGE)).thenReturn(Arrays.asList(customerLedgerEntryMock));
 
@@ -52,19 +57,19 @@ public class CustomerControllerTest {
     }
 
     @Test
-    public void list_delegatesToService() {
-        controller.list();
+    public void list_returnsProperValue() {
+        CustomerList list = controller.list();
 
-        verify(svcMock).list();
-        verify(svcMock).toDTO(customerMock);
+        assertEquals(customerDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
-    public void listWithPage_delegatesToService() {
-        controller.list(TEST_PAGE);
+    public void listWithPage_returnsProperValue() {
+        CustomerList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(customerMock);
+        assertEquals(customerDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test

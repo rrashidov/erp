@@ -8,6 +8,7 @@ import org.roko.erp.backend.services.CustomerLedgerEntryService;
 import org.roko.erp.backend.services.CustomerService;
 import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.CustomerLedgerEntryDTO;
+import org.roko.erp.dto.list.CustomerList;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerController {
-    
+
     private CustomerService svc;
     private CustomerLedgerEntryService customerLedgerEntrySvc;
 
@@ -30,17 +31,27 @@ public class CustomerController {
     }
 
     @GetMapping
-    public List<CustomerDTO> list() {
-        return svc.list().stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+    public CustomerList list() {
+        List<CustomerDTO> data = svc.list().stream()
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
+
+        CustomerList list = new CustomerList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/page/{page}")
-    public List<CustomerDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+    public CustomerList list(@PathVariable("page") int page) {
+        List<CustomerDTO> data = svc.list(page).stream()
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
+
+        CustomerList list = new CustomerList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}/ledgerentries/page/{page}")
