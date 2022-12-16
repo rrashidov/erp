@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -57,6 +59,9 @@ public class PaymentMethodControllerTest {
         when(bankAccountSvcMock.get(TEST_BANK_ACCOUNT_CODE)).thenReturn(bankAccountMock);
 
         when(svcMock.get(TEST_CODE)).thenReturn(paymentMethodMock);
+        when(svcMock.list()).thenReturn(Arrays.asList(paymentMethodMock));
+        when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(paymentMethodMock));
+        when(svcMock.toDTO(paymentMethodMock)).thenReturn(paymentMethodDtoMock);
         
         controller = new PaymentMethodController(svcMock, bankAccountSvcMock);
     }
@@ -66,6 +71,7 @@ public class PaymentMethodControllerTest {
         controller.list();
 
         verify(svcMock).list();
+        verify(svcMock).toDTO(paymentMethodMock);
     }
 
     @Test
@@ -73,13 +79,15 @@ public class PaymentMethodControllerTest {
         controller.list(TEST_PAGE);
 
         verify(svcMock).list(TEST_PAGE);
+        verify(svcMock).toDTO(paymentMethodMock);
     }
 
     @Test
     public void get_delegatesToService() {
         controller.get(TEST_CODE);
 
-        verify(svcMock).getDTO(TEST_CODE);
+        verify(svcMock).get(TEST_CODE);
+        verify(svcMock).toDTO(paymentMethodMock);
     }
 
     @Test

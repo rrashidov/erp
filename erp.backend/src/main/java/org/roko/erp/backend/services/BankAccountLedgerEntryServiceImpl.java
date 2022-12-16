@@ -1,13 +1,11 @@
 package org.roko.erp.backend.services;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.repositories.BankAccountLedgerEntryRepository;
 import org.roko.erp.dto.BankAccountLedgerEntryDTO;
-import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

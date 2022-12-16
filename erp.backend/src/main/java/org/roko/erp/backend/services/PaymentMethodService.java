@@ -15,11 +15,13 @@ public interface PaymentMethodService {
 
     public PaymentMethod get(String code);
 
-    public PaymentMethodDTO getDTO(String code);
+    public List<PaymentMethod> list();
 
-    public List<PaymentMethodDTO> list();
-
-    public List<PaymentMethodDTO> list(int page);
+    public List<PaymentMethod> list(int page);
 
     public int count();
+
+    public PaymentMethodDTO toDTO(PaymentMethod paymentMethod);
+
+    public PaymentMethod fromDTO(PaymentMethodDTO paymentMethodDto);
 }

@@ -1,6 +1,8 @@
 package org.roko.erp.backend.controllers;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.services.BankAccountService;
@@ -31,17 +33,21 @@ public class PaymentMethodController {
 
     @GetMapping
     public List<PaymentMethodDTO> list(){
-        return svc.list();
+        return svc.list().stream()
+            .map(x -> svc.toDTO(x))
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/page/{page}")
     public List<PaymentMethodDTO> list(@PathVariable("page") int page) {
-        return svc.list(page);
+        return svc.list(page).stream()
+            .map(x -> svc.toDTO(x))
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/{code}")
     public PaymentMethodDTO get(@PathVariable("code") String code) {
-        return svc.getDTO(code);
+        return svc.toDTO(svc.get(code));
     }
 
     @PostMapping
