@@ -1,5 +1,6 @@
 package org.roko.erp.backend.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,9 +14,15 @@ import org.roko.erp.backend.model.PostedSalesOrder;
 import org.roko.erp.backend.model.PostedSalesOrderLine;
 import org.roko.erp.backend.services.PostedSalesOrderLineService;
 import org.roko.erp.backend.services.PostedSalesOrderService;
+import org.roko.erp.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.PostedSalesDocumentLineDTO;
+import org.roko.erp.dto.list.PostedSalesDocumentLineList;
+import org.roko.erp.dto.list.PostedSalesDocumentList;
 
 public class PostedSalesOrderControllerTest {
     
+    private static final int TEST_COUNT = 222;
+
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 123;
@@ -32,6 +39,12 @@ public class PostedSalesOrderControllerTest {
     @Mock
     private PostedSalesOrderLine postedSalesOrderLineMock;
 
+    @Mock
+    private PostedSalesDocumentDTO dtoMock;
+
+    @Mock
+    private PostedSalesDocumentLineDTO lineDtoMock;
+
     private PostedSalesOrderController controller;
 
     @BeforeEach
@@ -39,19 +52,23 @@ public class PostedSalesOrderControllerTest {
         MockitoAnnotations.openMocks(this);
 
         when(postedSalesOrderLineSvcMock.list(postedSalesOrderMock, TEST_PAGE)).thenReturn(Arrays.asList(postedSalesOrderLineMock));
+        when(postedSalesOrderLineSvcMock.toDTO(postedSalesOrderLineMock)).thenReturn(lineDtoMock);
+        when(postedSalesOrderLineSvcMock.count(postedSalesOrderMock)).thenReturn(TEST_COUNT);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(postedSalesOrderMock));
         when(svcMock.get(TEST_CODE)).thenReturn(postedSalesOrderMock);
+        when(svcMock.toDTO(postedSalesOrderMock)).thenReturn(dtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new PostedSalesOrderController(svcMock, postedSalesOrderLineSvcMock);
     }
 
     @Test
-    public void list_delegatesToService() {
-        controller.list(TEST_PAGE);
+    public void list_returnsProperResult() {
+        PostedSalesDocumentList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(postedSalesOrderMock);
+        assertEquals(dtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
@@ -63,11 +80,11 @@ public class PostedSalesOrderControllerTest {
     }
 
     @Test
-    public void listLines_delegatesToService() {
-        controller.listLines(TEST_CODE, TEST_PAGE);
+    public void listLines_returnsProperResult() {
+        PostedSalesDocumentLineList list = controller.listLines(TEST_CODE, TEST_PAGE);
 
-        verify(postedSalesOrderLineSvcMock).list(postedSalesOrderMock, TEST_PAGE);
-        verify(postedSalesOrderLineSvcMock).toDTO(postedSalesOrderLineMock);
+        assertEquals(lineDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
 }
