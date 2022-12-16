@@ -1,5 +1,6 @@
 package org.roko.erp.backend.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,9 +13,12 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.services.CodeSerieService;
 import org.roko.erp.dto.CodeSerieDTO;
+import org.roko.erp.dto.list.CodeSerieList;
 
 public class CodeSerieControllerTest {
     
+    private static final int TEST_COUNT = 222;
+
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 123;
@@ -38,24 +42,26 @@ public class CodeSerieControllerTest {
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(codeSerieMock));
         when(svcMock.get(TEST_CODE)).thenReturn(codeSerieMock);
         when(svcMock.fromDTO(dtoMock)).thenReturn(codeSerieMock);
+        when(svcMock.toDTO(codeSerieMock)).thenReturn(dtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new CodeSerieController(svcMock);
     }
 
     @Test
     public void list_delegatesToService() {
-        controller.list();
+        CodeSerieList list = controller.list();
 
-        verify(svcMock).list();
-        verify(svcMock).toDTO(codeSerieMock);
+        assertEquals(dtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
     public void listPage_delegatesToService() {
-        controller.list(TEST_PAGE);
+        CodeSerieList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(codeSerieMock);
+        assertEquals(dtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test

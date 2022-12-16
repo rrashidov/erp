@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.services.CodeSerieService;
 import org.roko.erp.dto.CodeSerieDTO;
+import org.roko.erp.dto.list.CodeSerieList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/codeseries")
 public class CodeSerieController {
-    
+
     private CodeSerieService svc;
 
     @Autowired
@@ -28,17 +29,27 @@ public class CodeSerieController {
     }
 
     @GetMapping
-    public List<CodeSerieDTO> list() {
-        return svc.list().stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+    public CodeSerieList list() {
+        List<CodeSerieDTO> data = svc.list().stream()
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
+
+        CodeSerieList list = new CodeSerieList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/page/{page}")
-    public List<CodeSerieDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+    public CodeSerieList list(@PathVariable("page") int page) {
+        List<CodeSerieDTO> data = svc.list(page).stream()
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
+
+        CodeSerieList list = new CodeSerieList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
