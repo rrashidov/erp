@@ -10,6 +10,8 @@ import org.roko.erp.backend.services.SalesCreditMemoLineService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.SalesDocumentLineList;
+import org.roko.erp.dto.list.SalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/salescreditmemos")
 public class SalesCreditMemoController {
-    
+
     private SalesCreditMemoService svc;
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
 
@@ -31,26 +33,37 @@ public class SalesCreditMemoController {
     public SalesCreditMemoController(SalesCreditMemoService svc, SalesCreditMemoLineService salesCreditMemoLineSvc) {
         this.svc = svc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
-	}
+    }
 
-	@GetMapping("/page/{page}")
-    public List<SalesDocumentDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+    @GetMapping("/page/{page}")
+    public SalesDocumentList list(@PathVariable("page") int page) {
+        List<SalesDocumentDTO> data = svc.list(page).stream()
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
+
+        SalesDocumentList list = new SalesDocumentList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
-    public SalesDocumentDTO get(@PathVariable("code") String code){
+    public SalesDocumentDTO get(@PathVariable("code") String code) {
         return svc.toDTO(svc.get(code));
     }
 
     @GetMapping("/{code}/lines/page/{page}")
-    public List<SalesDocumentLineDTO> listLines(@PathVariable("code") String code, @PathVariable("page") int page) {
+    public SalesDocumentLineList listLines(@PathVariable("code") String code, @PathVariable("page") int page) {
         SalesCreditMemo salesCreditMemo = svc.get(code);
-        return salesCreditMemoLineSvc.list(salesCreditMemo, page).stream()
+
+        List<SalesDocumentLineDTO> data = salesCreditMemoLineSvc.list(salesCreditMemo, page).stream()
                 .map(x -> salesCreditMemoLineSvc.toDTO(x))
                 .collect(Collectors.toList());
+
+        SalesDocumentLineList list = new SalesDocumentLineList();
+        list.setData(data);
+        list.setCount(salesCreditMemoLineSvc.count(salesCreditMemo));
+        return list;
     }
 
     @GetMapping("/{code}/lines/{lineNo}")

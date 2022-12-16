@@ -20,9 +20,13 @@ import org.roko.erp.backend.services.SalesCreditMemoLineService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.SalesDocumentLineList;
+import org.roko.erp.dto.list.SalesDocumentList;
 
 public class SalesCreditMemoControllerTest {
     
+    private static final int TEST_COUNT = 222;
+
     private static final int TEST_LINE_NO = 1234;
 
     private static final String TEST_CODE = "test-code";
@@ -58,21 +62,25 @@ public class SalesCreditMemoControllerTest {
 
         when(salesCreditMemoLineSvcMock.list(salesCreditMemoMock, TEST_PAGE)).thenReturn(Arrays.asList(salesCreditMemoLineMock));
         when(salesCreditMemoLineSvcMock.fromDTO(salesDocumentLineDtoMock)).thenReturn(salesCreditMemoLineMock);
+        when(salesCreditMemoLineSvcMock.toDTO(salesCreditMemoLineMock)).thenReturn(salesDocumentLineDtoMock);
+        when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(TEST_COUNT);
 
         when(svcMock.fromDTO(dtoMock)).thenReturn(salesCreditMemoMock);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(salesCreditMemoMock));
         when(svcMock.get(TEST_CODE)).thenReturn(salesCreditMemoMock);
+        when(svcMock.toDTO(salesCreditMemoMock)).thenReturn(dtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new SalesCreditMemoController(svcMock, salesCreditMemoLineSvcMock);
     }
 
     @Test
-    public void list_delegatesToService() {
-        controller.list(TEST_PAGE);
+    public void list_returnsProperResult() {
+        SalesDocumentList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(salesCreditMemoMock);
+        assertEquals(dtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
@@ -84,11 +92,11 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void listLines_delegatesToService() {
-        controller.listLines(TEST_CODE, TEST_PAGE);
+    public void listLines_returnsProperResult() {
+        SalesDocumentLineList list = controller.listLines(TEST_CODE, TEST_PAGE);
 
-        verify(salesCreditMemoLineSvcMock).list(salesCreditMemoMock, TEST_PAGE);
-        verify(salesCreditMemoLineSvcMock).toDTO(salesCreditMemoLineMock);
+        assertEquals(salesDocumentLineDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
