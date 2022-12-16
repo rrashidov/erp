@@ -20,9 +20,13 @@ import org.roko.erp.backend.services.SalesOrderLineService;
 import org.roko.erp.backend.services.SalesOrderService;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.SalesDocumentLineList;
+import org.roko.erp.dto.list.SalesDocumentList;
 
 public class SalesOrderControllerTest {
     
+    private static final int TEST_COUNT = 222;
+
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 123;
@@ -64,20 +68,24 @@ public class SalesOrderControllerTest {
         when(salesOrderLineSvcMock.list(salesOrderMock, TEST_PAGE)).thenReturn(Arrays.asList(salesOrderLineMock));
         when(salesOrderLineSvcMock.get(salesOrderLineId)).thenReturn(salesOrderLineMock);
         when(salesOrderLineSvcMock.fromDTO(salesOrderLineDtoMock)).thenReturn(salesOrderLineMock);
+        when(salesOrderLineSvcMock.toDTO(salesOrderLineMock)).thenReturn(salesOrderLineDtoMock);
+        when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(TEST_COUNT);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(salesOrderMock));
         when(svcMock.get(TEST_CODE)).thenReturn(salesOrderMock);
         when(svcMock.fromDTO(salesOrderDtoMock)).thenReturn(salesOrderMock);
+        when(svcMock.toDTO(salesOrderMock)).thenReturn(salesOrderDtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new SalesOrderController(svcMock, salesOrderLineSvcMock);
     }
 
     @Test
-    public void list_delegatesToService() {
-        controller.list(TEST_PAGE);
+    public void list_returnsProperResult() {
+        SalesDocumentList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(salesOrderMock);
+        assertEquals(salesOrderDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
@@ -89,11 +97,11 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void listLines_delegatesToService() {
-        controller.listLines(TEST_CODE, TEST_PAGE);
+    public void listLines_returnsProperResult() {
+        SalesDocumentLineList list = controller.listLines(TEST_CODE, TEST_PAGE);
 
-        verify(salesOrderLineSvcMock).list(salesOrderMock, TEST_PAGE);
-        verify(salesOrderLineSvcMock).toDTO(salesOrderLineMock);
+        assertEquals(salesOrderLineDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test

@@ -10,6 +10,8 @@ import org.roko.erp.backend.services.SalesOrderLineService;
 import org.roko.erp.backend.services.SalesOrderService;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.SalesDocumentLineList;
+import org.roko.erp.dto.list.SalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,10 +36,15 @@ public class SalesOrderController {
     }
 
     @GetMapping("/page/{page}")
-    public List<SalesDocumentDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+    public SalesDocumentList list(@PathVariable("page") int page) {
+        List<SalesDocumentDTO> data = svc.list(page).stream()
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
+
+        SalesDocumentList list = new SalesDocumentList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
@@ -46,11 +53,17 @@ public class SalesOrderController {
     }
 
     @GetMapping("/{code}/lines/page/{page}")
-    public List<SalesDocumentLineDTO> listLines(@PathVariable("code") String code, @PathVariable("page") int page) {
+    public SalesDocumentLineList listLines(@PathVariable("code") String code, @PathVariable("page") int page) {
         SalesOrder salesOrder = svc.get(code);
-        return salesOrderLineSvc.list(salesOrder, page).stream()
+
+        List<SalesDocumentLineDTO> data = salesOrderLineSvc.list(salesOrder, page).stream()
                 .map(x -> salesOrderLineSvc.toDTO(x))
                 .collect(Collectors.toList());
+
+        SalesDocumentLineList list = new SalesDocumentLineList();
+        list.setData(data);
+        list.setCount(salesOrderLineSvc.count(salesOrder));
+        return list;
     }
 
     @GetMapping("/{code}/lines/{lineNo}")
@@ -103,7 +116,7 @@ public class SalesOrderController {
     }
 
     @PostMapping
-    public String post(@RequestBody SalesDocumentDTO dto){
+    public String post(@RequestBody SalesDocumentDTO dto) {
         SalesOrder salesOrder = svc.fromDTO(dto);
         svc.create(salesOrder);
         return salesOrder.getCode();
