@@ -15,6 +15,8 @@ import org.roko.erp.backend.model.CustomerLedgerEntry;
 import org.roko.erp.backend.services.CustomerLedgerEntryService;
 import org.roko.erp.backend.services.CustomerService;
 import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.CustomerLedgerEntryDTO;
+import org.roko.erp.dto.list.CustomerLedgerEntryList;
 import org.roko.erp.dto.list.CustomerList;
 
 public class CustomerControllerTest {
@@ -38,6 +40,9 @@ public class CustomerControllerTest {
     @Mock
     private CustomerLedgerEntry customerLedgerEntryMock;
 
+    @Mock
+    private CustomerLedgerEntryDTO customerLedgerEntryDtoMock;
+
     private CustomerController controller;
 
     @BeforeEach
@@ -52,6 +57,8 @@ public class CustomerControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
         when(customerLedgerEntrySvcMock.findFor(customerMock, TEST_PAGE)).thenReturn(Arrays.asList(customerLedgerEntryMock));
+        when(customerLedgerEntrySvcMock.toDTO(customerLedgerEntryMock)).thenReturn(customerLedgerEntryDtoMock);
+        when(customerLedgerEntrySvcMock.count(customerMock)).thenReturn(TEST_COUNT);
 
         controller = new CustomerController(svcMock, customerLedgerEntrySvcMock);
     }
@@ -73,12 +80,11 @@ public class CustomerControllerTest {
     }
 
     @Test
-    public void listLedgerEntries_delegatesToService() {
-        controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
+    public void listLedgerEntries_returnsProperValue() {
+        CustomerLedgerEntryList list = controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
 
-        verify(svcMock).get(TEST_CODE);
-        verify(customerLedgerEntrySvcMock).findFor(customerMock, TEST_PAGE);
-        verify(customerLedgerEntrySvcMock).toDTO(customerLedgerEntryMock);
+        assertEquals(TEST_COUNT, list.getCount());
+        assertEquals(customerLedgerEntryDtoMock, list.getData().get(0));
     }
 
     @Test
