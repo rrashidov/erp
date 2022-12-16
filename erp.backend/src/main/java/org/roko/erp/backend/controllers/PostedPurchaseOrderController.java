@@ -8,6 +8,8 @@ import org.roko.erp.backend.services.PostedPurchaseOrderLineService;
 import org.roko.erp.backend.services.PostedPurchaseOrderService;
 import org.roko.erp.dto.PostedPurchaseDocumentDTO;
 import org.roko.erp.dto.PostedPurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.PostedPurchaseDocumentLineList;
+import org.roko.erp.dto.list.PostedPurchaseDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,10 +31,15 @@ public class PostedPurchaseOrderController {
     }
 
     @GetMapping("/page/{page}")
-    public List<PostedPurchaseDocumentDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
+    public PostedPurchaseDocumentList list(@PathVariable("page") int page) {
+        List<PostedPurchaseDocumentDTO> data = svc.list(page).stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
+
+        PostedPurchaseDocumentList list = new PostedPurchaseDocumentList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
@@ -41,11 +48,17 @@ public class PostedPurchaseOrderController {
     }
 
     @GetMapping("/{code}/lines/page/{page}")
-    public List<PostedPurchaseDocumentLineDTO> listLines(@PathVariable("code") String code,
+    public PostedPurchaseDocumentLineList listLines(@PathVariable("code") String code,
             @PathVariable("page") int page) {
         PostedPurchaseOrder postedPurchaseOrder = svc.get(code);
-        return postedPurchaseOrderLineSvc.list(postedPurchaseOrder, page).stream()
+
+        List<PostedPurchaseDocumentLineDTO> data = postedPurchaseOrderLineSvc.list(postedPurchaseOrder, page).stream()
                 .map(x -> postedPurchaseOrderLineSvc.toDTO(x))
                 .collect(Collectors.toList());
+
+        PostedPurchaseDocumentLineList list = new PostedPurchaseDocumentLineList();
+        list.setData(data);
+        list.setCount(postedPurchaseOrderLineSvc.count(postedPurchaseOrder));
+        return list;
     }
 }
