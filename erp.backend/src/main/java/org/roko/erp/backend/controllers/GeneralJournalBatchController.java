@@ -10,6 +10,8 @@ import org.roko.erp.backend.services.GeneralJournalBatchLineService;
 import org.roko.erp.backend.services.GeneralJournalBatchService;
 import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.list.GeneralJournalBatchLineList;
+import org.roko.erp.dto.list.GeneralJournalBatchList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,10 +37,15 @@ public class GeneralJournalBatchController {
     }
 
     @GetMapping("/pages/{page}")
-    public List<GeneralJournalBatchDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
+    public GeneralJournalBatchList list(@PathVariable("page") int page) {
+        List<GeneralJournalBatchDTO> data = svc.list(page).stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
+
+        GeneralJournalBatchList list = new GeneralJournalBatchList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
@@ -47,12 +54,18 @@ public class GeneralJournalBatchController {
     }
 
     @GetMapping("/{code}/lines/page/{page}")
-    public List<GeneralJournalBatchLineDTO> listLines(@PathVariable("code") String code,
+    public GeneralJournalBatchLineList listLines(@PathVariable("code") String code,
             @PathVariable("page") int page) {
         GeneralJournalBatch generalJournalBatch = svc.get(code);
-        return generalJournalBatchLineSvc.list(generalJournalBatch, page).stream()
+
+        List<GeneralJournalBatchLineDTO> data = generalJournalBatchLineSvc.list(generalJournalBatch, page).stream()
                 .map(x -> generalJournalBatchLineSvc.toDTO(x))
                 .collect(Collectors.toList());
+
+        GeneralJournalBatchLineList list = new GeneralJournalBatchLineList();
+        list.setData(data);
+        list.setCount(generalJournalBatchLineSvc.count(generalJournalBatch));
+        return list;
     }
 
     @GetMapping("/{code}/lines/{lineNo}")
@@ -90,13 +103,13 @@ public class GeneralJournalBatchController {
     @DeleteMapping("/{code}/lines/{lineNo}")
     public int deleteLine(@PathVariable("code") String code, @PathVariable("lineNo") int lineNo) {
         GeneralJournalBatch generalJournalBatch = svc.get(code);
-        
+
         GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
         generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatch);
         generalJournalBatchLineId.setLineNo(lineNo);
 
         generalJournalBatchLineSvc.delete(generalJournalBatchLineId);
-        
+
         return lineNo;
     }
 

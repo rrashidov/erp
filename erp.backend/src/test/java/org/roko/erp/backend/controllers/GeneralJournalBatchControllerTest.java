@@ -1,5 +1,6 @@
 package org.roko.erp.backend.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,8 +17,12 @@ import org.roko.erp.backend.services.GeneralJournalBatchLineService;
 import org.roko.erp.backend.services.GeneralJournalBatchService;
 import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.list.GeneralJournalBatchLineList;
+import org.roko.erp.dto.list.GeneralJournalBatchList;
 
 public class GeneralJournalBatchControllerTest {
+
+    private static final int TEST_COUNT = 222;
 
     private static final String TEST_CODE = "test-code";
 
@@ -58,20 +63,24 @@ public class GeneralJournalBatchControllerTest {
         when(generalJournalBatchLineSvcMock.get(generalJournalBatchLineId)).thenReturn(generalJournalBatchLineMock);
         when(generalJournalBatchLineSvcMock.fromDTO(generalJournalBatchLineDtoMock))
                 .thenReturn(generalJournalBatchLineMock);
+        when(generalJournalBatchLineSvcMock.toDTO(generalJournalBatchLineMock)).thenReturn(generalJournalBatchLineDtoMock);
+        when(generalJournalBatchLineSvcMock.count(generalJournalBatchMock)).thenReturn(TEST_COUNT);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(generalJournalBatchMock));
         when(svcMock.get(TEST_CODE)).thenReturn(generalJournalBatchMock);
         when(svcMock.fromDTO(dtoMock)).thenReturn(generalJournalBatchMock);
+        when(svcMock.toDTO(generalJournalBatchMock)).thenReturn(dtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new GeneralJournalBatchController(svcMock, generalJournalBatchLineSvcMock);
     }
 
     @Test
-    public void list_delegatesToService() {
-        controller.list(TEST_PAGE);
+    public void list_returnsProperValue() {
+        GeneralJournalBatchList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(generalJournalBatchMock);
+        assertEquals(dtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
@@ -104,11 +113,11 @@ public class GeneralJournalBatchControllerTest {
     }
 
     @Test
-    public void listLines_delegatesToService() {
-        controller.listLines(TEST_CODE, TEST_PAGE);
+    public void listLines_returnsProperValue() {
+        GeneralJournalBatchLineList list = controller.listLines(TEST_CODE, TEST_PAGE);
 
-        verify(generalJournalBatchLineSvcMock).list(generalJournalBatchMock, TEST_PAGE);
-        verify(generalJournalBatchLineSvcMock).toDTO(generalJournalBatchLineMock);
+        assertEquals(generalJournalBatchLineDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
