@@ -10,6 +10,8 @@ import org.roko.erp.backend.services.PurchaseCreditMemoLineService;
 import org.roko.erp.backend.services.PurchaseCreditMemoService;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.PurchaseDocumentLineList;
+import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,10 +37,15 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/page/{page}")
-    public List<PurchaseDocumentDTO> list(int page) {
-        return svc.list(page).stream()
+    public PurchaseDocumentList list(int page) {
+        List<PurchaseDocumentDTO> data = svc.list(page).stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
+
+        PurchaseDocumentList list = new PurchaseDocumentList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
@@ -47,12 +54,17 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/{code}/lines/page/{page}")
-    public List<PurchaseDocumentLineDTO> listLines(@PathVariable("code") String code, @PathVariable("page") int page) {
+    public PurchaseDocumentLineList listLines(@PathVariable("code") String code, @PathVariable("page") int page) {
         PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
 
-        return purchaseCreditMemoLineSvc.list(purchaseCreditMemo, page).stream()
+        List<PurchaseDocumentLineDTO> data = purchaseCreditMemoLineSvc.list(purchaseCreditMemo, page).stream()
                 .map(x -> purchaseCreditMemoLineSvc.toDTO(x))
                 .collect(Collectors.toList());
+
+        PurchaseDocumentLineList list = new PurchaseDocumentLineList();
+        list.setData(data);
+        list.setCount(purchaseCreditMemoLineSvc.count(purchaseCreditMemo));
+        return list;
     }
 
     @GetMapping("/{code}/lines/{lineNo}")

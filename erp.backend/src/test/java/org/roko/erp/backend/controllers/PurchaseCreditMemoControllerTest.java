@@ -1,5 +1,6 @@
 package org.roko.erp.backend.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,8 +17,12 @@ import org.roko.erp.backend.services.PurchaseCreditMemoLineService;
 import org.roko.erp.backend.services.PurchaseCreditMemoService;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.PurchaseDocumentLineList;
+import org.roko.erp.dto.list.PurchaseDocumentList;
 
 public class PurchaseCreditMemoControllerTest {
+
+    private static final int TEST_COUNT = 222;
 
     private static final String TEST_CODE = "test-code";
 
@@ -58,20 +63,24 @@ public class PurchaseCreditMemoControllerTest {
         when(purchaseCreditMemoLineSvcMock.get(purchaseCreditMemoLineId)).thenReturn(purchaseCreditMemoLineMock);
         when(purchaseCreditMemoLineSvcMock.fromDTO(purchaseCreditMemoLineDtoMock))
                 .thenReturn(purchaseCreditMemoLineMock);
+        when(purchaseCreditMemoLineSvcMock.toDTO(purchaseCreditMemoLineMock)).thenReturn(purchaseCreditMemoLineDtoMock);
+        when(purchaseCreditMemoLineSvcMock.count(purchaseCreditMemoMock)).thenReturn(TEST_COUNT);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(purchaseCreditMemoMock));
         when(svcMock.get(TEST_CODE)).thenReturn(purchaseCreditMemoMock);
         when(svcMock.fromDTO(dtoMock)).thenReturn(purchaseCreditMemoMock);
+        when(svcMock.toDTO(purchaseCreditMemoMock)).thenReturn(dtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new PurchaseCreditMemoController(svcMock, purchaseCreditMemoLineSvcMock);
     }
 
     @Test
-    public void list_delegatesToService() {
-        controller.list(TEST_PAGE);
+    public void list_returnsProperValue() {
+        PurchaseDocumentList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(purchaseCreditMemoMock);
+        assertEquals(dtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
@@ -104,12 +113,11 @@ public class PurchaseCreditMemoControllerTest {
     }
 
     @Test
-    public void listLines_delegatesToService() {
-        controller.listLines(TEST_CODE, TEST_PAGE);
+    public void listLines_returnsProperValue() {
+        PurchaseDocumentLineList list = controller.listLines(TEST_CODE, TEST_PAGE);
 
-        verify(svcMock).get(TEST_CODE);
-        verify(purchaseCreditMemoLineSvcMock).list(purchaseCreditMemoMock, TEST_PAGE);
-        verify(purchaseCreditMemoLineSvcMock).toDTO(purchaseCreditMemoLineMock);
+        assertEquals(purchaseCreditMemoLineDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
