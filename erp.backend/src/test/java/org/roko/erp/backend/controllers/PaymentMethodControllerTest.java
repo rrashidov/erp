@@ -18,12 +18,15 @@ import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.backend.services.PaymentMethodService;
 import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.list.PaymentMethodList;
 
 public class PaymentMethodControllerTest {
     
     private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
 
     private static final int TEST_PAGE = 123;
+
+    private static final int TEST_COUNT = 222;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
@@ -62,24 +65,25 @@ public class PaymentMethodControllerTest {
         when(svcMock.list()).thenReturn(Arrays.asList(paymentMethodMock));
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(paymentMethodMock));
         when(svcMock.toDTO(paymentMethodMock)).thenReturn(paymentMethodDtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
         
         controller = new PaymentMethodController(svcMock, bankAccountSvcMock);
     }
 
     @Test
-    public void list_delegatesToService(){
-        controller.list();
+    public void list_returnsProperValue(){
+        PaymentMethodList list = controller.list();
 
-        verify(svcMock).list();
-        verify(svcMock).toDTO(paymentMethodMock);
+        assertEquals(paymentMethodDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
-    public void listWithPage_delegatesToService() {
-        controller.list(TEST_PAGE);
+    public void listWithPage_returnsProperValue() {
+        PaymentMethodList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(paymentMethodMock);
+        assertEquals(paymentMethodDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test

@@ -1,13 +1,13 @@
 package org.roko.erp.backend.controllers;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.backend.services.PaymentMethodService;
 import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.list.PaymentMethodList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/paymentmethods")
 public class PaymentMethodController {
-    
+
     private PaymentMethodService svc;
     private BankAccountService bankAccountSvc;
 
@@ -32,17 +32,27 @@ public class PaymentMethodController {
     }
 
     @GetMapping
-    public List<PaymentMethodDTO> list(){
-        return svc.list().stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+    public PaymentMethodList list() {
+        List<PaymentMethodDTO> data = svc.list().stream()
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
+
+        PaymentMethodList list = new PaymentMethodList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/page/{page}")
-    public List<PaymentMethodDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+    public PaymentMethodList list(@PathVariable("page") int page) {
+        List<PaymentMethodDTO> data = svc.list(page).stream()
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
+
+        PaymentMethodList list = new PaymentMethodList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
@@ -78,7 +88,7 @@ public class PaymentMethodController {
         return paymentMethod;
     }
 
-    private void updateFromDTO(PaymentMethod paymentMethod, PaymentMethodDTO paymentMethodDTO){
+    private void updateFromDTO(PaymentMethod paymentMethod, PaymentMethodDTO paymentMethodDTO) {
         paymentMethod.setName(paymentMethodDTO.getName());
         if (!paymentMethodDTO.getBankAccountCode().isEmpty()) {
             paymentMethod.setBankAccount(bankAccountSvc.get(paymentMethodDTO.getBankAccountCode()));
