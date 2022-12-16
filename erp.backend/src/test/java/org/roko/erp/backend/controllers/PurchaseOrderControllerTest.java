@@ -1,5 +1,6 @@
 package org.roko.erp.backend.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +17,8 @@ import org.roko.erp.backend.services.PurchaseOrderLineService;
 import org.roko.erp.backend.services.PurchaseOrderService;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.PurchaseDocumentLineList;
+import org.roko.erp.dto.list.PurchaseDocumentList;
 
 public class PurchaseOrderControllerTest {
     
@@ -24,6 +27,8 @@ public class PurchaseOrderControllerTest {
     private static final int TEST_PAGE = 123;
 
     private static final int TEST_LINE_NO = 1234;
+
+    private static final int TEST_COUNT = 222;
 
     @Mock
     private PurchaseOrderService svcMock;
@@ -56,30 +61,33 @@ public class PurchaseOrderControllerTest {
         when(purchaseOrderLineSvcMock.list(purchaseOrderMock, TEST_PAGE)).thenReturn(Arrays.asList(purchaseOrderLineMock));
         when(purchaseOrderLineSvcMock.get(purchaseOrderLineId)).thenReturn(purchaseOrderLineMock);
         when(purchaseOrderLineSvcMock.fromDTO(purchaseOrderLineDtoMock)).thenReturn(purchaseOrderLineMock);
+        when(purchaseOrderLineSvcMock.toDTO(purchaseOrderLineMock)).thenReturn(purchaseOrderLineDtoMock);
+        when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(TEST_COUNT);
 
         when(svcMock.list()).thenReturn(Arrays.asList(purchaseOrderMock));
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(purchaseOrderMock));
         when(svcMock.get(TEST_CODE)).thenReturn(purchaseOrderMock);
         when(svcMock.toDTO(purchaseOrderMock)).thenReturn(dtoMock);
         when(svcMock.fromDTO(dtoMock)).thenReturn(purchaseOrderMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock);
     }
 
     @Test
-    public void list_delegatesToService() {
-        controller.list();
+    public void list_returnsProperValue() {
+        PurchaseDocumentList list = controller.list();
 
-        verify(svcMock).list();
-        verify(svcMock).toDTO(purchaseOrderMock);
+        assertEquals(dtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
-    public void listWithPage_delegatesToService() {
-        controller.list(TEST_PAGE);
+    public void listWithPage_returnsProperValue() {
+        PurchaseDocumentList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(purchaseOrderMock);
+        assertEquals(dtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
@@ -112,11 +120,11 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
-    public void listLines_delegatesToService() {
-        controller.listLines(TEST_CODE, TEST_PAGE);
+    public void listLines_returnsProperValue() {
+        PurchaseDocumentLineList list = controller.listLines(TEST_CODE, TEST_PAGE);
 
-        verify(purchaseOrderLineSvcMock).list(purchaseOrderMock, TEST_PAGE);
-        verify(purchaseOrderLineSvcMock).toDTO(purchaseOrderLineMock);
+        assertEquals(purchaseOrderLineDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
