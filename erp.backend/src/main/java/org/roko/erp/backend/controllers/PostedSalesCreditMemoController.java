@@ -8,6 +8,8 @@ import org.roko.erp.backend.services.PostedSalesCreditMemoLineService;
 import org.roko.erp.backend.services.PostedSalesCreditMemoService;
 import org.roko.erp.dto.PostedSalesDocumentDTO;
 import org.roko.erp.dto.PostedSalesDocumentLineDTO;
+import org.roko.erp.dto.list.PostedSalesDocumentLineList;
+import org.roko.erp.dto.list.PostedSalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,10 +31,15 @@ public class PostedSalesCreditMemoController {
     }
 
     @GetMapping("/page/{page}")
-    public List<PostedSalesDocumentDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
+    public PostedSalesDocumentList list(@PathVariable("page") int page) {
+        List<PostedSalesDocumentDTO> data = svc.list(page).stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
+
+        PostedSalesDocumentList list = new PostedSalesDocumentList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
@@ -41,11 +48,17 @@ public class PostedSalesCreditMemoController {
     }
 
     @GetMapping("/{code}/lines/page/{page}")
-    public List<PostedSalesDocumentLineDTO> listLines(@PathVariable("code") String code,
+    public PostedSalesDocumentLineList listLines(@PathVariable("code") String code,
             @PathVariable("page") int page) {
         PostedSalesCreditMemo postedSalesCreditMemo = svc.get(code);
-        return postedSalesCreditMemoLineSvc.list(postedSalesCreditMemo, page).stream()
+
+        List<PostedSalesDocumentLineDTO> data = postedSalesCreditMemoLineSvc.list(postedSalesCreditMemo, page).stream()
                 .map(x -> postedSalesCreditMemoLineSvc.toDTO(x))
                 .collect(Collectors.toList());
+
+        PostedSalesDocumentLineList list = new PostedSalesDocumentLineList();
+        list.setData(data);
+        list.setCount(postedSalesCreditMemoLineSvc.count(postedSalesCreditMemo));
+        return list;
     }
 }
