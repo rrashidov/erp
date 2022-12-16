@@ -8,6 +8,8 @@ import org.roko.erp.backend.services.VendorLedgerEntryService;
 import org.roko.erp.backend.services.VendorService;
 import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.dto.VendorLedgerEntryDTO;
+import org.roko.erp.dto.list.VendorLedgerEntryList;
+import org.roko.erp.dto.list.VendorList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,17 +34,27 @@ public class VendorController {
     }
 
     @GetMapping
-    public List<VendorDTO> list() {
-        return svc.list().stream()
+    public VendorList list() {
+        List<VendorDTO> data = svc.list().stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
+
+        VendorList list = new VendorList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/page/{page}")
-    public List<VendorDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
+    public VendorList list(@PathVariable("page") int page) {
+        List<VendorDTO> data = svc.list(page).stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
+
+        VendorList list = new VendorList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
@@ -51,12 +63,18 @@ public class VendorController {
     }
 
     @GetMapping("/{code}/ledgerentries/page/{page}")
-    public List<VendorLedgerEntryDTO> listLedgerEntries(@PathVariable("code") String code,
+    public VendorLedgerEntryList listLedgerEntries(@PathVariable("code") String code,
             @PathVariable("page") int page) {
         Vendor vendor = svc.get(code);
-        return vendorLedgerEntrySvc.findFor(vendor, page).stream()
+
+        List<VendorLedgerEntryDTO> data = vendorLedgerEntrySvc.findFor(vendor, page).stream()
                 .map(x -> vendorLedgerEntrySvc.toDTO(x))
                 .collect(Collectors.toList());
+
+        VendorLedgerEntryList list = new VendorLedgerEntryList();
+        list.setData(data);
+        list.setCount(vendorLedgerEntrySvc.count(vendor));
+        return list;
     }
 
     @PostMapping
