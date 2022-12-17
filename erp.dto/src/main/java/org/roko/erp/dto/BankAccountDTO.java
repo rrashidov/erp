@@ -2,8 +2,9 @@ package org.roko.erp.dto;
 
 public class BankAccountDTO {
     
-    private String code;
-    private String name;
+    private String code = "";
+    private String name = "";
+    private double balance = 0;
     
     public String getCode() {
         return code;
@@ -16,6 +17,12 @@ public class BankAccountDTO {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    public double getBalance() {
+        return balance;
+    }
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
 }
