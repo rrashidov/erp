@@ -8,6 +8,7 @@ import org.roko.erp.backend.services.CodeSerieService;
 import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.dto.list.CodeSerieList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/codeseries")
@@ -54,7 +56,13 @@ public class CodeSerieController {
 
     @GetMapping("/{code}")
     public CodeSerieDTO get(@PathVariable("code") String code) {
-        return svc.toDTO(svc.get(code));
+        CodeSerie codeSerie = svc.get(code);
+
+        if (codeSerie == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return svc.toDTO(codeSerie);
     }
 
     @PostMapping
