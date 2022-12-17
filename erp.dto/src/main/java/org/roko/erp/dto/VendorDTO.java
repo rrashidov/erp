@@ -7,7 +7,7 @@ public class VendorDTO {
     private String address = "";
     private String paymentMethodCode = "";
     private String paymentMethodName = "";
-    private double balance;
+    private double balance = 0;
     
     public String getCode() {
         return code;
