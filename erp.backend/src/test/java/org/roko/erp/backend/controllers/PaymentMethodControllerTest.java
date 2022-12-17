@@ -2,6 +2,7 @@ package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,9 +20,12 @@ import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.backend.services.PaymentMethodService;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.list.PaymentMethodList;
+import org.springframework.web.server.ResponseStatusException;
 
 public class PaymentMethodControllerTest {
     
+    private static final String NON_EXISTING_CODE = "non-existing-code";
+
     private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
 
     private static final int TEST_PAGE = 123;
@@ -92,6 +96,13 @@ public class PaymentMethodControllerTest {
 
         verify(svcMock).get(TEST_CODE);
         verify(svcMock).toDTO(paymentMethodMock);
+    }
+
+    @Test
+    public void get_returnsNotFound_whenCalledWithNonExisting() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.get(NON_EXISTING_CODE);
+        });
     }
 
     @Test
