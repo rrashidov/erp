@@ -11,6 +11,7 @@ import org.roko.erp.dto.VendorLedgerEntryDTO;
 import org.roko.erp.dto.list.VendorLedgerEntryList;
 import org.roko.erp.dto.list.VendorList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/vendors")
@@ -59,7 +61,13 @@ public class VendorController {
 
     @GetMapping("/{code}")
     public VendorDTO get(@PathVariable("code") String code) {
-        return svc.toDTO(svc.get(code));
+        Vendor vendor = svc.get(code);
+
+        if (vendor == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return svc.toDTO(vendor);
     }
 
     @GetMapping("/{code}/ledgerentries/page/{page}")
