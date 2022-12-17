@@ -78,13 +78,10 @@ public class BankAccountController {
         BankAccount bankAccountFromDB = svc.get(bankAccount.getCode());
 
         if (bankAccountFromDB == null) {
-            bankAccountFromDB = new BankAccount();
-            bankAccountFromDB.setCode(bankAccount.getCode());
+            svc.create(bankAccount);
+        } else {
+            svc.update(bankAccount.getCode(), bankAccount);
         }
-
-        bankAccountFromDB.setName(bankAccount.getName());
-
-        svc.create(bankAccountFromDB);
 
         return new RedirectView(BANK_ACCOUNT_LIST_URL);
     }

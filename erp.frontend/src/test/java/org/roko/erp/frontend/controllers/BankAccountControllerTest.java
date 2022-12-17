@@ -132,6 +132,8 @@ public class BankAccountControllerTest {
 
     @Test
     public void postingBankAccountCard_createsBankAccount_ifDoesNotExist(){
+        when(svcMock.get(TEST_CODE)).thenReturn(null);
+
         RedirectView redirectView = controller.postCard(bankAccountMock);
 
         assertEquals("/bankAccountList", redirectView.getUrl());
@@ -142,6 +144,17 @@ public class BankAccountControllerTest {
 
         assertEquals(TEST_CODE, createdBankAccount.getCode());
         assertEquals(TEST_NAME, createdBankAccount.getName());
+    }
+
+    @Test
+    public void postingBankAccountCard_updatesBankAccount_whenCalledForEixsting(){
+        controller.postCard(bankAccountMock);
+
+        verify(svcMock).update(eq(TEST_CODE), bankAccountCaptor.capture());
+
+        BankAccount updatedBankAccount = bankAccountCaptor.getValue();
+
+        assertEquals(TEST_NAME, updatedBankAccount.getName());
     }
 
     @Test
