@@ -133,7 +133,6 @@ public class ItemControllerTest {
 
     @Test
     public void postingItemCard_createsItem_ifDoesNotExist(){
-        // mock that the item does not exist
         when(itemServiceMock.get(TEST_ITEM_CODE)).thenReturn(null);
 
         RedirectView redirect = controller.postCard(itemMock, modelMock, redirectAttributesMock);
@@ -142,6 +141,20 @@ public class ItemControllerTest {
 
         verify(itemServiceMock).get(TEST_ITEM_CODE);
         verify(itemServiceMock).create(itemArgumentCaptor.capture());
+
+        Item createdItem = itemArgumentCaptor.getValue();
+
+        assertEquals(TEST_ITEM_CODE, createdItem.getCode());
+        assertEquals(TEST_ITEM_NAME, createdItem.getName());
+        assertEquals(TEST_ITEM_SALES_PRICE, createdItem.getSalesPrice());
+        assertEquals(TEST_ITEM_PURCHASE_PRICE, createdItem.getPurchasePrice());
+    }
+
+    @Test
+    public void postingItemCard_updatesItem_whenCalledForExisting(){
+        controller.postCard(itemMock, modelMock, redirectAttributesMock);
+
+        verify(itemServiceMock).update(eq(TEST_ITEM_CODE), itemArgumentCaptor.capture());
 
         Item createdItem = itemArgumentCaptor.getValue();
 

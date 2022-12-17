@@ -65,13 +65,18 @@ public class ItemController {
         if (itemFromDB == null) {
             itemFromDB = new Item();
             itemFromDB.setCode(item.getCode());
+            itemFromDB.setName(item.getName());
+            itemFromDB.setSalesPrice(item.getSalesPrice());
+            itemFromDB.setPurchasePrice(item.getPurchasePrice());
+    
+            svc.create(itemFromDB);
+        } else {
+            itemFromDB.setName(item.getName());
+            itemFromDB.setSalesPrice(item.getSalesPrice());
+            itemFromDB.setPurchasePrice(item.getPurchasePrice());
+    
+            svc.update(item.getCode(), itemFromDB);
         }
-
-        itemFromDB.setName(item.getName());
-        itemFromDB.setSalesPrice(item.getSalesPrice());
-        itemFromDB.setPurchasePrice(item.getPurchasePrice());
-
-        svc.create(itemFromDB);
 
         return new RedirectView("/itemList");
     }
