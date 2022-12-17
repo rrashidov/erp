@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,8 +19,11 @@ import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.BankAccountLedgerEntryDTO;
 import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.roko.erp.dto.list.BankAccountList;
+import org.springframework.web.server.ResponseStatusException;
 
 public class BankAccountControllerTest {
+
+    private static final String NON_EXISTING_CODE = "non-existing-code";
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
@@ -50,7 +54,7 @@ public class BankAccountControllerTest {
     private BankAccountController controller;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
         when(svcMock.get(TEST_CODE)).thenReturn(bankAccountMock);
@@ -64,14 +68,15 @@ public class BankAccountControllerTest {
         when(bankAccountDtoMock.getName()).thenReturn(TEST_NAME);
 
         when(bankAccountLedgerEntrySvcMock.count(bankAccountMock)).thenReturn(TEST_LEDGER_ENTRY_COUNT);
-        when(bankAccountLedgerEntrySvcMock.findFor(bankAccountMock, TEST_PAGE)).thenReturn(Arrays.asList(bankAccountLedgerEntryMock));
+        when(bankAccountLedgerEntrySvcMock.findFor(bankAccountMock, TEST_PAGE))
+                .thenReturn(Arrays.asList(bankAccountLedgerEntryMock));
         when(bankAccountLedgerEntrySvcMock.toDTO(bankAccountLedgerEntryMock)).thenReturn(bankAccountLedgerEntryDtoMock);
 
         controller = new BankAccountController(svcMock, bankAccountLedgerEntrySvcMock);
     }
 
     @Test
-    public void list_delegatesToSvc(){
+    public void list_delegatesToSvc() {
         BankAccountList list = controller.list();
 
         assertEquals(TEST_COUNT, list.getCount());
@@ -94,6 +99,13 @@ public class BankAccountControllerTest {
     }
 
     @Test
+    public void get_returnsNotFound_whenCalledWithNonExistingCode() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.get(NON_EXISTING_CODE);
+        });
+    }
+
+    @Test
     public void post_delegatesToRepo() {
         controller.post(bankAccountDtoMock);
 
@@ -101,21 +113,21 @@ public class BankAccountControllerTest {
     }
 
     @Test
-    public void put_delegatesToRepo(){
+    public void put_delegatesToRepo() {
         controller.put(TEST_CODE, bankAccountDtoMock);
 
         verify(svcMock).update(TEST_CODE, bankAccountMock);
     }
 
     @Test
-    public void delete_delegatesToRepo(){
+    public void delete_delegatesToRepo() {
         controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
     }
 
     @Test
-    public void listLedgerEntries_delegatesToSvc(){
+    public void listLedgerEntries_delegatesToSvc() {
         BankAccountLedgerEntryList list = controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
 
         assertEquals(TEST_LEDGER_ENTRY_COUNT, list.getCount());
