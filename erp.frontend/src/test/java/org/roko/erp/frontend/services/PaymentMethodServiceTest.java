@@ -1,13 +1,8 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +10,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
+import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.frontend.model.PaymentMethod;
-import org.roko.erp.frontend.repositories.PaymentMethodRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 public class PaymentMethodServiceTest {
 
@@ -37,84 +35,69 @@ public class PaymentMethodServiceTest {
     private PaymentMethod persistedPaymentMethodMock;
 
     @Mock
-    private PaymentMethod paymentMethodMock;
-    
+    private PaymentMethodDTO paymentMethodMock;
+
     @Mock
-    private PaymentMethodRepository repoMock;
+    private RestTemplate restTemplateMock;
 
     private PaymentMethodService svc;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(pageMock.toList()).thenReturn(new ArrayList<>());
-
-        when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(persistedPaymentMethodMock));
-        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new PaymentMethodServiceImpl(repoMock);
+        svc = new PaymentMethodServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo(){
+    public void create_delegatesToRepo() {
         svc.create(paymentMethodMock);
 
-        verify(repoMock).save(paymentMethodMock);
+        verify(restTemplateMock).postForObject("/api/v1/paymentmethods", paymentMethodMock, String.class);
     }
 
     @Test
-    public void update_delegatesToRepo(){
+    public void update_delegatesToRepo() {
         svc.update(TEST_CODE, paymentMethodMock);
 
-        verify(repoMock).save(persistedPaymentMethodMock);
+        verify(restTemplateMock).put("/api/v1/paymentmethods/{code}", paymentMethodMock, TEST_CODE);
     }
 
     @Test
-    public void delete_delegatesToRepo(){
+    public void delete_delegatesToRepo() {
         svc.delete(TEST_CODE);
 
-        verify(repoMock).findById(TEST_CODE);
-        verify(repoMock).delete(persistedPaymentMethodMock);
+        verify(restTemplateMock).delete("/api/v1/paymentmethods/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo(){
+    public void get_delegatesToRepo() {
         svc.get(TEST_CODE);
 
-        verify(repoMock).findById(TEST_CODE);
+        verify(restTemplateMock).getForObject("/api/v1/paymentmethods/{code}", PaymentMethodDTO.class, TEST_CODE);
     }
 
     @Test
-    public void getReturnsNull_whenNotFound(){
-        PaymentMethod paymentMethod = svc.get("non-existing-code");
+    public void getReturnsNull_whenNotFound() {
+        when(restTemplateMock.getForObject("/api/v1/paymentmethod/{code}", PaymentMethodDTO.class, "non-existing-code")).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
-        assertNull(paymentMethod);
+        PaymentMethodDTO paymentMethodDTO = svc.get("non-existing-code");
+
+        assertNull(paymentMethodDTO);
     }
 
     @Test
-    public void list_delegatesToRepo(){
+    public void list_delegatesToRepo() {
         svc.list();
 
-        verify(repoMock).findAll();
+        verify(restTemplateMock).getForObject("/api/v1/paymentmethods", PaymentMethodList.class);
     }
 
     @Test
-    public void listWithPage_delegatesToRepo(){
+    public void listWithPage_delegatesToRepo() {
         svc.list(TEST_PAGE);
 
-        verify(repoMock).findAll(pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
+        verify(restTemplateMock).getForObject("/api/v1/paymentmethods/page/{page}", PaymentMethodList.class, TEST_PAGE);
     }
 
-    @Test
-    public void count_delegatesToRepo(){
-        svc.count();
-
-        verify(repoMock).count();
-    }
 }

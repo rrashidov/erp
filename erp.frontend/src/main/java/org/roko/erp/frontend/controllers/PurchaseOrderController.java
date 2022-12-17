@@ -165,14 +165,14 @@ public class PurchaseOrderController {
         purchaseOrder.setCode(purchaseCodeSeriesSvc.orderCode());
         purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
         purchaseOrder.setDate(purchaseOrderModel.getDate());
-        purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
+        //purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
         return purchaseOrder;
     }
 
     private void fromModel(PurchaseOrder purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
         purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
         purchaseOrder.setDate(purchaseOrderModel.getDate());
-        purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
+        //purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
     }
 
     private void toModel(PurchaseOrder purchaseOrder, PurchaseOrderModel purchaseOrderModel) {

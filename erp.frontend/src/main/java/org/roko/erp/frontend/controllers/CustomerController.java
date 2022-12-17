@@ -102,7 +102,7 @@ public class CustomerController {
         
         customer.setName(customerModel.getName());
         customer.setAddress(customerModel.getAddress());
-        customer.setPaymentMethod(paymentMethodSvc.get(customerModel.getPaymentMethodCode()));
+        //customer.setPaymentMethod(paymentMethodSvc.get(customerModel.getPaymentMethodCode()));
     }
 
 }

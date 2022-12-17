@@ -158,7 +158,7 @@ public class SalesCreditMemoController {
         salesCreditMemo.setCode(salesCodeSeriesSvc.creditMemoCode());
         salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
-        salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
+        //salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
 
         svc.create(salesCreditMemo);
 
@@ -169,7 +169,7 @@ public class SalesCreditMemoController {
         SalesCreditMemo salesCreditMemo = svc.get(salesCreditMemoModel.getCode());
         salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
-        salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
+        //salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
 
         svc.update(salesCreditMemoModel.getCode(), salesCreditMemo);
     }

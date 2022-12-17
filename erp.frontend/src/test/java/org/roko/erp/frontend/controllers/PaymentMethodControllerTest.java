@@ -1,9 +1,11 @@
 package org.roko.erp.frontend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,11 +16,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.list.BankAccountList;
+import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.frontend.controllers.model.PaymentMethodModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PaymentMethod;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.springframework.ui.Model;
@@ -29,17 +32,21 @@ public class PaymentMethodControllerTest {
     private static final String CARD_TEMPLATE = "paymentMethodCard.html";
 
     private static final int TEST_PAGE = 123;
-    private static final int TEST_COUNT = 234;
+    private static final long TEST_COUNT = 234l;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
     private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account";
 
+    private List<BankAccountDTO> bankAccounts = new ArrayList<>();
+
+    private List<PaymentMethodDTO> paymentMethods;
+
     @Mock
     private BankAccountDTO bankAccountMock;
 
     @Captor
-    private ArgumentCaptor<PaymentMethod> paymentMethodArgumentCaptor;
+    private ArgumentCaptor<PaymentMethodDTO> paymentMethodArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<PaymentMethodModel> paymentMethodModelArgumentCaptor;
@@ -48,12 +55,13 @@ public class PaymentMethodControllerTest {
     private PaymentMethodModel paymentMethodModelMock;
 
     @Mock
-    private PaymentMethod paymentMethodMock;
+    private PaymentMethodDTO paymentMethodMock;
 
     @Mock
     private BankAccountList bankAccountList;
 
-    private List<PaymentMethod> paymentMethodList;
+    @Mock
+    private PaymentMethodList paymentMethodList;
 
     @Mock
     private PagingData pagingDataMock;
@@ -76,26 +84,30 @@ public class PaymentMethodControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        paymentMethodList = Arrays.asList(paymentMethodMock);
+        when(bankAccountList.getData()).thenReturn(bankAccounts);
+
+        paymentMethods = Arrays.asList(paymentMethodMock);
 
         when(bankAccountMock.getCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
 
         when(paymentMethodMock.getCode()).thenReturn(TEST_CODE);
         when(paymentMethodMock.getName()).thenReturn(TEST_NAME);
-        //when(paymentMethodMock.getBankAccount()).thenReturn(bankAccountMock);
+        when(paymentMethodMock.getBankAccountCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
 
         when(paymentMethodModelMock.getCode()).thenReturn(TEST_CODE);
         when(paymentMethodModelMock.getName()).thenReturn(TEST_NAME);
         when(paymentMethodModelMock.getBankAccountCode()).thenReturn(TEST_BANK_ACCOUNT_CODE);
 
+        when(paymentMethodList.getData()).thenReturn(paymentMethods);
+        when(paymentMethodList.getCount()).thenReturn(TEST_COUNT);
+
         when(svcMock.list(TEST_PAGE)).thenReturn(paymentMethodList);
-        when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(paymentMethodMock);
 
         when(bankAccountSvcMock.list()).thenReturn(bankAccountList);
         when(bankAccountSvcMock.get(TEST_BANK_ACCOUNT_CODE)).thenReturn(bankAccountMock);
 
-        when(pagingSvcMock.generate("paymentMethod", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("paymentMethod", TEST_PAGE, (int) TEST_COUNT)).thenReturn(pagingDataMock);
 
         controller = new PaymentMethodController(svcMock, pagingSvcMock, bankAccountSvcMock);
     }
@@ -106,7 +118,7 @@ public class PaymentMethodControllerTest {
 
         assertEquals("paymentMethodList.html", template);
 
-        verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
+        verify(modelMock).addAttribute("paymentMethods", paymentMethods);
         verify(modelMock).addAttribute("paging", pagingDataMock);
     }
 
@@ -116,72 +128,53 @@ public class PaymentMethodControllerTest {
 
         assertEquals(CARD_TEMPLATE, template);
 
-        verify(modelMock).addAttribute("bankAccounts", bankAccountList);
+        verify(modelMock).addAttribute("bankAccounts", bankAccounts);
     }
 
-    // @Test
-    // public void cardReturnsProperTemplate_whenCalledForExistingEntity() {
-    //     String template = controller.card(TEST_CODE, modelMock);
+    @Test
+    public void cardReturnsProperTemplate_whenCalledForExistingEntity() {
+        String template = controller.card(TEST_CODE, modelMock);
 
-    //     assertEquals(CARD_TEMPLATE, template);
+        assertEquals(CARD_TEMPLATE, template);
 
-    //     verify(modelMock).addAttribute("bankAccounts", bankAccountList);
-    //     verify(modelMock).addAttribute(eq("paymentMethod"), paymentMethodModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("bankAccounts", bankAccounts);
+        verify(modelMock).addAttribute(eq("paymentMethod"), paymentMethodModelArgumentCaptor.capture());
 
-    //     PaymentMethodModel paymentMethodModel = paymentMethodModelArgumentCaptor.getValue();
-    //     assertEquals(TEST_CODE, paymentMethodModel.getCode());
-    //     assertEquals(TEST_NAME, paymentMethodModel.getName());
-    //     assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethodModel.getBankAccountCode());
-    // }
-
-    // @Test
-    // public void postingCard_creates_ifDoesNotExist(){
-    //     when(svcMock.get(TEST_CODE)).thenReturn(null);
-        
-    //     RedirectView redirect = controller.postCard(paymentMethodModelMock);
-
-    //     assertEquals("/paymentMethodList", redirect.getUrl());
-
-    //     verify(svcMock).create(paymentMethodArgumentCaptor.capture());
-
-    //     PaymentMethod paymentMethod = paymentMethodArgumentCaptor.getValue();
-
-    //     assertEquals(TEST_CODE, paymentMethod.getCode());
-    //     assertEquals(TEST_NAME, paymentMethod.getName());
-    //     assertEquals(bankAccountMock, paymentMethod.getBankAccount());
-    // }
+        PaymentMethodModel paymentMethodModel = paymentMethodModelArgumentCaptor.getValue();
+        assertEquals(TEST_CODE, paymentMethodModel.getCode());
+        assertEquals(TEST_NAME, paymentMethodModel.getName());
+        assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethodModel.getBankAccountCode());
+    }
 
     @Test
-    public void postingCard_createsPaymentMethodWithoutBankAccount_ifDoesNotExist(){
+    public void postingCard_creates_ifDoesNotExist(){
         when(svcMock.get(TEST_CODE)).thenReturn(null);
         
-        when(paymentMethodModelMock.getBankAccountCode()).thenReturn("");
-
         RedirectView redirect = controller.postCard(paymentMethodModelMock);
 
         assertEquals("/paymentMethodList", redirect.getUrl());
 
         verify(svcMock).create(paymentMethodArgumentCaptor.capture());
 
-        PaymentMethod paymentMethod = paymentMethodArgumentCaptor.getValue();
+        PaymentMethodDTO paymentMethod = paymentMethodArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, paymentMethod.getCode());
         assertEquals(TEST_NAME, paymentMethod.getName());
-        assertEquals(null, paymentMethod.getBankAccount());
+        assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethod.getBankAccountCode());
     }
 
-    // @Test
-    // public void postingCard_updates_whenCalledForExistingEntity(){
-    //     controller.postCard(paymentMethodModelMock);
+    @Test
+    public void postingCard_updates_whenCalledForExistingEntity(){
+        controller.postCard(paymentMethodModelMock);
 
-    //     verify(svcMock).update(eq(TEST_CODE), paymentMethodArgumentCaptor.capture());
+        verify(svcMock).update(eq(TEST_CODE), paymentMethodArgumentCaptor.capture());
 
-    //     PaymentMethod paymentMethod = paymentMethodArgumentCaptor.getValue();
+        PaymentMethodDTO paymentMethod = paymentMethodArgumentCaptor.getValue();
 
-    //     assertEquals(TEST_CODE, paymentMethod.getCode());
-    //     assertEquals(TEST_NAME, paymentMethod.getName());
-    //     assertEquals(bankAccountMock, paymentMethod.getBankAccount());
-    // }
+        assertEquals(TEST_CODE, paymentMethod.getCode());
+        assertEquals(TEST_NAME, paymentMethod.getName());
+        assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethod.getBankAccountCode());
+    }
 
     @Test
     public void deletingPaymentMethod_deletesPaymentMethod() {

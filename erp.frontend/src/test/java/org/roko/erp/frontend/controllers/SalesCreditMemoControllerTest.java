@@ -143,8 +143,8 @@ public class SalesCreditMemoControllerTest {
 
         when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
-        when(paymentMethodSvcMock.list()).thenReturn(paymentMethods);
-        when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
+        //when(paymentMethodSvcMock.list()).thenReturn(paymentMethods);
+        //when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
 
         when(customerMock.getCode()).thenReturn(TEST_CUSTOMER_CODE);
         when(customerMock.getName()).thenReturn(TEST_CUSTOMER_NAME);
@@ -223,32 +223,32 @@ public class SalesCreditMemoControllerTest {
         assertEquals(TEST_PAYMENT_METHOD_CODE, salesCreditMemoModel.getPaymentMethodCode());
     }
 
-    @Test
-    public void postWizardFirstPage_returnsProperTemplate() {
-        String template = controller.postWizardFirstPage(salesCreditMemoModelMock, modelMock);
+    // @Test
+    // public void postWizardFirstPage_returnsProperTemplate() {
+    //     String template = controller.postWizardFirstPage(salesCreditMemoModelMock, modelMock);
 
-        assertEquals("salesCreditMemoWizardSecondPage.html", template);
+    //     assertEquals("salesCreditMemoWizardSecondPage.html", template);
 
-        verify(modelMock).addAttribute("paymentMethods", paymentMethods);
+    //     verify(modelMock).addAttribute("paymentMethods", paymentMethods);
 
-        verify(salesCreditMemoModelMock).setCustomerName(TEST_CUSTOMER_NAME);
-        verify(salesCreditMemoModelMock).setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
-    }
+    //     verify(salesCreditMemoModelMock).setCustomerName(TEST_CUSTOMER_NAME);
+    //     verify(salesCreditMemoModelMock).setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
+    // }
 
-    @Test
-    public void postWizardSecondPage_createsSalesCreditMemoAndReturnsProperTemplate_whenCalledForNew() {
-        RedirectView redirectView = controller.postWizardSecondPage(salesCreditMemoModelMock, redirectAttributesMock);
+    // @Test
+    // public void postWizardSecondPage_createsSalesCreditMemoAndReturnsProperTemplate_whenCalledForNew() {
+    //     RedirectView redirectView = controller.postWizardSecondPage(salesCreditMemoModelMock, redirectAttributesMock);
 
-        assertEquals("/salesCreditMemoCard", redirectView.getUrl());
+    //     assertEquals("/salesCreditMemoCard", redirectView.getUrl());
 
-        verify(svcMock).create(salesCreditMemoArgumentCaptor.capture());
+    //     verify(svcMock).create(salesCreditMemoArgumentCaptor.capture());
 
-        SalesCreditMemo createdSalesCreditMemo = salesCreditMemoArgumentCaptor.getValue();
+    //     SalesCreditMemo createdSalesCreditMemo = salesCreditMemoArgumentCaptor.getValue();
 
-        assertEquals(TEST_NEW_SALES_CREDIT_MEMO_CODE, createdSalesCreditMemo.getCode());
-        assertEquals(customerMock, createdSalesCreditMemo.getCustomer());
-        assertEquals(paymentMethodMock, createdSalesCreditMemo.getPaymentMethod());
-    }
+    //     assertEquals(TEST_NEW_SALES_CREDIT_MEMO_CODE, createdSalesCreditMemo.getCode());
+    //     assertEquals(customerMock, createdSalesCreditMemo.getCustomer());
+    //     assertEquals(paymentMethodMock, createdSalesCreditMemo.getPaymentMethod());
+    // }
 
     @Test
     public void postWizardSecondPage_updatesSalesCreditMemoAndReturnsProperTemplate_whenCalledForExisting(){

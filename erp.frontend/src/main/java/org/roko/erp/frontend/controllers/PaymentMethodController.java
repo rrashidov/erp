@@ -1,11 +1,11 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
+import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.list.BankAccountList;
+import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.frontend.controllers.model.PaymentMethodModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PaymentMethod;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +33,12 @@ public class PaymentMethodController {
 
     @GetMapping("/paymentMethodList")
     public String list(@RequestParam(name="page", required = false, defaultValue = "1") int page, Model model){
-        PagingData pagingData = pagingSvc.generate("paymentMethod", page, svc.count());
-        List<PaymentMethod> paymentMethodList = svc.list(page);
+        PaymentMethodList paymentMethodList = svc.list(page);
+
+        PagingData pagingData = pagingSvc.generate("paymentMethod", page, (int) paymentMethodList.getCount());
 
         model.addAttribute("paging", pagingData);
-        model.addAttribute("paymentMethods", paymentMethodList);
+        model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "paymentMethodList.html";
     }
@@ -47,15 +48,15 @@ public class PaymentMethodController {
         PaymentMethodModel paymentMethodModel = new PaymentMethodModel();
 
         if (code != null){
-            PaymentMethod paymentMethod = svc.get(code);
+            PaymentMethodDTO paymentMethod = svc.get(code);
             paymentMethodModel.setCode(paymentMethod.getCode());
             paymentMethodModel.setName(paymentMethod.getName());
-            if (paymentMethod.getBankAccount() != null){
-                paymentMethodModel.setBankAccountCode(paymentMethod.getBankAccount().getCode());
-            }
+            paymentMethodModel.setBankAccountCode(paymentMethod.getBankAccountCode());
         }
 
-        model.addAttribute("bankAccounts", bankAccountSvc.list());
+        BankAccountList bankAccountList = bankAccountSvc.list();
+
+        model.addAttribute("bankAccounts", bankAccountList.getData());
         model.addAttribute("paymentMethod", paymentMethodModel);
 
         return "paymentMethodCard.html";
@@ -63,24 +64,18 @@ public class PaymentMethodController {
 
     @PostMapping("/paymentMethodCard")
     public RedirectView postCard(@ModelAttribute PaymentMethodModel model){
-        PaymentMethod paymentMethod = svc.get(model.getCode());
+        PaymentMethodDTO paymentMethod = svc.get(model.getCode());
 
         if (paymentMethod == null) {
-            paymentMethod = new PaymentMethod();
+            paymentMethod = new PaymentMethodDTO();
             paymentMethod.setCode(model.getCode());
             paymentMethod.setName(model.getName());
-            if (!model.getBankAccountCode().isEmpty()) {
-                //BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
-                //paymentMethod.setBankAccount(bankAccount);
-            }
+            paymentMethod.setBankAccountCode(model.getBankAccountCode());
     
             svc.create(paymentMethod);
         } else {
             paymentMethod.setName(model.getName());
-            if (!model.getBankAccountCode().isEmpty()) {
-                //BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
-                //paymentMethod.setBankAccount(bankAccount);
-            }
+            paymentMethod.setBankAccountCode(model.getBankAccountCode());
 
             svc.update(model.getCode(), paymentMethod);
         }

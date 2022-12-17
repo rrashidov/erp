@@ -1,74 +1,54 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PaymentMethod;
-import org.roko.erp.frontend.repositories.PaymentMethodRepository;
+import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.list.PaymentMethodList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class PaymentMethodServiceImpl implements PaymentMethodService {
 
-    private PaymentMethodRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public PaymentMethodServiceImpl(PaymentMethodRepository repo) {
-        this.repo = repo;
+    public PaymentMethodServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(PaymentMethod paymentMethod) {
-        repo.save(paymentMethod);
+    public void create(PaymentMethodDTO paymentMethod) {
+        restTemplate.postForObject("/api/v1/paymentmethods", paymentMethod, String.class);
     }
 
     @Override
-    public void update(String code, PaymentMethod paymentMethod) {
-        PaymentMethod paymentMethodFromDB = repo.findById(code).get();
-
-        transferFields(paymentMethod, paymentMethodFromDB);
-
-        repo.save(paymentMethodFromDB);
+    public void update(String code, PaymentMethodDTO paymentMethod) {
+        restTemplate.put("/api/v1/paymentmethods/{code}", paymentMethod, code);
     }
 
     @Override
     public void delete(String code) {
-        PaymentMethod paymentMethod = repo.findById(code).get();
-
-        repo.delete(paymentMethod);
+        restTemplate.delete("/api/v1/paymentmethods/{code}", code);
     }
 
     @Override
-    public PaymentMethod get(String code) {
-        Optional<PaymentMethod> paymentMethodOptional = repo.findById(code);
-
-        if (paymentMethodOptional.isPresent()) {
-            return paymentMethodOptional.get();
+    public PaymentMethodDTO get(String code) {
+        try {
+            return restTemplate.getForObject("/api/v1/paymentmethods/{code}", PaymentMethodDTO.class, code);
+        } catch (HttpClientErrorException e) {
+            return null;
         }
-
-        return null;
     }
 
     @Override
-    public List<PaymentMethod> list() {
-        return repo.findAll();
+    public PaymentMethodList list() {
+        return restTemplate.getForObject("/api/v1/paymentmethods", PaymentMethodList.class);
     }
 
     @Override
-    public List<PaymentMethod> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+    public PaymentMethodList list(int page) {
+        return restTemplate.getForObject("/api/v1/paymentmethods/page/{page}", PaymentMethodList.class, page);
     }
 
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-
-    private void transferFields(PaymentMethod source, PaymentMethod target) {
-        target.setName(source.getName());
-        target.setBankAccount(source.getBankAccount());
-    }
 }

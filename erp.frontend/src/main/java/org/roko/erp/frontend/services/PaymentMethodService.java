@@ -1,22 +1,20 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.PaymentMethod;
+import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.list.PaymentMethodList;
 
 public interface PaymentMethodService {
     
-    public void create(PaymentMethod paymentMethod);
+    public void create(PaymentMethodDTO paymentMethod);
 
-    public void update(String code, PaymentMethod paymentMethod);
+    public void update(String code, PaymentMethodDTO paymentMethod);
 
     public void delete(String code);
 
-    public PaymentMethod get(String code);
+    public PaymentMethodDTO get(String code);
 
-    public List<PaymentMethod> list();
+    public PaymentMethodList list();
 
-    public List<PaymentMethod> list(int page);
+    public PaymentMethodList list(int page);
 
-    public int count();
 }

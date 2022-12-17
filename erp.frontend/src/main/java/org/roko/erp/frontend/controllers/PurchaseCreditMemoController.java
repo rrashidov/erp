@@ -173,7 +173,7 @@ public class PurchaseCreditMemoController {
     private void fromModel(PurchaseCreditMemoModel purchaseCreditMemoModel, PurchaseCreditMemo purchaseCreditMemo) {
         purchaseCreditMemo.setVendor(vendorSvc.get(purchaseCreditMemoModel.getVendorCode()));
         purchaseCreditMemo.setDate(purchaseCreditMemoModel.getDate());
-        purchaseCreditMemo.setPaymentMethod(paymentMethodSvc.get(purchaseCreditMemoModel.getPaymentMethodCode()));
+        //purchaseCreditMemo.setPaymentMethod(paymentMethodSvc.get(purchaseCreditMemoModel.getPaymentMethodCode()));
     }
 
     private void toModel(PurchaseCreditMemo purchaseCreditMemo, PurchaseCreditMemoModel purchaseCreditMemoModel) {

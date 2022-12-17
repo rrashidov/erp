@@ -1,6 +1,7 @@
 package org.roko.erp.frontend.components;
 
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.frontend.model.CodeSerie;
 import org.roko.erp.frontend.model.Customer;
 import org.roko.erp.frontend.model.GeneralJournalBatch;
@@ -71,18 +72,18 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     initBulkBankAccounts();
 
     // init payment methods
-    PaymentMethod pm01 = new PaymentMethod();
+    PaymentMethodDTO pm01 = new PaymentMethodDTO();
     pm01.setCode("PM01");
     pm01.setName("Delayed");
     paymentMethodSvc.create(pm01);
 
-    PaymentMethod pm02 = new PaymentMethod();
+    PaymentMethodDTO pm02 = new PaymentMethodDTO();
     pm02.setCode("PM02");
     pm02.setName("Cash");
     //pm02.setBankAccount(ba01);
     paymentMethodSvc.create(pm02);
 
-    PaymentMethod pm03 = new PaymentMethod();
+    PaymentMethodDTO pm03 = new PaymentMethodDTO();
     pm03.setCode("PM03");
     pm03.setName("By card");
     //pm03.setBankAccount(ba02);
@@ -97,48 +98,48 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     c1.setCode("CUST01");
     c1.setName("Customer 01");
     c1.setAddress("Test address");
-    c1.setPaymentMethod(pm01);
+    //c1.setPaymentMethod(pm01);
     customerService.create(c1);
 
     Customer c2 = new Customer();
     c2.setCode("CUST02");
     c2.setName("Customer 02");
     c2.setAddress("Test address");
-    c2.setPaymentMethod(pm02);
+    //c2.setPaymentMethod(pm02);
     customerService.create(c2);
 
     Customer c3 = new Customer();
     c3.setCode("CUST03");
     c3.setName("Customer 03");
     c3.setAddress("Test address");
-    c3.setPaymentMethod(pm03);
+    //c3.setPaymentMethod(pm03);
     customerService.create(c3);
 
-    initBulkCustomers(pm03);
+    //initBulkCustomers(pm03);
 
     // init vendors
     Vendor v1 = new Vendor();
     v1.setCode("VEND001");
     v1.setName("Vendor 01");
     v1.setAddress("Address 01");
-    v1.setPaymentMethod(pm01);
+    //v1.setPaymentMethod(pm01);
     vendorService.create(v1);
 
     Vendor v2 = new Vendor();
     v2.setCode("VEND002");
     v2.setName("Vendor 02");
     v2.setAddress("Address 02");
-    v2.setPaymentMethod(pm02);
+    //v2.setPaymentMethod(pm02);
     vendorService.create(v2);
 
     Vendor v3 = new Vendor();
     v3.setCode("VEND003");
     v3.setName("Vendor 03");
     v3.setAddress("Address 03");
-    v3.setPaymentMethod(pm03);
+    //v3.setPaymentMethod(pm03);
     vendorService.create(v3);
 
-    initBulkVendors(pm03);
+    //initBulkVendors(pm03);
 
     // init items
     initItems();
@@ -255,7 +256,7 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
 
   private void initBulkPaymentMethods() {
     for (int i = 0; i < 100; i++) {
-      PaymentMethod pm01 = new PaymentMethod();
+      PaymentMethodDTO pm01 = new PaymentMethodDTO();
       pm01.setCode("PM00" + i);
       pm01.setName("Payment Method " + i);
       paymentMethodSvc.create(pm01);

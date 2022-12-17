@@ -159,7 +159,7 @@ public class SalesOrderController {
         salesOrder.setCode(salesCodeSeriesSvc.orderCode());
         salesOrder.setCustomer(customerSvc.get(salesOrderModelMock.getCustomerCode()));
         salesOrder.setDate(salesOrderModelMock.getDate());
-        salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModelMock.getPaymentMethodCode()));
+        //salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModelMock.getPaymentMethodCode()));
         return salesOrder;
     }
 
@@ -173,7 +173,7 @@ public class SalesOrderController {
     private void fromModel(SalesOrder salesOrder, SalesOrderModel salesOrderModel) {
         salesOrder.setCustomer(customerSvc.get(salesOrderModel.getCustomerCode()));
         salesOrder.setDate(salesOrderModel.getDate());
-        salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModel.getPaymentMethodCode()));
+        //salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModel.getPaymentMethodCode()));
     }
 
 }

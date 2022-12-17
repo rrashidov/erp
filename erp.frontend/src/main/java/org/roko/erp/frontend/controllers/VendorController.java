@@ -79,13 +79,13 @@ public class VendorController {
             vendor.setCode(vendorModel.getCode());
             vendor.setName(vendorModel.getName());
             vendor.setAddress(vendorModel.getAddress());
-            vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
+            //vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
     
             vendorSvc.create(vendor);    
         } else {
             vendor.setName(vendorModel.getName());
             vendor.setAddress(vendorModel.getAddress());
-            vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
+            //vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
 
             vendorSvc.update(vendorModel.getCode(), vendor);
         }

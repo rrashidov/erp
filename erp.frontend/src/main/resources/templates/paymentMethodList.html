@@ -31,10 +31,7 @@
                     <tr th:each="paymentMethod : ${paymentMethods}">
                         <td th:text="${paymentMethod.code}"></td>
                         <td th:text="${paymentMethod.name}"></td>
-
-                        <td th:if="${paymentMethod.bankAccount} != null" th:text="${paymentMethod.bankAccount.name}">
-                        </td>
-                        <td th:unless="${paymentMethod.bankAccount} != null"></td>
+                        <td th:text="${paymentMethod.bankAccountName}"></td>
 
                         <td><a class="btn btn-primary" th:href="@{/paymentMethodCard?code={code}(code=${paymentMethod.code})}">edit</a> <a
                             class="btn btn-primary" th:href="@{/deletePaymentMethod?code={code}(code=${paymentMethod.code})}">delete</a>
