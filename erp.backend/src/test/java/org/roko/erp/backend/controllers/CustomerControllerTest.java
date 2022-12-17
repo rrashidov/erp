@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,9 +19,12 @@ import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.CustomerLedgerEntryDTO;
 import org.roko.erp.dto.list.CustomerLedgerEntryList;
 import org.roko.erp.dto.list.CustomerList;
+import org.springframework.web.server.ResponseStatusException;
 
 public class CustomerControllerTest {
 
+    private static final String NON_EXISTING_CODE = "non-existing-code";
+    
     private static final int TEST_COUNT = 222;
     private static final int TEST_PAGE = 12;
     private static final String TEST_CODE = "test-code";
@@ -93,6 +97,13 @@ public class CustomerControllerTest {
 
         verify(svcMock).get(TEST_CODE);
         verify(svcMock).toDTO(customerMock);
+    }
+
+    @Test
+    public void get_throwsException_whenCalledWithNonExistingCode() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.get(NON_EXISTING_CODE);
+        });
     }
 
     @Test
