@@ -1,12 +1,9 @@
 package org.roko.erp.backend.controllers;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.BankAccount;
-import org.roko.erp.backend.model.BankAccountLedgerEntry;
-import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.services.BankAccountLedgerEntryService;
 import org.roko.erp.backend.services.BankAccountService;
 import org.roko.erp.dto.BankAccountDTO;
@@ -39,8 +36,8 @@ public class BankAccountController {
     @GetMapping
     public BankAccountList list() {
         List<BankAccountDTO> data = svc.list().stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
 
         BankAccountList list = new BankAccountList();
         list.setData(data);
@@ -51,8 +48,8 @@ public class BankAccountController {
     @GetMapping("/page/{page}")
     public BankAccountList list(@PathVariable("page") int page) {
         List<BankAccountDTO> data = svc.list(page).stream()
-            .map(x -> svc.toDTO(x))
-            .collect(Collectors.toList());
+                .map(x -> svc.toDTO(x))
+                .collect(Collectors.toList());
 
         BankAccountList list = new BankAccountList();
         list.setData(data);
@@ -69,14 +66,6 @@ public class BankAccountController {
     public BankAccountLedgerEntryList listLedgerEntries(@PathVariable("code") String code,
             @PathVariable("page") int page) {
         BankAccount bankAccount = svc.get(code);
-
-        BankAccountLedgerEntry bankAccountLedgerEntry = new BankAccountLedgerEntry();
-        bankAccountLedgerEntry.setBankAccount(bankAccount);
-        bankAccountLedgerEntry.setType(BankAccountLedgerEntryType.FREE_ENTRY);
-        bankAccountLedgerEntry.setAmount(123.12);
-        bankAccountLedgerEntry.setDate(new Date());
-        bankAccountLedgerEntry.setDocumentCode("BA001");
-        bankAccountLedgerEntrySvc.create(bankAccountLedgerEntry);
 
         List<BankAccountLedgerEntryDTO> data = bankAccountLedgerEntrySvc.findFor(bankAccount, page).stream()
                 .map(x -> bankAccountLedgerEntrySvc.toDTO(x))
