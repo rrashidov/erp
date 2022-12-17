@@ -178,6 +178,8 @@ public class CustomerControllerTest {
 
     @Test
     public void postingCustomerCard_createsNewCustomerIfCalledForNonExisting() {
+        when(customerSvcMock.get(TEST_CODE)).thenReturn(null);
+
         RedirectView redirectView = controller.post(customerModelMock);
 
         assertEquals("/customerList", redirectView.getUrl());
@@ -187,6 +189,19 @@ public class CustomerControllerTest {
         Customer customer = customerArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, customer.getCode());
+        assertEquals(TEST_NAME, customer.getName());
+        assertEquals(TEST_ADDRESS, customer.getAddress());
+        assertEquals(paymentMethodMock, customer.getPaymentMethod());
+    }
+
+    @Test
+    public void postingCustomerCard_updatesCustomer_whenCalledForExisting() {
+        controller.post(customerModelMock);
+
+        verify(customerSvcMock).update(eq(TEST_CODE), customerArgumentCaptor.capture());
+
+        Customer customer = customerArgumentCaptor.getValue();
+
         assertEquals(TEST_NAME, customer.getName());
         assertEquals(TEST_ADDRESS, customer.getAddress());
         assertEquals(paymentMethodMock, customer.getPaymentMethod());

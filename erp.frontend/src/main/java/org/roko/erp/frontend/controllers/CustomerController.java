@@ -76,11 +76,17 @@ public class CustomerController {
 
     @PostMapping("/customerCard")
     public RedirectView post(@ModelAttribute CustomerModel customerModel) {
-        Customer customer = new Customer();
+        Customer customer = svc.get(customerModel.getCode());
 
-        transferFields(customerModel, customer);
-
-        svc.create(customer);
+        if (customer == null){
+            customer = new Customer();
+            customer.setCode(customerModel.getCode());
+            transferFields(customerModel, customer);
+            svc.create(customer);
+        } else {
+            transferFields(customerModel, customer);
+            svc.update(customerModel.getCode(), customer);
+        }
 
         return new RedirectView("/customerList");
     }
@@ -93,7 +99,7 @@ public class CustomerController {
     }
 
     private void transferFields(CustomerModel customerModel, Customer customer) {
-        customer.setCode(customerModel.getCode());
+        
         customer.setName(customerModel.getName());
         customer.setAddress(customerModel.getAddress());
         customer.setPaymentMethod(paymentMethodSvc.get(customerModel.getPaymentMethodCode()));
