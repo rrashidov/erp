@@ -1,88 +1,77 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.BankAccount;
-import org.roko.erp.frontend.repositories.BankAccountRepository;
+import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class BankAccountServiceImpl implements BankAccountService {
 
-    private BankAccountRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public BankAccountServiceImpl(BankAccountRepository repo) {
-        this.repo = repo;
+    public BankAccountServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
 	}
 
 	@Override
-    public void create(BankAccount bankAccount) {
-        repo.save(bankAccount);
+    public void create(BankAccountDTO bankAccount) {
+        //repo.save(bankAccount);
     }
 
     @Override
-    public void update(String code, BankAccount bankAccount) {
-        Optional<BankAccount> bankAccountOptional = repo.findById(code);
+    public void update(String code, BankAccountDTO bankAccount) {
+        // Optional<BankAccount> bankAccountOptional = repo.findById(code);
 
-        BankAccount bankAccountFromDB = bankAccountOptional.get();
+        // BankAccount bankAccountFromDB = bankAccountOptional.get();
 
-        transferFields(bankAccount, bankAccountFromDB);
+        // transferFields(bankAccount, bankAccountFromDB);
 
-        repo.save(bankAccountFromDB);
+        // repo.save(bankAccountFromDB);
     }
 
     @Override
     public void delete(String code) {
-        BankAccount bankAccount = repo.findById(code).get();
+        // BankAccount bankAccount = repo.findById(code).get();
 
-        repo.delete(bankAccount);
+        // repo.delete(bankAccount);
     }
 
     @Override
-    public BankAccount get(String code) {
-        Optional<BankAccount> bankAccountOptional = repo.findById(code);
+    public BankAccountDTO get(String code) {
+        // Optional<BankAccount> bankAccountOptional = repo.findById(code);
 
-        if (bankAccountOptional.isPresent()){
-            BankAccount bankAccount = bankAccountOptional.get();
-            bankAccount.setBalance(repo.balance(bankAccount));
-            return bankAccount;
-        }
+        // if (bankAccountOptional.isPresent()){
+        //     BankAccount bankAccount = bankAccountOptional.get();
+        //     bankAccount.setBalance(repo.balance(bankAccount));
+        //     return bankAccount;
+        // }
 
         return null;
     }
 
     @Override
-    public List<BankAccount> list() {
-        List<BankAccount> bankAccounts = repo.findAll();
+    public BankAccountList list() {
+        // List<BankAccount> bankAccounts = repo.findAll();
 
-        bankAccounts.stream()
-            .forEach(customer -> customer.setBalance(repo.balance(customer)));
+        // bankAccounts.stream()
+        //     .forEach(customer -> customer.setBalance(repo.balance(customer)));
 
-        return bankAccounts;
+        // return bankAccounts;
+        return null;
     }
 
     @Override
-    public List<BankAccount> list(int page) {
-        List<BankAccount> bankAccounts = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
+    public BankAccountList list(int page) {
+        // List<BankAccount> bankAccounts = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
 
-        bankAccounts.stream()
-            .forEach(customer -> customer.setBalance(repo.balance(customer)));
+        // bankAccounts.stream()
+        //     .forEach(customer -> customer.setBalance(repo.balance(customer)));
 
-        return bankAccounts;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-    
-    private void transferFields(BankAccount source, BankAccount target) {
-        target.setName(source.getName());
+        // return bankAccounts;
+        return null;
     }
 
 }

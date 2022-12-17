@@ -1,6 +1,6 @@
 package org.roko.erp.frontend.components;
 
-import org.roko.erp.frontend.model.BankAccount;
+import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.frontend.model.CodeSerie;
 import org.roko.erp.frontend.model.Customer;
 import org.roko.erp.frontend.model.GeneralJournalBatch;
@@ -58,12 +58,12 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     }
 
     // init bank accounts
-    BankAccount ba01 = new BankAccount();
+    BankAccountDTO ba01 = new BankAccountDTO();
     ba01.setCode("BA01");
     ba01.setName("Cash");
     bankAccountSvc.create(ba01);
 
-    BankAccount ba02 = new BankAccount();
+    BankAccountDTO ba02 = new BankAccountDTO();
     ba02.setCode("BA02");
     ba02.setName("Bank");
     bankAccountSvc.create(ba02);
@@ -79,13 +79,13 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     PaymentMethod pm02 = new PaymentMethod();
     pm02.setCode("PM02");
     pm02.setName("Cash");
-    pm02.setBankAccount(ba01);
+    //pm02.setBankAccount(ba01);
     paymentMethodSvc.create(pm02);
 
     PaymentMethod pm03 = new PaymentMethod();
     pm03.setCode("PM03");
     pm03.setName("By card");
-    pm03.setBankAccount(ba02);
+    //pm03.setBankAccount(ba02);
     paymentMethodSvc.create(pm03);
 
     initBulkPaymentMethods();
@@ -264,7 +264,7 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
 
   private void initBulkBankAccounts() {
     for (int i = 0; i < 100; i++) {
-      BankAccount ba01 = new BankAccount();
+      BankAccountDTO ba01 = new BankAccountDTO();
       ba01.setCode("BA00" + i);
       ba01.setName("Bank Account " + i);
       bankAccountSvc.create(ba01);

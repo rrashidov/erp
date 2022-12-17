@@ -1,13 +1,9 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +11,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
+import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.list.BankAccountList;
 import org.roko.erp.frontend.model.BankAccount;
 import org.roko.erp.frontend.repositories.BankAccountRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 public class BankAccountServiceTest {
 
@@ -34,7 +33,7 @@ public class BankAccountServiceTest {
     private Page<BankAccount> pageMock;
 
     @Mock
-    private BankAccount bankAccountMock;
+    private BankAccountDTO bankAccountMock;
 
     @Mock
     private BankAccount bankAccountMock1;
@@ -45,54 +44,51 @@ public class BankAccountServiceTest {
     @Mock
     private BankAccountRepository repoMock;
 
+    @Mock
+    private RestTemplate restTemplateMock;
+
     private BankAccountService svc;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(pageMock.toList()).thenReturn(Arrays.asList(bankAccountMock, bankAccountMock1, bankAccountMock2));
-
-        when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(bankAccountMock));
-        when(repoMock.findAll()).thenReturn(Arrays.asList(bankAccountMock, bankAccountMock1, bankAccountMock2));
-        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new BankAccountServiceImpl(repoMock);
+        svc = new BankAccountServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo() {
+    public void create_callsBackend() {
         svc.create(bankAccountMock);
 
-        verify(repoMock).save(bankAccountMock);
+        verify(restTemplateMock).postForObject("/api/v1/bankaccounts", bankAccountMock, String.class);
     }
 
     @Test
-    public void update_delegatesToRepo() {
+    public void update_callsBackend() {
         svc.update(TEST_CODE, bankAccountMock);
 
-        verify(repoMock).save(bankAccountMock);
+        verify(restTemplateMock).put("/api/v1/bankaccounts/{code}", bankAccountMock, TEST_CODE);
     }
 
     @Test
-    public void delete_delegatesToRepo(){
+    public void delete_callsBackend(){
         svc.delete(TEST_CODE);
 
-        verify(repoMock).delete(bankAccountMock);
+        verify(restTemplateMock).delete("/api/v1/bankaccounts/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo(){
-        BankAccount retrievedBankAccount = svc.get(TEST_CODE);
+    public void get_callsBackend(){
+        svc.get(TEST_CODE);
 
-        assertEquals(bankAccountMock, retrievedBankAccount);
-
-        verify(repoMock).balance(bankAccountMock);
+        verify(restTemplateMock).getForObject("/api/v1/bankaccounts/{code}", BankAccountDTO.class, TEST_CODE);
     }
 
     @Test
     public void getReturnsNull_whenItemNotFound(){
-        BankAccount retrievedBankAccount = svc.get("non-existing-code");
+        when(restTemplateMock.getForObject("/api/v1/bankaccounts/{code}", BankAccountDTO.class, TEST_CODE)).thenThrow(new HttpClientErrorException(null));
+
+        BankAccountDTO retrievedBankAccount = svc.get("non-existing-code");
 
         assertNull(retrievedBankAccount);
     }
@@ -101,29 +97,14 @@ public class BankAccountServiceTest {
     public void list_delegatesToRepo(){
         svc.list();
 
-        verify(repoMock).findAll();
-
-        verify(repoMock).balance(bankAccountMock);
-        verify(repoMock).balance(bankAccountMock1);
-        verify(repoMock).balance(bankAccountMock2);
+        verify(restTemplateMock).getForObject("/api/v1/bankaccounts", BankAccountList.class);
     }
 
     @Test
     public void listWithPage_delegatesToRepo(){
         svc.list(TEST_PAGE);
 
-        verify(repoMock).findAll(pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
+        verify(restTemplateMock).getForObject("/api/v1/bankaccounts/page/{page}", BankAccountList.class, TEST_PAGE);
     }
 
-    @Test
-    public void count_delegatesToRepo(){
-        svc.count();
-
-        verify(repoMock).count();
-    }
 }

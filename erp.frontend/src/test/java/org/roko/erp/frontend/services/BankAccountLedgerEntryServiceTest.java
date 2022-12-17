@@ -12,16 +12,20 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
+import org.roko.erp.dto.BankAccountLedgerEntryDTO;
+import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.roko.erp.frontend.model.BankAccount;
 import org.roko.erp.frontend.model.BankAccountLedgerEntry;
 import org.roko.erp.frontend.repositories.BankAccountLedgerEntryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.client.RestTemplate;
 
 public class BankAccountLedgerEntryServiceTest {
 
     private static final int TEST_PAGE = 12;
+
+    private static final String TEST_CODE = "test-code";
 
     @Captor
     private ArgumentCaptor<Pageable> pageableArgumentCaptor;
@@ -33,10 +37,13 @@ public class BankAccountLedgerEntryServiceTest {
     private BankAccount bankAccountMock;
 
     @Mock
-    private BankAccountLedgerEntry bankAccountLedgerEntryMock;
+    private BankAccountLedgerEntryDTO bankAccountLedgerEntryMock;
 
     @Mock
     private BankAccountLedgerEntryRepository repoMock;
+
+    @Mock
+    private RestTemplate restTemplateMock;
 
     private BankAccountLedgerEntryService svc;
 
@@ -44,41 +51,15 @@ public class BankAccountLedgerEntryServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(repoMock.findFor(eq(bankAccountMock), any(Pageable.class))).thenReturn(pageMock);
-        
-        svc = new BankAccountLedgerEntryServiceImpl(repoMock);
+        svc = new BankAccountLedgerEntryServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo() {
-        svc.create(bankAccountLedgerEntryMock);
+    public void list_callsBackend() {
+        svc.list(TEST_CODE, TEST_PAGE);
 
-        verify(repoMock).save(bankAccountLedgerEntryMock);
+        verify(restTemplateMock).getForObject("/api/v1/bankaccounts/{code}/ledgerentries/page/{page}",
+                BankAccountLedgerEntryList.class, TEST_CODE, TEST_PAGE);
     }
 
-    @Test
-    public void list_delegatesToRepo() {
-        svc.findFor(bankAccountMock);
-
-        verify(repoMock).findFor(bankAccountMock);
-    }
-
-    @Test
-    public void listWithPage_delegatesToRepo() {
-        svc.findFor(bankAccountMock, TEST_PAGE);
-
-        verify(repoMock).findFor(eq(bankAccountMock), pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
-    }
-
-    @Test
-    public void count_delegatesToRepo() {
-        svc.count(bankAccountMock);
-
-        verify(repoMock).count(bankAccountMock);
-    }
 }

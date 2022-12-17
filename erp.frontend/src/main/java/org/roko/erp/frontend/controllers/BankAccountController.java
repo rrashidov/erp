@@ -1,10 +1,10 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
+import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.list.BankAccountLedgerEntryList;
+import org.roko.erp.dto.list.BankAccountList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.BankAccount;
 import org.roko.erp.frontend.services.BankAccountLedgerEntryService;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +44,12 @@ public class BankAccountController {
 
     @GetMapping(BANK_ACCOUNT_LIST_URL)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        PagingData pagingData = pagingSvc.generate(OBJECT_NAME, page, svc.count());
+        BankAccountList bankAccountList = svc.list(page);
 
-        List<BankAccount> bankAccounts = svc.list(page);
+        PagingData pagingData = pagingSvc.generate(OBJECT_NAME, page, (int) bankAccountList.getCount());
 
         model.addAttribute(PAGING_MODEL_NAME, pagingData);
-        model.addAttribute(LIST_MODEL_NAME, bankAccounts);
+        model.addAttribute(LIST_MODEL_NAME, bankAccountList.getData());
 
         return LIST_TEMPLATE;
     }
@@ -58,14 +58,16 @@ public class BankAccountController {
     public String card(@RequestParam(name = "code", required = false) String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             Model model) {
-        BankAccount bankAccount = new BankAccount();
+        BankAccountDTO bankAccount = new BankAccountDTO();
 
         if (code != null) {
             bankAccount = svc.get(code);
 
-            model.addAttribute("bankAccountLedgerEntries", bankAccountLedgerEntrySvc.findFor(bankAccount, page));
+            BankAccountLedgerEntryList bankAccountLedgerEntryList = bankAccountLedgerEntrySvc.list(code, page);
+
+            model.addAttribute("bankAccountLedgerEntries", bankAccountLedgerEntryList.getData());
             model.addAttribute("paging",
-                    pagingSvc.generate("bankAccountCard", code, page, bankAccountLedgerEntrySvc.count(bankAccount)));
+                    pagingSvc.generate("bankAccountCard", code, page, (int) bankAccountLedgerEntryList.getCount()));
         }
 
         model.addAttribute("bankAccount", bankAccount);
@@ -74,8 +76,8 @@ public class BankAccountController {
     }
 
     @PostMapping("/bankAccountCard")
-    public RedirectView postCard(@ModelAttribute BankAccount bankAccount) {
-        BankAccount bankAccountFromDB = svc.get(bankAccount.getCode());
+    public RedirectView postCard(@ModelAttribute BankAccountDTO bankAccount) {
+        BankAccountDTO bankAccountFromDB = svc.get(bankAccount.getCode());
 
         if (bankAccountFromDB == null) {
             svc.create(bankAccount);
