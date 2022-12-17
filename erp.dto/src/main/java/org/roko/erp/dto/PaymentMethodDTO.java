@@ -2,8 +2,8 @@ package org.roko.erp.dto;
 
 public class PaymentMethodDTO {
     
-    private String code;
-    private String name;
+    private String code = "";
+    private String name = "";
     private String bankAccountCode = "";
     private String bankAccountName = "";
     
