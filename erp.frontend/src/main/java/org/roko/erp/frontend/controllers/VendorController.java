@@ -72,14 +72,23 @@ public class VendorController {
 
     @PostMapping("/vendorCard")
     public RedirectView post(@ModelAttribute VendorModel vendorModel) {
-        Vendor vendor = new Vendor();
+        Vendor vendor = vendorSvc.get(vendorModel.getCode());
 
-        vendor.setCode(vendorModel.getCode());
-        vendor.setName(vendorModel.getName());
-        vendor.setAddress(vendorModel.getAddress());
-        vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
+        if (vendor == null) {
+            vendor = new Vendor();
+            vendor.setCode(vendorModel.getCode());
+            vendor.setName(vendorModel.getName());
+            vendor.setAddress(vendorModel.getAddress());
+            vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
+    
+            vendorSvc.create(vendor);    
+        } else {
+            vendor.setName(vendorModel.getName());
+            vendor.setAddress(vendorModel.getAddress());
+            vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
 
-        vendorSvc.create(vendor);
+            vendorSvc.update(vendorModel.getCode(), vendor);
+        }
 
         return new RedirectView("/vendorList");
     }

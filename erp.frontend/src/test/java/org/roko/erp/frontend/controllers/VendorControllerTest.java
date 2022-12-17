@@ -170,6 +170,8 @@ public class VendorControllerTest {
 
     @Test
     public void postingCard_createsNewVendor(){
+        when(vendorSvcMock.get(TEST_CODE)).thenReturn(null);
+
         RedirectView redirectView = controller.post(vendorModelMock);
 
         assertEquals("/vendorList", redirectView.getUrl());
@@ -179,6 +181,19 @@ public class VendorControllerTest {
         Vendor vendor = vendorArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, vendor.getCode());
+        assertEquals(TEST_NAME, vendor.getName());
+        assertEquals(TEST_ADDRESS, vendor.getAddress());
+        assertEquals(paymentMethodMock, vendor.getPaymentMethod());
+    }
+
+    @Test
+    public void postingCard_updatesVendor_whenCalledForExisting(){
+        controller.post(vendorModelMock);
+
+        verify(vendorSvcMock).update(eq(TEST_CODE), vendorArgumentCaptor.capture());
+
+        Vendor vendor = vendorArgumentCaptor.getValue();
+
         assertEquals(TEST_NAME, vendor.getName());
         assertEquals(TEST_ADDRESS, vendor.getAddress());
         assertEquals(paymentMethodMock, vendor.getPaymentMethod());
