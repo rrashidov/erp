@@ -41,7 +41,7 @@ public class VendorControllerTest {
 
     private List<Vendor> vendorList;
 
-    private List<PaymentMethod> paymentMethodList = new ArrayList<>();
+    //private List<PaymentMethod> paymentMethodList = new ArrayList<>();
 
     private List<VendorLedgerEntry> vendorLedgerEntries = new ArrayList<>();
 

@@ -63,7 +63,7 @@ public class PurchaseCreditMemoControllerTest {
 
     private List<Vendor> vendors = new ArrayList<>();
 
-    private List<PaymentMethod> paymentMethods = new ArrayList<>();
+    //private List<PaymentMethod> paymentMethods = new ArrayList<>();
 
     private List<PurchaseCreditMemoLine> purchaseCreditMemoLines = new ArrayList<>();
 

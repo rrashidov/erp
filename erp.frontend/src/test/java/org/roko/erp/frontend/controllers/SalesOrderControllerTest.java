@@ -65,7 +65,7 @@ public class SalesOrderControllerTest {
 
     private List<Customer> customerList = new ArrayList<>();
 
-    private List<PaymentMethod> paymentMethodList = new ArrayList<>();
+    //private List<PaymentMethod> paymentMethodList = new ArrayList<>();
 
     private List<SalesOrderLine> salesOrderLineList = new ArrayList<>();
 

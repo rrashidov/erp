@@ -6,7 +6,6 @@ import org.roko.erp.frontend.model.CodeSerie;
 import org.roko.erp.frontend.model.Customer;
 import org.roko.erp.frontend.model.GeneralJournalBatch;
 import org.roko.erp.frontend.model.Item;
-import org.roko.erp.frontend.model.PaymentMethod;
 import org.roko.erp.frontend.model.Setup;
 import org.roko.erp.frontend.model.Vendor;
 import org.roko.erp.frontend.services.BankAccountService;
@@ -222,27 +221,27 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     setupSvc.update(setup);
   }
 
-  private void initBulkVendors(PaymentMethod pm01) {
-    for (int i = 0; i < 100; i++) {
-      Vendor v1 = new Vendor();
-      v1.setCode("VEND000" + i);
-      v1.setName("Vendor " + i);
-      v1.setAddress("Address " + i);
-      v1.setPaymentMethod(pm01);
-      vendorService.create(v1);
-    }
-  }
+  // private void initBulkVendors(PaymentMethod pm01) {
+  //   for (int i = 0; i < 100; i++) {
+  //     Vendor v1 = new Vendor();
+  //     v1.setCode("VEND000" + i);
+  //     v1.setName("Vendor " + i);
+  //     v1.setAddress("Address " + i);
+  //     v1.setPaymentMethod(pm01);
+  //     vendorService.create(v1);
+  //   }
+  // }
 
-  private void initBulkCustomers(PaymentMethod pm01) {
-    for (int i = 0; i < 100; i++) {
-      Customer c1 = new Customer();
-      c1.setCode("CUST00" + i);
-      c1.setName("Customer " + i);
-      c1.setAddress("Test address");
-      c1.setPaymentMethod(pm01);
-      customerService.create(c1);
-    }
-  }
+  // private void initBulkCustomers(PaymentMethod pm01) {
+  //   for (int i = 0; i < 100; i++) {
+  //     Customer c1 = new Customer();
+  //     c1.setCode("CUST00" + i);
+  //     c1.setName("Customer " + i);
+  //     c1.setAddress("Test address");
+  //     c1.setPaymentMethod(pm01);
+  //     customerService.create(c1);
+  //   }
+  // }
 
   private void initBulkGeneralJournalBatches() {
     for (int i = 0; i < 110; i++) {

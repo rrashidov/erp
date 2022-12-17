@@ -45,7 +45,7 @@ public class CustomerControllerTest {
 
     private static final int TEST_CUSTOMER_LEDGER_ENTRIES_COUNT = 123;
 
-    private List<PaymentMethod> paymentMethodList = new ArrayList<>();
+    //private List<PaymentMethod> paymentMethodList = new ArrayList<>();
 
     private List<Customer> customerList;
 

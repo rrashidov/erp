@@ -1,7 +1,6 @@
 package org.roko.erp.frontend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -65,7 +64,7 @@ public class PurchaseOrderControllerTest {
 
     private List<Vendor> vendors = new ArrayList<>();
 
-    private List<PaymentMethod> paymentMethods = new ArrayList<>();
+    //private List<PaymentMethod> paymentMethods = new ArrayList<>();
 
     private List<PurchaseOrderLine> purchaseOrderLines = new ArrayList<>();
 
