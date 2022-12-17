@@ -17,7 +17,8 @@ public class BankAccountLedgerEntryServiceImpl implements BankAccountLedgerEntry
 
     @Override
     public BankAccountLedgerEntryList list(String bankAccountCode, int page) {
-        return null;
+        return restTemplate.getForObject("/api/v1/bankaccounts/{code}/ledgerentries/page/{page}",
+                BankAccountLedgerEntryList.class, bankAccountCode, page);
     }
 
 }

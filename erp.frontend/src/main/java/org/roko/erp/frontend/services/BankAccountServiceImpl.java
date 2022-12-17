@@ -4,6 +4,7 @@ import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.list.BankAccountList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -18,60 +19,36 @@ public class BankAccountServiceImpl implements BankAccountService {
 
 	@Override
     public void create(BankAccountDTO bankAccount) {
-        //repo.save(bankAccount);
+        restTemplate.postForObject("/api/v1/bankaccounts", bankAccount, String.class);
     }
 
     @Override
     public void update(String code, BankAccountDTO bankAccount) {
-        // Optional<BankAccount> bankAccountOptional = repo.findById(code);
-
-        // BankAccount bankAccountFromDB = bankAccountOptional.get();
-
-        // transferFields(bankAccount, bankAccountFromDB);
-
-        // repo.save(bankAccountFromDB);
+        restTemplate.put("/api/v1/bankaccounts/{code}", bankAccount, code);
     }
 
     @Override
     public void delete(String code) {
-        // BankAccount bankAccount = repo.findById(code).get();
-
-        // repo.delete(bankAccount);
+        restTemplate.delete("/api/v1/bankaccounts/{code}", code);
     }
 
     @Override
     public BankAccountDTO get(String code) {
-        // Optional<BankAccount> bankAccountOptional = repo.findById(code);
-
-        // if (bankAccountOptional.isPresent()){
-        //     BankAccount bankAccount = bankAccountOptional.get();
-        //     bankAccount.setBalance(repo.balance(bankAccount));
-        //     return bankAccount;
-        // }
-
-        return null;
+        try {
+            return restTemplate.getForObject("/api/v1/bankaccounts/{code}", BankAccountDTO.class, code);
+        } catch (HttpClientErrorException e) {
+            return null;
+        } 
     }
 
     @Override
     public BankAccountList list() {
-        // List<BankAccount> bankAccounts = repo.findAll();
-
-        // bankAccounts.stream()
-        //     .forEach(customer -> customer.setBalance(repo.balance(customer)));
-
-        // return bankAccounts;
-        return null;
+        return restTemplate.getForObject("/api/v1/bankaccounts", BankAccountList.class);
     }
 
     @Override
     public BankAccountList list(int page) {
-        // List<BankAccount> bankAccounts = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        // bankAccounts.stream()
-        //     .forEach(customer -> customer.setBalance(repo.balance(customer)));
-
-        // return bankAccounts;
-        return null;
+        return restTemplate.getForObject("/api/v1/bankaccounts/page/{page}", BankAccountList.class, page);
     }
 
 }

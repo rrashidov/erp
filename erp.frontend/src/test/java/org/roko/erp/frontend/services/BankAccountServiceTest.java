@@ -17,6 +17,7 @@ import org.roko.erp.frontend.model.BankAccount;
 import org.roko.erp.frontend.repositories.BankAccountRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -71,14 +72,14 @@ public class BankAccountServiceTest {
     }
 
     @Test
-    public void delete_callsBackend(){
+    public void delete_callsBackend() {
         svc.delete(TEST_CODE);
 
         verify(restTemplateMock).delete("/api/v1/bankaccounts/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_callsBackend(){
+    public void get_callsBackend() {
         svc.get(TEST_CODE);
 
         verify(restTemplateMock).getForObject("/api/v1/bankaccounts/{code}", BankAccountDTO.class, TEST_CODE);
@@ -86,7 +87,7 @@ public class BankAccountServiceTest {
 
     @Test
     public void getReturnsNull_whenItemNotFound(){
-        when(restTemplateMock.getForObject("/api/v1/bankaccounts/{code}", BankAccountDTO.class, TEST_CODE)).thenThrow(new HttpClientErrorException(null));
+        when(restTemplateMock.getForObject("/api/v1/bankaccounts/{code}", BankAccountDTO.class, "non-existing-code")).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         BankAccountDTO retrievedBankAccount = svc.get("non-existing-code");
 
@@ -94,14 +95,14 @@ public class BankAccountServiceTest {
     }
 
     @Test
-    public void list_delegatesToRepo(){
+    public void list_callsBackend() {
         svc.list();
 
         verify(restTemplateMock).getForObject("/api/v1/bankaccounts", BankAccountList.class);
     }
 
     @Test
-    public void listWithPage_delegatesToRepo(){
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/bankaccounts/page/{page}", BankAccountList.class, TEST_PAGE);

@@ -166,7 +166,7 @@ public class GeneralJournalBatchLineController {
         line.setDocumentCode(model.getDocumentCode());
         line.setDate(model.getDate());
         line.setAmount(model.getAmount());
-        line.setTarget(bankAccountSvc.get(model.getBankAccountCode()));
+        //line.setTarget(bankAccountSvc.get(model.getBankAccountCode()));
     }
 
     private void toModel(GeneralJournalBatchLine generalJournalBatchLine,
@@ -222,6 +222,7 @@ public class GeneralJournalBatchLineController {
     }
 
     private void addBankAccounts(List<GeneralJournalBatchLineSource> sources) {
+        /*
         sources.addAll(bankAccountSvc.list().stream()
                 .map(x -> {
                     GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
@@ -230,5 +231,6 @@ public class GeneralJournalBatchLineController {
                     return s;
                 })
                 .collect(Collectors.toList()));
+        */
     }
 }

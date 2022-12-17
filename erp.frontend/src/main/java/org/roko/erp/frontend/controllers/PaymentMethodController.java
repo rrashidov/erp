@@ -5,7 +5,6 @@ import java.util.List;
 import org.roko.erp.frontend.controllers.model.PaymentMethodModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.BankAccount;
 import org.roko.erp.frontend.model.PaymentMethod;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.PaymentMethodService;
@@ -71,16 +70,16 @@ public class PaymentMethodController {
             paymentMethod.setCode(model.getCode());
             paymentMethod.setName(model.getName());
             if (!model.getBankAccountCode().isEmpty()) {
-                BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
-                paymentMethod.setBankAccount(bankAccount);
+                //BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
+                //paymentMethod.setBankAccount(bankAccount);
             }
     
             svc.create(paymentMethod);
         } else {
             paymentMethod.setName(model.getName());
             if (!model.getBankAccountCode().isEmpty()) {
-                BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
-                paymentMethod.setBankAccount(bankAccount);
+                //BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
+                //paymentMethod.setBankAccount(bankAccount);
             }
 
             svc.update(model.getCode(), paymentMethod);
