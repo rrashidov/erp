@@ -73,7 +73,7 @@ public class PaymentMethodControllerTest {
     private PaymentMethodController controller;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
         paymentMethodList = Arrays.asList(paymentMethodMock);
@@ -101,7 +101,7 @@ public class PaymentMethodControllerTest {
     }
 
     @Test
-    public void listReturnsProperTemplate(){
+    public void listReturnsProperTemplate() {
         String template = controller.list(TEST_PAGE, modelMock);
 
         assertEquals("paymentMethodList.html", template);
@@ -111,7 +111,7 @@ public class PaymentMethodControllerTest {
     }
 
     @Test
-    public void cardReturnsProperTemplate(){
+    public void cardReturnsProperTemplate() {
         String template = controller.card(null, modelMock);
 
         assertEquals(CARD_TEMPLATE, template);
@@ -120,7 +120,7 @@ public class PaymentMethodControllerTest {
     }
 
     @Test
-    public void cardReturnsProperTemplate_whenCalledForExistingEntity(){
+    public void cardReturnsProperTemplate_whenCalledForExistingEntity() {
         String template = controller.card(TEST_CODE, modelMock);
 
         assertEquals(CARD_TEMPLATE, template);
@@ -134,9 +134,10 @@ public class PaymentMethodControllerTest {
         assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethodModel.getBankAccountCode());
     }
 
-
     @Test
     public void postingCard_creates_ifDoesNotExist(){
+        when(svcMock.get(TEST_CODE)).thenReturn(null);
+        
         RedirectView redirect = controller.postCard(paymentMethodModelMock);
 
         assertEquals("/paymentMethodList", redirect.getUrl());
@@ -152,6 +153,8 @@ public class PaymentMethodControllerTest {
 
     @Test
     public void postingCard_createsPaymentMethodWithoutBankAccount_ifDoesNotExist(){
+        when(svcMock.get(TEST_CODE)).thenReturn(null);
+        
         when(paymentMethodModelMock.getBankAccountCode()).thenReturn("");
 
         RedirectView redirect = controller.postCard(paymentMethodModelMock);
@@ -168,7 +171,20 @@ public class PaymentMethodControllerTest {
     }
 
     @Test
-    public void deletingPaymentMethod_deletesPaymentMethod(){
+    public void postingCard_updates_whenCalledForExistingEntity(){
+        controller.postCard(paymentMethodModelMock);
+
+        verify(svcMock).update(eq(TEST_CODE), paymentMethodArgumentCaptor.capture());
+
+        PaymentMethod paymentMethod = paymentMethodArgumentCaptor.getValue();
+
+        assertEquals(TEST_CODE, paymentMethod.getCode());
+        assertEquals(TEST_NAME, paymentMethod.getName());
+        assertEquals(bankAccountMock, paymentMethod.getBankAccount());
+    }
+
+    @Test
+    public void deletingPaymentMethod_deletesPaymentMethod() {
         RedirectView redirectView = controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);

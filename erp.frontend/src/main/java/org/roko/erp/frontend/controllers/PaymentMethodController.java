@@ -64,16 +64,27 @@ public class PaymentMethodController {
 
     @PostMapping("/paymentMethodCard")
     public RedirectView postCard(@ModelAttribute PaymentMethodModel model){
-        PaymentMethod paymentMethod = new PaymentMethod();
+        PaymentMethod paymentMethod = svc.get(model.getCode());
 
-        paymentMethod.setCode(model.getCode());
-        paymentMethod.setName(model.getName());
-        if (!model.getBankAccountCode().isEmpty()) {
-            BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
-            paymentMethod.setBankAccount(bankAccount);
+        if (paymentMethod == null) {
+            paymentMethod = new PaymentMethod();
+            paymentMethod.setCode(model.getCode());
+            paymentMethod.setName(model.getName());
+            if (!model.getBankAccountCode().isEmpty()) {
+                BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
+                paymentMethod.setBankAccount(bankAccount);
+            }
+    
+            svc.create(paymentMethod);
+        } else {
+            paymentMethod.setName(model.getName());
+            if (!model.getBankAccountCode().isEmpty()) {
+                BankAccount bankAccount = bankAccountSvc.get(model.getBankAccountCode());
+                paymentMethod.setBankAccount(bankAccount);
+            }
+
+            svc.update(model.getCode(), paymentMethod);
         }
-
-        svc.create(paymentMethod);
 
         return new RedirectView("/paymentMethodList");
     }
