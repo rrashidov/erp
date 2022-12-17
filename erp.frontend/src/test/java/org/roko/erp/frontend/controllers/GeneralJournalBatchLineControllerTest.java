@@ -38,7 +38,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class GeneralJournalBatchLineControllerTest {
 
-    private static final int BANK_ACCOUNTS_COUNT = 2;
+    // private static final int BANK_ACCOUNTS_COUNT = 2;
 
     private static final String TEST_BANK_ACCOUNT_CODE_1 = "test-bank-account-code-1";
     private static final String TEST_BANK_ACCOUNT_CODE_2 = "test-bank-account-code-2";
@@ -339,15 +339,15 @@ public class GeneralJournalBatchLineControllerTest {
         assertEquals(TEST_VENDOR_NAME_2, sources.get(1).getName());
     }
 
-    private void assertBankAccounts(List<GeneralJournalBatchLineSource> sources) {
-        assertEquals(BANK_ACCOUNTS_COUNT, sources.size());
+    // private void assertBankAccounts(List<GeneralJournalBatchLineSource> sources) {
+    //     assertEquals(BANK_ACCOUNTS_COUNT, sources.size());
 
-        assertEquals(TEST_BANK_ACCOUNT_CODE_1, sources.get(0).getCode());
-        assertEquals(TEST_BANK_ACCOUNT_CODE_2, sources.get(1).getCode());
+    //     assertEquals(TEST_BANK_ACCOUNT_CODE_1, sources.get(0).getCode());
+    //     assertEquals(TEST_BANK_ACCOUNT_CODE_2, sources.get(1).getCode());
 
-        assertEquals(TEST_BANK_ACCOUNT_NAME_1, sources.get(0).getName());
-        assertEquals(TEST_BANK_ACCOUNT_NAME_2, sources.get(1).getName());
-    }
+    //     assertEquals(TEST_BANK_ACCOUNT_NAME_1, sources.get(0).getName());
+    //     assertEquals(TEST_BANK_ACCOUNT_NAME_2, sources.get(1).getName());
+    // }
 
     private void assertCustomers(List<GeneralJournalBatchLineSource> sources) {
         assertEquals(CUSTOMERS_COUNT, sources.size());
