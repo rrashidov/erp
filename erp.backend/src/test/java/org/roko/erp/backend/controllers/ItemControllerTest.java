@@ -20,6 +20,9 @@ import org.roko.erp.backend.services.ItemLedgerEntryService;
 import org.roko.erp.backend.services.ItemService;
 
 import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.ItemLedgerEntryDTO;
+import org.roko.erp.dto.list.ItemLedgerEntryList;
+import org.roko.erp.dto.list.ItemList;
 import org.springframework.web.server.ResponseStatusException;
 
 public class ItemControllerTest {
@@ -32,6 +35,8 @@ public class ItemControllerTest {
     private static final double TEST_PURCHASE_PRICE = 34.56;
 
     private static final int TEST_PAGE = 12;
+
+    private static final int TEST_COUNT = 222;
 
     @Captor
     private ArgumentCaptor<Item> itemArgumentCaptor;
@@ -51,8 +56,11 @@ public class ItemControllerTest {
     @Mock
     private ItemLedgerEntryService itemLedgerEntrySvcMock;
 
-    private ItemController controller;
+    @Mock
+    private ItemLedgerEntryDTO itemLedgerEntryDtoMock;
     
+    private ItemController controller;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -66,6 +74,8 @@ public class ItemControllerTest {
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(itemMock));
         when(svcMock.get(TEST_CODE)).thenReturn(itemMock);
         when(svcMock.fromDTO(itemDtoMock)).thenReturn(itemMock);
+        when(svcMock.toDTO(itemMock)).thenReturn(itemDtoMock);
+        when(svcMock.count()).thenReturn(TEST_COUNT);
 
         when(itemDtoMock.getCode()).thenReturn(TEST_CODE);
         when(itemDtoMock.getName()).thenReturn(TEST_NAME);
@@ -73,34 +83,34 @@ public class ItemControllerTest {
         when(itemDtoMock.getPurchasePrice()).thenReturn(TEST_PURCHASE_PRICE);
 
         when(itemLedgerEntrySvcMock.list(itemMock, TEST_PAGE)).thenReturn(Arrays.asList(itemLedgerEntryMock));
+        when(itemLedgerEntrySvcMock.toDTO(itemLedgerEntryMock)).thenReturn(itemLedgerEntryDtoMock);
+        when(itemLedgerEntrySvcMock.count(itemMock)).thenReturn(TEST_COUNT);
 
         controller = new ItemController(svcMock, itemLedgerEntrySvcMock);
     }
 
     @Test
     public void list_delegatesToSvc(){
-        controller.list();
+        ItemList list = controller.list();
 
-        verify(svcMock).list();
-
-        verify(svcMock).toDTO(itemMock);
+        assertEquals(itemDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
     public void listWithPage_delegatesToSvc() {
-        controller.list(TEST_PAGE);
+        ItemList list = controller.list(TEST_PAGE);
 
-        verify(svcMock).list(TEST_PAGE);
-        verify(svcMock).toDTO(itemMock);
+        assertEquals(itemDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test
     public void listLedgerEntries_delegatesToSvc() {
-        controller.ledgerEntries(TEST_CODE, TEST_PAGE);
+        ItemLedgerEntryList list = controller.ledgerEntries(TEST_CODE, TEST_PAGE);
 
-        verify(svcMock).get(TEST_CODE);
-        verify(itemLedgerEntrySvcMock).list(itemMock, TEST_PAGE);
-        verify(itemLedgerEntrySvcMock).toDTO(itemLedgerEntryMock);
+        assertEquals(itemLedgerEntryDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
     }
 
     @Test

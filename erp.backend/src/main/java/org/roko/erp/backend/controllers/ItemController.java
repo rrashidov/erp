@@ -11,6 +11,8 @@ import org.roko.erp.backend.services.ItemLedgerEntryService;
 import org.roko.erp.backend.services.ItemService;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.ItemLedgerEntryDTO;
+import org.roko.erp.dto.list.ItemLedgerEntryList;
+import org.roko.erp.dto.list.ItemList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api/v1/items")
 public class ItemController {
-   
+
     private ItemService svc;
     private ItemLedgerEntryService itemLedgerEntrySvc;
 
@@ -34,20 +36,30 @@ public class ItemController {
     public ItemController(ItemService svc, ItemLedgerEntryService itemLedgerEntrySvc) {
         this.svc = svc;
         this.itemLedgerEntrySvc = itemLedgerEntrySvc;
-	}
+    }
 
     @GetMapping
-    public List<ItemDTO> list() {
-        return svc.list().stream()
+    public ItemList list() {
+        List<ItemDTO> data = svc.list().stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
+
+        ItemList list = new ItemList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/page/{page}")
-    public List<ItemDTO> list(@PathVariable("page") int page) {
-        return svc.list(page).stream()
+    public ItemList list(@PathVariable("page") int page) {
+        List<ItemDTO> data = svc.list(page).stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
+
+        ItemList list = new ItemList();
+        list.setData(data);
+        list.setCount(svc.count());
+        return list;
     }
 
     @GetMapping("/{code}")
@@ -62,7 +74,7 @@ public class ItemController {
     }
 
     @GetMapping("/{code}/ledgerentries/page/{page}")
-    public List<ItemLedgerEntryDTO> ledgerEntries(@PathVariable("code") String code, @PathVariable("page") int page) {
+    public ItemLedgerEntryList ledgerEntries(@PathVariable("code") String code, @PathVariable("page") int page) {
         Item item = svc.get(code);
 
         ItemLedgerEntry itemLedgerEntry = new ItemLedgerEntry();
@@ -73,9 +85,14 @@ public class ItemController {
         itemLedgerEntry.setDocumentCode("PPO" + System.currentTimeMillis());
         itemLedgerEntrySvc.create(itemLedgerEntry);
 
-        return itemLedgerEntrySvc.list(item, page).stream()
-            .map(x -> itemLedgerEntrySvc.toDTO(x))
-            .collect(Collectors.toList());
+        List<ItemLedgerEntryDTO> data = itemLedgerEntrySvc.list(item, page).stream()
+                .map(x -> itemLedgerEntrySvc.toDTO(x))
+                .collect(Collectors.toList());
+
+        ItemLedgerEntryList list = new ItemLedgerEntryList();
+        list.setData(data);
+        list.setCount(itemLedgerEntrySvc.count(item));
+        return list;
     }
 
     @PostMapping
@@ -86,7 +103,7 @@ public class ItemController {
     }
 
     @PutMapping("/{code}")
-    public String put(@PathVariable("code") String code, @RequestBody ItemDTO itemDTO){
+    public String put(@PathVariable("code") String code, @RequestBody ItemDTO itemDTO) {
         Item item = svc.fromDTO(itemDTO);
         svc.update(code, item);
         return item.getCode();
