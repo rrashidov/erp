@@ -1,22 +1,20 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.Item;
+import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.list.ItemList;
 
 public interface ItemService {
     
-    public void create(Item item);
+    public void create(ItemDTO item);
 
-    public void update(String id, Item item);
+    public void update(String id, ItemDTO item);
 
     public void delete(String id);
 
-    public Item get(String id);
+    public ItemDTO get(String id);
 
-    public List<Item> list();
+    public ItemList list();
 
-    public List<Item> list(int page);
+    public ItemList list(int page);
 
-    public int count();
 }

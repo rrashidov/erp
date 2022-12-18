@@ -1,8 +1,10 @@
 package org.roko.erp.frontend.controllers;
 
+import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.list.ItemLedgerEntryList;
+import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.Item;
 import org.roko.erp.frontend.services.ItemLedgerEntryService;
 import org.roko.erp.frontend.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +33,10 @@ public class ItemController {
 
     @GetMapping("/itemList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        model.addAttribute("items", svc.list(page));
+        ItemList itemList = svc.list(page);
+        PagingData generate = pagingSvc.generate("item", page, (int) itemList.getCount());
 
-        PagingData generate = pagingSvc.generate("item", page, svc.count());
-
+        model.addAttribute("items", itemList.getData());
         model.addAttribute("paging", generate);
 
         return "itemList.html";
@@ -43,13 +45,16 @@ public class ItemController {
     @GetMapping("/itemCard")
     public String card(@RequestParam(name = "code", required = false) String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        Item item = new Item();
+        ItemDTO item = new ItemDTO();
 
         if (code != null) {
             item = svc.get(code);
 
-            model.addAttribute("itemLedgerEntries", itemLedgerEntrySvc.list(item, page));
-            model.addAttribute("paging", pagingSvc.generate("itemCard", code, page, itemLedgerEntrySvc.count(item)));
+            ItemLedgerEntryList itemLedgerEntryList = itemLedgerEntrySvc.list(code, page);
+
+            model.addAttribute("itemLedgerEntries", itemLedgerEntryList.getData());
+            model.addAttribute("paging",
+                    pagingSvc.generate("itemCard", code, page, (int) itemLedgerEntryList.getCount()));
         }
 
         model.addAttribute("item", item);
@@ -58,23 +63,23 @@ public class ItemController {
     }
 
     @PostMapping("/itemCard")
-    public RedirectView postCard(@ModelAttribute Item item, Model model,
+    public RedirectView postCard(@ModelAttribute ItemDTO item, Model model,
             RedirectAttributes attributes) {
-        Item itemFromDB = svc.get(item.getCode());
+        ItemDTO itemFromDB = svc.get(item.getCode());
 
         if (itemFromDB == null) {
-            itemFromDB = new Item();
+            itemFromDB = new ItemDTO();
             itemFromDB.setCode(item.getCode());
             itemFromDB.setName(item.getName());
             itemFromDB.setSalesPrice(item.getSalesPrice());
             itemFromDB.setPurchasePrice(item.getPurchasePrice());
-    
+
             svc.create(itemFromDB);
         } else {
             itemFromDB.setName(item.getName());
             itemFromDB.setSalesPrice(item.getSalesPrice());
             itemFromDB.setPurchasePrice(item.getPurchasePrice());
-    
+
             svc.update(item.getCode(), itemFromDB);
         }
 

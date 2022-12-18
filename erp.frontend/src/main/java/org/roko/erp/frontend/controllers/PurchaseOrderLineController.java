@@ -60,7 +60,7 @@ public class PurchaseOrderLineController {
     @PostMapping("/purchaseOrderLineWizardFirstPage")
     public String postPurchaseOrderLineWizardFirstPage(@ModelAttribute PurchaseOrderLineModel purchaseOrderLineModel,
             Model model) {
-        Item item = itemSvc.get(purchaseOrderLineModel.getItemCode());
+        Item item = null;//itemSvc.get(purchaseOrderLineModel.getItemCode());
         
         purchaseOrderLineModel.setItemName(item.getName());
         purchaseOrderLineModel.setPrice(item.getPurchasePrice());
@@ -138,7 +138,7 @@ public class PurchaseOrderLineController {
 
         PurchaseOrderLine purchaseOrderLine = new PurchaseOrderLine();
         purchaseOrderLine.setPurchaseOrderLineId(purchaseOrderLineId);
-        purchaseOrderLine.setItem(itemSvc.get(purchaseOrderLineModel.getItemCode()));
+        //purchaseOrderLine.setItem(itemSvc.get(purchaseOrderLineModel.getItemCode()));
         purchaseOrderLine.setQuantity(purchaseOrderLineModel.getQuantity());
         purchaseOrderLine.setPrice(purchaseOrderLineModel.getPrice());
         purchaseOrderLine.setAmount(purchaseOrderLineModel.getAmount());
@@ -147,7 +147,7 @@ public class PurchaseOrderLineController {
     }
 
     private void fromModel(PurchaseOrderLine purchaseOrderLine, PurchaseOrderLineModel purchaseOrderLineModel) {
-        purchaseOrderLine.setItem(itemSvc.get(purchaseOrderLineModel.getItemCode()));
+        //purchaseOrderLine.setItem(itemSvc.get(purchaseOrderLineModel.getItemCode()));
         purchaseOrderLine.setQuantity(purchaseOrderLineModel.getQuantity());
         purchaseOrderLine.setPrice(purchaseOrderLineModel.getPrice());
         purchaseOrderLine.setAmount(purchaseOrderLineModel.getAmount());

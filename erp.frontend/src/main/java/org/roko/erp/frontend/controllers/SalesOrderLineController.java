@@ -63,7 +63,7 @@ public class SalesOrderLineController {
 
     @PostMapping("/salesOrderLineWizardFirstPage")
     public String postSalesOrderLineWizardFirstPage(@ModelAttribute SalesOrderLineModel salesOrderLine, Model model){
-        Item item = itemSvc.get(salesOrderLine.getItemCode());
+        Item item = null;//itemSvc.get(salesOrderLine.getItemCode());
 
         salesOrderLine.setItemName(item.getName());
         salesOrderLine.setPrice(item.getSalesPrice());
@@ -98,7 +98,7 @@ public class SalesOrderLineController {
     
             SalesOrderLine salesOrderLineToUpdate = salesOrderLineSvc.get(salesOrderLineId);
 
-            salesOrderLineToUpdate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
+            //salesOrderLineToUpdate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
             salesOrderLineToUpdate.setQuantity(salesOrderLine.getQuantity());
             salesOrderLineToUpdate.setPrice(salesOrderLine.getPrice());
             salesOrderLineToUpdate.setAmount(salesOrderLine.getAmount());
@@ -114,7 +114,7 @@ public class SalesOrderLineController {
     
             SalesOrderLine salesOrderLineToCreate = new SalesOrderLine();
             salesOrderLineToCreate.setSalesOrderLineId(salesOrderLineId);
-            salesOrderLineToCreate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
+            //salesOrderLineToCreate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
             salesOrderLineToCreate.setQuantity(salesOrderLine.getQuantity());
             salesOrderLineToCreate.setPrice(salesOrderLine.getPrice());
             salesOrderLineToCreate.setAmount(salesOrderLine.getAmount());

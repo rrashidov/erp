@@ -58,7 +58,7 @@ public class SalesCreditMemoLineController {
     @PostMapping("/salesCreditMemoLineWizardFirstPage")
     public String postSalesCreditMemoLineWizardFirstPage(
             @ModelAttribute SalesCreditMemoLineModel salesCreditMemoLineModel, Model model) {
-        Item item = itemSvc.get(salesCreditMemoLineModel.getItemCode());
+        Item item = null;//itemSvc.get(salesCreditMemoLineModel.getItemCode());
 
         salesCreditMemoLineModel.setItemName(item.getName());
         salesCreditMemoLineModel.setPrice(item.getSalesPrice());
@@ -130,7 +130,7 @@ public class SalesCreditMemoLineController {
 
         SalesCreditMemoLine salesCreditMemoLine = new SalesCreditMemoLine();        
         salesCreditMemoLine.setSalesCreditMemoLineId(salesCreditMemoLineId);
-        salesCreditMemoLine.setItem(itemSvc.get(salesCreditMemoLineModel.getItemCode()));
+        //salesCreditMemoLine.setItem(itemSvc.get(salesCreditMemoLineModel.getItemCode()));
         salesCreditMemoLine.setQuantity(salesCreditMemoLineModel.getQuantity());
         salesCreditMemoLine.setPrice(salesCreditMemoLineModel.getPrice());
         salesCreditMemoLine.setAmount(salesCreditMemoLineModel.getAmount());
@@ -145,7 +145,7 @@ public class SalesCreditMemoLineController {
 
         SalesCreditMemoLine salesCreditMemoLine = svc.get(salesCreditMemoLineId);
 
-        salesCreditMemoLine.setItem(itemSvc.get(salesCreditMemoLineModel.getItemCode()));
+        //salesCreditMemoLine.setItem(itemSvc.get(salesCreditMemoLineModel.getItemCode()));
         salesCreditMemoLine.setQuantity(salesCreditMemoLineModel.getQuantity());
         salesCreditMemoLine.setPrice(salesCreditMemoLineModel.getPrice());
         salesCreditMemoLine.setAmount(salesCreditMemoLineModel.getAmount());

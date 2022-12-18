@@ -1,13 +1,8 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,15 +10,21 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
+import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.frontend.model.Item;
 import org.roko.erp.frontend.repositories.ItemRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 public class ItemServiceTest {
 
     private static final int TEST_PAGE = 2;
+
+    private static final String NON_EXISTING_ITEM_ID = "non-existing-item-id";
 
     private static final String TEST_ID = "test-id";
 
@@ -34,7 +35,7 @@ public class ItemServiceTest {
     private Item itemFromDBMock;
 
     @Mock
-    private Item itemMock;
+    private ItemDTO itemMock;
 
     @Mock
     private Item itemMock1;
@@ -48,86 +49,67 @@ public class ItemServiceTest {
     @Mock
     private ItemRepository repoMock;
 
+    @Mock
+    private RestTemplate restTemplateMock;
+
     private ItemService svc;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(pageMock.toList()).thenReturn(Arrays.asList(itemMock, itemMock1, itemMock2));
-
-        when(repoMock.findById(TEST_ID)).thenReturn(Optional.of(itemFromDBMock));
-        when(repoMock.findAll()).thenReturn(Arrays.asList(itemMock, itemMock1, itemMock2));
-        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new ItemServiceImpl(repoMock);
+        svc = new ItemServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo() {
+    public void create_callsBackend() {
         svc.create(itemMock);
 
-        verify(repoMock).save(itemMock);
+        verify(restTemplateMock).postForObject("/api/v1/items", itemMock, String.class);
     }
 
     @Test 
-    public void update_delegatesToRepo(){
+    public void update_callsBackend(){
         svc.update(TEST_ID, itemMock);
 
-        verify(repoMock).save(itemFromDBMock);
+        verify(restTemplateMock).put("/api/v1/items/{code}", itemMock, TEST_ID);
     }
 
     @Test 
-    public void delete_delegatesToRepo(){
+    public void delete_callsBackend(){
         svc.delete(TEST_ID);
 
-        verify(repoMock).findById(TEST_ID);
-        verify(repoMock).delete(itemFromDBMock);
+        verify(restTemplateMock).delete("/api/v1/items/{code}", TEST_ID);
     }
 
     @Test 
-    public void get_delegatesToRepo(){
-        Item retrievedItem = svc.get(TEST_ID);
+    public void get_callsBackend(){
+        svc.get(TEST_ID);
 
-        assertEquals(itemFromDBMock, retrievedItem);
-
-        verify(repoMock).inventory(itemFromDBMock);
+        verify(restTemplateMock).getForObject("/api/v1/items/{code}", ItemDTO.class, TEST_ID);
     }
 
     @Test
     public void getReturnsNull_whenItemNotFound(){
-        Item item = svc.get("non-existing-item-id");
+        when(restTemplateMock.getForObject("/api/v1/items/{code}", ItemDTO.class, NON_EXISTING_ITEM_ID)).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        ItemDTO item = svc.get(NON_EXISTING_ITEM_ID);
 
         assertNull(item);
     }
 
     @Test 
-    public void list_delegatesToRepo(){
+    public void list_callsBackend(){
         svc.list();
 
-        verify(repoMock).findAll();
-
-        verify(repoMock).inventory(itemMock);
-        verify(repoMock).inventory(itemMock1);
-        verify(repoMock).inventory(itemMock2);
+        verify(restTemplateMock).getForObject("/api/v1/items", ItemList.class);
     }
 
     @Test
     public void listWithPage_delegatesToRepo() {
         svc.list(TEST_PAGE);
 
-        verify(repoMock).findAll(pageAbleArgumentCaptor.capture());
-
-        Pageable pageable = pageAbleArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
+        verify(restTemplateMock).getForObject("/api/v1/items/page/{page}", ItemList.class, TEST_PAGE);
     }
 
-    @Test
-    public void count_delegatesToRepo(){
-        svc.count();
-
-        verify(repoMock).count();
-    }
 }

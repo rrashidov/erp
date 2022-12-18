@@ -1,11 +1,11 @@
 package org.roko.erp.frontend.components;
 
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.frontend.model.CodeSerie;
 import org.roko.erp.frontend.model.Customer;
 import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.model.Item;
 import org.roko.erp.frontend.model.Setup;
 import org.roko.erp.frontend.model.Vendor;
 import org.roko.erp.frontend.services.BankAccountService;
@@ -273,7 +273,7 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
 
   private void initItems() {
     for (int i = 0; i < 100; i++) {
-      Item i1 = new Item();
+      ItemDTO i1 = new ItemDTO();
       i1.setCode("ITEM" + i);
       i1.setName("Test item " + i);
       i1.setSalesPrice(1.0 * i);

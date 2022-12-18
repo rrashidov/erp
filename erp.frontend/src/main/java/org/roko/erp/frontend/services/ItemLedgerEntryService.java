@@ -1,18 +1,9 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.Item;
-import org.roko.erp.frontend.model.ItemLedgerEntry;
+import org.roko.erp.dto.list.ItemLedgerEntryList;
 
 public interface ItemLedgerEntryService {
 
-    public void create(ItemLedgerEntry itemLedgerEntry);
-
-    public List<ItemLedgerEntry> list(Item item);
-
-    public List<ItemLedgerEntry> list(Item item, int page);
-
-    public int count(Item item);
+    public ItemLedgerEntryList list(String itemCode, int page);
     
 }

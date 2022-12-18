@@ -52,7 +52,7 @@ public class PurchaseCreditMemoLineController {
             toModel(purchaseCreditMemoLine, purchaseCreditMemoLineModel);
         }
 
-        List<Item> items = itemSvc.list();
+        List<Item> items = null;//itemSvc.list();
 
         model.addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModel);
         model.addAttribute("items", items);
@@ -63,7 +63,7 @@ public class PurchaseCreditMemoLineController {
     @PostMapping("/purchaseCreditMemoLineWizardFirstPage")
     public String postPurchaseCreditMemoLineWizardFirstPage(
             @ModelAttribute PurchaseCreditMemoLineModel purchaseCreditMemoLineModel, Model model) {
-        Item item = itemSvc.get(purchaseCreditMemoLineModel.getItemCode());
+        Item item = null;//itemSvc.get(purchaseCreditMemoLineModel.getItemCode());
 
         purchaseCreditMemoLineModel.setItemName(item.getName());
         purchaseCreditMemoLineModel.setPrice(item.getPurchasePrice());
@@ -140,7 +140,7 @@ public class PurchaseCreditMemoLineController {
    
         PurchaseCreditMemoLine purchaseCreditMemoLine = new PurchaseCreditMemoLine();
         purchaseCreditMemoLine.setPurchaseCreditMemoLineId(purchaseCreditMemoLineId);
-        purchaseCreditMemoLine.setItem(itemSvc.get(purchaseCreditMemoLineModel.getItemCode()));
+        //purchaseCreditMemoLine.setItem(itemSvc.get(purchaseCreditMemoLineModel.getItemCode()));
         purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
         purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
         purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
@@ -156,7 +156,7 @@ public class PurchaseCreditMemoLineController {
    
         PurchaseCreditMemoLine purchaseCreditMemoLine = svc.get(purchaseCreditMemoLineId);
 
-        purchaseCreditMemoLine.setItem(itemSvc.get(purchaseCreditMemoLineModel.getItemCode()));
+        //purchaseCreditMemoLine.setItem(itemSvc.get(purchaseCreditMemoLineModel.getItemCode()));
         purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
         purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
         purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
