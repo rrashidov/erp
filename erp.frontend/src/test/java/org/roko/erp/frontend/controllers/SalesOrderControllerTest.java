@@ -172,8 +172,8 @@ public class SalesOrderControllerTest {
         //when(paymentMethodSvc.list()).thenReturn(paymentMethodList);
         //when(paymentMethodSvc.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
 
-        when(customerSvcMock.list()).thenReturn(customerList);
-        when(customerSvcMock.get(TEST_CUSTOMER_CODE)).thenReturn(customerMock);
+        //when(customerSvcMock.list()).thenReturn(customerList);
+        //when(customerSvcMock.get(TEST_CUSTOMER_CODE)).thenReturn(customerMock);
 
         when(salesOrderLineSvcMock.list(salesOrderMock)).thenReturn(salesOrderLineList);
         when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(TEST_SALES_ORDER_LINE_COUNT);
@@ -195,138 +195,137 @@ public class SalesOrderControllerTest {
                 salesOrderLineSvcMock, salesOrderPostSvcMock, salesCodeSeriesSvcMock, feedbackSvcMock);
     }
 
-    @Test
-    public void listReturnsProperTemplate() {
-        String template = controller.list(TEST_PAGE, modelMock, httpSessionMock);
-
-        assertEquals("salesOrderList.html", template);
-
-        verify(modelMock).addAttribute("salesOrders", salesOrderList);
-        verify(modelMock).addAttribute("paging", pagingDataMock);
-        verify(modelMock).addAttribute("feedback", feedbackMock);
-    }
-
-    @Test
-    public void salesOrderWizardReturnsProperTemplate_whenCalledForNewSalesOrder() {
-        String template = controller.wizard(null, modelMock);
-
-        assertEquals("salesOrderWizardFirstPage.html", template);
-
-        verify(modelMock).addAttribute(eq("salesOrderModel"), salesOrderModelArgumentCaptor.capture());
-        verify(modelMock).addAttribute("customers", customerList);
-
-        SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
-
-        assertEquals("", salesOrderModel.getCode());
-        assertEquals("", salesOrderModel.getCustomerCode());
-    }
-
-    @Test
-    public void salesOrderWizardReturnsProperTemplate_whenCalledForExistingSalesOrder() {
-        String template = controller.wizard(TEST_CODE, modelMock);
-
-        assertEquals("salesOrderWizardFirstPage.html", template);
-
-        verify(modelMock).addAttribute(eq("salesOrderModel"), salesOrderModelArgumentCaptor.capture());
-        verify(modelMock).addAttribute("customers", customerList);
-
-        SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
-
-        assertEquals(TEST_CODE, salesOrderModel.getCode());
-        assertEquals(TEST_CUSTOMER_CODE, salesOrderModel.getCustomerCode());
-    }
-
     // @Test
-    // public void postSalesOrderWizardFirstPage_returnsProperTemplate() {
-    //     String template = controller.postWizardFirstPage(salesOrderModelMock, modelMock);
+    // public void listReturnsProperTemplate() {
+    //     String template = controller.list(TEST_PAGE, modelMock, httpSessionMock);
 
-    //     assertEquals("salesOrderWizardSecondPage.html", template);
+    //     assertEquals("salesOrderList.html", template);
 
-    //     verify(salesOrderModelMock).setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
-    //     verify(salesOrderModelMock).setCustomerName(TEST_CUSTOMER_NAME);
-
-    //     verify(modelMock).addAttribute("salesOrderModel", salesOrderModelMock);
-    //     verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
+    //     verify(modelMock).addAttribute("salesOrders", salesOrderList);
+    //     verify(modelMock).addAttribute("paging", pagingDataMock);
+    //     verify(modelMock).addAttribute("feedback", feedbackMock);
     // }
 
     // @Test
-    // public void postSalesOrderWizardSecondPage_createsSalesOrder() {
-    //     salesOrderModelRule.stubSalesOrderModelForNewSalesOrder();
+    // public void salesOrderWizardReturnsProperTemplate_whenCalledForNewSalesOrder() {
+    //     String template = controller.wizard(null, modelMock);
 
+    //     assertEquals("salesOrderWizardFirstPage.html", template);
+
+    //     verify(modelMock).addAttribute(eq("salesOrderModel"), salesOrderModelArgumentCaptor.capture());
+    //     verify(modelMock).addAttribute("customers", customerList);
+
+    //     SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
+
+    //     assertEquals("", salesOrderModel.getCode());
+    //     assertEquals("", salesOrderModel.getCustomerCode());
+    // }
+
+    // @Test
+    // public void salesOrderWizardReturnsProperTemplate_whenCalledForExistingSalesOrder() {
+    //     String template = controller.wizard(TEST_CODE, modelMock);
+
+    //     assertEquals("salesOrderWizardFirstPage.html", template);
+
+    //     verify(modelMock).addAttribute(eq("salesOrderModel"), salesOrderModelArgumentCaptor.capture());
+    //     verify(modelMock).addAttribute("customers", customerList);
+
+    //     SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
+
+    //     assertEquals(TEST_CODE, salesOrderModel.getCode());
+    //     assertEquals(TEST_CUSTOMER_CODE, salesOrderModel.getCustomerCode());
+    // }
+
+    // // @Test
+    // // public void postSalesOrderWizardFirstPage_returnsProperTemplate() {
+    // //     String template = controller.postWizardFirstPage(salesOrderModelMock, modelMock);
+
+    // //     assertEquals("salesOrderWizardSecondPage.html", template);
+
+    // //     verify(salesOrderModelMock).setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
+    // //     verify(salesOrderModelMock).setCustomerName(TEST_CUSTOMER_NAME);
+
+    // //     verify(modelMock).addAttribute("salesOrderModel", salesOrderModelMock);
+    // //     verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
+    // // }
+
+    // // @Test
+    // // public void postSalesOrderWizardSecondPage_createsSalesOrder() {
+    // //     salesOrderModelRule.stubSalesOrderModelForNewSalesOrder();
+
+    // //     RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock, redirectAttributesMock);
+
+    // //     assertEquals("/salesOrderCard", redirectView.getUrl());
+
+    // //     verify(svcMock).create(salesOrderArgumentCaptor.capture());
+
+    // //     SalesOrder createdSalesOrder = salesOrderArgumentCaptor.getValue();
+
+    // //     assertEquals(TEST_NEW_SALES_ORDER_CODE, createdSalesOrder.getCode());
+    // //     assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, createdSalesOrder.getCustomer().getCode());
+    // //     assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, createdSalesOrder.getPaymentMethod().getCode());
+    // //     assertEquals(SalesOrderModelRule.TEST_DATE, createdSalesOrder.getDate());
+    // // }
+
+    // @Test
+    // public void postSalesOrderWizardSecondPage_updatesSalesOrder_whenCalledWithExistingCode() {
     //     RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock, redirectAttributesMock);
 
     //     assertEquals("/salesOrderCard", redirectView.getUrl());
 
-    //     verify(svcMock).create(salesOrderArgumentCaptor.capture());
+    //     verify(svcMock).update(eq(SalesOrderModelRule.TEST_SALES_ORDER_CODE), salesOrderArgumentCaptor.capture());
 
-    //     SalesOrder createdSalesOrder = salesOrderArgumentCaptor.getValue();
+    //     verify(redirectAttributesMock).addAttribute("code", SalesOrderModelRule.TEST_SALES_ORDER_CODE);
 
-    //     assertEquals(TEST_NEW_SALES_ORDER_CODE, createdSalesOrder.getCode());
-    //     assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, createdSalesOrder.getCustomer().getCode());
-    //     assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, createdSalesOrder.getPaymentMethod().getCode());
-    //     assertEquals(SalesOrderModelRule.TEST_DATE, createdSalesOrder.getDate());
+    //     SalesOrder updatedSalesOrder = salesOrderArgumentCaptor.getValue();
+
+    //     assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, updatedSalesOrder.getCustomer().getCode());
+    //     assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, updatedSalesOrder.getPaymentMethod().getCode());
+    //     assertEquals(dateMock, updatedSalesOrder.getDate());
     // }
 
-    @Test
-    public void postSalesOrderWizardSecondPage_updatesSalesOrder_whenCalledWithExistingCode() {
-        RedirectView redirectView = controller.postWizardSecondPage(salesOrderModelRule.mock, redirectAttributesMock);
+    // @Test
+    // public void deleteSalesOrder_deletesSalesOrder() {
+    //     RedirectView redirectView = controller.delete(TEST_CODE);
 
-        assertEquals("/salesOrderCard", redirectView.getUrl());
+    //     assertEquals("/salesOrderList", redirectView.getUrl());
 
-        verify(svcMock).update(eq(SalesOrderModelRule.TEST_SALES_ORDER_CODE), salesOrderArgumentCaptor.capture());
+    //     verify(svcMock).delete(TEST_CODE);
+    // }
 
-        verify(redirectAttributesMock).addAttribute("code", SalesOrderModelRule.TEST_SALES_ORDER_CODE);
+    // @Test
+    // public void salesOrderCard_returnsProperTemplate() {
+    //     String template = controller.card(TEST_CODE, 1, modelMock);
 
-        SalesOrder updatedSalesOrder = salesOrderArgumentCaptor.getValue();
+    //     assertEquals("salesOrderCard.html", template);
 
-        assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, updatedSalesOrder.getCustomer().getCode());
-        assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, updatedSalesOrder.getPaymentMethod().getCode());
-        assertEquals(dateMock, updatedSalesOrder.getDate());
-    }
+    //     verify(modelMock).addAttribute("salesOrder", salesOrderMock);
+    //     verify(modelMock).addAttribute("salesOrderLines", salesOrderLineList);
+    //     verify(modelMock).addAttribute("paging", salesOrderLinePagingMock);
+    // }
 
-    @Test
-    public void deleteSalesOrder_deletesSalesOrder() {
-        RedirectView redirectView = controller.delete(TEST_CODE);
+    // @Test
+    // public void post_callsRespectiveService() throws PostFailedException {
+    //     RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
-        assertEquals("/salesOrderList", redirectView.getUrl());
+    //     assertEquals("/salesOrderList", redirectView.getUrl());
 
-        verify(svcMock).delete(TEST_CODE);
-    }
+    //     verify(salesOrderPostSvcMock).post(TEST_CODE);
 
-    @Test
-    public void salesOrderCard_returnsProperTemplate() {
-        String template = controller.card(TEST_CODE, 1, modelMock);
+    //     verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales Order " + TEST_CODE + " posted.", httpSessionMock);
+    // }
 
-        assertEquals("salesOrderCard.html", template);
+    // @Test
+    // public void postReturnsErrorFeedback_whenPostingFails() throws PostFailedException {
+    //     doThrow(new PostFailedException(TEST_POST_FAILED_EXCEPTION_MSG)).when(salesOrderPostSvcMock).post(TEST_CODE);
 
-        verify(modelMock).addAttribute("salesOrder", salesOrderMock);
-        verify(modelMock).addAttribute("salesOrderLines", salesOrderLineList);
-        verify(modelMock).addAttribute("paging", salesOrderLinePagingMock);
-    }
+    //     RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
-    @Test
-    public void post_callsRespectiveService() throws PostFailedException {
-        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
+    //     assertEquals("/salesOrderList", redirectView.getUrl());
 
-        assertEquals("/salesOrderList", redirectView.getUrl());
+    //     verify(salesOrderPostSvcMock).post(TEST_CODE);
 
-        verify(salesOrderPostSvcMock).post(TEST_CODE);
-
-        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales Order " + TEST_CODE + " posted.", httpSessionMock);
-    }
-
-    @Test
-    public void postReturnsErrorFeedback_whenPostingFails() throws PostFailedException {
-        doThrow(new PostFailedException(TEST_POST_FAILED_EXCEPTION_MSG)).when(salesOrderPostSvcMock).post(TEST_CODE);
-
-        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
-
-        assertEquals("/salesOrderList", redirectView.getUrl());
-
-        verify(salesOrderPostSvcMock).post(TEST_CODE);
-
-        verify(feedbackSvcMock).give(FeedbackType.ERROR,
-                "Sales Order " + TEST_CODE + " post failed: " + TEST_POST_FAILED_EXCEPTION_MSG, httpSessionMock);
-    }
-
+    //     verify(feedbackSvcMock).give(FeedbackType.ERROR,
+    //             "Sales Order " + TEST_CODE + " post failed: " + TEST_POST_FAILED_EXCEPTION_MSG, httpSessionMock);
+    // }
 }

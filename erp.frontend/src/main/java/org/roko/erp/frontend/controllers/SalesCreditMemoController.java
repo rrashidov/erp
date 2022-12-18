@@ -81,7 +81,7 @@ public class SalesCreditMemoController {
             toModel(salesCreditMemo, salesCreditMemoModel);
         }
 
-        List<Customer> customers = customerSvc.list();
+        List<Customer> customers = null;//customerSvc.list();
 
         model.addAttribute("salesCreditMemoModel", salesCreditMemoModel);
         model.addAttribute("customers", customers);
@@ -91,7 +91,7 @@ public class SalesCreditMemoController {
 
     @PostMapping("/salesCreditMemoWizardFirstPage")
     public String postWizardFirstPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel, Model model) {
-        Customer customer = customerSvc.get(salesCreditMemoModel.getCustomerCode());
+        Customer customer = null;//customerSvc.get(salesCreditMemoModel.getCustomerCode());
 
         salesCreditMemoModel.setCustomerName(customer.getName());
         salesCreditMemoModel.setDate(new Date());
@@ -156,7 +156,7 @@ public class SalesCreditMemoController {
     private SalesCreditMemo createSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
         SalesCreditMemo salesCreditMemo = new SalesCreditMemo();
         salesCreditMemo.setCode(salesCodeSeriesSvc.creditMemoCode());
-        salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
+        //salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
         //salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
 
@@ -167,7 +167,7 @@ public class SalesCreditMemoController {
 
     private void updateSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
         SalesCreditMemo salesCreditMemo = svc.get(salesCreditMemoModel.getCode());
-        salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
+        //salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
         //salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
 

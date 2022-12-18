@@ -1,88 +1,54 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.Customer;
-import org.roko.erp.frontend.repositories.CustomerRepository;
+import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.list.CustomerList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class CustomerServiceImpl implements CustomerService {
 
-    private CustomerRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository repo) {
-        this.repo = repo;
+    public CustomerServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(Customer customer) {
-        repo.save(customer);
+    public void create(CustomerDTO customer) {
+        restTemplate.postForObject("/api/v1/customers", customer, String.class);
     }
 
     @Override
-    public void update(String code, Customer customer) {
-        Customer customerFromDB = repo.findById(code).get();
-
-        transferFields(customerFromDB, customer);
-
-        repo.save(customerFromDB);
+    public void update(String code, CustomerDTO customer) {
+        restTemplate.put("/api/v1/customers/{code}", customer, code);
     }
 
     @Override
     public void delete(String code) {
-        Customer customer = repo.findById(code).get();
-
-        repo.delete(customer);
+        restTemplate.delete("/api/v1/customers/{code}", code);
     }
 
     @Override
-    public Customer get(String code) {
-        Optional<Customer> customerOptional = repo.findById(code);
-
-        if (customerOptional.isPresent()) {
-            Customer customer = customerOptional.get();
-            customer.setBalance(repo.balance(customer));
-            return customer;
+    public CustomerDTO get(String code) {
+        try {
+            return restTemplate.getForObject("/api/v1/customers/{code}", CustomerDTO.class, code);
+        } catch (HttpClientErrorException e) {
+            return null;
         }
-
-        return null;
     }
 
     @Override
-    public List<Customer> list() {
-        List<Customer> customers = repo.findAll();
-        customers.stream()
-                .forEach(c -> {
-                    c.setBalance(repo.balance(c));
-                });
-        return customers;
+    public CustomerList list() {
+        return restTemplate.getForObject("/api/v1/customers", CustomerList.class);
     }
 
     @Override
-    public List<Customer> list(int page) {
-        List<Customer> customers = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-        customers.stream()
-                .forEach(c -> {
-                    c.setBalance(repo.balance(c));
-                });
-        return customers;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-
-    private void transferFields(Customer target, Customer source) {
-        target.setName(source.getName());
-        target.setAddress(source.getAddress());
-        target.setPaymentMethod(source.getPaymentMethod());
+    public CustomerList list(int page) {
+        return restTemplate.getForObject("/api/v1/customers/page/{page}", CustomerList.class, page);
     }
 
 }

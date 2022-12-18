@@ -1,10 +1,10 @@
 package org.roko.erp.frontend.components;
 
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.frontend.model.CodeSerie;
-import org.roko.erp.frontend.model.Customer;
 import org.roko.erp.frontend.model.GeneralJournalBatch;
 import org.roko.erp.frontend.model.Setup;
 import org.roko.erp.frontend.model.Vendor;
@@ -93,28 +93,28 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     initBulkGeneralJournalBatches();
 
     // init customers
-    Customer c1 = new Customer();
+    CustomerDTO c1 = new CustomerDTO();
     c1.setCode("CUST01");
     c1.setName("Customer 01");
     c1.setAddress("Test address");
-    //c1.setPaymentMethod(pm01);
+    c1.setPaymentMethodCode("PM01");
     customerService.create(c1);
 
-    Customer c2 = new Customer();
+    CustomerDTO c2 = new CustomerDTO();
     c2.setCode("CUST02");
     c2.setName("Customer 02");
     c2.setAddress("Test address");
-    //c2.setPaymentMethod(pm02);
+    c2.setPaymentMethodCode("PM02");
     customerService.create(c2);
 
-    Customer c3 = new Customer();
+    CustomerDTO c3 = new CustomerDTO();
     c3.setCode("CUST03");
     c3.setName("Customer 03");
     c3.setAddress("Test address");
-    //c3.setPaymentMethod(pm03);
+    c3.setPaymentMethodCode("PM03");
     customerService.create(c3);
 
-    //initBulkCustomers(pm03);
+    initBulkCustomers("PM03");
 
     // init vendors
     Vendor v1 = new Vendor();
@@ -232,16 +232,16 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
   //   }
   // }
 
-  // private void initBulkCustomers(PaymentMethod pm01) {
-  //   for (int i = 0; i < 100; i++) {
-  //     Customer c1 = new Customer();
-  //     c1.setCode("CUST00" + i);
-  //     c1.setName("Customer " + i);
-  //     c1.setAddress("Test address");
-  //     c1.setPaymentMethod(pm01);
-  //     customerService.create(c1);
-  //   }
-  // }
+  private void initBulkCustomers(String pmCode) {
+    for (int i = 0; i < 100; i++) {
+      CustomerDTO c1 = new CustomerDTO();
+      c1.setCode("CUST00" + i);
+      c1.setName("Customer " + i);
+      c1.setAddress("Test address");
+      c1.setPaymentMethodCode(pmCode);
+      customerService.create(c1);
+    }
+  }
 
   private void initBulkGeneralJournalBatches() {
     for (int i = 0; i < 110; i++) {

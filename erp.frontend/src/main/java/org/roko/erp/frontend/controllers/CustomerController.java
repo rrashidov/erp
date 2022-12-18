@@ -1,11 +1,12 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
+import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.list.CustomerLedgerEntryList;
+import org.roko.erp.dto.list.CustomerList;
+import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.frontend.controllers.model.CustomerModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.Customer;
 import org.roko.erp.frontend.services.CustomerLedgerEntryService;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.PaymentMethodService;
@@ -41,11 +42,12 @@ public class CustomerController {
 
     @GetMapping("/customerList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<Customer> customerList = svc.list(page);
-        PagingData pagingData = pagingSvc.generate(CUSTOMER_OBJECT_NAME, page, svc.count());
+        CustomerList customerList = svc.list(page);
+        
+        PagingData pagingData = pagingSvc.generate(CUSTOMER_OBJECT_NAME, page, (int) customerList.getCount());
 
         model.addAttribute(MODEL_ATTR_PAGING, pagingData);
-        model.addAttribute(MODEL_ATTR_CUSTOMERS, customerList);
+        model.addAttribute(MODEL_ATTR_CUSTOMERS, customerList.getData());
 
         return "customerList.html";
     }
@@ -57,29 +59,33 @@ public class CustomerController {
         CustomerModel customerModel = new CustomerModel();
 
         if (code != null) {
-            Customer customer = svc.get(code);
+            CustomerDTO customer = svc.get(code);
             customerModel.setCode(customer.getCode());
             customerModel.setName(customer.getName());
             customerModel.setAddress(customer.getAddress());
-            customerModel.setPaymentMethodCode(customer.getPaymentMethod().getCode());
+            customerModel.setPaymentMethodCode(customer.getPaymentMethodCode());
 
-            model.addAttribute("customerLedgerEntries", customerLedgerEntrySvc.findFor(customer, page));
+            CustomerLedgerEntryList customerLedgerEntryList = customerLedgerEntrySvc.list(customer.getCode(), page);
+
+            model.addAttribute("customerLedgerEntries", customerLedgerEntryList.getData());
             model.addAttribute("paging",
-                    pagingSvc.generate("customerCard", code, page, customerLedgerEntrySvc.count(customer)));
+                    pagingSvc.generate("customerCard", code, page, (int) customerLedgerEntryList.getCount()));
         }
 
+        PaymentMethodList paymentMethodList = paymentMethodSvc.list();
+
         model.addAttribute("customer", customerModel);
-        model.addAttribute("paymentMethods", paymentMethodSvc.list());
+        model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "customerCard.html";
     }
 
     @PostMapping("/customerCard")
     public RedirectView post(@ModelAttribute CustomerModel customerModel) {
-        Customer customer = svc.get(customerModel.getCode());
+        CustomerDTO customer = svc.get(customerModel.getCode());
 
         if (customer == null){
-            customer = new Customer();
+            customer = new CustomerDTO();
             customer.setCode(customerModel.getCode());
             transferFields(customerModel, customer);
             svc.create(customer);
@@ -98,11 +104,11 @@ public class CustomerController {
         return new RedirectView("/customerList");
     }
 
-    private void transferFields(CustomerModel customerModel, Customer customer) {
+    private void transferFields(CustomerModel customerModel, CustomerDTO customer) {
         
         customer.setName(customerModel.getName());
         customer.setAddress(customerModel.getAddress());
-        //customer.setPaymentMethod(paymentMethodSvc.get(customerModel.getPaymentMethodCode()));
+        customer.setPaymentMethodCode(customerModel.getPaymentMethodCode());
     }
 
 }

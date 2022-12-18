@@ -211,14 +211,14 @@ public class GeneralJournalBatchLineController {
     }
 
     private void addCustomers(List<GeneralJournalBatchLineSource> sources) {
-        sources.addAll(customerSvc.list().stream()
-                .map(c -> {
-                    GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
-                    s.setCode(c.getCode());
-                    s.setName(c.getName());
-                    return s;
-                })
-                .collect(Collectors.toList()));
+        // sources.addAll(customerSvc.list().stream()
+        //         .map(c -> {
+        //             GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
+        //             s.setCode(c.getCode());
+        //             s.setName(c.getName());
+        //             return s;
+        //         })
+        //         .collect(Collectors.toList()));
     }
 
     private void addBankAccounts(List<GeneralJournalBatchLineSource> sources) {

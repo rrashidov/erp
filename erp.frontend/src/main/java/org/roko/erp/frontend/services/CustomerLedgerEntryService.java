@@ -1,17 +1,9 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.Customer;
-import org.roko.erp.frontend.model.CustomerLedgerEntry;
+import org.roko.erp.dto.list.CustomerLedgerEntryList;
 
 public interface CustomerLedgerEntryService {
     
-    public void create(CustomerLedgerEntry customerLedgerEntry);
+    public CustomerLedgerEntryList list(String customerCode, int page);
 
-    public List<CustomerLedgerEntry> findFor(Customer customer);
-
-    public List<CustomerLedgerEntry> findFor(Customer customer, int page);
-
-    public int count(Customer customer);
 }

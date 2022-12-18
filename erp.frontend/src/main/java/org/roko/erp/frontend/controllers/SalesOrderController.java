@@ -87,7 +87,7 @@ public class SalesOrderController {
 
     @PostMapping("/salesOrderWizardFirstPage")
     public String postWizardFirstPage(@ModelAttribute SalesOrderModel salesOrderModel, Model model) {
-        Customer customer = customerSvc.get(salesOrderModel.getCustomerCode());
+        Customer customer = null;//customerSvc.get(salesOrderModel.getCustomerCode());
 
         salesOrderModel.setCustomerName(customer.getName());
         salesOrderModel.setDate(new Date());
@@ -157,7 +157,7 @@ public class SalesOrderController {
     private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {
         SalesOrder salesOrder = new SalesOrder();
         salesOrder.setCode(salesCodeSeriesSvc.orderCode());
-        salesOrder.setCustomer(customerSvc.get(salesOrderModelMock.getCustomerCode()));
+        //salesOrder.setCustomer(customerSvc.get(salesOrderModelMock.getCustomerCode()));
         salesOrder.setDate(salesOrderModelMock.getDate());
         //salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModelMock.getPaymentMethodCode()));
         return salesOrder;
@@ -171,7 +171,7 @@ public class SalesOrderController {
     }
 
     private void fromModel(SalesOrder salesOrder, SalesOrderModel salesOrderModel) {
-        salesOrder.setCustomer(customerSvc.get(salesOrderModel.getCustomerCode()));
+        //salesOrder.setCustomer(customerSvc.get(salesOrderModel.getCustomerCode()));
         salesOrder.setDate(salesOrderModel.getDate());
         //salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModel.getPaymentMethodCode()));
     }

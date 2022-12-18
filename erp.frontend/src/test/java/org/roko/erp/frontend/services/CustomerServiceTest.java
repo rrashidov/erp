@@ -1,14 +1,8 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,11 +10,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
+import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.frontend.model.Customer;
 import org.roko.erp.frontend.repositories.CustomerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 public class CustomerServiceTest {
 
@@ -41,91 +39,72 @@ public class CustomerServiceTest {
     private Customer customerMock2;
 
     @Mock
-    private Customer customerMock;
-    
+    private CustomerDTO customerMock;
+
     @Mock
     private CustomerRepository repoMock;
-    
+
+    @Mock
+    private RestTemplate restTemplateMock;
+
     private CustomerService svc;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        List<Customer> customers = Arrays.asList(customerMock, customerMock1, customerMock2);
-
-        when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(customerMock));
-        when(repoMock.findAll()).thenReturn(customers);
-        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new CustomerServiceImpl(repoMock);
+        svc = new CustomerServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo(){
+    public void create_callsBackend() {
         svc.create(customerMock);
 
-        verify(repoMock).save(customerMock);
+        verify(restTemplateMock).postForObject("/api/v1/customers", customerMock, String.class);
     }
 
     @Test
-    public void update_delegatesToRepo(){
+    public void update_callsBackend() {
         svc.update(TEST_CODE, customerMock);
 
-        verify(repoMock).save(customerMock);
+        verify(restTemplateMock).put("/api/v1/customers/{code}", customerMock, TEST_CODE);
     }
 
     @Test
-    public void delete_delegatesToRepo(){
+    public void delete_callsBackend() {
         svc.delete(TEST_CODE);
 
-        verify(repoMock).findById(TEST_CODE);
-        verify(repoMock).delete(customerMock);
+        verify(restTemplateMock).delete("/api/v1/customers/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo(){
-        Customer retrievedCustomer = svc.get(TEST_CODE);
+    public void get_callsBackend() {
+        svc.get(TEST_CODE);
 
-        assertEquals(customerMock, retrievedCustomer);
-
-        verify(repoMock).balance(customerMock);
+        verify(restTemplateMock).getForObject("/api/v1/customers/{code}", CustomerDTO.class, TEST_CODE);
     }
 
     @Test 
     public void getReturnsNull_whenNotFound(){
-        Customer retrievedCustomer = svc.get("non-existing-code");
+        when(restTemplateMock.getForObject("/api/v1/customers/{code}", CustomerDTO.class, "non-existing-code")).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        CustomerDTO retrievedCustomer = svc.get("non-existing-code");
 
         assertNull(retrievedCustomer);
     }
 
     @Test
-    public void list_delegatesToRepo(){
+    public void list_callsBackend() {
         svc.list();
 
-        verify(repoMock).findAll();
-
-        verify(repoMock).balance(customerMock);
-        verify(repoMock).balance(customerMock1);
-        verify(repoMock).balance(customerMock2);
+        verify(restTemplateMock).getForObject("/api/v1/customers", CustomerList.class);
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
-        verify(repoMock).findAll(pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
+        verify(restTemplateMock).getForObject("/api/v1/customers/page/{page}", CustomerList.class, TEST_PAGE);
     }
 
-    @Test
-    public void count_delegatesToRepo(){
-        svc.count();
-
-        verify(repoMock).count();
-    }
 }

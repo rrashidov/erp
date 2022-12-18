@@ -1,22 +1,20 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.Customer;
+import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.list.CustomerList;
 
 public interface CustomerService {
     
-    public void create(Customer customer);
+    public void create(CustomerDTO customer);
 
-    public void update(String code, Customer customer);
+    public void update(String code, CustomerDTO customer);
 
     public void delete(String code);
 
-    public Customer get(String code);
+    public CustomerDTO get(String code);
 
-    public List<Customer> list();
+    public CustomerList list();
 
-    public List<Customer> list(int page);
+    public CustomerList list(int page);
 
-    public int count();
 }

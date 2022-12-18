@@ -15,12 +15,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.CustomerLedgerEntryDTO;
+import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.list.CustomerLedgerEntryList;
+import org.roko.erp.dto.list.CustomerList;
+import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.frontend.controllers.model.CustomerModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.Customer;
-import org.roko.erp.frontend.model.CustomerLedgerEntry;
-import org.roko.erp.frontend.model.PaymentMethod;
 import org.roko.erp.frontend.services.CustomerLedgerEntryService;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.PaymentMethodService;
@@ -36,26 +39,26 @@ public class CustomerControllerTest {
     private static final String EXPECTED_CUSTOMER_LIST_TEMPLATE = "customerList.html";
 
     private static final int TEST_PAGE = 123;
-    private static final int TEST_CUSTOMER_COUNT = 234;
+    private static final long TEST_CUSTOMER_COUNT = 234l;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
     private static final String TEST_ADDRESS = "test-address";
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
-    private static final int TEST_CUSTOMER_LEDGER_ENTRIES_COUNT = 123;
+    private static final long TEST_CUSTOMER_LEDGER_ENTRIES_COUNT = 123;
 
-    //private List<PaymentMethod> paymentMethodList = new ArrayList<>();
+    private List<CustomerDTO> customers;
 
-    private List<Customer> customerList;
+    private List<CustomerLedgerEntryDTO> customerLedgerEntries = new ArrayList<>();
 
-    private List<CustomerLedgerEntry> customerLedgerEntries = new ArrayList<>();
-
-    @Mock
-    private Customer customerMock;
+    private List<PaymentMethodDTO> paymentMethods = new ArrayList<>();
 
     @Mock
-    private PaymentMethod paymentMethodMock;
+    private CustomerDTO customerMock;
+
+    @Mock
+    private PaymentMethodDTO paymentMethodMock;
 
     @Mock
     private CustomerModel customerModelMock;
@@ -64,10 +67,13 @@ public class CustomerControllerTest {
     private PaymentMethodService paymentMethodSvcMock;
 
     @Mock
+    private PaymentMethodList paymentMethodList;
+
+    @Mock
     private CustomerLedgerEntryService customerLedgerEntrySvcMock;
 
     @Captor
-    private ArgumentCaptor<Customer> customerArgumentCaptor;
+    private ArgumentCaptor<CustomerDTO> customerArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<CustomerModel> customerModelArgumentCaptor;
@@ -85,7 +91,13 @@ public class CustomerControllerTest {
     private CustomerService customerSvcMock;
 
     @Mock
+    private CustomerList customerList;
+
+    @Mock
     private PagingService pagingServiceMock;
+
+    @Mock
+    private CustomerLedgerEntryList customerLedgerEntryList;
 
     private CustomerController controller;
 
@@ -93,34 +105,40 @@ public class CustomerControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        customerList = Arrays.asList(customerMock);
+        customers = Arrays.asList(customerMock);
 
         when(paymentMethodMock.getCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
         when(customerMock.getCode()).thenReturn(TEST_CODE);
         when(customerMock.getName()).thenReturn(TEST_NAME);
         when(customerMock.getAddress()).thenReturn(TEST_ADDRESS);
-        when(customerMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+        when(customerMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
         when(customerModelMock.getCode()).thenReturn(TEST_CODE);
         when(customerModelMock.getName()).thenReturn(TEST_NAME);
         when(customerModelMock.getAddress()).thenReturn(TEST_ADDRESS);
         when(customerModelMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
 
-        //when(paymentMethodSvcMock.list()).thenReturn(paymentMethodList);
-        //when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
+        when(paymentMethodList.getData()).thenReturn(paymentMethods);
 
-        when(pagingServiceMock.generate(CUSTOMER_OBJECT_NAME, TEST_PAGE, TEST_CUSTOMER_COUNT))
+        when(paymentMethodSvcMock.list()).thenReturn(paymentMethodList);
+        when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
+
+        when(pagingServiceMock.generate(CUSTOMER_OBJECT_NAME, TEST_PAGE, (int) TEST_CUSTOMER_COUNT))
                 .thenReturn(pagingDataMock);
-        when(pagingServiceMock.generate("customerCard", TEST_CODE, TEST_PAGE, TEST_CUSTOMER_LEDGER_ENTRIES_COUNT))
+        when(pagingServiceMock.generate("customerCard", TEST_CODE, TEST_PAGE, (int) TEST_CUSTOMER_LEDGER_ENTRIES_COUNT))
                 .thenReturn(customerLedgerEntriesPagingData);
 
-        when(customerSvcMock.count()).thenReturn(TEST_CUSTOMER_COUNT);
+        when(customerList.getData()).thenReturn(customers);
+        when(customerList.getCount()).thenReturn(TEST_CUSTOMER_COUNT);
+
         when(customerSvcMock.list(TEST_PAGE)).thenReturn(customerList);
         when(customerSvcMock.get(TEST_CODE)).thenReturn(customerMock);
 
-        when(customerLedgerEntrySvcMock.findFor(customerMock, TEST_PAGE)).thenReturn(customerLedgerEntries);
-        when(customerLedgerEntrySvcMock.count(customerMock)).thenReturn(TEST_CUSTOMER_LEDGER_ENTRIES_COUNT);
+        when(customerLedgerEntryList.getData()).thenReturn(customerLedgerEntries);
+        when(customerLedgerEntryList.getCount()).thenReturn(TEST_CUSTOMER_LEDGER_ENTRIES_COUNT);
+
+        when(customerLedgerEntrySvcMock.list(TEST_CODE, TEST_PAGE)).thenReturn(customerLedgerEntryList);
 
         controller = new CustomerController(customerSvcMock, pagingServiceMock, paymentMethodSvcMock,
                 customerLedgerEntrySvcMock);
@@ -132,67 +150,65 @@ public class CustomerControllerTest {
 
         assertEquals(EXPECTED_CUSTOMER_LIST_TEMPLATE, returnedTemplate);
 
-        verify(pagingServiceMock).generate(CUSTOMER_OBJECT_NAME, TEST_PAGE, TEST_CUSTOMER_COUNT);
-
-        when(customerLedgerEntrySvcMock.findFor(customerMock)).thenReturn(customerLedgerEntries);
+        verify(pagingServiceMock).generate(CUSTOMER_OBJECT_NAME, TEST_PAGE, (int) TEST_CUSTOMER_COUNT);
 
         verify(modelMock).addAttribute(PAGING_MODEL_ATTRIBUTE_NAME, pagingDataMock);
-        verify(modelMock).addAttribute("customers", customerList);
+        verify(modelMock).addAttribute("customers", customers);
     }
 
-    // @Test
-    // public void cardReturnsProperTemplate() {
-    //     String template = controller.card(null, 1, modelMock);
+    @Test
+    public void cardReturnsProperTemplate() {
+        String template = controller.card(null, 1, modelMock);
 
-    //     assertEquals("customerCard.html", template);
+        assertEquals("customerCard.html", template);
 
-    //     verify(modelMock).addAttribute(eq("customer"), customerModelArgumentCaptor.capture());
-    //     verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
+        verify(modelMock).addAttribute(eq("customer"), customerModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("paymentMethods", paymentMethods);
 
-    //     CustomerModel customerModel = customerModelArgumentCaptor.getValue();
+        CustomerModel customerModel = customerModelArgumentCaptor.getValue();
 
-    //     assertEquals("", customerModel.getCode());
-    //     assertEquals("", customerModel.getName());
-    //     assertEquals("", customerModel.getAddress());
-    //     assertEquals("", customerModel.getPaymentMethodCode());
-    // }
+        assertEquals("", customerModel.getCode());
+        assertEquals("", customerModel.getName());
+        assertEquals("", customerModel.getAddress());
+        assertEquals("", customerModel.getPaymentMethodCode());
+    }
 
-    // @Test
-    // public void cardReturnsProperTemplate_whenCalledWithExistingCustomer() {
-    //     String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
+    @Test
+    public void cardReturnsProperTemplate_whenCalledWithExistingCustomer() {
+        String template = controller.card(TEST_CODE, TEST_PAGE, modelMock);
 
-    //     assertEquals("customerCard.html", template);
+        assertEquals("customerCard.html", template);
 
-    //     verify(modelMock).addAttribute(eq("customer"), customerModelArgumentCaptor.capture());
-    //     verify(modelMock).addAttribute("paymentMethods", paymentMethodList);
-    //     verify(modelMock).addAttribute("customerLedgerEntries", customerLedgerEntries);
-    //     verify(modelMock).addAttribute("paging", customerLedgerEntriesPagingData);
+        verify(modelMock).addAttribute(eq("customer"), customerModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("paymentMethods", paymentMethods);
+        verify(modelMock).addAttribute("customerLedgerEntries", customerLedgerEntries);
+        verify(modelMock).addAttribute("paging", customerLedgerEntriesPagingData);
 
-    //     CustomerModel customerModel = customerModelArgumentCaptor.getValue();
+        CustomerModel customerModel = customerModelArgumentCaptor.getValue();
 
-    //     assertEquals(TEST_CODE, customerModel.getCode());
-    //     assertEquals(TEST_NAME, customerModel.getName());
-    //     assertEquals(TEST_ADDRESS, customerModel.getAddress());
-    //     assertEquals(TEST_PAYMENT_METHOD_CODE, customerModel.getPaymentMethodCode());
-    // }
+        assertEquals(TEST_CODE, customerModel.getCode());
+        assertEquals(TEST_NAME, customerModel.getName());
+        assertEquals(TEST_ADDRESS, customerModel.getAddress());
+        assertEquals(TEST_PAYMENT_METHOD_CODE, customerModel.getPaymentMethodCode());
+    }
 
-    // @Test
-    // public void postingCustomerCard_createsNewCustomerIfCalledForNonExisting() {
-    //     when(customerSvcMock.get(TEST_CODE)).thenReturn(null);
+    @Test
+    public void postingCustomerCard_createsNewCustomerIfCalledForNonExisting() {
+        when(customerSvcMock.get(TEST_CODE)).thenReturn(null);
 
-    //     RedirectView redirectView = controller.post(customerModelMock);
+        RedirectView redirectView = controller.post(customerModelMock);
 
-    //     assertEquals("/customerList", redirectView.getUrl());
+        assertEquals("/customerList", redirectView.getUrl());
 
-    //     verify(customerSvcMock).create(customerArgumentCaptor.capture());
+        verify(customerSvcMock).create(customerArgumentCaptor.capture());
 
-    //     Customer customer = customerArgumentCaptor.getValue();
+        CustomerDTO customer = customerArgumentCaptor.getValue();
 
-    //     assertEquals(TEST_CODE, customer.getCode());
-    //     assertEquals(TEST_NAME, customer.getName());
-    //     assertEquals(TEST_ADDRESS, customer.getAddress());
-    //     assertEquals(paymentMethodMock, customer.getPaymentMethod());
-    // }
+        assertEquals(TEST_CODE, customer.getCode());
+        assertEquals(TEST_NAME, customer.getName());
+        assertEquals(TEST_ADDRESS, customer.getAddress());
+        assertEquals(TEST_PAYMENT_METHOD_CODE, customer.getPaymentMethodCode());
+    }
 
     @Test
     public void postingCustomerCard_updatesCustomer_whenCalledForExisting() {
@@ -200,11 +216,11 @@ public class CustomerControllerTest {
 
         verify(customerSvcMock).update(eq(TEST_CODE), customerArgumentCaptor.capture());
 
-        Customer customer = customerArgumentCaptor.getValue();
+        CustomerDTO customer = customerArgumentCaptor.getValue();
 
         assertEquals(TEST_NAME, customer.getName());
         assertEquals(TEST_ADDRESS, customer.getAddress());
-        assertEquals(paymentMethodMock, customer.getPaymentMethod());
+        assertEquals(TEST_PAYMENT_METHOD_CODE, customer.getPaymentMethodCode());
     }
 
     @Test
