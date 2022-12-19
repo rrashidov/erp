@@ -16,13 +16,11 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
     private SalesCreditMemoRepository repo;
     private PaymentMethodService paymentMethodSvc;
     private CustomerService customerSvc;
-    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
-    public SalesCreditMemoServiceImpl(SalesCreditMemoRepository repo, SalesCodeSeriesService salesCodeSeriesSvc,
+    public SalesCreditMemoServiceImpl(SalesCreditMemoRepository repo,
             CustomerService customerSvc, PaymentMethodService paymentMethodSvc) {
         this.repo = repo;
-        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
         this.customerSvc = customerSvc;
         this.paymentMethodSvc = paymentMethodSvc;
     }
@@ -43,7 +41,7 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
 
     @Override
     public void delete(String code) {
-        SalesCreditMemo salesCreditMemo = repo.findById(code).get();        
+        SalesCreditMemo salesCreditMemo = repo.findById(code).get();
 
         repo.delete(salesCreditMemo);
     }
@@ -52,7 +50,7 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
     public SalesCreditMemo get(String code) {
         Optional<SalesCreditMemo> salesCreditMemoOptional = repo.findById(code);
 
-        if (salesCreditMemoOptional.isPresent()){
+        if (salesCreditMemoOptional.isPresent()) {
             return salesCreditMemoOptional.get();
         }
 
@@ -64,17 +62,18 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
         List<SalesCreditMemo> salesCreditMemos = repo.findAll();
 
         salesCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
+                .forEach(x -> x.setAmount(repo.amount(x)));
 
         return salesCreditMemos;
     }
 
     @Override
     public List<SalesCreditMemo> list(int page) {
-        List<SalesCreditMemo> salesCreditMemos = repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList();
+        List<SalesCreditMemo> salesCreditMemos = repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE))
+                .toList();
 
         salesCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
+                .forEach(x -> x.setAmount(repo.amount(x)));
 
         return salesCreditMemos;
     }
@@ -87,7 +86,6 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
     @Override
     public SalesCreditMemo fromDTO(SalesDocumentDTO dto) {
         SalesCreditMemo salesCreditMemo = new SalesCreditMemo();
-        salesCreditMemo.setCode(salesCodeSeriesSvc.creditMemoCode());
         salesCreditMemo.setCustomer(customerSvc.get(dto.getCustomerCode()));
         salesCreditMemo.setDate(dto.getDate());
         salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(dto.getPaymentMethodCode()));

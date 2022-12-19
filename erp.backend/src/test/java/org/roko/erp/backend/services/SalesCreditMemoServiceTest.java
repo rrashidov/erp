@@ -128,7 +128,7 @@ public class SalesCreditMemoServiceTest {
         when(salesCreditMemoToUpdateMock.getDate()).thenReturn(updatedDateMock);
         when(salesCreditMemoToUpdateMock.getPaymentMethod()).thenReturn(updatedPaymentMethodMock);
 
-        svc = new SalesCreditMemoServiceImpl(repoMock, salesCodeSeriesSvcMock, customerSvcMock, paymentMethodSvcMock);
+        svc = new SalesCreditMemoServiceImpl(repoMock, customerSvcMock, paymentMethodSvcMock);
     }
 
     @Test
@@ -205,7 +205,7 @@ public class SalesCreditMemoServiceTest {
     public void fromDTO_returnsProperValue() {
         SalesCreditMemo salesCreditMemo = svc.fromDTO(salesDocumentDtoMock);
 
-        assertEquals(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemo.getCode());
+        assertNull(salesCreditMemo.getCode());
         assertEquals(customerMock, salesCreditMemo.getCustomer());
         assertEquals(TEST_DATE, salesCreditMemo.getDate());
         assertEquals(paymentMethodMock, salesCreditMemo.getPaymentMethod());
