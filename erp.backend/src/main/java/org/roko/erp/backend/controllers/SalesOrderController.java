@@ -79,12 +79,15 @@ public class SalesOrderController {
 
     @PostMapping("/{code}/lines")
     public int postLine(@PathVariable("code") String code, @RequestBody SalesDocumentLineDTO salesOrderLineDTO) {
-        SalesOrderLine salesOrderLine = salesOrderLineSvc.fromDTO(salesOrderLineDTO);
-
         SalesOrder salesOrder = svc.get(code);
 
-        salesOrderLine.getSalesOrderLineId().setSalesOrder(salesOrder);
-        salesOrderLine.getSalesOrderLineId().setLineNo(salesOrderLineSvc.maxLineNo(salesOrder) + 1);
+        SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
+        salesOrderLineId.setSalesOrder(salesOrder);
+        salesOrderLineId.setLineNo(salesOrderLineSvc.maxLineNo(salesOrder) + 1);
+
+        SalesOrderLine salesOrderLine = salesOrderLineSvc.fromDTO(salesOrderLineDTO);
+
+        salesOrderLine.setSalesOrderLineId(salesOrderLineId);
 
         salesOrderLineSvc.create(salesOrderLine);
 

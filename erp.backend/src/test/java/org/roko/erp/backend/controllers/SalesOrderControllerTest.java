@@ -132,8 +132,12 @@ public class SalesOrderControllerTest {
     public void postLine_delegatesToService() {
         controller.postLine(TEST_CODE, salesOrderLineDtoMock);
 
-        verify(salesOrderLineId).setSalesOrder(salesOrderMock);
-        verify(salesOrderLineId).setLineNo(TEST_MAX_LINE_NO + 1);
+        verify(salesOrderLineMock).setSalesOrderLineId(salesOrderLineIdArgumentCaptor.capture());
+
+        SalesOrderLineId salesOrderLineId = salesOrderLineIdArgumentCaptor.getValue();
+
+        assertEquals(salesOrderMock, salesOrderLineId.getSalesOrder());
+        assertEquals(TEST_MAX_LINE_NO + 1, salesOrderLineId.getLineNo());
 
         verify(salesOrderLineSvcMock).create(salesOrderLineMock);
     }
