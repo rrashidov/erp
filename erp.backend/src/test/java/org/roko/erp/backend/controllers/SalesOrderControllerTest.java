@@ -33,6 +33,8 @@ public class SalesOrderControllerTest {
 
     private static final int TEST_LINE_NO = 234;
 
+    private static final int TEST_MAX_LINE_NO = 12;
+
     @Captor
     private ArgumentCaptor<SalesOrderLineId> salesOrderLineIdArgumentCaptor;
 
@@ -51,25 +53,33 @@ public class SalesOrderControllerTest {
     @Mock
     private SalesOrderLine salesOrderLineMock;
 
-    private SalesOrderController controller;
-
+    @Mock
     private SalesDocumentLineDTO salesOrderLineDtoMock;
+
+    @Mock
+    private SalesOrderLineId salesOrderLineId;
+
+    private SalesOrderController controller;
 
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
-        SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
-        salesOrderLineId.setSalesOrder(salesOrderMock);
-        salesOrderLineId.setLineNo(TEST_LINE_NO);
+        when(salesOrderLineId.getSalesOrder()).thenReturn(salesOrderMock);
+        when(salesOrderLineId.getLineNo()).thenReturn(TEST_LINE_NO);
+
+        SalesOrderLineId existingSalesOrderLineId = new SalesOrderLineId();
+        existingSalesOrderLineId.setSalesOrder(salesOrderMock);
+        existingSalesOrderLineId.setLineNo(TEST_LINE_NO);
 
         when(salesOrderLineMock.getSalesOrderLineId()).thenReturn(salesOrderLineId);
 
         when(salesOrderLineSvcMock.list(salesOrderMock, TEST_PAGE)).thenReturn(Arrays.asList(salesOrderLineMock));
-        when(salesOrderLineSvcMock.get(salesOrderLineId)).thenReturn(salesOrderLineMock);
+        when(salesOrderLineSvcMock.get(existingSalesOrderLineId)).thenReturn(salesOrderLineMock);
         when(salesOrderLineSvcMock.fromDTO(salesOrderLineDtoMock)).thenReturn(salesOrderLineMock);
         when(salesOrderLineSvcMock.toDTO(salesOrderLineMock)).thenReturn(salesOrderLineDtoMock);
         when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(TEST_COUNT);
+        when(salesOrderLineSvcMock.maxLineNo(salesOrderMock)).thenReturn(TEST_MAX_LINE_NO);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(salesOrderMock));
         when(svcMock.get(TEST_CODE)).thenReturn(salesOrderMock);
@@ -121,6 +131,9 @@ public class SalesOrderControllerTest {
     @Test
     public void postLine_delegatesToService() {
         controller.postLine(TEST_CODE, salesOrderLineDtoMock);
+
+        verify(salesOrderLineId).setSalesOrder(salesOrderMock);
+        verify(salesOrderLineId).setLineNo(TEST_MAX_LINE_NO + 1);
 
         verify(salesOrderLineSvcMock).create(salesOrderLineMock);
     }
