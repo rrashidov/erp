@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
+import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesOrderLineService;
 import org.roko.erp.backend.services.SalesOrderService;
 import org.roko.erp.dto.SalesDocumentDTO;
@@ -28,11 +29,14 @@ public class SalesOrderController {
 
     private SalesOrderService svc;
     private SalesOrderLineService salesOrderLineSvc;
+    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
-    public SalesOrderController(SalesOrderService svc, SalesOrderLineService salesOrderLineSvc) {
+    public SalesOrderController(SalesOrderService svc, SalesOrderLineService salesOrderLineSvc,
+            SalesCodeSeriesService salesCodeSeriesSvc) {
         this.svc = svc;
         this.salesOrderLineSvc = salesOrderLineSvc;
+        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @GetMapping("/page/{page}")
@@ -126,6 +130,7 @@ public class SalesOrderController {
     @PostMapping
     public String post(@RequestBody SalesDocumentDTO dto) {
         SalesOrder salesOrder = svc.fromDTO(dto);
+        salesOrder.setCode(salesCodeSeriesSvc.orderCode());
         svc.create(salesOrder);
         return salesOrder.getCode();
     }

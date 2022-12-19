@@ -2,6 +2,7 @@ package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
+import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesOrderLineService;
 import org.roko.erp.backend.services.SalesOrderService;
 import org.roko.erp.dto.SalesDocumentDTO;
@@ -59,11 +61,16 @@ public class SalesOrderControllerTest {
     @Mock
     private SalesOrderLineId salesOrderLineId;
 
+    @Mock
+    private SalesCodeSeriesService salesCodeSeriesSvcMock;
+
     private SalesOrderController controller;
 
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
+
+        when(salesCodeSeriesSvcMock.orderCode()).thenReturn(TEST_CODE);
 
         when(salesOrderLineId.getSalesOrder()).thenReturn(salesOrderMock);
         when(salesOrderLineId.getLineNo()).thenReturn(TEST_LINE_NO);
@@ -87,7 +94,7 @@ public class SalesOrderControllerTest {
         when(svcMock.toDTO(salesOrderMock)).thenReturn(salesOrderDtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new SalesOrderController(svcMock, salesOrderLineSvcMock);
+        controller = new SalesOrderController(svcMock, salesOrderLineSvcMock, salesCodeSeriesSvcMock);
     }
 
     @Test
@@ -171,6 +178,10 @@ public class SalesOrderControllerTest {
         controller.post(salesOrderDtoMock);
 
         verify(svcMock).create(salesOrderMock);
+        
+        verify(salesOrderMock).setCode(TEST_CODE);
+
+        verify(salesCodeSeriesSvcMock).orderCode();
     }
 
     @Test

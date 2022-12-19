@@ -72,9 +72,6 @@ public class SalesOrderServiceTest {
     @Mock
     private PaymentMethod paymentMethodMock;
 
-    @Mock
-    private SalesCodeSeriesService salesCodeSeriesSvcMock;
-
     private SalesOrderService svc;
 
     @BeforeEach
@@ -91,8 +88,6 @@ public class SalesOrderServiceTest {
 
         when(customerSvcMock.get(TEST_CUSTOMER_CODE)).thenReturn(customerMock);
 
-        when(salesCodeSeriesSvcMock.orderCode()).thenReturn(TEST_CODE);
-
         when(salesOrderDtoMock.getCustomerCode()).thenReturn(TEST_CUSTOMER_CODE);
         when(salesOrderDtoMock.getDate()).thenReturn(TEST_DATE);
         when(salesOrderDtoMock.getPaymentMethodCode()).thenReturn(TEST_PAYMENT_METHOD_CODE);
@@ -107,7 +102,7 @@ public class SalesOrderServiceTest {
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(salesOrderMock));
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
 
-        svc = new SalesOrderServiceImpl(repoMock, customerSvcMock, paymentMethodSvcMock, salesCodeSeriesSvcMock);
+        svc = new SalesOrderServiceImpl(repoMock, customerSvcMock, paymentMethodSvcMock);
     }
 
     @Test
@@ -180,7 +175,6 @@ public class SalesOrderServiceTest {
     public void fromDTO_returnsProperValue() {
         SalesOrder salesOrder = svc.fromDTO(salesOrderDtoMock);
 
-        assertEquals(TEST_CODE, salesOrder.getCode());
         assertEquals(customerMock, salesOrder.getCustomer());
         assertEquals(TEST_DATE, salesOrder.getDate());
         assertEquals(paymentMethodMock, salesOrder.getPaymentMethod());

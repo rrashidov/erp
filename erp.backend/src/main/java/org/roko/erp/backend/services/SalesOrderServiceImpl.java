@@ -16,15 +16,13 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     private SalesOrderRepository repo;
     private CustomerService customerSvc;
     private PaymentMethodService paymentMethodSvc;
-    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
     public SalesOrderServiceImpl(SalesOrderRepository repo, CustomerService customerSvc,
-            PaymentMethodService paymentMethodSvc, SalesCodeSeriesService salesCodeSeriesSvc) {
+            PaymentMethodService paymentMethodSvc) {
         this.repo = repo;
         this.customerSvc = customerSvc;
         this.paymentMethodSvc = paymentMethodSvc;
-        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @Override
@@ -87,7 +85,6 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     @Override
     public SalesOrder fromDTO(SalesDocumentDTO dto) {
         SalesOrder salesOrder = new SalesOrder();
-        salesOrder.setCode(salesCodeSeriesSvc.orderCode());
         salesOrder.setCustomer(customerSvc.get(dto.getCustomerCode()));
         salesOrder.setDate(dto.getDate());
         salesOrder.setPaymentMethod(paymentMethodSvc.get(dto.getPaymentMethodCode()));
