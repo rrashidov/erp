@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.SalesCreditMemo;
 import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
+import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesCreditMemoLineService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
 import org.roko.erp.dto.SalesDocumentDTO;
@@ -25,6 +26,8 @@ import org.roko.erp.dto.list.SalesDocumentList;
 
 public class SalesCreditMemoControllerTest {
     
+    private static final String GENERATED_CODE = "generated-code";
+
     private static final int TEST_COUNT = 222;
 
     private static final int TEST_LINE_NO = 1234;
@@ -54,11 +57,16 @@ public class SalesCreditMemoControllerTest {
     @Mock
     private SalesDocumentLineDTO salesDocumentLineDtoMock;
 
+    @Mock
+    private SalesCodeSeriesService salesCodeSeriesSvcMock;
+
     private SalesCreditMemoController controller;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(salesCodeSeriesSvcMock.creditMemoCode()).thenReturn(GENERATED_CODE);
 
         when(salesCreditMemoLineSvcMock.list(salesCreditMemoMock, TEST_PAGE)).thenReturn(Arrays.asList(salesCreditMemoLineMock));
         when(salesCreditMemoLineSvcMock.fromDTO(salesDocumentLineDtoMock)).thenReturn(salesCreditMemoLineMock);
@@ -72,7 +80,7 @@ public class SalesCreditMemoControllerTest {
         when(svcMock.toDTO(salesCreditMemoMock)).thenReturn(dtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new SalesCreditMemoController(svcMock, salesCreditMemoLineSvcMock);
+        controller = new SalesCreditMemoController(svcMock, salesCreditMemoLineSvcMock, salesCodeSeriesSvcMock);
     }
 
     @Test
@@ -146,12 +154,16 @@ public class SalesCreditMemoControllerTest {
     public void post_delegatesToService() {
         controller.post(dtoMock);
 
+        verify(salesCreditMemoMock).setCode(GENERATED_CODE);
+
         verify(svcMock).create(salesCreditMemoMock);
     }
 
     @Test
     public void put_delegatesToService() {
         controller.put(TEST_CODE, dtoMock);
+
+        verify(salesCreditMemoMock).setCode(TEST_CODE);
 
         verify(svcMock).update(TEST_CODE, salesCreditMemoMock);
     }

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.roko.erp.backend.model.SalesCreditMemo;
 import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
+import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesCreditMemoLineService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
 import org.roko.erp.dto.SalesDocumentDTO;
@@ -28,11 +29,14 @@ public class SalesCreditMemoController {
 
     private SalesCreditMemoService svc;
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
+    private SalesCodeSeriesService salesCodeSeriesSvc;
 
     @Autowired
-    public SalesCreditMemoController(SalesCreditMemoService svc, SalesCreditMemoLineService salesCreditMemoLineSvc) {
+    public SalesCreditMemoController(SalesCreditMemoService svc, SalesCreditMemoLineService salesCreditMemoLineSvc,
+            SalesCodeSeriesService salesCodeSeriesSvc) {
         this.svc = svc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
+        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
     }
 
     @GetMapping("/page/{page}")
@@ -118,6 +122,7 @@ public class SalesCreditMemoController {
     @PostMapping
     public String post(@RequestBody SalesDocumentDTO dto) {
         SalesCreditMemo salesCreditMemo = svc.fromDTO(dto);
+        salesCreditMemo.setCode(salesCodeSeriesSvc.creditMemoCode());
         svc.create(salesCreditMemo);
         return salesCreditMemo.getCode();
     }
@@ -125,6 +130,7 @@ public class SalesCreditMemoController {
     @PutMapping("/{code}")
     public String put(@PathVariable("code") String code, @RequestBody SalesDocumentDTO dto) {
         SalesCreditMemo salesCreditMemo = svc.fromDTO(dto);
+        salesCreditMemo.setCode(code);
         svc.update(code, salesCreditMemo);
         return code;
     }
