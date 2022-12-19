@@ -105,8 +105,8 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     private void transferFields(SalesOrder source, SalesOrder target) {
-        source.setCustomer(target.getCustomer());
-        source.setDate(target.getDate());
-        source.setPaymentMethod(target.getPaymentMethod());
+        target.setCustomer(source.getCustomer());
+        target.setDate(source.getDate());
+        target.setPaymentMethod(source.getPaymentMethod());
     }
 }

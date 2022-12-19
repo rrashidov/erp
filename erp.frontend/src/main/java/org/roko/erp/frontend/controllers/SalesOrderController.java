@@ -1,16 +1,18 @@
 package org.roko.erp.frontend.controllers;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.SalesDocumentDTO;
+import org.roko.erp.dto.list.CustomerList;
+import org.roko.erp.dto.list.PaymentMethodList;
+import org.roko.erp.dto.list.SalesDocumentLineList;
+import org.roko.erp.dto.list.SalesDocumentList;
 import org.roko.erp.frontend.controllers.model.SalesOrderModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.Customer;
-import org.roko.erp.frontend.model.SalesOrder;
-import org.roko.erp.frontend.model.SalesOrderLine;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
@@ -60,10 +62,11 @@ public class SalesOrderController {
     @GetMapping("/salesOrderList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model,
             HttpSession httpSession) {
-        List<SalesOrder> salesOrders = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("salesOrder", page, svc.count());
+        SalesDocumentList salesOrderList = svc.list(page);
 
-        model.addAttribute("salesOrders", salesOrders);
+        PagingData pagingData = pagingSvc.generate("salesOrder", page, (int) salesOrderList.getCount());
+
+        model.addAttribute("salesOrders", salesOrderList.getData());
         model.addAttribute("paging", pagingData);
         model.addAttribute("feedback", feedbackSvc.get(httpSession));
 
@@ -75,26 +78,30 @@ public class SalesOrderController {
         SalesOrderModel salesOrderModel = new SalesOrderModel();
 
         if (code != null) {
-            SalesOrder salesOrder = svc.get(code);
+            SalesDocumentDTO salesOrder = svc.get(code);
             toModel(salesOrder, salesOrderModel);
         }
 
+        CustomerList customerList = customerSvc.list();
+
         model.addAttribute("salesOrderModel", salesOrderModel);
-        model.addAttribute("customers", customerSvc.list());
+        model.addAttribute("customers", customerList.getData());
 
         return "salesOrderWizardFirstPage.html";
     }
 
     @PostMapping("/salesOrderWizardFirstPage")
     public String postWizardFirstPage(@ModelAttribute SalesOrderModel salesOrderModel, Model model) {
-        Customer customer = null;//customerSvc.get(salesOrderModel.getCustomerCode());
+        CustomerDTO customer = customerSvc.get(salesOrderModel.getCustomerCode());
 
         salesOrderModel.setCustomerName(customer.getName());
         salesOrderModel.setDate(new Date());
-        salesOrderModel.setPaymentMethodCode(customer.getPaymentMethod().getCode());
+        salesOrderModel.setPaymentMethodCode(customer.getPaymentMethodCode());
+
+        PaymentMethodList paymentMethodList = paymentMethodSvc.list();
 
         model.addAttribute("salesOrderModel", salesOrderModel);
-        model.addAttribute("paymentMethods", paymentMethodSvc.list());
+        model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "salesOrderWizardSecondPage.html";
     }
@@ -102,13 +109,14 @@ public class SalesOrderController {
     @PostMapping("/salesOrderWizardSecondPage")
     public RedirectView postWizardSecondPage(@ModelAttribute SalesOrderModel salesOrderModel,
             RedirectAttributes redirectAttributes) {
+
         if (salesOrderModel.getCode().isEmpty()) {
-            SalesOrder salesOrderToCreate = fromModel(salesOrderModel);
+            SalesDocumentDTO salesOrderToCreate = fromModel(salesOrderModel);
             svc.create(salesOrderToCreate);
 
             redirectAttributes.addAttribute("code", salesOrderToCreate.getCode());
         } else {
-            SalesOrder salesOrderToUpdate = svc.get(salesOrderModel.getCode());
+            SalesDocumentDTO salesOrderToUpdate = svc.get(salesOrderModel.getCode());
             fromModel(salesOrderToUpdate, salesOrderModel);
             svc.update(salesOrderModel.getCode(), salesOrderToUpdate);
 
@@ -128,13 +136,15 @@ public class SalesOrderController {
     @GetMapping("/salesOrderCard")
     public String card(@RequestParam(name = "code") String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        SalesOrder salesOrder = svc.get(code);
-        List<SalesOrderLine> salesOrderLineList = salesOrderLineSvc.list(salesOrder, page);
+        SalesDocumentDTO salesOrder = svc.get(code);
+
+        SalesDocumentLineList salesOrderLineList = salesOrderLineSvc.list(code, page);
+
         PagingData salesOrderLinePagingData = pagingSvc.generate("salesOrderCard", code, page,
-                salesOrderLineSvc.count(salesOrder));
+                (int) salesOrderLineList.getCount());
 
         model.addAttribute("salesOrder", salesOrder);
-        model.addAttribute("salesOrderLines", salesOrderLineList);
+        model.addAttribute("salesOrderLines", salesOrderLineList.getData());
         model.addAttribute("paging", salesOrderLinePagingData);
 
         return "salesOrderCard.html";
@@ -154,26 +164,26 @@ public class SalesOrderController {
         return new RedirectView("/salesOrderList");
     }
 
-    private SalesOrder fromModel(SalesOrderModel salesOrderModelMock) {
-        SalesOrder salesOrder = new SalesOrder();
+    private SalesDocumentDTO fromModel(SalesOrderModel salesOrderModelMock) {
+        SalesDocumentDTO salesOrder = new SalesDocumentDTO();
         salesOrder.setCode(salesCodeSeriesSvc.orderCode());
-        //salesOrder.setCustomer(customerSvc.get(salesOrderModelMock.getCustomerCode()));
+        salesOrder.setCustomerCode(salesOrderModelMock.getCustomerCode());
         salesOrder.setDate(salesOrderModelMock.getDate());
-        //salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModelMock.getPaymentMethodCode()));
+        salesOrder.setPaymentMethodCode(salesOrderModelMock.getPaymentMethodCode());
         return salesOrder;
     }
 
-    private void toModel(SalesOrder salesOrder, SalesOrderModel salesOrderModel) {
+    private void toModel(SalesDocumentDTO salesOrder, SalesOrderModel salesOrderModel) {
         salesOrderModel.setCode(salesOrder.getCode());
-        salesOrderModel.setCustomerCode(salesOrder.getCustomer().getCode());
+        salesOrderModel.setCustomerCode(salesOrder.getCustomerCode());
         salesOrderModel.setDate(salesOrder.getDate());
-        salesOrderModel.setPaymentMethodCode(salesOrder.getPaymentMethod().getCode());
+        salesOrderModel.setPaymentMethodCode(salesOrder.getPaymentMethodCode());
     }
 
-    private void fromModel(SalesOrder salesOrder, SalesOrderModel salesOrderModel) {
-        //salesOrder.setCustomer(customerSvc.get(salesOrderModel.getCustomerCode()));
+    private void fromModel(SalesDocumentDTO salesOrder, SalesOrderModel salesOrderModel) {
+        salesOrder.setCustomerCode(salesOrderModel.getCustomerCode());
         salesOrder.setDate(salesOrderModel.getDate());
-        //salesOrder.setPaymentMethod(paymentMethodSvc.get(salesOrderModel.getPaymentMethodCode()));
+        salesOrder.setPaymentMethodCode(salesOrderModel.getPaymentMethodCode());
     }
 
 }

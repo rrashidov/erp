@@ -1,23 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.SalesOrder;
+import org.roko.erp.dto.SalesDocumentDTO;
+import org.roko.erp.dto.list.SalesDocumentList;
 
 public interface SalesOrderService {
     
-    public void create(SalesOrder salesOrder);
+    public void create(SalesDocumentDTO salesOrder);
 
-    public void update(String code, SalesOrder salesOrder);
+    public void update(String code, SalesDocumentDTO salesOrder);
 
     public void delete(String code);
 
-    public SalesOrder get(String code);
+    public SalesDocumentDTO get(String code);
 
-    public List<SalesOrder> list();
-
-    public List<SalesOrder> list(int page);
-
-    public int count();
+    public SalesDocumentList list(int page);
 
 }

@@ -138,6 +138,7 @@ public class SalesOrderController {
     @PutMapping("/{code}")
     public String put(@PathVariable("code") String code, @RequestBody SalesDocumentDTO dto) {
         SalesOrder salesOrder = svc.fromDTO(dto);
+        salesOrder.setCode(code);
         svc.update(code, salesOrder);
         return salesOrder.getCode();
     }

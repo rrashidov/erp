@@ -1,13 +1,10 @@
 package org.roko.erp.frontend.controllers;
 
+import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.frontend.controllers.model.SalesOrderLineModel;
-import org.roko.erp.frontend.model.Item;
-import org.roko.erp.frontend.model.SalesOrder;
-import org.roko.erp.frontend.model.SalesOrderLine;
-import org.roko.erp.frontend.model.jpa.SalesOrderLineId;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.SalesOrderLineService;
-import org.roko.erp.frontend.services.SalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,13 +18,11 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class SalesOrderLineController {
 
-    private SalesOrderService svc;
     private SalesOrderLineService salesOrderLineSvc;
     private ItemService itemSvc;
 
     @Autowired
-    public SalesOrderLineController(SalesOrderService svc, SalesOrderLineService salesOrderLineSvc, ItemService itemSvc) {
-        this.svc = svc;
+    public SalesOrderLineController(SalesOrderLineService salesOrderLineSvc, ItemService itemSvc) {
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.itemSvc = itemSvc;
     }
@@ -39,16 +34,11 @@ public class SalesOrderLineController {
         salesOrderLineModel.setSalesOrderCode(salesOrderCode);
 
         if (lineNo != null){
-            SalesOrder salesOrder = svc.get(salesOrderCode);
-            SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
-            salesOrderLineId.setSalesOrder(salesOrder);
-            salesOrderLineId.setLineNo(lineNo);
-
-            SalesOrderLine salesOrderLine = salesOrderLineSvc.get(salesOrderLineId);
+            SalesDocumentLineDTO salesOrderLine = salesOrderLineSvc.get(salesOrderCode, lineNo);
             
             salesOrderLineModel.setLineNo(lineNo);
-            salesOrderLineModel.setItemCode(salesOrderLine.getItem().getCode());
-            salesOrderLineModel.setItemName(salesOrderLine.getItem().getName());
+            salesOrderLineModel.setItemCode(salesOrderLine.getItemCode());
+            salesOrderLineModel.setItemName(salesOrderLine.getItemName());
             
             salesOrderLineModel.setQuantity(salesOrderLine.getQuantity());
             salesOrderLineModel.setPrice(salesOrderLine.getPrice());
@@ -56,14 +46,14 @@ public class SalesOrderLineController {
         }
 
         model.addAttribute("salesOrderLine", salesOrderLineModel);
-        model.addAttribute("items", itemSvc.list());
+        model.addAttribute("items", itemSvc.list().getData());
 
         return "salesOrderLineWizardFirstPage.html";
     }
 
     @PostMapping("/salesOrderLineWizardFirstPage")
     public String postSalesOrderLineWizardFirstPage(@ModelAttribute SalesOrderLineModel salesOrderLine, Model model){
-        Item item = null;//itemSvc.get(salesOrderLine.getItemCode());
+        ItemDTO item = itemSvc.get(salesOrderLine.getItemCode());
 
         salesOrderLine.setItemName(item.getName());
         salesOrderLine.setPrice(item.getSalesPrice());
@@ -88,38 +78,25 @@ public class SalesOrderLineController {
     public RedirectView postSalesOrderLineWizardThirdPage(@ModelAttribute SalesOrderLineModel salesOrderLine,
             RedirectAttributes redirectAttributes) {
         
-        SalesOrder salesOrder = svc.get(salesOrderLine.getSalesOrderCode());
-
         if (salesOrderLine.getLineNo() != 0) {
             //update
-            SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
-            salesOrderLineId.setSalesOrder(salesOrder);
-            salesOrderLineId.setLineNo(salesOrderLine.getLineNo());
-    
-            SalesOrderLine salesOrderLineToUpdate = salesOrderLineSvc.get(salesOrderLineId);
+            SalesDocumentLineDTO salesOrderLineToUpdate = salesOrderLineSvc.get(salesOrderLine.getSalesOrderCode(), salesOrderLine.getLineNo());
 
-            //salesOrderLineToUpdate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
+            salesOrderLineToUpdate.setItemCode(salesOrderLine.getItemCode());
             salesOrderLineToUpdate.setQuantity(salesOrderLine.getQuantity());
             salesOrderLineToUpdate.setPrice(salesOrderLine.getPrice());
             salesOrderLineToUpdate.setAmount(salesOrderLine.getAmount());
     
-            salesOrderLineSvc.update(salesOrderLineId, salesOrderLineToUpdate);
+            salesOrderLineSvc.update(salesOrderLine.getSalesOrderCode(), salesOrderLine.getLineNo(), salesOrderLineToUpdate);
         } else {
             //create
-            long lineNo = salesOrderLineSvc.maxLineNo(salesOrder) + 1;
-
-            SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
-            salesOrderLineId.setSalesOrder(salesOrder);
-            salesOrderLineId.setLineNo((int)lineNo);
-    
-            SalesOrderLine salesOrderLineToCreate = new SalesOrderLine();
-            salesOrderLineToCreate.setSalesOrderLineId(salesOrderLineId);
-            //salesOrderLineToCreate.setItem(itemSvc.get(salesOrderLine.getItemCode()));
+            SalesDocumentLineDTO salesOrderLineToCreate = new SalesDocumentLineDTO();
+            salesOrderLineToCreate.setItemCode(salesOrderLine.getItemCode());
             salesOrderLineToCreate.setQuantity(salesOrderLine.getQuantity());
             salesOrderLineToCreate.setPrice(salesOrderLine.getPrice());
             salesOrderLineToCreate.setAmount(salesOrderLine.getAmount());
     
-            salesOrderLineSvc.create(salesOrderLineToCreate);
+            salesOrderLineSvc.create(salesOrderLine.getSalesOrderCode(), salesOrderLineToCreate);
         }
 
         redirectAttributes.addAttribute("code", salesOrderLine.getSalesOrderCode());
@@ -130,12 +107,7 @@ public class SalesOrderLineController {
     @GetMapping("/deleteSalesOrderLine")
     public RedirectView deleteSalesOrderLine(@RequestParam(name = "salesOrderCode") String salesOrderCode,
     @RequestParam(name = "lineNo") Integer lineNo, RedirectAttributes redirectAttributes){
-
-        SalesOrderLineId salesOrderLineId = new SalesOrderLineId();
-        salesOrderLineId.setSalesOrder(svc.get(salesOrderCode));
-        salesOrderLineId.setLineNo(lineNo);
-
-        salesOrderLineSvc.delete(salesOrderLineId);
+        salesOrderLineSvc.delete(salesOrderCode, lineNo);
 
         redirectAttributes.addAttribute("code", salesOrderCode);
         return new RedirectView("/salesOrderCard");

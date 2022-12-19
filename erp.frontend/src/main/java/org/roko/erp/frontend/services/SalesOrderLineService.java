@@ -1,26 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.SalesOrder;
-import org.roko.erp.frontend.model.SalesOrderLine;
-import org.roko.erp.frontend.model.jpa.SalesOrderLineId;
+import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.SalesDocumentLineList;
 
 public interface SalesOrderLineService {
     
-    public void create(SalesOrderLine salesOrderLine);
+    public void create(String code, SalesDocumentLineDTO salesOrderLine);
 
-    public void update(SalesOrderLineId id, SalesOrderLine salesOrderLine);
+    public void update(String code, int lineNo, SalesDocumentLineDTO salesOrderLine);
 
-    public void delete(SalesOrderLineId id);
+    public void delete(String code, int lineNo);
 
-    public SalesOrderLine get(SalesOrderLineId id);
+    public SalesDocumentLineDTO get(String code, int lineNo);
 
-    public List<SalesOrderLine> list(SalesOrder salesOrder);
+    public SalesDocumentLineList list(String code, int page);
 
-    public List<SalesOrderLine> list(SalesOrder salesOrder, int page);
-
-    public int count(SalesOrder salesOrder);
-
-    public int maxLineNo(SalesOrder salesOrder);
 }

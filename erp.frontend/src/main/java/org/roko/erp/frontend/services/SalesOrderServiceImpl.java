@@ -1,85 +1,49 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.SalesOrder;
-import org.roko.erp.frontend.repositories.SalesOrderRepository;
+import org.roko.erp.dto.SalesDocumentDTO;
+import org.roko.erp.dto.list.SalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class SalesOrderServiceImpl implements SalesOrderService {
 
-    private SalesOrderRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public SalesOrderServiceImpl(SalesOrderRepository repo) {
-        this.repo = repo;
+    public SalesOrderServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(SalesOrder salesOrder) {
-        repo.save(salesOrder);
+    public void create(SalesDocumentDTO salesOrder) {
+        restTemplate.postForObject("/api/v1/salesorders", salesOrder, String.class);
     }
 
     @Override
-    public void update(String code, SalesOrder salesOrder) {
-        SalesOrder salesOrderFromDB = repo.findById(code).get();
-
-        transferFields(salesOrder, salesOrderFromDB);
-
-        repo.save(salesOrderFromDB);
+    public void update(String code, SalesDocumentDTO salesOrder) {
+        restTemplate.put("/api/v1/salesorders/{code}", salesOrder, code);
     }
 
     @Override
     public void delete(String code) {
-        SalesOrder salesOrder = repo.findById(code).get();
-
-        repo.delete(salesOrder);
+        restTemplate.delete("/api/v1/salesorders/{code}", code);
     }
 
     @Override
-    public SalesOrder get(String code) {
-        Optional<SalesOrder> salesOrderOptional = repo.findById(code);
-
-        if (salesOrderOptional.isPresent()) {
-            return salesOrderOptional.get();
+    public SalesDocumentDTO get(String code) {
+        try {
+            return restTemplate.getForObject("/api/v1/salesorders/{code}", SalesDocumentDTO.class, code);
+        } catch (HttpClientErrorException e) {
+            return null;
         }
-
-        return null;
     }
 
     @Override
-    public List<SalesOrder> list() {
-        List<SalesOrder> salesOrders = repo.findAll();
-
-        salesOrders.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return salesOrders;
+    public SalesDocumentList list(int page) {
+        return restTemplate.getForObject("/api/v1/salesorders/page/{page}", SalesDocumentList.class, page);
     }
 
-    @Override
-    public List<SalesOrder> list(int page) {
-        List<SalesOrder> salesOrders = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        salesOrders.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return salesOrders;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-
-    private void transferFields(SalesOrder source, SalesOrder target) {
-        source.setCustomer(target.getCustomer());
-        source.setDate(target.getDate());
-        source.setPaymentMethod(target.getPaymentMethod());
-    }
 }

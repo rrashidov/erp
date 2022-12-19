@@ -1,151 +1,75 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.Item;
-import org.roko.erp.frontend.model.SalesOrder;
-import org.roko.erp.frontend.model.SalesOrderLine;
-import org.roko.erp.frontend.model.jpa.SalesOrderLineId;
-import org.roko.erp.frontend.repositories.SalesOrderLineRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.SalesDocumentLineList;
+import org.springframework.web.client.RestTemplate;
 
 public class SalesOrderLineServiceTest {
 
-    private static final double TEST_PRICE = 123.23;
-    private static final double TEST_QUANTITY = 23.00;
-    private static final double TEST_AMOUNT = 23.34;
-    
+    private static final String TEST_CODE = "test-code";
+
+    private static final int TEST_LINE_NO = 123;
+
     private static final int TEST_PAGE = 12;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
+    @Mock
+    private SalesDocumentLineDTO salesOrderLineMock;
 
     @Mock
-    private Page<SalesOrderLine> pageMock;
+    private RestTemplate restTemplate;
 
-    @Mock
-    private SalesOrder salesOrderMock;
-
-    @Mock
-    private SalesOrderLineId nonExistingSalesOrderLineId;
-
-    @Mock
-    private Item itemMock;
-
-    @Mock
-    private SalesOrderLineId salesOrderLineIdMock;
-
-    @Mock
-    private SalesOrderLine salesOrderLineMock;
-
-    @Mock
-    private SalesOrderLine existingSalesOrderLineMock;
-
-    @Mock
-    private SalesOrderLineRepository repoMock;
-    
     private SalesOrderLineService svc;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(salesOrderLineMock.getItem()).thenReturn(itemMock);
-        when(salesOrderLineMock.getPrice()).thenReturn(TEST_PRICE);
-        when(salesOrderLineMock.getQuantity()).thenReturn(TEST_QUANTITY);
-        when(salesOrderLineMock.getAmount()).thenReturn(TEST_AMOUNT);
-
-        when(repoMock.findById(salesOrderLineIdMock)).thenReturn(Optional.of(existingSalesOrderLineMock));
-        when(repoMock.findForSalesOrder(eq(salesOrderMock), any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new SalesOrderLineServiceImpl(repoMock);
+        svc = new SalesOrderLineServiceImpl(restTemplate);
     }
 
     @Test
-    public void create_delegatesToRepo(){
-        svc.create(salesOrderLineMock);
+    public void create_callsBackend() {
+        svc.create(TEST_CODE, salesOrderLineMock);
 
-        verify(repoMock).save(salesOrderLineMock);
+        verify(restTemplate).postForObject("/api/v1/salesorders/{code}/lines", salesOrderLineMock, Integer.class,
+                TEST_CODE);
     }
 
     @Test
-    public void update_delegatesToRepo(){
-        svc.update(salesOrderLineIdMock, salesOrderLineMock);
+    public void update_callsBackend() {
+        svc.update(TEST_CODE, TEST_LINE_NO, salesOrderLineMock);
 
-        verify(repoMock).findById(salesOrderLineIdMock);
-        verify(repoMock).save(existingSalesOrderLineMock);
-
-        verify(existingSalesOrderLineMock).setItem(itemMock);
-        verify(existingSalesOrderLineMock).setQuantity(TEST_QUANTITY);
-        verify(existingSalesOrderLineMock).setPrice(TEST_PRICE);
-        verify(existingSalesOrderLineMock).setAmount(TEST_AMOUNT);
+        verify(restTemplate).put("/api/v1/salesorders/{code}/lines/{lineNo}", salesOrderLineMock, TEST_CODE,
+                TEST_LINE_NO);
     }
 
     @Test
-    public void delete_delegatesToRepo(){
-        svc.delete(salesOrderLineIdMock);
+    public void delete_callsBackend() {
+        svc.delete(TEST_CODE, TEST_LINE_NO);
 
-        verify(repoMock).delete(existingSalesOrderLineMock);
+        verify(restTemplate).delete("/api/v1/salesorders/{code}/lines/{lineNo}", TEST_CODE, TEST_LINE_NO);
     }
 
     @Test
-    public void get_delegatesToRepo(){
-        SalesOrderLine salesOrderLine = svc.get(salesOrderLineIdMock);
+    public void get_callsBackend() {
+        svc.get(TEST_CODE, TEST_LINE_NO);
 
-        assertEquals(existingSalesOrderLineMock, salesOrderLine);
+        verify(restTemplate).getForObject("/api/v1/salesorders/{code}/lines/{lineNo}", SalesDocumentLineDTO.class,
+                TEST_CODE, TEST_LINE_NO);
     }
 
     @Test
-    public void getReturnsNull_whenNotFound(){
-        SalesOrderLine salesOrderLine = svc.get(nonExistingSalesOrderLineId);
+    public void listWithPage_callsBackend() {
+        svc.list(TEST_CODE, TEST_PAGE);
 
-        assertNull(salesOrderLine);
+        verify(restTemplate).getForObject("/api/v1/salesorders/{code}/lines/page/{page}", SalesDocumentLineList.class,
+                TEST_CODE, TEST_PAGE);
     }
 
-    @Test
-    public void list_delegatesToRepo(){
-        svc.list(salesOrderMock);
-
-        verify(repoMock).findForSalesOrder(salesOrderMock);
-    }
-
-    @Test
-    public void listWithPage_delegatesToRepo() {
-        svc.list(salesOrderMock, TEST_PAGE);
-
-        verify(repoMock).findForSalesOrder(eq(salesOrderMock), pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
-    }
-
-    @Test
-    public void couunt_delegatesToRepo(){
-        svc.count(salesOrderMock);
-
-        verify(repoMock).countForSalesOrder(salesOrderMock);
-    }
-
-    @Test
-    public void maxLineNo_delegatesToRepo() {
-        svc.maxLineNo(salesOrderMock);
-
-    }
 }
