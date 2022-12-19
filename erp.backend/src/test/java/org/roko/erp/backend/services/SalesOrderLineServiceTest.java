@@ -68,9 +68,6 @@ public class SalesOrderLineServiceTest {
     private SalesOrderLineRepository repoMock;
 
     @Mock
-    private SalesOrderService salesOrderSvcMock;
-
-    @Mock
     private ItemService itemSvcMock;
     
     private SalesOrderLineService svc;
@@ -83,8 +80,6 @@ public class SalesOrderLineServiceTest {
 
         when(itemMock.getCode()).thenReturn(TEST_ITEM_CODE);
         when(itemMock.getName()).thenReturn(TEST_ITEM_NAME);
-
-        when(salesOrderSvcMock.get(TEST_SALES_ORDER_CODE)).thenReturn(salesOrderMock);
 
         when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
@@ -108,7 +103,7 @@ public class SalesOrderLineServiceTest {
         when(repoMock.findById(salesOrderLineIdMock)).thenReturn(Optional.of(existingSalesOrderLineMock));
         when(repoMock.findForSalesOrder(eq(salesOrderMock), any(Pageable.class))).thenReturn(pageMock);
 
-        svc = new SalesOrderLineServiceImpl(repoMock, salesOrderSvcMock, itemSvcMock);
+        svc = new SalesOrderLineServiceImpl(repoMock, itemSvcMock);
     }
 
     @Test
@@ -189,8 +184,6 @@ public class SalesOrderLineServiceTest {
     public void fromDTO_returnsProperValue(){
         SalesOrderLine salesOrderLine = svc.fromDTO(salesOrderLineDtoMock);
 
-        assertEquals(salesOrderMock, salesOrderLine.getSalesOrderLineId().getSalesOrder());
-        assertEquals(TEST_LINE_NO, salesOrderLine.getSalesOrderLineId().getLineNo());
         assertEquals(itemMock, salesOrderLine.getItem());
         assertEquals(TEST_PRICE, salesOrderLine.getPrice());
         assertEquals(TEST_QUANTITY, salesOrderLine.getQuantity());
