@@ -17,7 +17,6 @@ import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
-import org.roko.erp.frontend.services.SalesCodeSeriesService;
 import org.roko.erp.frontend.services.SalesOrderLineService;
 import org.roko.erp.frontend.services.SalesOrderPostService;
 import org.roko.erp.frontend.services.SalesOrderService;
@@ -41,13 +40,12 @@ public class SalesOrderController {
     private PaymentMethodService paymentMethodSvc;
     private SalesOrderLineService salesOrderLineSvc;
     private SalesOrderPostService salesOrderPostService;
-    private SalesCodeSeriesService salesCodeSeriesSvc;
     private FeedbackService feedbackSvc;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, PagingService pagingSvc, CustomerService customerSvc,
             PaymentMethodService paymentMethodSvc, SalesOrderLineService salesOrderLineSvc,
-            SalesOrderPostService salesOrderPostService, SalesCodeSeriesService salesCodeSeriesSvc,
+            SalesOrderPostService salesOrderPostService,
             FeedbackService feedbackSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
@@ -55,7 +53,6 @@ public class SalesOrderController {
         this.paymentMethodSvc = paymentMethodSvc;
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.salesOrderPostService = salesOrderPostService;
-        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
         this.feedbackSvc = feedbackSvc;
     }
 
@@ -112,9 +109,10 @@ public class SalesOrderController {
 
         if (salesOrderModel.getCode().isEmpty()) {
             SalesDocumentDTO salesOrderToCreate = fromModel(salesOrderModel);
-            svc.create(salesOrderToCreate);
 
-            redirectAttributes.addAttribute("code", salesOrderToCreate.getCode());
+            String code = svc.create(salesOrderToCreate);
+
+            redirectAttributes.addAttribute("code", code);
         } else {
             SalesDocumentDTO salesOrderToUpdate = svc.get(salesOrderModel.getCode());
             fromModel(salesOrderToUpdate, salesOrderModel);
@@ -166,7 +164,6 @@ public class SalesOrderController {
 
     private SalesDocumentDTO fromModel(SalesOrderModel salesOrderModelMock) {
         SalesDocumentDTO salesOrder = new SalesDocumentDTO();
-        salesOrder.setCode(salesCodeSeriesSvc.orderCode());
         salesOrder.setCustomerCode(salesOrderModelMock.getCustomerCode());
         salesOrder.setDate(salesOrderModelMock.getDate());
         salesOrder.setPaymentMethodCode(salesOrderModelMock.getPaymentMethodCode());

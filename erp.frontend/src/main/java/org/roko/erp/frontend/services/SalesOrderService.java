@@ -5,7 +5,7 @@ import org.roko.erp.dto.list.SalesDocumentList;
 
 public interface SalesOrderService {
     
-    public void create(SalesDocumentDTO salesOrder);
+    public String create(SalesDocumentDTO salesOrder);
 
     public void update(String code, SalesDocumentDTO salesOrder);
 

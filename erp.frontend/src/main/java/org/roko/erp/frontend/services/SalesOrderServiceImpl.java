@@ -18,8 +18,8 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     @Override
-    public void create(SalesDocumentDTO salesOrder) {
-        restTemplate.postForObject("/api/v1/salesorders", salesOrder, String.class);
+    public String create(SalesDocumentDTO salesOrder) {
+        return restTemplate.postForObject("/api/v1/salesorders", salesOrder, String.class);
     }
 
     @Override
