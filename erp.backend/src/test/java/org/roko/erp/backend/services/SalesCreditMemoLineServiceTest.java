@@ -68,9 +68,6 @@ public class SalesCreditMemoLineServiceTest {
     private SalesDocumentLineDTO dtoMock;
 
     @Mock
-    private SalesCreditMemoService salesCreditMemoSvcMock;
-
-    @Mock
     private ItemService itemSvcMock;
 
     private SalesCreditMemoLineService svc;
@@ -94,8 +91,6 @@ public class SalesCreditMemoLineServiceTest {
         when(salesCreditMemoLineMock.getPrice()).thenReturn(TEST_PRICE);
         when(salesCreditMemoLineMock.getAmount()).thenReturn(TEST_AMOUNT);
 
-        when(salesCreditMemoSvcMock.get(TEST_SALES_CREDIT_MEMO_CODE)).thenReturn(salesCreditMemoMock);
-
         when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
         when(dtoMock.getSalesDocumentCode()).thenReturn(TEST_SALES_CREDIT_MEMO_CODE);
@@ -113,7 +108,7 @@ public class SalesCreditMemoLineServiceTest {
         when(repoMock.findById(salesCreditMemoLineIdMock)).thenReturn(Optional.of(salesCreditMemoLineMock));
         when(repoMock.findForSalesCreditMemo(eq(salesCreditMemoMock), any(Pageable.class))).thenReturn(pageMock);
 
-        svc = new SalesCreditMemoLineServiceImpl(repoMock, salesCreditMemoSvcMock, itemSvcMock);
+        svc = new SalesCreditMemoLineServiceImpl(repoMock, itemSvcMock);
     }
 
     @Test

@@ -16,14 +16,12 @@ import org.springframework.stereotype.Service;
 public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineService {
 
     private SalesCreditMemoLineRepository repo;
-    private SalesCreditMemoService salesCreditMemoSvc;
     private ItemService itemSvc;
 
     @Autowired
-    public SalesCreditMemoLineServiceImpl(SalesCreditMemoLineRepository repo, SalesCreditMemoService salesCreditMemoSvc,
+    public SalesCreditMemoLineServiceImpl(SalesCreditMemoLineRepository repo,
             ItemService itemSvc) {
         this.repo = repo;
-        this.salesCreditMemoSvc = salesCreditMemoSvc;
         this.itemSvc = itemSvc;
     }
 
@@ -66,7 +64,8 @@ public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineServic
 
     @Override
     public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo, int page) {
-        return repo.findForSalesCreditMemo(salesCreditMemo, PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList();
+        return repo.findForSalesCreditMemo(salesCreditMemo, PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE))
+                .toList();
     }
 
     @Override
