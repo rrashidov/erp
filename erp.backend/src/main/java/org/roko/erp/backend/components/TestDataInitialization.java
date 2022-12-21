@@ -32,7 +32,7 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
             return;
         }
 
-        // sales order
+        // sales order code serie
         CodeSerie cs01 = new CodeSerie();
         cs01.setCode("CS01");
         cs01.setName("Sales Orders");
@@ -40,9 +40,18 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
         cs01.setLastCode("SO000000");
         codeSerieSvc.create(cs01);
 
+        // sales credit memo code serie
+        CodeSerie cs02 = new CodeSerie();
+        cs01.setCode("CS02");
+        cs01.setName("Sales Credit Memo");
+        cs01.setFirstCode("SCM000000");
+        cs01.setLastCode("SCM000000");
+        codeSerieSvc.create(cs02);
+
         // modify setup
         Setup setup = setupSvc.get();
         setup.setSalesOrderCodeSerie(cs01);
+        setup.setSalesCreditMemoCodeSerie(cs02);
         setupSvc.update(setup);
     }
 
