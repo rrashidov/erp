@@ -1,13 +1,11 @@
 package org.roko.erp.frontend.controllers;
 
+import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.frontend.controllers.model.SalesCreditMemoLineModel;
-import org.roko.erp.frontend.model.Item;
-import org.roko.erp.frontend.model.SalesCreditMemo;
-import org.roko.erp.frontend.model.SalesCreditMemoLine;
-import org.roko.erp.frontend.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.SalesCreditMemoLineService;
-import org.roko.erp.frontend.services.SalesCreditMemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,13 +20,12 @@ import org.springframework.web.servlet.view.RedirectView;
 public class SalesCreditMemoLineController {
 
     private SalesCreditMemoLineService svc;
-    private SalesCreditMemoService salesCreditMemoSvc;
     private ItemService itemSvc;
 
     @Autowired
-    public SalesCreditMemoLineController(SalesCreditMemoLineService svc, SalesCreditMemoService salesCreditMemoSvc, ItemService itemSvc) {
+    public SalesCreditMemoLineController(SalesCreditMemoLineService svc,
+            ItemService itemSvc) {
         this.svc = svc;
-        this.salesCreditMemoSvc = salesCreditMemoSvc;
         this.itemSvc = itemSvc;
     }
 
@@ -39,17 +36,15 @@ public class SalesCreditMemoLineController {
 
         salesCreditMemoLineModel.setSalesCreditMemoCode(salesCreditMemoCode);
 
-        if (lineNo != null){
-            SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
-            salesCreditMemoLineId.setLineNo(lineNo);
-            salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemoSvc.get(salesCreditMemoCode));
-
-            SalesCreditMemoLine salesCreditMemoLine = svc.get(salesCreditMemoLineId);
+        if (lineNo != null) {
+            SalesDocumentLineDTO salesCreditMemoLine = svc.get(salesCreditMemoCode, lineNo);
 
             toModel(salesCreditMemoLine, salesCreditMemoLineModel);
         }
 
-        model.addAttribute("items", itemSvc.list());
+        ItemList itemList = itemSvc.list();
+
+        model.addAttribute("items", itemList.getData());
         model.addAttribute("salesCreditMemoLineModel", salesCreditMemoLineModel);
 
         return "salesCreditMemoLineWizardFirstPage.html";
@@ -58,7 +53,7 @@ public class SalesCreditMemoLineController {
     @PostMapping("/salesCreditMemoLineWizardFirstPage")
     public String postSalesCreditMemoLineWizardFirstPage(
             @ModelAttribute SalesCreditMemoLineModel salesCreditMemoLineModel, Model model) {
-        Item item = null;//itemSvc.get(salesCreditMemoLineModel.getItemCode());
+        ItemDTO item = itemSvc.get(salesCreditMemoLineModel.getItemCode());
 
         salesCreditMemoLineModel.setItemName(item.getName());
         salesCreditMemoLineModel.setPrice(item.getSalesPrice());
@@ -85,72 +80,55 @@ public class SalesCreditMemoLineController {
     @PostMapping("/salesCreditMemoLineWizardThirdPage")
     public RedirectView postSalesCreditMemoLineWizardThirdPage(
             @ModelAttribute SalesCreditMemoLineModel salesCreditMemoLineModel, RedirectAttributes redirectAttributes) {
-        SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(salesCreditMemoLineModel.getSalesCreditMemoCode());
-
         if (salesCreditMemoLineModel.getLineNo() == 0) {
-            create(salesCreditMemo, salesCreditMemoLineModel);
+            create(salesCreditMemoLineModel.getSalesCreditMemoCode(), salesCreditMemoLineModel);
         } else {
-            update(salesCreditMemo, salesCreditMemoLineModel);
+            update(salesCreditMemoLineModel.getSalesCreditMemoCode(), salesCreditMemoLineModel.getLineNo(),
+                    salesCreditMemoLineModel);
         }
-        
+
         redirectAttributes.addAttribute("code", salesCreditMemoLineModel.getSalesCreditMemoCode());
-        
+
         return new RedirectView("/salesCreditMemoCard");
     }
 
     @GetMapping("/deleteSalesCreditMemoLine")
     public RedirectView delete(@RequestParam(name = "salesCreditMemoCode") String code,
             @RequestParam(name = "lineNo") Integer lineNo, RedirectAttributes redirectAttributes) {
+        svc.delete(code, lineNo);
 
-        SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(code);
-
-        SalesCreditMemoLineId id = new SalesCreditMemoLineId();
-        id.setSalesCreditMemo(salesCreditMemo);
-        id.setLineNo(lineNo);
-
-        svc.delete(id);
-        
         redirectAttributes.addAttribute("code", code);
         return new RedirectView("/salesCreditMemoCard");
     }
 
-    private void toModel(SalesCreditMemoLine source, SalesCreditMemoLineModel target) {
-        target.setLineNo(source.getSalesCreditMemoLineId().getLineNo());
-        target.setItemCode(source.getItem().getCode());
-        target.setItemName(source.getItem().getName());
+    private void toModel(SalesDocumentLineDTO source, SalesCreditMemoLineModel target) {
+        target.setLineNo(source.getLineNo());
+        target.setItemCode(source.getItemCode());
+        target.setItemName(source.getItemName());
         target.setQuantity(source.getQuantity());
         target.setPrice(source.getPrice());
         target.setAmount(source.getAmount());
     }
 
-    private void create(SalesCreditMemo salesCreditMemo, SalesCreditMemoLineModel salesCreditMemoLineModel) {
-        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
-        salesCreditMemoLineId.setLineNo((int) (svc.maxLineNo(salesCreditMemo) + 1));
-        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
-
-        SalesCreditMemoLine salesCreditMemoLine = new SalesCreditMemoLine();        
-        salesCreditMemoLine.setSalesCreditMemoLineId(salesCreditMemoLineId);
-        //salesCreditMemoLine.setItem(itemSvc.get(salesCreditMemoLineModel.getItemCode()));
+    private void create(String code, SalesCreditMemoLineModel salesCreditMemoLineModel) {
+        SalesDocumentLineDTO salesCreditMemoLine = new SalesDocumentLineDTO();
+        salesCreditMemoLine.setItemCode(salesCreditMemoLineModel.getItemCode());
         salesCreditMemoLine.setQuantity(salesCreditMemoLineModel.getQuantity());
         salesCreditMemoLine.setPrice(salesCreditMemoLineModel.getPrice());
         salesCreditMemoLine.setAmount(salesCreditMemoLineModel.getAmount());
 
-        svc.create(salesCreditMemoLine);
+        svc.create(code, salesCreditMemoLine);
     }
 
-    private void update(SalesCreditMemo salesCreditMemo, SalesCreditMemoLineModel salesCreditMemoLineModel) {
-        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
-        salesCreditMemoLineId.setLineNo(salesCreditMemoLineModel.getLineNo());
-        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
+    private void update(String code, int lineNo, SalesCreditMemoLineModel salesCreditMemoLineModel) {
+        SalesDocumentLineDTO salesCreditMemoLine = svc.get(code, lineNo);
 
-        SalesCreditMemoLine salesCreditMemoLine = svc.get(salesCreditMemoLineId);
-
-        //salesCreditMemoLine.setItem(itemSvc.get(salesCreditMemoLineModel.getItemCode()));
+        salesCreditMemoLine.setItemCode(salesCreditMemoLineModel.getItemCode());
         salesCreditMemoLine.setQuantity(salesCreditMemoLineModel.getQuantity());
         salesCreditMemoLine.setPrice(salesCreditMemoLineModel.getPrice());
         salesCreditMemoLine.setAmount(salesCreditMemoLineModel.getAmount());
 
-        svc.update(salesCreditMemoLineId, salesCreditMemoLine);
+        svc.update(code, lineNo, salesCreditMemoLine);
     }
 
 }

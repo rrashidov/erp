@@ -81,14 +81,7 @@ public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineServic
 
     @Override
     public SalesCreditMemoLine fromDTO(SalesDocumentLineDTO dto) {
-        SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(dto.getSalesDocumentCode());
-
-        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
-        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
-        salesCreditMemoLineId.setLineNo(dto.getLineNo());
-
         SalesCreditMemoLine salesCreditMemoLine = new SalesCreditMemoLine();
-        salesCreditMemoLine.setSalesCreditMemoLineId(salesCreditMemoLineId);
         salesCreditMemoLine.setItem(itemSvc.get(dto.getItemCode()));
         salesCreditMemoLine.setQuantity(dto.getQuantity());
         salesCreditMemoLine.setPrice(dto.getPrice());

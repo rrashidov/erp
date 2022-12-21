@@ -1,86 +1,44 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.SalesCreditMemo;
-import org.roko.erp.frontend.repositories.SalesCreditMemoRepository;
+import org.roko.erp.dto.SalesDocumentDTO;
+import org.roko.erp.dto.list.SalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
 
-    private SalesCreditMemoRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public SalesCreditMemoServiceImpl(SalesCreditMemoRepository repo) {
-        this.repo = repo;
+    public SalesCreditMemoServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(SalesCreditMemo salesCreditMemo) {
-        repo.save(salesCreditMemo);
+    public String create(SalesDocumentDTO salesCreditMemo) {
+        return restTemplate.postForObject("/api/v1/salescreditmemos", salesCreditMemo, String.class);
     }
 
     @Override
-    public void update(String code, SalesCreditMemo salesCreditMemo) {
-        SalesCreditMemo salesCreditMemoFromDB = repo.findById(code).get();
-
-        transferFields(salesCreditMemo, salesCreditMemoFromDB);
-
-        repo.save(salesCreditMemoFromDB);
+    public void update(String code, SalesDocumentDTO salesCreditMemo) {
+        restTemplate.put("/api/v1/salescreditmemos/{code}", salesCreditMemo, code);
     }
 
     @Override
     public void delete(String code) {
-        SalesCreditMemo salesCreditMemo = repo.findById(code).get();        
-
-        repo.delete(salesCreditMemo);
+        restTemplate.delete("/api/v1/salescreditmemos/{code}", code);
     }
 
     @Override
-    public SalesCreditMemo get(String code) {
-        Optional<SalesCreditMemo> salesCreditMemoOptional = repo.findById(code);
-
-        if (salesCreditMemoOptional.isPresent()){
-            return salesCreditMemoOptional.get();
-        }
-
-        return null;
+    public SalesDocumentDTO get(String code) {
+        return restTemplate.getForObject("/api/v1/salescreditmemos/{code}", SalesDocumentDTO.class, code);
     }
 
     @Override
-    public List<SalesCreditMemo> list() {
-        List<SalesCreditMemo> salesCreditMemos = repo.findAll();
-
-        salesCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return salesCreditMemos;
-    }
-
-    @Override
-    public List<SalesCreditMemo> list(int page) {
-        List<SalesCreditMemo> salesCreditMemos = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        salesCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return salesCreditMemos;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-    
-    private void transferFields(SalesCreditMemo source, SalesCreditMemo target) {
-        target.setCustomer(source.getCustomer());
-        target.setDate(source.getDate());
-        target.setPaymentMethod(source.getPaymentMethod());
+    public SalesDocumentList list(int page) {
+        return restTemplate.getForObject("/api/v1/salescreditmemos/page/{page}", SalesDocumentList.class, page);
     }
 
 }

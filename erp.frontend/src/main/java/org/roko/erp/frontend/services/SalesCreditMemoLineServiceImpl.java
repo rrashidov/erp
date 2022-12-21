@@ -1,83 +1,46 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.SalesCreditMemo;
-import org.roko.erp.frontend.model.SalesCreditMemoLine;
-import org.roko.erp.frontend.model.jpa.SalesCreditMemoLineId;
-import org.roko.erp.frontend.repositories.SalesCreditMemoLineRepository;
-import org.springframework.data.domain.PageRequest;
+import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.SalesDocumentLineList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class SalesCreditMemoLineServiceImpl implements SalesCreditMemoLineService {
 
-    private SalesCreditMemoLineRepository repo;
+    private RestTemplate restTemplate;
 
-    public SalesCreditMemoLineServiceImpl(SalesCreditMemoLineRepository repo) {
-        this.repo = repo;
+    @Autowired
+    public SalesCreditMemoLineServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(SalesCreditMemoLine salesCreditMemoLine) {
-        repo.save(salesCreditMemoLine);
+    public void create(String code, SalesDocumentLineDTO salesCreditMemoLine) {
+        restTemplate.postForObject("/api/v1/salescreditmemos/{code}/lines", salesCreditMemoLine, Integer.class, code);
     }
 
     @Override
-    public void update(SalesCreditMemoLineId salesCreditMemoLineId, SalesCreditMemoLine salesCreditMemoLine) {
-        SalesCreditMemoLine salesCreditMemoLineFromDB = repo.findById(salesCreditMemoLineId).get();
-
-        transferFields(salesCreditMemoLine, salesCreditMemoLineFromDB);
-
-        repo.save(salesCreditMemoLineFromDB);
+    public void update(String code, int lineNo, SalesDocumentLineDTO salesCreditMemoLine) {
+        restTemplate.put("/api/v1/salescreditmemos/{code}/lines/{lineNo}", salesCreditMemoLine, code, lineNo);
     }
 
     @Override
-    public void delete(SalesCreditMemoLineId salesCreditMemoLineId) {
-        SalesCreditMemoLine salesCreditMemoLine = repo.findById(salesCreditMemoLineId).get();
-
-        repo.delete(salesCreditMemoLine);
+    public void delete(String code, int lineNo) {
+        restTemplate.delete("/api/v1/salescreditmemos/{code}/lines/{lineNo}", code, lineNo);
     }
 
     @Override
-    public SalesCreditMemoLine get(SalesCreditMemoLineId salesCreditMemoLineId) {
-        Optional<SalesCreditMemoLine> salesCreditMemoLineOptional = repo.findById(salesCreditMemoLineId);
-
-        if (salesCreditMemoLineOptional.isPresent()) {
-            return salesCreditMemoLineOptional.get();
-        }
-
-        return null;
+    public SalesDocumentLineDTO get(String code, int lineNo) {
+        return restTemplate.getForObject("/api/v1/salescreditmemos/{code}/lines/{lineNo}", SalesDocumentLineDTO.class,
+                code, lineNo);
     }
 
     @Override
-    public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo) {
-        return repo.findForSalesCreditMemo(salesCreditMemo);
-    }
-
-    @Override
-    public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo, int page) {
-        return repo.findForSalesCreditMemo(salesCreditMemo, PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-    }
-
-    @Override
-    public int count(SalesCreditMemo salesCreditMemo) {
-        return new Long(repo.countForSalesCreditMemo(salesCreditMemo)).intValue();
-    }
-
-    @Override
-    public int maxLineNo(SalesCreditMemo salesCreditMemo) {
-        return repo.maxLineNo(salesCreditMemo);
-    }
-
-    private void transferFields(SalesCreditMemoLine source,
-            SalesCreditMemoLine target) {
-        target.setItem(source.getItem());
-        target.setQuantity(source.getQuantity());
-        target.setPrice(source.getPrice());
-        target.setAmount(source.getAmount());
+    public SalesDocumentLineList list(String code, int page) {
+        return restTemplate.getForObject("/api/v1/salescreditmemos/{code}/lines/page/{page}",
+                SalesDocumentLineList.class, code, page);
     }
 
 }

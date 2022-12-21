@@ -36,6 +36,8 @@ public class SalesCreditMemoControllerTest {
 
     private static final int TEST_PAGE = 123;
 
+    private static final int TEST_MAX_LINE_NO = 345;
+
     @Captor
     private ArgumentCaptor<SalesCreditMemoLineId> salesCreditMemoLineIdArgumentCaptor;
 
@@ -72,6 +74,7 @@ public class SalesCreditMemoControllerTest {
         when(salesCreditMemoLineSvcMock.fromDTO(salesDocumentLineDtoMock)).thenReturn(salesCreditMemoLineMock);
         when(salesCreditMemoLineSvcMock.toDTO(salesCreditMemoLineMock)).thenReturn(salesDocumentLineDtoMock);
         when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(TEST_COUNT);
+        when(salesCreditMemoLineSvcMock.maxLineNo(salesCreditMemoMock)).thenReturn(TEST_MAX_LINE_NO);
 
         when(svcMock.fromDTO(dtoMock)).thenReturn(salesCreditMemoMock);
 
@@ -124,6 +127,13 @@ public class SalesCreditMemoControllerTest {
         controller.postLine(TEST_CODE, salesDocumentLineDtoMock);
 
         verify(salesCreditMemoLineSvcMock).create(salesCreditMemoLineMock);
+
+        verify(salesCreditMemoLineMock).setSalesCreditMemoLineId(salesCreditMemoLineIdArgumentCaptor.capture());
+
+        SalesCreditMemoLineId salesCreditMemoLineId = salesCreditMemoLineIdArgumentCaptor.getValue();
+
+        assertEquals(salesCreditMemoMock, salesCreditMemoLineId.getSalesCreditMemo());
+        assertEquals(TEST_MAX_LINE_NO + 1, salesCreditMemoLineId.getLineNo());
     }
 
     @Test

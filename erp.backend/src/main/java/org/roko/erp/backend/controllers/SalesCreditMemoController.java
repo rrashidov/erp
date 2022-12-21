@@ -85,6 +85,16 @@ public class SalesCreditMemoController {
     public int postLine(@PathVariable("code") String code, @RequestBody SalesDocumentLineDTO dto) {
         SalesCreditMemoLine salesCreditMemoLine = salesCreditMemoLineSvc.fromDTO(dto);
 
+        SalesCreditMemo salesCreditMemo = svc.get(code);
+
+        int maxLineNo = salesCreditMemoLineSvc.maxLineNo(salesCreditMemo);
+
+        SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
+        salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
+        salesCreditMemoLineId.setLineNo(maxLineNo + 1);
+
+        salesCreditMemoLine.setSalesCreditMemoLineId(salesCreditMemoLineId);
+
         salesCreditMemoLineSvc.create(salesCreditMemoLine);
 
         return dto.getLineNo();

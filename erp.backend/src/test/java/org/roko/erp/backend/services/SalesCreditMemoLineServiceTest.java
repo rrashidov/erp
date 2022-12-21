@@ -194,8 +194,6 @@ public class SalesCreditMemoLineServiceTest {
     public void fromDTO_returnsProperResult() {
         SalesCreditMemoLine salesCreditMemoLine = svc.fromDTO(dtoMock);
 
-        assertEquals(salesCreditMemoMock, salesCreditMemoLine.getSalesCreditMemoLineId().getSalesCreditMemo());
-        assertEquals(TEST_LINE_NO, salesCreditMemoLine.getSalesCreditMemoLineId().getLineNo());
         assertEquals(itemMock, salesCreditMemoLine.getItem());
         assertEquals(TEST_QTY, salesCreditMemoLine.getQuantity());
         assertEquals(TEST_PRICE, salesCreditMemoLine.getPrice());

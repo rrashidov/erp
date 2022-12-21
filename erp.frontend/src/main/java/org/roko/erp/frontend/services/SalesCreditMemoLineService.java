@@ -1,26 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.SalesCreditMemo;
-import org.roko.erp.frontend.model.SalesCreditMemoLine;
-import org.roko.erp.frontend.model.jpa.SalesCreditMemoLineId;
+import org.roko.erp.dto.SalesDocumentLineDTO;
+import org.roko.erp.dto.list.SalesDocumentLineList;
 
 public interface SalesCreditMemoLineService {
     
-    public void create(SalesCreditMemoLine salesCreditMemoLine);
+    public void create(String code, SalesDocumentLineDTO salesCreditMemoLine);
 
-    public void update(SalesCreditMemoLineId salesCreditMemoLineId, SalesCreditMemoLine salesCreditMemoLine);
+    public void update(String code, int lineNo, SalesDocumentLineDTO salesCreditMemoLine);
 
-    public void delete(SalesCreditMemoLineId salesCreditMemoLineId);
+    public void delete(String code, int lineNo);
 
-    public SalesCreditMemoLine get(SalesCreditMemoLineId salesCreditMemoLineId);
+    public SalesDocumentLineDTO get(String code, int lineNo);
 
-    public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo);
+    public SalesDocumentLineList list(String code, int page);
 
-    public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo, int page);
-
-    public int count(SalesCreditMemo salesCreditMemo);
-
-    public int maxLineNo(SalesCreditMemo salesCreditMemo);
 }

@@ -1,21 +1,22 @@
 package org.roko.erp.frontend.controllers;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.SalesDocumentDTO;
+import org.roko.erp.dto.list.CustomerList;
+import org.roko.erp.dto.list.PaymentMethodList;
+import org.roko.erp.dto.list.SalesDocumentLineList;
+import org.roko.erp.dto.list.SalesDocumentList;
 import org.roko.erp.frontend.controllers.model.SalesCreditMemoModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.Customer;
-import org.roko.erp.frontend.model.SalesCreditMemo;
-import org.roko.erp.frontend.model.SalesCreditMemoLine;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
-import org.roko.erp.frontend.services.SalesCodeSeriesService;
 import org.roko.erp.frontend.services.SalesCreditMemoLineService;
 import org.roko.erp.frontend.services.SalesCreditMemoPostService;
 import org.roko.erp.frontend.services.SalesCreditMemoService;
@@ -40,13 +41,12 @@ public class SalesCreditMemoController {
     private PaymentMethodService paymentMethodSvc;
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
     private SalesCreditMemoPostService salesCreditMemoPostSvc;
-    private SalesCodeSeriesService salesCodeSeriesSvc;
     private FeedbackService feedbackSvc;
 
     @Autowired
     public SalesCreditMemoController(SalesCreditMemoService svc, PagingService pagingSvc, CustomerService customerSvc,
             PaymentMethodService paymentMethodSvc, SalesCreditMemoLineService salesCreditMemoLineSvc,
-            SalesCreditMemoPostService salesCreditMemoPostSvc, SalesCodeSeriesService salesCodeSeriesSvc,
+            SalesCreditMemoPostService salesCreditMemoPostSvc,
             FeedbackService feedbackSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
@@ -54,18 +54,17 @@ public class SalesCreditMemoController {
         this.paymentMethodSvc = paymentMethodSvc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
         this.salesCreditMemoPostSvc = salesCreditMemoPostSvc;
-        this.salesCodeSeriesSvc = salesCodeSeriesSvc;
         this.feedbackSvc = feedbackSvc;
     }
 
     @GetMapping("/salesCreditMemoList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model,
             HttpSession httpSession) {
-        List<SalesCreditMemo> salesCreditMemos = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("salesCreditMemo", page, svc.count());
+        SalesDocumentList salesCreditMemoList = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("salesCreditMemo", page, (int) salesCreditMemoList.getCount());
         Feedback feedback = feedbackSvc.get(httpSession);
 
-        model.addAttribute("salesCreditMemos", salesCreditMemos);
+        model.addAttribute("salesCreditMemos", salesCreditMemoList.getData());
         model.addAttribute("paging", pagingData);
         model.addAttribute("feedback", feedback);
 
@@ -77,27 +76,29 @@ public class SalesCreditMemoController {
         SalesCreditMemoModel salesCreditMemoModel = new SalesCreditMemoModel();
 
         if (code != null) {
-            SalesCreditMemo salesCreditMemo = svc.get(code);
+            SalesDocumentDTO salesCreditMemo = svc.get(code);
             toModel(salesCreditMemo, salesCreditMemoModel);
         }
 
-        List<Customer> customers = null;//customerSvc.list();
+        CustomerList customers = customerSvc.list();
 
         model.addAttribute("salesCreditMemoModel", salesCreditMemoModel);
-        model.addAttribute("customers", customers);
+        model.addAttribute("customers", customers.getData());
 
         return "salesCreditMemoWizardFirstPage.html";
     }
 
     @PostMapping("/salesCreditMemoWizardFirstPage")
     public String postWizardFirstPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel, Model model) {
-        Customer customer = null;//customerSvc.get(salesCreditMemoModel.getCustomerCode());
+        CustomerDTO customer = customerSvc.get(salesCreditMemoModel.getCustomerCode());
 
         salesCreditMemoModel.setCustomerName(customer.getName());
         salesCreditMemoModel.setDate(new Date());
-        salesCreditMemoModel.setPaymentMethodCode(customer.getPaymentMethod().getCode());
+        salesCreditMemoModel.setPaymentMethodCode(customer.getPaymentMethodCode());
 
-        model.addAttribute("paymentMethods", paymentMethodSvc.list());
+        PaymentMethodList paymentMethodList = paymentMethodSvc.list();
+
+        model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "salesCreditMemoWizardSecondPage.html";
     }
@@ -106,9 +107,9 @@ public class SalesCreditMemoController {
     public RedirectView postWizardSecondPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel,
             RedirectAttributes redirectAttributesMock) {
         if (salesCreditMemoModel.getCode().isEmpty()) {
-            SalesCreditMemo createSalesCreditMemo = createSalesCreditMemo(salesCreditMemoModel);
+            String code = createSalesCreditMemo(salesCreditMemoModel);
 
-            redirectAttributesMock.addAttribute("code", createSalesCreditMemo.getCode());
+            redirectAttributesMock.addAttribute("code", code);
         } else {
             updateSalesCreditMemo(salesCreditMemoModel);
 
@@ -128,13 +129,13 @@ public class SalesCreditMemoController {
     @GetMapping("/salesCreditMemoCard")
     public String card(@RequestParam(name = "code") String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        SalesCreditMemo salesCreditMemo = svc.get(code);
-        List<SalesCreditMemoLine> salesCreditMemoLines = salesCreditMemoLineSvc.list(salesCreditMemo, page);
+        SalesDocumentDTO salesCreditMemo = svc.get(code);
+        SalesDocumentLineList salesCreditMemoLines = salesCreditMemoLineSvc.list(code, page);
         PagingData pagingData = pagingSvc.generate("salesCreditMemoCard", code, page,
-                salesCreditMemoLineSvc.count(salesCreditMemo));
+                (int) salesCreditMemoLines.getCount());
 
         model.addAttribute("salesCreditMemo", salesCreditMemo);
-        model.addAttribute("salesCreditMemoLines", salesCreditMemoLines);
+        model.addAttribute("salesCreditMemoLines", salesCreditMemoLines.getData());
         model.addAttribute("paging", pagingData);
 
         return "salesCreditMemoCard.html";
@@ -147,39 +148,37 @@ public class SalesCreditMemoController {
 
             feedbackSvc.give(FeedbackType.INFO, "Sales credit memo " + code + " posted.", httpSession);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Sales credit memo " + code + " post failed: " + e.getMessage(), httpSession);
+            feedbackSvc.give(FeedbackType.ERROR, "Sales credit memo " + code + " post failed: " + e.getMessage(),
+                    httpSession);
         }
 
         return new RedirectView("/salesCreditMemoList");
     }
 
-    private SalesCreditMemo createSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
-        SalesCreditMemo salesCreditMemo = new SalesCreditMemo();
-        salesCreditMemo.setCode(salesCodeSeriesSvc.creditMemoCode());
-        //salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
+    private String createSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
+        SalesDocumentDTO salesCreditMemo = new SalesDocumentDTO();
+        salesCreditMemo.setCustomerCode(salesCreditMemoModel.getCustomerCode());
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
-        //salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
+        salesCreditMemo.setPaymentMethodCode(salesCreditMemoModel.getPaymentMethodCode());
 
-        svc.create(salesCreditMemo);
-
-        return salesCreditMemo;
+        return svc.create(salesCreditMemo);
     }
 
     private void updateSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
-        SalesCreditMemo salesCreditMemo = svc.get(salesCreditMemoModel.getCode());
-        //salesCreditMemo.setCustomer(customerSvc.get(salesCreditMemoModel.getCustomerCode()));
+        SalesDocumentDTO salesCreditMemo = svc.get(salesCreditMemoModel.getCode());
+        salesCreditMemo.setCustomerCode(salesCreditMemoModel.getCustomerCode());
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
-        //salesCreditMemo.setPaymentMethod(paymentMethodSvc.get(salesCreditMemoModel.getPaymentMethodCode()));
+        salesCreditMemo.setPaymentMethodCode(salesCreditMemoModel.getPaymentMethodCode());
 
         svc.update(salesCreditMemoModel.getCode(), salesCreditMemo);
     }
 
-    private void toModel(SalesCreditMemo salesCreditMemo, SalesCreditMemoModel salesCreditMemoModel) {
+    private void toModel(SalesDocumentDTO salesCreditMemo, SalesCreditMemoModel salesCreditMemoModel) {
         salesCreditMemoModel.setCode(salesCreditMemo.getCode());
-        salesCreditMemoModel.setCustomerCode(salesCreditMemo.getCustomer().getCode());
-        salesCreditMemoModel.setCustomerName(salesCreditMemo.getCustomer().getName());
+        salesCreditMemoModel.setCustomerCode(salesCreditMemo.getCustomerCode());
+        salesCreditMemoModel.setCustomerName(salesCreditMemo.getCustomerName());
         salesCreditMemoModel.setDate(salesCreditMemo.getDate());
-        salesCreditMemoModel.setPaymentMethodCode(salesCreditMemo.getPaymentMethod().getCode());
+        salesCreditMemoModel.setPaymentMethodCode(salesCreditMemo.getPaymentMethodCode());
     }
 
 }
