@@ -42,10 +42,10 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
 
         // sales credit memo code serie
         CodeSerie cs02 = new CodeSerie();
-        cs01.setCode("CS02");
-        cs01.setName("Sales Credit Memo");
-        cs01.setFirstCode("SCM000000");
-        cs01.setLastCode("SCM000000");
+        cs02.setCode("CS02");
+        cs02.setName("Sales Credit Memo");
+        cs02.setFirstCode("SCM000000");
+        cs02.setLastCode("SCM000000");
         codeSerieSvc.create(cs02);
 
         // modify setup
