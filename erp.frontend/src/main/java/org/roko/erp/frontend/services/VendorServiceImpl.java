@@ -1,88 +1,54 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.Vendor;
-import org.roko.erp.frontend.repositories.VendorRepository;
+import org.roko.erp.dto.VendorDTO;
+import org.roko.erp.dto.list.VendorList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class VendorServiceImpl implements VendorService {
 
-    private VendorRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public VendorServiceImpl(VendorRepository repo) {
-        this.repo = repo;
+    public VendorServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(Vendor vendor) {
-        repo.save(vendor);
+    public void create(VendorDTO vendor) {
+        restTemplate.postForObject("/api/v1/vendors", vendor, String.class);
     }
 
     @Override
-    public void update(String code, Vendor vendor) {
-        Vendor vendorFromDB = repo.findById(code).get();
-
-        transferFields(vendor, vendorFromDB);
-
-        repo.save(vendorFromDB);
+    public void update(String code, VendorDTO vendor) {
+        restTemplate.put("/api/v1/vendors/{code}", vendor, code);
     }
 
     @Override
     public void delete(String code) {
-        Vendor vendor = repo.findById(code).get();
-
-        repo.delete(vendor);
+        restTemplate.delete("/api/v1/vendors/{code}", code);
     }
 
     @Override
-    public Vendor get(String code) {
-        Optional<Vendor> vendorOptional = repo.findById(code);
-
-        if (vendorOptional.isPresent()) {
-            Vendor vendor = vendorOptional.get();
-            vendor.setBalance(repo.balance(vendor));
-            return vendor;
+    public VendorDTO get(String code) {
+        try {
+            return restTemplate.getForObject("/api/v1/vendors/{code}", VendorDTO.class, code);
+        } catch (HttpClientErrorException e) {
+            return null;
         }
-
-        return null;
     }
 
     @Override
-    public List<Vendor> list() {
-        List<Vendor> vendors = repo.findAll();
-
-        vendors.stream()
-            .forEach(v -> v.setBalance(repo.balance(v)));
-
-        return vendors;
+    public VendorList list() {
+        return restTemplate.getForObject("/api/v1/vendors", VendorList.class);
     }
 
     @Override
-    public List<Vendor> list(int page) {
-        List<Vendor> vendors = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        vendors.stream()
-            .forEach(v -> v.setBalance(repo.balance(v)));
-
-        return vendors;
+    public VendorList list(int page) {
+        return restTemplate.getForObject("/api/v1/vendors/page/{page}", VendorList.class, page);
     }
 
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-
-    private void transferFields(Vendor source, Vendor target) {
-        target.setName(source.getName());
-        target.setAddress(source.getAddress());
-        target.setPaymentMethod(source.getPaymentMethod());
-    }
-    
 }

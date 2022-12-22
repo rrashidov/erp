@@ -2,7 +2,6 @@ package org.roko.erp.frontend.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineModel;
 import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineSource;
@@ -200,14 +199,14 @@ public class GeneralJournalBatchLineController {
     }
 
     private void addVendors(List<GeneralJournalBatchLineSource> sources) {
-        sources.addAll(vendorSvc.list().stream()
-                .map(x -> {
-                    GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
-                    s.setCode(x.getCode());
-                    s.setName(x.getName());
-                    return s;
-                })
-                .collect(Collectors.toList()));
+        // sources.addAll(vendorSvc.list().stream()
+        //         .map(x -> {
+        //             GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
+        //             s.setCode(x.getCode());
+        //             s.setName(x.getName());
+        //             return s;
+        //         })
+        //         .collect(Collectors.toList()));
     }
 
     private void addCustomers(List<GeneralJournalBatchLineSource> sources) {

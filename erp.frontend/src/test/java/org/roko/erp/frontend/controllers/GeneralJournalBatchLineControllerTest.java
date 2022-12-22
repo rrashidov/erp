@@ -174,7 +174,7 @@ public class GeneralJournalBatchLineControllerTest {
         when(vendorMock2.getCode()).thenReturn(TEST_VENDOR_CODE_2);
         when(vendorMock2.getName()).thenReturn(TEST_VENDOR_NAME_2);
 
-        when(vendorSvcMock.list()).thenReturn(Arrays.asList(vendorMock1, vendorMock2));
+        //when(vendorSvcMock.list()).thenReturn(Arrays.asList(vendorMock1, vendorMock2));
 
         when(generalJournalBatchLineModelMock.getGeneralJournalBatchCode()).thenReturn(TEST_CODE);
 

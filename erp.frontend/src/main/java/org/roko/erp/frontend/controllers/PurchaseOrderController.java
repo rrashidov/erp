@@ -82,7 +82,7 @@ public class PurchaseOrderController {
             toModel(purchaseOrder, purchaseOrderModel);
         }
 
-        List<Vendor> vendors = vendorSvc.list();
+        List<Vendor> vendors = null;//vendorSvc.list();
 
         model.addAttribute("purchaseOrderModel", purchaseOrderModel);
         model.addAttribute("vendors", vendors);
@@ -92,7 +92,7 @@ public class PurchaseOrderController {
 
     @PostMapping("/purchaseOrderWizardFirstPage")
     public String postPurchaseOrderWizardFirstPage(@ModelAttribute PurchaseOrderModel purchaseOrderModel, Model model) {
-        Vendor vendor = vendorSvc.get(purchaseOrderModel.getVendorCode());
+        Vendor vendor = null;//vendorSvc.get(purchaseOrderModel.getVendorCode());
 
         purchaseOrderModel.setVendorName(vendor.getName());
         purchaseOrderModel.setDate(new Date());
@@ -163,14 +163,14 @@ public class PurchaseOrderController {
     private PurchaseOrder fromModel(PurchaseOrderModel purchaseOrderModel) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
         purchaseOrder.setCode(purchaseCodeSeriesSvc.orderCode());
-        purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
+        //purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
         purchaseOrder.setDate(purchaseOrderModel.getDate());
         //purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
         return purchaseOrder;
     }
 
     private void fromModel(PurchaseOrder purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
-        purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
+        //purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
         purchaseOrder.setDate(purchaseOrderModel.getDate());
         //purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
     }

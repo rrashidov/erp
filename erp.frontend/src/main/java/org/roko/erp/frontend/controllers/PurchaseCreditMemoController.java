@@ -81,7 +81,7 @@ public class PurchaseCreditMemoController {
             toModel(purchaseCreditMemo, purchaseCreditMemoModel);
         }
 
-        List<Vendor> vendors = vendorSvc.list();
+        List<Vendor> vendors = null;//vendorSvc.list();
 
         model.addAttribute("purchaseCreditMemoModel", purchaseCreditMemoModel);
         model.addAttribute("vendors", vendors);
@@ -92,7 +92,7 @@ public class PurchaseCreditMemoController {
     @PostMapping("/purchaseCreditMemoWizardFirstPage")
     public String postPurchaseCreditMemoWizardFirstPage(@ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel,
             Model model) {
-        Vendor vendor = vendorSvc.get(purchaseCreditMemoModel.getVendorCode());
+        Vendor vendor = null;//vendorSvc.get(purchaseCreditMemoModel.getVendorCode());
 
         purchaseCreditMemoModel.setVendorName(vendor.getName());
         purchaseCreditMemoModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
@@ -171,7 +171,7 @@ public class PurchaseCreditMemoController {
     }
 
     private void fromModel(PurchaseCreditMemoModel purchaseCreditMemoModel, PurchaseCreditMemo purchaseCreditMemo) {
-        purchaseCreditMemo.setVendor(vendorSvc.get(purchaseCreditMemoModel.getVendorCode()));
+        //purchaseCreditMemo.setVendor(vendorSvc.get(purchaseCreditMemoModel.getVendorCode()));
         purchaseCreditMemo.setDate(purchaseCreditMemoModel.getDate());
         //purchaseCreditMemo.setPaymentMethod(paymentMethodSvc.get(purchaseCreditMemoModel.getPaymentMethodCode()));
     }

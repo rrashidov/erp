@@ -1,17 +1,9 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.Vendor;
-import org.roko.erp.frontend.model.VendorLedgerEntry;
+import org.roko.erp.dto.list.VendorLedgerEntryList;
 
 public interface VendorLedgerEntryService {
     
-    public void create(VendorLedgerEntry vendorLedgerEntry);
+    public VendorLedgerEntryList list(String code, int page);
 
-    public List<VendorLedgerEntry> findFor(Vendor vendor);
-
-    public List<VendorLedgerEntry> findFor(Vendor vendor, int page);
-
-    public int count(Vendor vendor);
 }

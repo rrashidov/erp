@@ -1,25 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.Vendor;
-import org.roko.erp.frontend.repositories.VendorRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.roko.erp.dto.VendorDTO;
+import org.roko.erp.dto.list.VendorList;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 public class VendorServiceTest {
 
@@ -27,23 +20,11 @@ public class VendorServiceTest {
 
     private static final int TEST_PAGE = 12;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
-
     @Mock
-    private Page<Vendor> pageMock;
-
-    @Mock
-    private Vendor vendorMock;
+    private VendorDTO vendorMock;
     
     @Mock
-    private Vendor vendorMock1;
-
-    @Mock
-    private Vendor vendorMock2;
-
-    @Mock
-    private VendorRepository repoMock;
+    private RestTemplate restTemplate;
 
     private VendorService svc;
 
@@ -51,80 +32,58 @@ public class VendorServiceTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
-        when(pageMock.toList()).thenReturn(Arrays.asList(vendorMock, vendorMock1, vendorMock2));
-
-        when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(vendorMock));
-        when(repoMock.findAll()).thenReturn(Arrays.asList(vendorMock, vendorMock1, vendorMock2));
-        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new VendorServiceImpl(repoMock);
+        svc = new VendorServiceImpl(restTemplate);
     }
 
     @Test
-    public void create_delegatesToRepo(){
+    public void create_callsBackend(){
         svc.create(vendorMock);
 
-        verify(repoMock).save(vendorMock);
+        verify(restTemplate).postForObject("/api/v1/vendors", vendorMock, String.class);
     }
 
     @Test
-    public void update_delegatesToRepo(){
+    public void update_callsBackend(){
         svc.update(TEST_CODE, vendorMock);
 
-        verify(repoMock).findById(TEST_CODE);
-        verify(repoMock).save(vendorMock);
+        verify(restTemplate).put("/api/v1/vendors/{code}", vendorMock, TEST_CODE);
     }
 
     @Test
-    public void delete_delegatesToRepo(){
+    public void delete_callsBackend(){
         svc.delete(TEST_CODE);
 
-        verify(repoMock).delete(vendorMock);
+        verify(restTemplate).delete("/api/v1/vendors/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo(){
-        Vendor vendor = svc.get(TEST_CODE);
+    public void get_callsBackend(){
+        svc.get(TEST_CODE);
 
-        assertEquals(vendorMock, vendor);
-
-        verify(repoMock).balance(vendorMock);
+        verify(restTemplate).getForObject("/api/v1/vendors/{code}", VendorDTO.class, TEST_CODE);
     }
 
     @Test
     public void getReturnsNull_whenCalledWithNonExistingCode(){
-        Vendor vendor = svc.get("non-existing-code");
+        when(restTemplate.getForObject("/api/v1/vendors/{code}", VendorDTO.class, "non-existing-code")).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        VendorDTO vendor = svc.get("non-existing-code");
 
         assertNull(vendor);
     }
 
     @Test
-    public void list_delegatesToRepo(){
+    public void list_callsBackend(){
         svc.list();
 
-        verify(repoMock).findAll();
-
-        verify(repoMock).balance(vendorMock);
-        verify(repoMock).balance(vendorMock1);
-        verify(repoMock).balance(vendorMock2);
+        verify(restTemplate).getForObject("/api/v1/vendors", VendorList.class);
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
-        verify(repoMock).findAll(pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
+        verify(restTemplate).getForObject("/api/v1/vendors/page/{page}", VendorList.class, TEST_PAGE);
     }
 
-    @Test
-    public void count_delegatesToRepo(){
-        svc.count();
-
-        verify(repoMock).count();
-    }
 }

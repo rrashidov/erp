@@ -1,42 +1,22 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.Vendor;
-import org.roko.erp.frontend.model.VendorLedgerEntry;
-import org.roko.erp.frontend.repositories.VendorLedgerEntryRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.roko.erp.dto.list.VendorLedgerEntryList;
+import org.springframework.web.client.RestTemplate;
 
 public class VendorLedgerEntryServiceTest {
 
+    private static final String TEST_VENDOR_CODE = "test-vendor-code";
+
     private static final int TEST_PAGE = 12;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
-
     @Mock
-    private Vendor vendorMock;
-
-    @Mock
-    private Page<VendorLedgerEntry> pageMock;
-
-    @Mock
-    private VendorLedgerEntry vendorLedgerEntryMock;
-
-    @Mock
-    private VendorLedgerEntryRepository repoMock;
+    private RestTemplate restTemplateMock;
 
     private VendorLedgerEntryService svc;
 
@@ -44,41 +24,15 @@ public class VendorLedgerEntryServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(repoMock.findFor(eq(vendorMock), any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new VendorLedgerEntryServiceImpl(repoMock);
+        svc = new VendorLedgerEntryServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo() {
-        svc.create(vendorLedgerEntryMock);
+    public void listWithPage_callsBackend() {
+        svc.list(TEST_VENDOR_CODE, TEST_PAGE);
 
-        verify(repoMock).save(vendorLedgerEntryMock);
+        verify(restTemplateMock).getForObject("/api/v1/vendors/{code}/ledgerentries/page/{page}",
+                VendorLedgerEntryList.class, TEST_VENDOR_CODE, TEST_PAGE);
     }
 
-    @Test
-    public void list_delegatesToRepo() {
-        svc.findFor(vendorMock);
-
-        verify(repoMock).findFor(vendorMock);
-    }
-
-    @Test
-    public void listWithPage_delegatesToRepo() {
-        svc.findFor(vendorMock, TEST_PAGE);
-
-        verify(repoMock).findFor(eq(vendorMock), pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
-    }
-
-    @Test
-    public void count_delegatesToRepo() {
-        svc.count(vendorMock);
-
-        verify(repoMock).count(vendorMock);
-    }
 }

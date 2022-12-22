@@ -4,10 +4,10 @@ import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.frontend.model.CodeSerie;
 import org.roko.erp.frontend.model.GeneralJournalBatch;
 import org.roko.erp.frontend.model.Setup;
-import org.roko.erp.frontend.model.Vendor;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.CodeSerieService;
 import org.roko.erp.frontend.services.CustomerService;
@@ -117,25 +117,25 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     initBulkCustomers("PM03");
 
     // init vendors
-    Vendor v1 = new Vendor();
+    VendorDTO v1 = new VendorDTO();
     v1.setCode("VEND001");
     v1.setName("Vendor 01");
     v1.setAddress("Address 01");
-    //v1.setPaymentMethod(pm01);
+    v1.setPaymentMethodCode("PM01");
     vendorService.create(v1);
 
-    Vendor v2 = new Vendor();
+    VendorDTO v2 = new VendorDTO();
     v2.setCode("VEND002");
     v2.setName("Vendor 02");
     v2.setAddress("Address 02");
-    //v2.setPaymentMethod(pm02);
+    v2.setPaymentMethodCode("PM02");
     vendorService.create(v2);
 
-    Vendor v3 = new Vendor();
+    VendorDTO v3 = new VendorDTO();
     v3.setCode("VEND003");
     v3.setName("Vendor 03");
     v3.setAddress("Address 03");
-    //v3.setPaymentMethod(pm03);
+    v3.setPaymentMethodCode("PM03");
     vendorService.create(v3);
 
     //initBulkVendors(pm03);

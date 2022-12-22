@@ -1,11 +1,12 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
+import org.roko.erp.dto.VendorDTO;
+import org.roko.erp.dto.list.PaymentMethodList;
+import org.roko.erp.dto.list.VendorLedgerEntryList;
+import org.roko.erp.dto.list.VendorList;
 import org.roko.erp.frontend.controllers.model.VendorModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.Vendor;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.VendorLedgerEntryService;
 import org.roko.erp.frontend.services.VendorService;
@@ -37,10 +38,10 @@ public class VendorController {
 
     @GetMapping("/vendorList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<Vendor> vendors = vendorSvc.list(page);
-        PagingData pagingData = pagingSvc.generate("vendor", page, vendorSvc.count());
+        VendorList vendorList = vendorSvc.list(page);
+        PagingData pagingData = pagingSvc.generate("vendor", page, (int) vendorList.getCount());
 
-        model.addAttribute("vendors", vendors);
+        model.addAttribute("vendors", vendorList.getData());
         model.addAttribute("paging", pagingData);
 
         return "vendorList.html";
@@ -52,40 +53,44 @@ public class VendorController {
         VendorModel vendorModel = new VendorModel();
 
         if (code != null) {
-            Vendor vendor = vendorSvc.get(code);
+            VendorDTO vendor = vendorSvc.get(code);
 
             vendorModel.setCode(vendor.getCode());
             vendorModel.setName(vendor.getName());
             vendorModel.setAddress(vendor.getAddress());
-            vendorModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
+            vendorModel.setPaymentMethodCode(vendor.getPaymentMethodCode());
 
-            model.addAttribute("vendorLedgerEntries", vendorLedgerEntrySvc.findFor(vendor, page));
+            VendorLedgerEntryList vendorLedgerEntryList = vendorLedgerEntrySvc.list(code, page);
+
+            model.addAttribute("vendorLedgerEntries", vendorLedgerEntryList.getData());
             model.addAttribute("paging",
-                    pagingSvc.generate("vendorCard", code, page, vendorLedgerEntrySvc.count(vendor)));
+                    pagingSvc.generate("vendorCard", code, page, (int) vendorLedgerEntryList.getCount()));
         }
 
+        PaymentMethodList paymentMethodList = paymentMethodSvc.list();
+
         model.addAttribute("vendor", vendorModel);
-        model.addAttribute("paymentMethods", paymentMethodSvc.list());
+        model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "vendorCard.html";
     }
 
     @PostMapping("/vendorCard")
     public RedirectView post(@ModelAttribute VendorModel vendorModel) {
-        Vendor vendor = vendorSvc.get(vendorModel.getCode());
+        VendorDTO vendor = vendorSvc.get(vendorModel.getCode());
 
         if (vendor == null) {
-            vendor = new Vendor();
+            vendor = new VendorDTO();
             vendor.setCode(vendorModel.getCode());
             vendor.setName(vendorModel.getName());
             vendor.setAddress(vendorModel.getAddress());
-            //vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
-    
-            vendorSvc.create(vendor);    
+            vendor.setPaymentMethodCode(vendorModel.getPaymentMethodCode());
+
+            vendorSvc.create(vendor);
         } else {
             vendor.setName(vendorModel.getName());
             vendor.setAddress(vendorModel.getAddress());
-            //vendor.setPaymentMethod(paymentMethodSvc.get(vendorModel.getPaymentMethodCode()));
+            vendor.setPaymentMethodCode(vendorModel.getPaymentMethodCode());
 
             vendorSvc.update(vendorModel.getCode(), vendor);
         }
