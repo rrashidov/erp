@@ -1,23 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.PurchaseOrder;
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.list.PurchaseDocumentList;
 
 public interface PurchaseOrderService {
 
-    public void create(PurchaseOrder purchaseOrder);
+    public String create(PurchaseDocumentDTO purchaseOrder);
 
-    public void update(String code, PurchaseOrder purchaseOrder);
+    public void update(String code, PurchaseDocumentDTO purchaseOrder);
 
     public void delete(String code);
 
-    public PurchaseOrder get(String code);
+    public PurchaseDocumentDTO get(String code);
 
-    public List<PurchaseOrder> list();
+    public PurchaseDocumentList list(int page);
 
-    public List<PurchaseOrder> list(int page);
-
-    public int count();
-    
 }

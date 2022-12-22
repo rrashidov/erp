@@ -1,20 +1,21 @@
 package org.roko.erp.frontend.controllers;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.VendorDTO;
+import org.roko.erp.dto.list.PaymentMethodList;
+import org.roko.erp.dto.list.PurchaseDocumentLineList;
+import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.roko.erp.dto.list.VendorList;
 import org.roko.erp.frontend.controllers.model.PurchaseOrderModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PurchaseOrder;
-import org.roko.erp.frontend.model.PurchaseOrderLine;
-import org.roko.erp.frontend.model.Vendor;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
-import org.roko.erp.frontend.services.PurchaseCodeSeriesService;
 import org.roko.erp.frontend.services.PurchaseOrderLineService;
 import org.roko.erp.frontend.services.PurchaseOrderPostService;
 import org.roko.erp.frontend.services.PurchaseOrderService;
@@ -40,14 +41,13 @@ public class PurchaseOrderController {
     private PaymentMethodService paymentMethodSvc;
     private PurchaseOrderLineService purchaseOrderLineSvc;
     private PurchaseOrderPostService purchaseOrderPostSvc;
-    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
     private FeedbackService feedbackSvc;
 
     @Autowired
     public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc,
             VendorService vendorSvc,
             PaymentMethodService paymentMethodSvc, PagingService pagingSvc,
-            PurchaseOrderPostService purchaseOrderPostSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc,
+            PurchaseOrderPostService purchaseOrderPostSvc,
             FeedbackService feedbackSvc) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
@@ -55,18 +55,17 @@ public class PurchaseOrderController {
         this.paymentMethodSvc = paymentMethodSvc;
         this.pagingSvc = pagingSvc;
         this.purchaseOrderPostSvc = purchaseOrderPostSvc;
-        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
         this.feedbackSvc = feedbackSvc;
     }
 
     @GetMapping("/purchaseOrderList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model,
             HttpSession httpSession) {
-        List<PurchaseOrder> purchaseOrders = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("purchaseOrder", page, svc.count());
+        PurchaseDocumentList purchaseOrderList = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("purchaseOrder", page, (int) purchaseOrderList.getCount());
         Feedback feedback = feedbackSvc.get(httpSession);
 
-        model.addAttribute("purchaseOrders", purchaseOrders);
+        model.addAttribute("purchaseOrders", purchaseOrderList.getData());
         model.addAttribute("paging", pagingData);
         model.addAttribute("feedback", feedback);
 
@@ -78,28 +77,30 @@ public class PurchaseOrderController {
         PurchaseOrderModel purchaseOrderModel = new PurchaseOrderModel();
 
         if (code != null) {
-            PurchaseOrder purchaseOrder = svc.get(code);
+            PurchaseDocumentDTO purchaseOrder = svc.get(code);
             toModel(purchaseOrder, purchaseOrderModel);
         }
 
-        List<Vendor> vendors = null;//vendorSvc.list();
+        VendorList vendorList = vendorSvc.list();
 
         model.addAttribute("purchaseOrderModel", purchaseOrderModel);
-        model.addAttribute("vendors", vendors);
+        model.addAttribute("vendors", vendorList.getData());
 
         return "purchaseOrderWizardFirstPage.html";
     }
 
     @PostMapping("/purchaseOrderWizardFirstPage")
     public String postPurchaseOrderWizardFirstPage(@ModelAttribute PurchaseOrderModel purchaseOrderModel, Model model) {
-        Vendor vendor = null;//vendorSvc.get(purchaseOrderModel.getVendorCode());
+        VendorDTO vendor = vendorSvc.get(purchaseOrderModel.getVendorCode());
 
         purchaseOrderModel.setVendorName(vendor.getName());
         purchaseOrderModel.setDate(new Date());
-        purchaseOrderModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
+        purchaseOrderModel.setPaymentMethodCode(vendor.getPaymentMethodCode());
+
+        PaymentMethodList paymentMethodList = paymentMethodSvc.list();
 
         model.addAttribute("purchaseOrderModel", purchaseOrderModel);
-        model.addAttribute("paymentMethods", paymentMethodSvc.list());
+        model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "purchaseOrderWizardSecondPage.html";
     }
@@ -108,14 +109,16 @@ public class PurchaseOrderController {
     public RedirectView postPurchaseOrderWizardSecondPage(@ModelAttribute PurchaseOrderModel purchaseOrderModel,
             RedirectAttributes redirectAttributes) {
         if (purchaseOrderModel.getCode().isEmpty()) {
-            PurchaseOrder purchaseOrder = fromModel(purchaseOrderModel);
+            PurchaseDocumentDTO purchaseOrder = fromModel(purchaseOrderModel);
 
-            svc.create(purchaseOrder);
+            String code = svc.create(purchaseOrder);
 
-            redirectAttributes.addAttribute("code", purchaseOrder.getCode());
+            redirectAttributes.addAttribute("code", code);
         } else {
-            PurchaseOrder purchaseOrder = svc.get(purchaseOrderModel.getCode());
+            PurchaseDocumentDTO purchaseOrder = svc.get(purchaseOrderModel.getCode());
+
             fromModel(purchaseOrder, purchaseOrderModel);
+
             svc.update(purchaseOrderModel.getCode(), purchaseOrder);
 
             redirectAttributes.addAttribute("code", purchaseOrder.getCode());
@@ -134,13 +137,15 @@ public class PurchaseOrderController {
     @GetMapping("/purchaseOrderCard")
     public String card(@RequestParam(name = "code") String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        PurchaseOrder purchaseOrder = svc.get(code);
-        List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineSvc.list(purchaseOrder, page);
+        PurchaseDocumentDTO purchaseOrder = svc.get(code);
+
+        PurchaseDocumentLineList purchaseOrderLineList = purchaseOrderLineSvc.list(code, page);
+
         PagingData pagingData = pagingSvc.generate("purchaseOrderCard", code, page,
-                purchaseOrderLineSvc.count(purchaseOrder));
+                (int) purchaseOrderLineList.getCount());
 
         model.addAttribute("purchaseOrder", purchaseOrder);
-        model.addAttribute("purchaseOrderLines", purchaseOrderLines);
+        model.addAttribute("purchaseOrderLines", purchaseOrderLineList.getData());
         model.addAttribute("paging", pagingData);
 
         return "purchaseOrderCard.html";
@@ -160,26 +165,25 @@ public class PurchaseOrderController {
         return new RedirectView("/purchaseOrderList");
     }
 
-    private PurchaseOrder fromModel(PurchaseOrderModel purchaseOrderModel) {
-        PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setCode(purchaseCodeSeriesSvc.orderCode());
-        //purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
+    private PurchaseDocumentDTO fromModel(PurchaseOrderModel purchaseOrderModel) {
+        PurchaseDocumentDTO purchaseOrder = new PurchaseDocumentDTO();
+        purchaseOrder.setVendorCode(purchaseOrderModel.getVendorCode());
         purchaseOrder.setDate(purchaseOrderModel.getDate());
-        //purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
+        purchaseOrder.setPaymentMethodCode(purchaseOrderModel.getPaymentMethodCode());
         return purchaseOrder;
     }
 
-    private void fromModel(PurchaseOrder purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
-        //purchaseOrder.setVendor(vendorSvc.get(purchaseOrderModel.getVendorCode()));
+    private void fromModel(PurchaseDocumentDTO purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
+        purchaseOrder.setVendorCode(purchaseOrderModel.getVendorCode());
         purchaseOrder.setDate(purchaseOrderModel.getDate());
-        //purchaseOrder.setPaymentMethod(paymentMethodSvc.get(purchaseOrderModel.getPaymentMethodCode()));
+        purchaseOrder.setPaymentMethodCode(purchaseOrderModel.getPaymentMethodCode());
     }
 
-    private void toModel(PurchaseOrder purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
+    private void toModel(PurchaseDocumentDTO purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
         purchaseOrderModel.setCode(purchaseOrder.getCode());
         purchaseOrderModel.setDate(purchaseOrder.getDate());
-        purchaseOrderModel.setPaymentMethodCode(purchaseOrder.getPaymentMethod().getCode());
-        purchaseOrderModel.setVendorCode(purchaseOrder.getVendor().getCode());
-        purchaseOrderModel.setVendorName(purchaseOrder.getVendor().getName());
+        purchaseOrderModel.setPaymentMethodCode(purchaseOrder.getPaymentMethodCode());
+        purchaseOrderModel.setVendorCode(purchaseOrder.getVendorCode());
+        purchaseOrderModel.setVendorName(purchaseOrder.getVendorName());
     }
 }

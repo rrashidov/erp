@@ -1,86 +1,44 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PurchaseOrder;
-import org.roko.erp.frontend.repositories.PurchaseOrderRepository;
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
-    private PurchaseOrderRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public PurchaseOrderServiceImpl(PurchaseOrderRepository repo) {
-        this.repo = repo;
+    public PurchaseOrderServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(PurchaseOrder purchaseOrder) {
-        repo.save(purchaseOrder);
+    public String create(PurchaseDocumentDTO purchaseOrder) {
+        return restTemplate.postForObject("/api/v1/purchaseorders", purchaseOrder, String.class);
     }
 
     @Override
-    public void update(String code, PurchaseOrder purchaseOrder) {
-        PurchaseOrder purchaseOrderFromDB = repo.findById(code).get();
-
-        transferFields(purchaseOrder, purchaseOrderFromDB);
-
-        repo.save(purchaseOrderFromDB);
+    public void update(String code, PurchaseDocumentDTO purchaseOrder) {
+        restTemplate.put("/api/v1/purchaseorders/{code}", purchaseOrder, code);
     }
 
     @Override
     public void delete(String code) {
-        PurchaseOrder purchaseOrder = repo.findById(code).get();
-
-        repo.delete(purchaseOrder);
+        restTemplate.delete("/api/v1/purchaseorders/{code}", code);
     }
 
     @Override
-    public PurchaseOrder get(String code) {
-        Optional<PurchaseOrder> purchaseOrderOptional = repo.findById(code);
-
-        if (purchaseOrderOptional.isPresent()) {
-            return purchaseOrderOptional.get();
-        }
-
-        return null;
+    public PurchaseDocumentDTO get(String code) {
+        return restTemplate.getForObject("/api/v1/purchaseorders/{code}", PurchaseDocumentDTO.class, code);
     }
 
     @Override
-    public List<PurchaseOrder> list() {
-        List<PurchaseOrder> purchaseOrders = repo.findAll();
-
-        purchaseOrders.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return purchaseOrders;
-    }
-
-    @Override
-    public List<PurchaseOrder> list(int page) {
-        List<PurchaseOrder> purchaseOrders = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        purchaseOrders.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return purchaseOrders;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-    
-    private void transferFields(PurchaseOrder source, PurchaseOrder target) {
-        target.setVendor(source.getVendor());
-        target.setDate(source.getDate());
-        target.setPaymentMethod(source.getPaymentMethod());
+    public PurchaseDocumentList list(int page) {
+        return restTemplate.getForObject("/api/v1/purchaseorders/page/{page}", PurchaseDocumentList.class, page);
     }
 
 }

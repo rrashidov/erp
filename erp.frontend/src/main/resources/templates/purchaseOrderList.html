@@ -35,9 +35,9 @@
                 <tbody>
                     <tr th:each="purchaseOrder : ${purchaseOrders}">
                         <td th:text="${purchaseOrder.code}"></td>
-                        <td th:text="${purchaseOrder.vendor.name}"></td>
+                        <td th:text="${purchaseOrder.vendorName}"></td>
                         <td th:text="${purchaseOrder.date}"></td>
-                        <td th:text="${purchaseOrder.paymentMethod.name}"></td>
+                        <td th:text="${purchaseOrder.paymentMethodName}"></td>
                         <td th:text="${purchaseOrder.amount}"></td>
                         <td><a class="btn btn-primary" th:href="@{/purchaseOrderWizard?code={code}(code=${purchaseOrder.code})}">Edit</a>  <a
                             class="btn btn-primary" th:href="@{/purchaseOrderCard?code={code}(code=${purchaseOrder.code})}">Card</a> <a

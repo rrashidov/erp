@@ -1,26 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.PurchaseOrder;
-import org.roko.erp.frontend.model.PurchaseOrderLine;
-import org.roko.erp.frontend.model.jpa.PurchaseOrderLineId;
+import org.roko.erp.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.PurchaseDocumentLineList;
 
 public interface PurchaseOrderLineService {
 
-    public void create(PurchaseOrderLine PurchaseOrderLine);
+    public void create(String code, PurchaseDocumentLineDTO PurchaseOrderLine);
 
-    public void update(PurchaseOrderLineId id, PurchaseOrderLine purchaseOrderLine);
+    public void update(String code, int lineNo, PurchaseDocumentLineDTO purchaseOrderLine);
 
-    public void delete(PurchaseOrderLineId id);
+    public void delete(String code, int lineNo);
 
-    public PurchaseOrderLine get(PurchaseOrderLineId id);
+    public PurchaseDocumentLineDTO get(String code, int lineNo);
 
-    public List<PurchaseOrderLine> list(PurchaseOrder purchaseOrder);
+    public PurchaseDocumentLineList list(String code, int page);
 
-    public List<PurchaseOrderLine> list(PurchaseOrder purchaseOrder, int page);
-
-    public int count(PurchaseOrder purchaseOrder);
-
-    public int maxLineNo(PurchaseOrder purchaseOrder);
 }
