@@ -65,9 +65,6 @@ public class PurchaseOrderLineServiceTest {
     private PurchaseDocumentLineDTO dtoMock;
 
     @Mock
-    private PurchaseOrderService purchaseOrderSvcMock;
-
-    @Mock
     private ItemService itemSvcMock;
 
     private PurchaseOrderLineService svc;
@@ -77,8 +74,6 @@ public class PurchaseOrderLineServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
-
-        when(purchaseOrderSvcMock.get(TEST_PURCHASE_ORDER_CODE)).thenReturn(purchaseOrderMock);
 
         when(dtoMock.getPurchaseDocumentCode()).thenReturn(TEST_PURCHASE_ORDER_CODE);
         when(dtoMock.getLineNo()).thenReturn(TEST_LINE_NO);
@@ -105,7 +100,7 @@ public class PurchaseOrderLineServiceTest {
         when(repoMock.findById(purchaseOrderLineIdMock)).thenReturn(Optional.of(purchaseOrderLineMock));
         when(repoMock.listForPurchaseOrder(eq(purchaseOrderMock), any(Pageable.class))).thenReturn(pageMock);
 
-        svc = new PurchaseOrderLineServiceImpl(repoMock, purchaseOrderSvcMock, itemSvcMock);
+        svc = new PurchaseOrderLineServiceImpl(repoMock, itemSvcMock);
     }
 
     @Test
@@ -194,8 +189,7 @@ public class PurchaseOrderLineServiceTest {
     public void fromDTO_returnsProperValue() {
         PurchaseOrderLine purchaseOrderLine = svc.fromDTO(dtoMock);
 
-        assertEquals(purchaseOrderMock, purchaseOrderLine.getPurchaseOrderLineId().getPurchaseOrder());
-        assertEquals(TEST_LINE_NO, purchaseOrderLine.getPurchaseOrderLineId().getLineNo());
+        assertNull(purchaseOrderLine.getPurchaseOrderLineId());
         assertEquals(itemMock, purchaseOrderLine.getItem());
         assertEquals(TEST_QUANTITY, purchaseOrderLine.getQuantity());
         assertEquals(TEST_PRICE, purchaseOrderLine.getPrice());

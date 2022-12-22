@@ -16,14 +16,12 @@ import org.springframework.stereotype.Service;
 public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
 
     private PurchaseOrderLineRepository repo;
-    private PurchaseOrderService purchaseOrderSvc;
     private ItemService itemSvc;
 
     @Autowired
-    public PurchaseOrderLineServiceImpl(PurchaseOrderLineRepository repo, PurchaseOrderService purchaseOrderSvc,
+    public PurchaseOrderLineServiceImpl(PurchaseOrderLineRepository repo,
             ItemService itemSvc) {
         this.repo = repo;
-        this.purchaseOrderSvc = purchaseOrderSvc;
         this.itemSvc = itemSvc;
     }
 
@@ -82,14 +80,7 @@ public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
 
     @Override
     public PurchaseOrderLine fromDTO(PurchaseDocumentLineDTO dto) {
-        PurchaseOrder purchaseOrder = purchaseOrderSvc.get(dto.getPurchaseDocumentCode());
-
-        PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
-        purchaseOrderLineId.setPurchaseOrder(purchaseOrder);
-        purchaseOrderLineId.setLineNo(dto.getLineNo());
-
         PurchaseOrderLine purchaseOrderLine = new PurchaseOrderLine();
-        purchaseOrderLine.setPurchaseOrderLineId(purchaseOrderLineId);
         purchaseOrderLine.setItem(itemSvc.get(dto.getItemCode()));
         purchaseOrderLine.setQuantity(dto.getQuantity());
         purchaseOrderLine.setPrice(dto.getPrice());

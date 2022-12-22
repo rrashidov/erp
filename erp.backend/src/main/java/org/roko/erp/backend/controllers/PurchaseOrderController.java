@@ -97,8 +97,16 @@ public class PurchaseOrderController {
 
     @PostMapping("/{code}/lines")
     public int postLine(@PathVariable("code") String code, @RequestBody PurchaseDocumentLineDTO dto) {
-        PurchaseOrderLine purchaseOrderLine = purchaseOrderLineSvc.fromDTO(dto);
+        PurchaseOrder purchaseOrder = svc.get(code);
 
+        int maxLineNo = purchaseOrderLineSvc.maxLineNo(purchaseOrder);
+
+        PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
+        purchaseOrderLineId.setPurchaseOrder(purchaseOrder);
+        purchaseOrderLineId.setLineNo(maxLineNo + 1);
+
+        PurchaseOrderLine purchaseOrderLine = purchaseOrderLineSvc.fromDTO(dto);
+        purchaseOrderLine.setPurchaseOrderLineId(purchaseOrderLineId);
         purchaseOrderLineSvc.create(purchaseOrderLine);
 
         return dto.getLineNo();

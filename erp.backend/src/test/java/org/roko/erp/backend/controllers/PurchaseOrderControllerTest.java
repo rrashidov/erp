@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.PurchaseOrder;
@@ -23,6 +25,8 @@ import org.roko.erp.dto.list.PurchaseDocumentList;
 
 public class PurchaseOrderControllerTest {
     
+    private static final int TEST_MAX_LINE_NO = 345;
+
     private static final String NEW_CODE = "new-code";
 
     private static final String TEST_CODE = "test-code";
@@ -32,6 +36,9 @@ public class PurchaseOrderControllerTest {
     private static final int TEST_LINE_NO = 1234;
 
     private static final int TEST_COUNT = 222;
+
+    @Captor
+    private ArgumentCaptor<PurchaseOrderLineId> purchaseOrderLineIdArgumentCaptor;
 
     @Mock
     private PurchaseOrderService svcMock;
@@ -71,6 +78,7 @@ public class PurchaseOrderControllerTest {
         when(purchaseOrderLineSvcMock.fromDTO(purchaseOrderLineDtoMock)).thenReturn(purchaseOrderLineMock);
         when(purchaseOrderLineSvcMock.toDTO(purchaseOrderLineMock)).thenReturn(purchaseOrderLineDtoMock);
         when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(TEST_COUNT);
+        when(purchaseOrderLineSvcMock.maxLineNo(purchaseOrderMock)).thenReturn(TEST_MAX_LINE_NO);
 
         when(svcMock.list()).thenReturn(Arrays.asList(purchaseOrderMock));
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(purchaseOrderMock));
@@ -153,6 +161,13 @@ public class PurchaseOrderControllerTest {
         controller.postLine(TEST_CODE, purchaseOrderLineDtoMock);
 
         verify(purchaseOrderLineSvcMock).create(purchaseOrderLineMock);
+
+        verify(purchaseOrderLineMock).setPurchaseOrderLineId(purchaseOrderLineIdArgumentCaptor.capture());
+
+        PurchaseOrderLineId purchaseOrderLineId = purchaseOrderLineIdArgumentCaptor.getValue();
+
+        assertEquals(purchaseOrderMock, purchaseOrderLineId.getPurchaseOrder());
+        assertEquals(TEST_MAX_LINE_NO + 1, purchaseOrderLineId.getLineNo());
     }
 
     @Test
