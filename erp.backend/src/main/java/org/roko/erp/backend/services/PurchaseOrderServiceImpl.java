@@ -16,15 +16,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private PurchaseOrderRepository repo;
     private VendorService vendorSvc;
     private PaymentMethodService paymentMethodSvc;
-    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     @Autowired
     public PurchaseOrderServiceImpl(PurchaseOrderRepository repo, VendorService vendorSvc,
-            PaymentMethodService paymentMethodSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
+            PaymentMethodService paymentMethodSvc) {
         this.repo = repo;
         this.vendorSvc = vendorSvc;
         this.paymentMethodSvc = paymentMethodSvc;
-        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @Override
@@ -88,7 +86,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public PurchaseOrder fromDTO(PurchaseDocumentDTO dto) {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setCode(purchaseCodeSeriesSvc.orderCode());
         purchaseOrder.setVendor(vendorSvc.get(dto.getVendorCode()));
         purchaseOrder.setDate(dto.getDate());
         purchaseOrder.setPaymentMethod(paymentMethodSvc.get(dto.getPaymentMethodCode()));

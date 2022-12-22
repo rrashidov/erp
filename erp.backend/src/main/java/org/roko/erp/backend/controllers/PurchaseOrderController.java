@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
+import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseOrderLineService;
 import org.roko.erp.backend.services.PurchaseOrderService;
 import org.roko.erp.dto.PurchaseDocumentDTO;
@@ -28,11 +29,14 @@ public class PurchaseOrderController {
 
     private PurchaseOrderService svc;
     private PurchaseOrderLineService purchaseOrderLineSvc;
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     @Autowired
-    public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc) {
+    public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc,
+            PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
+        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @GetMapping
@@ -132,6 +136,7 @@ public class PurchaseOrderController {
     @PostMapping
     public String post(@RequestBody PurchaseDocumentDTO dto) {
         PurchaseOrder purchaseOrder = svc.fromDTO(dto);
+        purchaseOrder.setCode(purchaseCodeSeriesSvc.orderCode());
         svc.create(purchaseOrder);
         return purchaseOrder.getCode();
     }

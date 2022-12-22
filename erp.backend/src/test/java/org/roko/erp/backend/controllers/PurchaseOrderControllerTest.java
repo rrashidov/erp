@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
+import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseOrderLineService;
 import org.roko.erp.backend.services.PurchaseOrderService;
 import org.roko.erp.dto.PurchaseDocumentDTO;
@@ -22,6 +23,8 @@ import org.roko.erp.dto.list.PurchaseDocumentList;
 
 public class PurchaseOrderControllerTest {
     
+    private static final String NEW_CODE = "new-code";
+
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 123;
@@ -48,11 +51,16 @@ public class PurchaseOrderControllerTest {
     @Mock
     private PurchaseOrderLine purchaseOrderLineMock;
 
+    @Mock
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
+
     private PurchaseOrderController controller;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(purchaseCodeSeriesSvcMock.orderCode()).thenReturn(NEW_CODE);
 
         PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
         purchaseOrderLineId.setPurchaseOrder(purchaseOrderMock);
@@ -71,7 +79,7 @@ public class PurchaseOrderControllerTest {
         when(svcMock.fromDTO(dtoMock)).thenReturn(purchaseOrderMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock);
+        controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, purchaseCodeSeriesSvcMock);
     }
 
     @Test
@@ -103,6 +111,7 @@ public class PurchaseOrderControllerTest {
         controller.post(dtoMock);
 
         verify(svcMock).create(purchaseOrderMock);
+        verify(purchaseOrderMock).setCode(NEW_CODE);
     }
 
     @Test
