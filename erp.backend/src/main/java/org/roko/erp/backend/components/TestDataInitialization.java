@@ -48,10 +48,19 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
         cs02.setLastCode("SCM000000");
         codeSerieSvc.create(cs02);
 
+        // purchase order code serie
+        CodeSerie cs03 = new CodeSerie();
+        cs03.setCode("CS03");
+        cs03.setName("Purchase Order");
+        cs03.setFirstCode("PO000000");
+        cs03.setLastCode("PO000000");
+        codeSerieSvc.create(cs03);
+
         // modify setup
         Setup setup = setupSvc.get();
         setup.setSalesOrderCodeSerie(cs01);
         setup.setSalesCreditMemoCodeSerie(cs02);
+        setup.setPurchaseOrderCodeSerie(cs03);
         setupSvc.update(setup);
     }
 
