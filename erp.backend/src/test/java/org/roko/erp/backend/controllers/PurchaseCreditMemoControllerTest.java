@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
@@ -29,6 +31,11 @@ public class PurchaseCreditMemoControllerTest {
     private static final int TEST_PAGE = 123;
 
     private static final int TEST_LINE_NO = 23;
+
+    private static final int TEST_MAX_LINE_NO = 234;
+
+    @Captor
+    private ArgumentCaptor<PurchaseCreditMemoLineId> purchaseCreditMemoLineIdArgumentCaptor;
 
     @Mock
     private PurchaseCreditMemo purchaseCreditMemoMock;
@@ -65,6 +72,7 @@ public class PurchaseCreditMemoControllerTest {
                 .thenReturn(purchaseCreditMemoLineMock);
         when(purchaseCreditMemoLineSvcMock.toDTO(purchaseCreditMemoLineMock)).thenReturn(purchaseCreditMemoLineDtoMock);
         when(purchaseCreditMemoLineSvcMock.count(purchaseCreditMemoMock)).thenReturn(TEST_COUNT);
+        when(purchaseCreditMemoLineSvcMock.maxLineNo(purchaseCreditMemoMock)).thenReturn(TEST_MAX_LINE_NO);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(purchaseCreditMemoMock));
         when(svcMock.get(TEST_CODE)).thenReturn(purchaseCreditMemoMock);
@@ -138,6 +146,13 @@ public class PurchaseCreditMemoControllerTest {
         controller.postLine(TEST_CODE, purchaseCreditMemoLineDtoMock);
 
         verify(purchaseCreditMemoLineSvcMock).create(purchaseCreditMemoLineMock);
+
+        verify(purchaseCreditMemoLineMock).setPurchaseCreditMemoLineId(purchaseCreditMemoLineIdArgumentCaptor.capture());
+
+        PurchaseCreditMemoLineId purchaseCreditMemoLineId = purchaseCreditMemoLineIdArgumentCaptor.getValue();
+
+        assertEquals(purchaseCreditMemoMock, purchaseCreditMemoLineId.getPurchaseCreditMemo());
+        assertEquals(TEST_MAX_LINE_NO + 1, purchaseCreditMemoLineId.getLineNo());
     }
 
     @Test

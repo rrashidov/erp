@@ -78,8 +78,20 @@ public class PurchaseCreditMemoController {
 
     @PostMapping("/{code}/lines")
     public int postLine(@PathVariable("code") String code, @RequestBody PurchaseDocumentLineDTO dto) {
+        PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
+
+        int maxLineNo = purchaseCreditMemoLineSvc.maxLineNo(purchaseCreditMemo);
+
+        PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
+        purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemo);
+        purchaseCreditMemoLineId.setLineNo(maxLineNo + 1);
+
         PurchaseCreditMemoLine purchaseCreditMemoLine = purchaseCreditMemoLineSvc.fromDTO(dto);
+
+        purchaseCreditMemoLine.setPurchaseCreditMemoLineId(purchaseCreditMemoLineId);
+
         purchaseCreditMemoLineSvc.create(purchaseCreditMemoLine);
+        
         return dto.getLineNo();
     }
 

@@ -16,14 +16,12 @@ import org.springframework.stereotype.Service;
 public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLineService {
 
     private PurchaseCreditMemoLineRepository repo;
-    private PurchaseCreditMemoService purchaseCreditMemoSvc;
     private ItemService itemSvc;
 
     @Autowired
     public PurchaseCreditMemoLineServiceImpl(PurchaseCreditMemoLineRepository repo,
-            PurchaseCreditMemoService purchaseCreditMemoSvc, ItemService itemSvc) {
+            ItemService itemSvc) {
         this.repo = repo;
-        this.purchaseCreditMemoSvc = purchaseCreditMemoSvc;
         this.itemSvc = itemSvc;
     }
 
@@ -80,12 +78,7 @@ public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLine
 
     @Override
     public PurchaseCreditMemoLine fromDTO(PurchaseDocumentLineDTO dto) {
-        PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
-        purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemoSvc.get(dto.getPurchaseDocumentCode()));
-        purchaseCreditMemoLineId.setLineNo(dto.getLineNo());
-
         PurchaseCreditMemoLine purchaseCreditMemoLine = new PurchaseCreditMemoLine();
-        purchaseCreditMemoLine.setPurchaseCreditMemoLineId(purchaseCreditMemoLineId);
         purchaseCreditMemoLine.setItem(itemSvc.get(dto.getItemCode()));
         purchaseCreditMemoLine.setQuantity(dto.getQuantity());
         purchaseCreditMemoLine.setPrice(dto.getPrice());
@@ -96,7 +89,8 @@ public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLine
     @Override
     public PurchaseDocumentLineDTO toDTO(PurchaseCreditMemoLine purchaseCreditMemoLine) {
         PurchaseDocumentLineDTO dto = new PurchaseDocumentLineDTO();
-        dto.setPurchaseDocumentCode(purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getPurchaseCreditMemo().getCode());
+        dto.setPurchaseDocumentCode(
+                purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getPurchaseCreditMemo().getCode());
         dto.setLineNo(purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getLineNo());
         dto.setItemCode(purchaseCreditMemoLine.getItem().getCode());
         dto.setItemName(purchaseCreditMemoLine.getItem().getName());

@@ -107,7 +107,7 @@ public class PurchaseCreditMemoLineServiceTest {
         when(repoMock.findById(purchaseCreditMemoLineIdMock)).thenReturn(Optional.of(purchaseCreditMemoLineMock));
         when(repoMock.findFor(eq(purchaseCreditMemoMock), any(Pageable.class))).thenReturn(pageMock);
 
-        svc = new PurchaseCreditMemoLineServiceImpl(repoMock, purchaseCreditMemoSvcMock, itemSvcMock);
+        svc = new PurchaseCreditMemoLineServiceImpl(repoMock, itemSvcMock);
     }
 
     @Test
@@ -196,8 +196,6 @@ public class PurchaseCreditMemoLineServiceTest {
     public void fromDTO_returnsProperResult() {
         PurchaseCreditMemoLine purchaseCreditMemoLine = svc.fromDTO(dtoMock);
 
-        assertEquals(purchaseCreditMemoMock, purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getPurchaseCreditMemo());
-        assertEquals(TEST_LINE_NO, purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getLineNo());
         assertEquals(itemMock, purchaseCreditMemoLine.getItem());
         assertEquals(TEST_QUANTITY, purchaseCreditMemoLine.getQuantity());
         assertEquals(TEST_PRICE, purchaseCreditMemoLine.getPrice());
