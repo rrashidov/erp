@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
+import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseCreditMemoLineService;
 import org.roko.erp.backend.services.PurchaseCreditMemoService;
 import org.roko.erp.dto.PurchaseDocumentDTO;
@@ -33,6 +34,8 @@ public class PurchaseCreditMemoControllerTest {
     private static final int TEST_LINE_NO = 23;
 
     private static final int TEST_MAX_LINE_NO = 234;
+
+    private static final String TEST_NEW_CODE = "test-new-code";
 
     @Captor
     private ArgumentCaptor<PurchaseCreditMemoLineId> purchaseCreditMemoLineIdArgumentCaptor;
@@ -55,11 +58,16 @@ public class PurchaseCreditMemoControllerTest {
     @Mock
     private PurchaseDocumentLineDTO purchaseCreditMemoLineDtoMock;
 
+    @Mock
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
+
     private PurchaseCreditMemoController controller;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(purchaseCodeSeriesSvcMock.creditMemoCode()).thenReturn(TEST_NEW_CODE);
 
         PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
         purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemoMock);
@@ -80,7 +88,7 @@ public class PurchaseCreditMemoControllerTest {
         when(svcMock.toDTO(purchaseCreditMemoMock)).thenReturn(dtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new PurchaseCreditMemoController(svcMock, purchaseCreditMemoLineSvcMock);
+        controller = new PurchaseCreditMemoController(svcMock, purchaseCreditMemoLineSvcMock, purchaseCodeSeriesSvcMock);
     }
 
     @Test
@@ -104,6 +112,8 @@ public class PurchaseCreditMemoControllerTest {
         controller.post(dtoMock);
 
         verify(svcMock).create(purchaseCreditMemoMock);
+
+        verify(purchaseCreditMemoMock).setCode(TEST_NEW_CODE);
     }
 
     @Test

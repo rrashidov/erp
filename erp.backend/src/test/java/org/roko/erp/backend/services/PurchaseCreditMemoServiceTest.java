@@ -71,9 +71,6 @@ public class PurchaseCreditMemoServiceTest {
     @Mock
     private PaymentMethodService paymentMethodSvcMock;
 
-    @Mock
-    private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
-
     private PurchaseCreditMemoService svc;
 
     @BeforeEach
@@ -83,8 +80,6 @@ public class PurchaseCreditMemoServiceTest {
         when(vendorSvcMock.get(TEST_VENDOR_CODE)).thenReturn(vendorMock);
 
         when(paymentMethodSvcMock.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
-
-        when(purchaseCodeSeriesSvcMock.creditMemoCode()).thenReturn(TEST_CODE);
 
         when(dtoMock.getVendorCode()).thenReturn(TEST_VENDOR_CODE);
         when(dtoMock.getDate()).thenReturn(TEST_DATE);
@@ -106,7 +101,7 @@ public class PurchaseCreditMemoServiceTest {
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
         when(repoMock.findAll()).thenReturn(Arrays.asList(purchaseCreditMemoMock, purchaseCreditMemoMock1, purchaseCreditMemoMock2));
 
-        svc = new PurchaseCreditMemoServiceImpl(repoMock, vendorSvcMock, paymentMethodSvcMock, purchaseCodeSeriesSvcMock);
+        svc = new PurchaseCreditMemoServiceImpl(repoMock, vendorSvcMock, paymentMethodSvcMock);
     }
 
     @Test
@@ -192,7 +187,7 @@ public class PurchaseCreditMemoServiceTest {
     public void fromDTO_returnsProperResult() {
         PurchaseCreditMemo purchaseCreditMemo = svc.fromDTO(dtoMock);
 
-        assertEquals(TEST_CODE, purchaseCreditMemo.getCode());
+        assertNull(purchaseCreditMemo.getCode());
         assertEquals(vendorMock, purchaseCreditMemo.getVendor());
         assertEquals(TEST_DATE, purchaseCreditMemo.getDate());
         assertEquals(paymentMethodMock, purchaseCreditMemo.getPaymentMethod());

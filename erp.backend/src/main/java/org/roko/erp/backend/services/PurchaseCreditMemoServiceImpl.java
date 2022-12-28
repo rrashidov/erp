@@ -16,15 +16,13 @@ public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService 
     private PurchaseCreditMemoRepository repo;
     private VendorService vendorSvc;
     private PaymentMethodService paymentMethodSvc;
-    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     @Autowired
     public PurchaseCreditMemoServiceImpl(PurchaseCreditMemoRepository repo, VendorService vendorSvc,
-            PaymentMethodService paymentMethodSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
+            PaymentMethodService paymentMethodSvc) {
         this.repo = repo;
         this.vendorSvc = vendorSvc;
         this.paymentMethodSvc = paymentMethodSvc;
-        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @Override
@@ -88,7 +86,6 @@ public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService 
     @Override
     public PurchaseCreditMemo fromDTO(PurchaseDocumentDTO dto) {
         PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
-        purchaseCreditMemo.setCode(purchaseCodeSeriesSvc.creditMemoCode());
         purchaseCreditMemo.setVendor(vendorSvc.get(dto.getVendorCode()));
         purchaseCreditMemo.setDate(dto.getDate());
         purchaseCreditMemo.setPaymentMethod(paymentMethodSvc.get(dto.getPaymentMethodCode()));

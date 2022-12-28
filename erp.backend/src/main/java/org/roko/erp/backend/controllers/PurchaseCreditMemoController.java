@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
+import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseCreditMemoLineService;
 import org.roko.erp.backend.services.PurchaseCreditMemoService;
 import org.roko.erp.dto.PurchaseDocumentDTO;
@@ -28,12 +29,14 @@ public class PurchaseCreditMemoController {
 
     private PurchaseCreditMemoService svc;
     private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
+    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
 
     @Autowired
     public PurchaseCreditMemoController(PurchaseCreditMemoService svc,
-            PurchaseCreditMemoLineService purchaseCreditMemoLineSvc) {
+            PurchaseCreditMemoLineService purchaseCreditMemoLineSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
         this.svc = svc;
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
+        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
     }
 
     @GetMapping("/page/{page}")
@@ -123,6 +126,7 @@ public class PurchaseCreditMemoController {
     @PostMapping
     public String post(@RequestBody PurchaseDocumentDTO dto) {
         PurchaseCreditMemo purchaseCreditMemo = svc.fromDTO(dto);
+        purchaseCreditMemo.setCode(purchaseCodeSeriesSvc.creditMemoCode());
         svc.create(purchaseCreditMemo);
         return purchaseCreditMemo.getCode();
     }
