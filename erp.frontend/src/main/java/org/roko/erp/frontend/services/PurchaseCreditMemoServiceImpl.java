@@ -1,86 +1,44 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PurchaseCreditMemo;
-import org.roko.erp.frontend.repositories.PurchaseCreditMemoRepository;
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService {
 
-    private PurchaseCreditMemoRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public PurchaseCreditMemoServiceImpl(PurchaseCreditMemoRepository repo) {
-        this.repo = repo;
+    public PurchaseCreditMemoServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(PurchaseCreditMemo purchaseCreditMemo) {
-        repo.save(purchaseCreditMemo);
+    public String create(PurchaseDocumentDTO purchaseCreditMemo) {
+        return restTemplate.postForObject("/api/v1/purchasecreditmemos", purchaseCreditMemo, String.class);
     }
 
     @Override
-    public void update(String code, PurchaseCreditMemo purchaseCreditMemo) {
-        PurchaseCreditMemo purchaseCreditMemoFromDB = repo.findById(code).get();
-
-        transferFields(purchaseCreditMemo, purchaseCreditMemoFromDB);
-
-        repo.save(purchaseCreditMemoFromDB);
+    public void update(String code, PurchaseDocumentDTO purchaseCreditMemo) {
+        restTemplate.put("/api/v1/purchasecreditmemos/{code}", purchaseCreditMemo, code);
     }
 
     @Override
     public void delete(String code) {
-        PurchaseCreditMemo purchaseCreditMemo = repo.findById(code).get();
-
-        repo.delete(purchaseCreditMemo);
+        restTemplate.delete("/api/v1/purchasecreditmemos/{code}", code);
     }
 
     @Override
-    public PurchaseCreditMemo get(String code) {
-        Optional<PurchaseCreditMemo> purchaseCreditMemoOptional = repo.findById(code);
-
-        if (purchaseCreditMemoOptional.isPresent()) {
-            return purchaseCreditMemoOptional.get();
-        }
-
-        return null;
+    public PurchaseDocumentDTO get(String code) {
+        return restTemplate.getForObject("/api/v1/purchasecreditmemos/{code}", PurchaseDocumentDTO.class, code);
     }
 
     @Override
-    public List<PurchaseCreditMemo> list() {
-        List<PurchaseCreditMemo> purchaseCreditMemos = repo.findAll();
-
-        purchaseCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return purchaseCreditMemos;
-    }
-
-    @Override
-    public List<PurchaseCreditMemo> list(int page) {
-        List<PurchaseCreditMemo> purchaseCreditMemos = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        purchaseCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return purchaseCreditMemos;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-
-    private void transferFields(PurchaseCreditMemo source, PurchaseCreditMemo target) {
-        target.setVendor(source.getVendor());
-        target.setDate(source.getDate());
-        target.setPaymentMethod(source.getPaymentMethod());
+    public PurchaseDocumentList list(int page) {
+        return restTemplate.getForObject("/api/v1/purchasecreditmemos/page/{page}", PurchaseDocumentList.class, page);
     }
 
 }

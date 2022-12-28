@@ -14,14 +14,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.frontend.controllers.model.PurchaseCreditMemoLineModel;
-import org.roko.erp.frontend.model.Item;
-import org.roko.erp.frontend.model.PurchaseCreditMemo;
-import org.roko.erp.frontend.model.PurchaseCreditMemoLine;
 import org.roko.erp.frontend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoLineService;
-import org.roko.erp.frontend.services.PurchaseCreditMemoService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -38,13 +38,12 @@ public class PurchaseCreditMemoLineControllerTest {
     private static final Double TEST_PRICE = 23.45;
     private static final Double TEST_AMOUNT = 123.12;
 
-    private static final int TEST_LINE_COUNT = 123;
     private static final int TEST_LINE_NO = 234;
 
-    private List<Item> items = new ArrayList<>();
+    private List<ItemDTO> items = new ArrayList<>();
 
     @Captor
-    private ArgumentCaptor<PurchaseCreditMemoLine> purchaseCreditMemoLineArgumentCaptor;
+    private ArgumentCaptor<PurchaseDocumentLineDTO> purchaseCreditMemoLineArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<PurchaseCreditMemoLineModel> purchaseCreditMemoLineModelArgumentCaptor;
@@ -53,16 +52,16 @@ public class PurchaseCreditMemoLineControllerTest {
     private ArgumentCaptor<PurchaseCreditMemoLineId> purchaseCreditMemoLineIdArgumentCaptor;
 
     @Mock
-    private PurchaseCreditMemoLine purchaseCreditMemoLineMock;
+    private PurchaseDocumentLineDTO purchaseCreditMemoLineMock;
 
     @Mock
-    private PurchaseCreditMemo purchaseCreditMemoMock;
+    private PurchaseDocumentDTO purchaseCreditMemoMock;
 
     @Mock
     private RedirectAttributes redirectAttributesMock;
 
     @Mock
-    private Item itemMock;
+    private ItemDTO itemMock;
 
     @Mock
     private PurchaseCreditMemoLineModel purchaseCreditMemoLineModelMock;
@@ -77,7 +76,7 @@ public class PurchaseCreditMemoLineControllerTest {
     private ItemService itemSvcMock;
 
     @Mock
-    private PurchaseCreditMemoService purchaseCreditMemoSvcMock;
+    private ItemList itemList;
 
     private PurchaseCreditMemoLineController controller;
 
@@ -85,16 +84,14 @@ public class PurchaseCreditMemoLineControllerTest {
     public void setup(){
         MockitoAnnotations.openMocks(this);
 
-        PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
-        purchaseCreditMemoLineId.setLineNo(TEST_LINE_NO);
-        purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemoMock);
-
         when(itemMock.getCode()).thenReturn(TEST_ITEM_CODE);
         when(itemMock.getName()).thenReturn(TEST_ITEM_NAME);
         when(itemMock.getPurchasePrice()).thenReturn(TEST_ITEM_PURCHASE_PRICE);
 
-        //when(itemSvcMock.list()).thenReturn(items);
-        //when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
+        when(itemList.getData()).thenReturn(items);
+
+        when(itemSvcMock.list()).thenReturn(itemList);
+        when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
         when(purchaseCreditMemoLineModelMock.getPurchaseCreditMemoCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
         when(purchaseCreditMemoLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
@@ -104,145 +101,129 @@ public class PurchaseCreditMemoLineControllerTest {
 
         when(purchaseCreditMemoMock.getCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-        when(purchaseCreditMemoSvcMock.get(TEST_PURCHASE_CREDIT_MEMO_CODE)).thenReturn(purchaseCreditMemoMock);
-
-        when(purchaseCreditMemoLineMock.getPurchaseCreditMemoLineId()).thenReturn(purchaseCreditMemoLineId);
-        when(purchaseCreditMemoLineMock.getPurchaseCreditMemo()).thenReturn(purchaseCreditMemoMock);
-        when(purchaseCreditMemoLineMock.getItem()).thenReturn(itemMock);
+        when(purchaseCreditMemoLineMock.getPurchaseDocumentCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
+        when(purchaseCreditMemoLineMock.getLineNo()).thenReturn(TEST_LINE_NO);
+        when(purchaseCreditMemoLineMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
+        when(purchaseCreditMemoLineMock.getItemName()).thenReturn(TEST_ITEM_NAME);
         when(purchaseCreditMemoLineMock.getQuantity()).thenReturn(TEST_QTY);
         when(purchaseCreditMemoLineMock.getPrice()).thenReturn(TEST_PRICE);
         when(purchaseCreditMemoLineMock.getAmount()).thenReturn(TEST_AMOUNT);
 
-        when(svcMock.maxLineNo(purchaseCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
-        when(svcMock.get(purchaseCreditMemoLineId)).thenReturn(purchaseCreditMemoLineMock);
+        when(svcMock.get(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO)).thenReturn(purchaseCreditMemoLineMock);
 
-        controller = new PurchaseCreditMemoLineController(svcMock, purchaseCreditMemoSvcMock, itemSvcMock);
+        controller = new PurchaseCreditMemoLineController(svcMock, itemSvcMock);
     }
 
-    // @Test
-    // public void wizard_returnsProperTemplate_whenCalledForNew(){
-    //     String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, null, modelMock);
+    @Test
+    public void wizard_returnsProperTemplate_whenCalledForNew(){
+        String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, null, modelMock);
 
-    //     assertEquals("purchaseCreditMemoLineWizardFirstPage.html", template);
+        assertEquals("purchaseCreditMemoLineWizardFirstPage.html", template);
 
-    //     verify(modelMock).addAttribute(eq("purchaseCreditMemoLineModel"), purchaseCreditMemoLineModelArgumentCaptor.capture());
-    //     verify(modelMock).addAttribute("items", items);
+        verify(modelMock).addAttribute(eq("purchaseCreditMemoLineModel"), purchaseCreditMemoLineModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("items", items);
 
-    //     PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = purchaseCreditMemoLineModelArgumentCaptor.getValue();
+        PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = purchaseCreditMemoLineModelArgumentCaptor.getValue();
 
-    //     assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
-    //     assertEquals(0, purchaseCreditMemoLineModel.getLineNo());
-    //     assertEquals("", purchaseCreditMemoLineModel.getItemCode());
-    //     assertEquals("", purchaseCreditMemoLineModel.getItemName());
-    //     assertEquals(0, purchaseCreditMemoLineModel.getQuantity());
-    //     assertEquals(0, purchaseCreditMemoLineModel.getPrice());
-    //     assertEquals(0, purchaseCreditMemoLineModel.getAmount());
-    // }
+        assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
+        assertEquals(0, purchaseCreditMemoLineModel.getLineNo());
+        assertEquals("", purchaseCreditMemoLineModel.getItemCode());
+        assertEquals("", purchaseCreditMemoLineModel.getItemName());
+        assertEquals(0, purchaseCreditMemoLineModel.getQuantity());
+        assertEquals(0, purchaseCreditMemoLineModel.getPrice());
+        assertEquals(0, purchaseCreditMemoLineModel.getAmount());
+    }
 
-    // @Test
-    // public void wizard_returnsProperTemplate_whenCalledForExisting(){
-    //     String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, modelMock);
+    @Test
+    public void wizard_returnsProperTemplate_whenCalledForExisting(){
+        String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, modelMock);
 
-    //     assertEquals("purchaseCreditMemoLineWizardFirstPage.html", template);
+        assertEquals("purchaseCreditMemoLineWizardFirstPage.html", template);
 
-    //     verify(modelMock).addAttribute(eq("purchaseCreditMemoLineModel"), purchaseCreditMemoLineModelArgumentCaptor.capture());
-    //     verify(modelMock).addAttribute("items", items);
+        verify(modelMock).addAttribute(eq("purchaseCreditMemoLineModel"), purchaseCreditMemoLineModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute("items", items);
 
-    //     PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = purchaseCreditMemoLineModelArgumentCaptor.getValue();
+        PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = purchaseCreditMemoLineModelArgumentCaptor.getValue();
 
-    //     assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
-    //     assertEquals(TEST_LINE_NO, purchaseCreditMemoLineModel.getLineNo());
-    //     assertEquals(TEST_ITEM_CODE, purchaseCreditMemoLineModel.getItemCode());
-    //     assertEquals(TEST_ITEM_NAME, purchaseCreditMemoLineModel.getItemName());
-    //     assertEquals(TEST_QTY, purchaseCreditMemoLineModel.getQuantity());
-    //     assertEquals(TEST_PRICE, purchaseCreditMemoLineModel.getPrice());
-    //     assertEquals(TEST_AMOUNT, purchaseCreditMemoLineModel.getAmount());
-    // }
+        assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
+        assertEquals(TEST_LINE_NO, purchaseCreditMemoLineModel.getLineNo());
+        assertEquals(TEST_ITEM_CODE, purchaseCreditMemoLineModel.getItemCode());
+        assertEquals(TEST_ITEM_NAME, purchaseCreditMemoLineModel.getItemName());
+        assertEquals(TEST_QTY, purchaseCreditMemoLineModel.getQuantity());
+        assertEquals(TEST_PRICE, purchaseCreditMemoLineModel.getPrice());
+        assertEquals(TEST_AMOUNT, purchaseCreditMemoLineModel.getAmount());
+    }
 
-    // // @Test
-    // // public void postPurchaseCreditMemoLineWizardFirstPage_returnsProperTemplate(){
-    // //     String template = controller.postPurchaseCreditMemoLineWizardFirstPage(purchaseCreditMemoLineModelMock, modelMock);
+    @Test
+    public void postPurchaseCreditMemoLineWizardFirstPage_returnsProperTemplate(){
+        String template = controller.postPurchaseCreditMemoLineWizardFirstPage(purchaseCreditMemoLineModelMock, modelMock);
 
-    // //     assertEquals("purchaseCreditMemoLineWizardSecondPage.html", template);
+        assertEquals("purchaseCreditMemoLineWizardSecondPage.html", template);
 
-    // //     verify(modelMock).addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModelMock);
+        verify(modelMock).addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModelMock);
 
-    // //     verify(purchaseCreditMemoLineModelMock).setItemName(TEST_ITEM_NAME);
-    // //     verify(purchaseCreditMemoLineModelMock).setPrice(TEST_ITEM_PURCHASE_PRICE);
-    // //     verify(purchaseCreditMemoLineModelMock).setAmount(TEST_QTY * TEST_ITEM_PURCHASE_PRICE);
-    // // }
+        verify(purchaseCreditMemoLineModelMock).setItemName(TEST_ITEM_NAME);
+        verify(purchaseCreditMemoLineModelMock).setPrice(TEST_ITEM_PURCHASE_PRICE);
+        verify(purchaseCreditMemoLineModelMock).setAmount(TEST_QTY * TEST_ITEM_PURCHASE_PRICE);
+    }
 
-    // @Test
-    // public void postPurchaseCreditMemoLineWizardSecondPage_returnsProperTemplate() {
-    //     String template = controller.postPurchaseCreditMemoLineWizardSecondPage(purchaseCreditMemoLineModelMock, modelMock);
+    @Test
+    public void postPurchaseCreditMemoLineWizardSecondPage_returnsProperTemplate() {
+        String template = controller.postPurchaseCreditMemoLineWizardSecondPage(purchaseCreditMemoLineModelMock, modelMock);
 
-    //     assertEquals("purchaseCreditMemoLineWizardThirdPage.html", template);
+        assertEquals("purchaseCreditMemoLineWizardThirdPage.html", template);
 
-    //     verify(modelMock).addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModelMock);
+        verify(modelMock).addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModelMock);
 
-    //     verify(purchaseCreditMemoLineModelMock).setAmount(TEST_QTY * TEST_ITEM_PURCHASE_PRICE);
-    // }
+        verify(purchaseCreditMemoLineModelMock).setAmount(TEST_QTY * TEST_ITEM_PURCHASE_PRICE);
+    }
 
-    // @Test
-    // public void postPurchaseCreditMemoLineWizardThirdPage_createsEntityAndReturnsProperTemplate_whenCalledForNew(){
-    //     RedirectView redirectView = controller.postPurchaseCreditMemoLineWizardThirdPage(purchaseCreditMemoLineModelMock, redirectAttributesMock);
+    @Test
+    public void postPurchaseCreditMemoLineWizardThirdPage_createsEntityAndReturnsProperTemplate_whenCalledForNew(){
+        RedirectView redirectView = controller.postPurchaseCreditMemoLineWizardThirdPage(purchaseCreditMemoLineModelMock, redirectAttributesMock);
 
-    //     assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
+        assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
-    //     verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
+        verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-    //     verify(svcMock).create(purchaseCreditMemoLineArgumentCaptor.capture());
+        verify(svcMock).create(eq(TEST_PURCHASE_CREDIT_MEMO_CODE), purchaseCreditMemoLineArgumentCaptor.capture());
 
-    //     PurchaseCreditMemoLine purchaseCreditMemoLine = purchaseCreditMemoLineArgumentCaptor.getValue();
+        PurchaseDocumentLineDTO purchaseCreditMemoLine = purchaseCreditMemoLineArgumentCaptor.getValue();
 
-    //     assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getPurchaseCreditMemo().getCode());
-    //     assertEquals(TEST_LINE_COUNT + 1, purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getLineNo());
-    //     assertEquals(itemMock, purchaseCreditMemoLine.getItem());
-    //     assertEquals(TEST_QTY, purchaseCreditMemoLine.getQuantity());
-    //     assertEquals(TEST_ITEM_PURCHASE_PRICE, purchaseCreditMemoLine.getPrice());
-    //     assertEquals(TEST_AMOUNT, purchaseCreditMemoLine.getAmount());
-    // }
+        assertEquals(TEST_ITEM_CODE, purchaseCreditMemoLine.getItemCode());
+        assertEquals(TEST_QTY, purchaseCreditMemoLine.getQuantity());
+        assertEquals(TEST_ITEM_PURCHASE_PRICE, purchaseCreditMemoLine.getPrice());
+        assertEquals(TEST_AMOUNT, purchaseCreditMemoLine.getAmount());
+    }
 
-    // @Test
-    // public void postPurchaseCreditMemoLineWizardThirdPage_updatesEntityAndReturnsProperTemplate_whenCalledForExisting(){
-    //     when(purchaseCreditMemoLineModelMock.getLineNo()).thenReturn(TEST_LINE_NO);
+    @Test
+    public void postPurchaseCreditMemoLineWizardThirdPage_updatesEntityAndReturnsProperTemplate_whenCalledForExisting(){
+        when(purchaseCreditMemoLineModelMock.getLineNo()).thenReturn(TEST_LINE_NO);
         
-    //     RedirectView redirectView = controller.postPurchaseCreditMemoLineWizardThirdPage(purchaseCreditMemoLineModelMock, redirectAttributesMock);
+        RedirectView redirectView = controller.postPurchaseCreditMemoLineWizardThirdPage(purchaseCreditMemoLineModelMock, redirectAttributesMock);
 
-    //     assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
+        assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
-    //     verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
+        verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-    //     verify(svcMock).update(purchaseCreditMemoLineIdArgumentCaptor.capture(), purchaseCreditMemoLineArgumentCaptor.capture());
+        verify(svcMock).update(eq(TEST_PURCHASE_CREDIT_MEMO_CODE), eq(TEST_LINE_NO), purchaseCreditMemoLineArgumentCaptor.capture());
 
-    //     PurchaseCreditMemoLineId purchaseCreditMemoLineId = purchaseCreditMemoLineIdArgumentCaptor.getValue();
+        PurchaseDocumentLineDTO purchaseCreditMemoLine = purchaseCreditMemoLineArgumentCaptor.getValue();
 
-    //     assertEquals(purchaseCreditMemoMock, purchaseCreditMemoLineId.getPurchaseCreditMemo());
-    //     assertEquals(TEST_LINE_NO, purchaseCreditMemoLineId.getLineNo());
+        assertEquals(TEST_ITEM_CODE, purchaseCreditMemoLine.getItemCode());
+        assertEquals(TEST_QTY, purchaseCreditMemoLine.getQuantity());
+        assertEquals(TEST_PRICE, purchaseCreditMemoLine.getPrice());
+        assertEquals(TEST_AMOUNT, purchaseCreditMemoLine.getAmount());
+    }
 
-    //     PurchaseCreditMemoLine purchaseCreditMemoLine = purchaseCreditMemoLineArgumentCaptor.getValue();
+    @Test
+    public void delete_deletesEntity(){
+        RedirectView redirectView = controller.delete(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, redirectAttributesMock);
 
-    //     assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getPurchaseCreditMemo().getCode());
-    //     assertEquals(TEST_LINE_NO, purchaseCreditMemoLine.getPurchaseCreditMemoLineId().getLineNo());
-    //     assertEquals(itemMock, purchaseCreditMemoLine.getItem());
-    //     assertEquals(TEST_QTY, purchaseCreditMemoLine.getQuantity());
-    //     assertEquals(TEST_PRICE, purchaseCreditMemoLine.getPrice());
-    //     assertEquals(TEST_AMOUNT, purchaseCreditMemoLine.getAmount());
-    // }
+        assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
-    // @Test
-    // public void delete_deletesEntity(){
-    //     RedirectView redirectView = controller.delete(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, redirectAttributesMock);
+        verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-    //     assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
-
-    //     verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
-
-    //     verify(svcMock).delete(purchaseCreditMemoLineIdArgumentCaptor.capture());
-
-    //     PurchaseCreditMemoLineId purchaseCreditMemoLineId = purchaseCreditMemoLineIdArgumentCaptor.getValue();
-
-    //     assertEquals(purchaseCreditMemoMock, purchaseCreditMemoLineId.getPurchaseCreditMemo());
-    //     assertEquals(TEST_LINE_NO, purchaseCreditMemoLineId.getLineNo());
-    // }
+        verify(svcMock).delete(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO);
+    }
 }

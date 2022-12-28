@@ -1,23 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.PurchaseCreditMemo;
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.list.PurchaseDocumentList;
 
 public interface PurchaseCreditMemoService {
 
-    public void create(PurchaseCreditMemo purchaseCreditMemo);
+    public String create(PurchaseDocumentDTO purchaseCreditMemo);
 
-    public void update(String code, PurchaseCreditMemo purchaseCreditMemo);
+    public void update(String code, PurchaseDocumentDTO purchaseCreditMemo);
 
     public void delete(String code);
 
-    public PurchaseCreditMemo get(String code);
+    public PurchaseDocumentDTO get(String code);
 
-    public List<PurchaseCreditMemo> list();
+    public PurchaseDocumentList list(int page);
 
-    public List<PurchaseCreditMemo> list(int page);
-
-    public int count();
-    
 }

@@ -1,19 +1,18 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
 
+import org.roko.erp.dto.PurchaseDocumentDTO;
+import org.roko.erp.dto.VendorDTO;
+import org.roko.erp.dto.list.PurchaseDocumentLineList;
+import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.roko.erp.dto.list.VendorList;
 import org.roko.erp.frontend.controllers.model.PurchaseCreditMemoModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PurchaseCreditMemo;
-import org.roko.erp.frontend.model.PurchaseCreditMemoLine;
-import org.roko.erp.frontend.model.Vendor;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
-import org.roko.erp.frontend.services.PurchaseCodeSeriesService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoLineService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoPostService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoService;
@@ -39,14 +38,13 @@ public class PurchaseCreditMemoController {
     private PaymentMethodService paymentMethodSvc;
     private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
     private PurchaseCreditMemoPostService purchaseCreditMemoPostSvc;
-    private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
     private FeedbackService feedbackSvc;
 
     @Autowired
     public PurchaseCreditMemoController(PurchaseCreditMemoService svc, PagingService pagingSvc,
             VendorService vendorSvc, PaymentMethodService paymentMethodSvc,
             PurchaseCreditMemoLineService purchaseCreditMemoLineSvc,
-            PurchaseCreditMemoPostService purchaseCreditMemoPostSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc,
+            PurchaseCreditMemoPostService purchaseCreditMemoPostSvc,
             FeedbackService feedbackSvc) {
         this.svc = svc;
         this.pagingSvc = pagingSvc;
@@ -54,18 +52,17 @@ public class PurchaseCreditMemoController {
         this.paymentMethodSvc = paymentMethodSvc;
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
         this.purchaseCreditMemoPostSvc = purchaseCreditMemoPostSvc;
-        this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
         this.feedbackSvc = feedbackSvc;
     }
 
     @GetMapping("/purchaseCreditMemoList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model,
             HttpSession httpSession) {
-        List<PurchaseCreditMemo> purchaseCreditMemos = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("purchaseCreditMemo", page, svc.count());
+        PurchaseDocumentList purchaseCreditMemoList = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("purchaseCreditMemo", page, (int) purchaseCreditMemoList.getCount());
         Feedback feedback = feedbackSvc.get(httpSession);
 
-        model.addAttribute("purchaseCreditMemos", purchaseCreditMemos);
+        model.addAttribute("purchaseCreditMemos", purchaseCreditMemoList.getData());
         model.addAttribute("paging", pagingData);
         model.addAttribute("feedback", feedback);
 
@@ -77,14 +74,14 @@ public class PurchaseCreditMemoController {
         PurchaseCreditMemoModel purchaseCreditMemoModel = new PurchaseCreditMemoModel();
 
         if (code != null) {
-            PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
+            PurchaseDocumentDTO purchaseCreditMemo = svc.get(code);
             toModel(purchaseCreditMemo, purchaseCreditMemoModel);
         }
 
-        List<Vendor> vendors = null;//vendorSvc.list();
+        VendorList vendors = vendorSvc.list();
 
         model.addAttribute("purchaseCreditMemoModel", purchaseCreditMemoModel);
-        model.addAttribute("vendors", vendors);
+        model.addAttribute("vendors", vendors.getData());
 
         return "purchaseCreditMemoWizardFirstPage.html";
     }
@@ -92,13 +89,13 @@ public class PurchaseCreditMemoController {
     @PostMapping("/purchaseCreditMemoWizardFirstPage")
     public String postPurchaseCreditMemoWizardFirstPage(@ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel,
             Model model) {
-        Vendor vendor = null;//vendorSvc.get(purchaseCreditMemoModel.getVendorCode());
+        VendorDTO vendor = vendorSvc.get(purchaseCreditMemoModel.getVendorCode());
 
         purchaseCreditMemoModel.setVendorName(vendor.getName());
-        purchaseCreditMemoModel.setPaymentMethodCode(vendor.getPaymentMethod().getCode());
+        purchaseCreditMemoModel.setPaymentMethodCode(vendor.getPaymentMethodCode());
 
         model.addAttribute("purchaseCreditMemoModel", purchaseCreditMemoModel);
-        model.addAttribute("paymentMethods", paymentMethodSvc.list());
+        model.addAttribute("paymentMethods", paymentMethodSvc.list().getData());
 
         return "purchaseCreditMemoWizardSecondPage.html";
     }
@@ -129,13 +126,15 @@ public class PurchaseCreditMemoController {
     @GetMapping("/purchaseCreditMemoCard")
     public String card(@RequestParam(name = "code") String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
-        List<PurchaseCreditMemoLine> purchaseCreditMemoLines = purchaseCreditMemoLineSvc.list(purchaseCreditMemo, page);
+        PurchaseDocumentDTO purchaseCreditMemo = svc.get(code);
+
+        PurchaseDocumentLineList purchaseCreditMemoLineList = purchaseCreditMemoLineSvc.list(code, page);
+
         PagingData pagingData = pagingSvc.generate("purchaseCreditMemoCard", code, page,
-                purchaseCreditMemoLineSvc.count(purchaseCreditMemo));
+                (int) purchaseCreditMemoLineList.getCount());
 
         model.addAttribute("purchaseCreditMemo", purchaseCreditMemo);
-        model.addAttribute("purchaseCreditMemoLines", purchaseCreditMemoLines);
+        model.addAttribute("purchaseCreditMemoLines", purchaseCreditMemoLineList.getData());
         model.addAttribute("paging", pagingData);
 
         return "purchaseCreditMemoCard.html";
@@ -156,31 +155,28 @@ public class PurchaseCreditMemoController {
     }
 
     private String createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
-        PurchaseCreditMemo purchaseCreditMemo = new PurchaseCreditMemo();
-        purchaseCreditMemo.setCode(purchaseCodeSeriesSvc.creditMemoCode());
+        PurchaseDocumentDTO purchaseCreditMemo = new PurchaseDocumentDTO();
         fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
-        svc.create(purchaseCreditMemo);
-
-        return purchaseCreditMemo.getCode();
+        return svc.create(purchaseCreditMemo);
     }
 
     private void updatePurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
-        PurchaseCreditMemo purchaseCreditMemo = svc.get(purchaseCreditMemoModel.getCode());
+        PurchaseDocumentDTO purchaseCreditMemo = svc.get(purchaseCreditMemoModel.getCode());
         fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
         svc.update(purchaseCreditMemoModel.getCode(), purchaseCreditMemo);
     }
 
-    private void fromModel(PurchaseCreditMemoModel purchaseCreditMemoModel, PurchaseCreditMemo purchaseCreditMemo) {
-        //purchaseCreditMemo.setVendor(vendorSvc.get(purchaseCreditMemoModel.getVendorCode()));
+    private void fromModel(PurchaseCreditMemoModel purchaseCreditMemoModel, PurchaseDocumentDTO purchaseCreditMemo) {
+        purchaseCreditMemo.setVendorCode(purchaseCreditMemoModel.getVendorCode());
         purchaseCreditMemo.setDate(purchaseCreditMemoModel.getDate());
-        //purchaseCreditMemo.setPaymentMethod(paymentMethodSvc.get(purchaseCreditMemoModel.getPaymentMethodCode()));
+        purchaseCreditMemo.setPaymentMethodCode(purchaseCreditMemoModel.getPaymentMethodCode());
     }
 
-    private void toModel(PurchaseCreditMemo purchaseCreditMemo, PurchaseCreditMemoModel purchaseCreditMemoModel) {
+    private void toModel(PurchaseDocumentDTO purchaseCreditMemo, PurchaseCreditMemoModel purchaseCreditMemoModel) {
         purchaseCreditMemoModel.setCode(purchaseCreditMemo.getCode());
-        purchaseCreditMemoModel.setVendorCode(purchaseCreditMemo.getVendor().getCode());
-        purchaseCreditMemoModel.setVendorName(purchaseCreditMemo.getVendor().getName());
+        purchaseCreditMemoModel.setVendorCode(purchaseCreditMemo.getVendorCode());
+        purchaseCreditMemoModel.setVendorName(purchaseCreditMemo.getVendorName());
         purchaseCreditMemoModel.setDate(purchaseCreditMemo.getDate());
-        purchaseCreditMemoModel.setPaymentMethodCode(purchaseCreditMemo.getPaymentMethod().getCode());
+        purchaseCreditMemoModel.setPaymentMethodCode(purchaseCreditMemo.getPaymentMethodCode());
     }
 }

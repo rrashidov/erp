@@ -1,84 +1,47 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PurchaseCreditMemo;
-import org.roko.erp.frontend.model.PurchaseCreditMemoLine;
-import org.roko.erp.frontend.model.jpa.PurchaseCreditMemoLineId;
-import org.roko.erp.frontend.repositories.PurchaseCreditMemoLineRepository;
+import org.roko.erp.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLineService {
 
-    private PurchaseCreditMemoLineRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public PurchaseCreditMemoLineServiceImpl(PurchaseCreditMemoLineRepository repo) {
-        this.repo = repo;
+    public PurchaseCreditMemoLineServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(PurchaseCreditMemoLine purchaseCreditMemoLine) {
-        repo.save(purchaseCreditMemoLine);
+    public void create(String code, PurchaseDocumentLineDTO purchaseCreditMemoLine) {
+        restTemplate.postForObject("/api/v1/purchasecreditmemos/{code}/lines", purchaseCreditMemoLine, Integer.class,
+                code);
     }
 
     @Override
-    public void update(PurchaseCreditMemoLineId id, PurchaseCreditMemoLine purchaseCreditMemoLine) {
-        PurchaseCreditMemoLine purchaseCreditMemoLineFromDB = repo.findById(id).get();
-
-        transferFields(purchaseCreditMemoLine, purchaseCreditMemoLineFromDB);
-
-        repo.save(purchaseCreditMemoLineFromDB);
+    public void update(String code, int lineNo, PurchaseDocumentLineDTO purchaseCreditMemoLine) {
+        restTemplate.put("/api/v1/purchasecreditmemos/{code}/lines/{lineNo}", purchaseCreditMemoLine, code, lineNo);
     }
 
     @Override
-    public void delete(PurchaseCreditMemoLineId id) {
-        PurchaseCreditMemoLine purchaseCreditMemoLine = repo.findById(id).get();
-        repo.delete(purchaseCreditMemoLine);
+    public void delete(String code, int lineNo) {
+        restTemplate.delete("/api/v1/purchasecreditmemos/{code}/lines/{lineNo}", code, lineNo);
     }
 
     @Override
-    public PurchaseCreditMemoLine get(PurchaseCreditMemoLineId id) {
-        Optional<PurchaseCreditMemoLine> purchaseCreditMemoLineOptional = repo.findById(id);
-
-        if (purchaseCreditMemoLineOptional.isPresent()) {
-            return purchaseCreditMemoLineOptional.get();
-        }
-
-        return null;
+    public PurchaseDocumentLineDTO get(String code, int lineNo) {
+        return restTemplate.getForObject("/api/v1/purchasecreditmemos/{code}/lines/{lineNo}",
+                PurchaseDocumentLineDTO.class, code, lineNo);
     }
 
     @Override
-    public List<PurchaseCreditMemoLine> list(PurchaseCreditMemo purchaseCreditMemo) {
-        return repo.findFor(purchaseCreditMemo);
-    }
-
-    @Override
-    public List<PurchaseCreditMemoLine> list(PurchaseCreditMemo purchaseCreditMemo, int page) {
-        return repo.findFor(purchaseCreditMemo, PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-    }
-
-    @Override
-    public int count(PurchaseCreditMemo purchaseCreditMemo) {
-        return new Long(repo.count(purchaseCreditMemo)).intValue();
-    }
-
-    @Override
-    public int maxLineNo(PurchaseCreditMemo purchaseCreditMemo) {
-        return repo.maxLineNo(purchaseCreditMemo);
-    }
-
-    private void transferFields(PurchaseCreditMemoLine source,
-            PurchaseCreditMemoLine target) {
-        target.setItem(source.getItem());
-        target.setQuantity(source.getQuantity());
-        target.setPrice(source.getPrice());
-        target.setAmount(source.getAmount());
+    public PurchaseDocumentLineList list(String code, int page) {
+        return restTemplate.getForObject("/api/v1/purchasecreditmemos/{code}/lines/page/{page}",
+                PurchaseDocumentLineList.class, code, page);
     }
 
 }

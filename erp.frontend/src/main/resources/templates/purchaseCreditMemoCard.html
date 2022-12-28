@@ -30,7 +30,7 @@
                     <div class="col-sm-6">
                         <label for="customer" class="form-label">Vendor</label>
                         <input readonly type="text" class="form-control" id="vendorName" placeholder="" value=""
-                            th:field="*{vendor.name}">
+                            th:field="*{vendorName}">
                     </div>
 
                     <div class="col-sm-6">
@@ -42,7 +42,7 @@
                     <div class="col-sm-6">
                         <label for="paymentMethod" class="form-label">Payment Method</label>
                         <input readonly type="text" class="form-control" id="paymentMethod" placeholder="" value=""
-                            th:field="*{paymentMethod.name}">
+                            th:field="*{paymentMethodName}">
                     </div>
 
                     <div class="col-sm-6">
@@ -74,15 +74,15 @@
                             </thead>
                             <tbody>
                                 <tr th:each="purchaseCreditMemoLine : ${purchaseCreditMemoLines}">
-                                    <td th:text="${purchaseCreditMemoLine.purchaseCreditMemoLineId.lineNo}"></td>
-                                    <td th:text="${purchaseCreditMemoLine.item.name}"></td>
+                                    <td th:text="${purchaseCreditMemoLine.lineNo}"></td>
+                                    <td th:text="${purchaseCreditMemoLine.itemName}"></td>
                                     <td th:text="${purchaseCreditMemoLine.quantity}"></td>
                                     <td th:text="${purchaseCreditMemoLine.price}"></td>
                                     <td th:text="${purchaseCreditMemoLine.amount}"></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/purchaseCreditMemoLineWizard?purchaseCreditMemoCode={code}&lineNo={lineNo}(code=${purchaseCreditMemo.code},lineNo=${purchaseCreditMemoLine.purchaseCreditMemoLineId.lineNo})}">Edit</a>
+                                            th:href="@{/purchaseCreditMemoLineWizard?purchaseCreditMemoCode={code}&lineNo={lineNo}(code=${purchaseCreditMemo.code},lineNo=${purchaseCreditMemoLine.lineNo})}">Edit</a>
                                         <a class="btn btn-primary"
-                                            th:href="@{/deletePurchaseCreditMemoLine?purchaseCreditMemoCode={code}&lineNo={lineNo}(code=${purchaseCreditMemo.code},lineNo=${purchaseCreditMemoLine.purchaseCreditMemoLineId.lineNo})}">Delete</a>
+                                            th:href="@{/deletePurchaseCreditMemoLine?purchaseCreditMemoCode={code}&lineNo={lineNo}(code=${purchaseCreditMemo.code},lineNo=${purchaseCreditMemoLine.lineNo})}">Delete</a>
                                     </td>
                                 </tr>
 

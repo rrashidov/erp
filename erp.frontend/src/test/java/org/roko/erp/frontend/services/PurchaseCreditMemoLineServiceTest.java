@@ -1,52 +1,28 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PurchaseCreditMemo;
-import org.roko.erp.frontend.model.PurchaseCreditMemoLine;
-import org.roko.erp.frontend.model.jpa.PurchaseCreditMemoLineId;
-import org.roko.erp.frontend.repositories.PurchaseCreditMemoLineRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.roko.erp.dto.PurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.PurchaseDocumentLineList;
+import org.springframework.web.client.RestTemplate;
 
 public class PurchaseCreditMemoLineServiceTest {
 
     private static final int TEST_PAGE = 12;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
+    private static final String TEST_CODE = "test-code";
+
+    private static final int TEST_LINE_NO = 123;
 
     @Mock
-    private PurchaseCreditMemo purchaseCreditMemoMock;
+    private PurchaseDocumentLineDTO purchaseCreditMemoLineMock;
 
     @Mock
-    private PurchaseCreditMemoLineId nonExistingPurchaseCreditMemoLineIdMock;
-
-    @Mock
-    private PurchaseCreditMemoLineId purchaseCreditMemoLineIdMock;
-
-    @Mock
-    private PurchaseCreditMemoLine purchaseCreditMemoLineMock;
-
-    @Mock
-    private PurchaseCreditMemoLineRepository repoMock;
-
-    @Mock
-    private Page<PurchaseCreditMemoLine> pageMock;
+    private RestTemplate restTemplateMock;
 
     private PurchaseCreditMemoLineService svc;
 
@@ -54,78 +30,46 @@ public class PurchaseCreditMemoLineServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(repoMock.findById(purchaseCreditMemoLineIdMock)).thenReturn(Optional.of(purchaseCreditMemoLineMock));
-        when(repoMock.findFor(eq(purchaseCreditMemoMock), any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new PurchaseCreditMemoLineServiceImpl(repoMock);
+        svc = new PurchaseCreditMemoLineServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo() {
-        svc.create(purchaseCreditMemoLineMock);
+    public void create_callsBackend() {
+        svc.create(TEST_CODE, purchaseCreditMemoLineMock);
 
-        verify(repoMock).save(purchaseCreditMemoLineMock);
+        verify(restTemplateMock).postForObject("/api/v1/purchasecreditmemos/{code}/lines", purchaseCreditMemoLineMock,
+                Integer.class, TEST_CODE);
     }
 
     @Test
-    public void update_delegatesToRepo() {
-        svc.update(purchaseCreditMemoLineIdMock, purchaseCreditMemoLineMock);
+    public void update_callsBackend() {
+        svc.update(TEST_CODE, TEST_LINE_NO, purchaseCreditMemoLineMock);
 
-        verify(repoMock).findById(purchaseCreditMemoLineIdMock);
-        verify(repoMock).save(purchaseCreditMemoLineMock);
+        verify(restTemplateMock).put("/api/v1/purchasecreditmemos/{code}/lines/{lineNo}", purchaseCreditMemoLineMock,
+                TEST_CODE, TEST_LINE_NO);
     }
 
     @Test
-    public void delete_delegatesToRepo() {
-        svc.delete(purchaseCreditMemoLineIdMock);
+    public void delete_callsBackend() {
+        svc.delete(TEST_CODE, TEST_LINE_NO);
 
-        verify(repoMock).delete(purchaseCreditMemoLineMock);
+        verify(restTemplateMock).delete("/api/v1/purchasecreditmemos/{code}/lines/{lineNo}", TEST_CODE, TEST_LINE_NO);
     }
 
     @Test
-    public void get_delegatesToRepo() {
-        svc.get(purchaseCreditMemoLineIdMock);
+    public void get_callsBackend() {
+        svc.get(TEST_CODE, TEST_LINE_NO);
 
-        verify(repoMock).findById(purchaseCreditMemoLineIdMock);
-    }
-
-    @Test
-    public void getReturnsNull_whenCalledWithNonExistingId() {
-        PurchaseCreditMemoLine purchaseCreditMemoLine = svc.get(nonExistingPurchaseCreditMemoLineIdMock);
-
-        assertNull(purchaseCreditMemoLine);
-    }
-
-    @Test
-    public void list_delegatesToRepo() {
-        svc.list(purchaseCreditMemoMock);
-
-        verify(repoMock).findFor(purchaseCreditMemoMock);
+        verify(restTemplateMock).getForObject("/api/v1/purchasecreditmemos/{code}/lines/{lineNo}",
+                PurchaseDocumentLineDTO.class, TEST_CODE, TEST_LINE_NO);
     }
 
     @Test
     public void listWithPage_delegatesToRepo() {
-        svc.list(purchaseCreditMemoMock, TEST_PAGE);
+        svc.list(TEST_CODE, TEST_PAGE);
 
-        verify(repoMock).findFor(eq(purchaseCreditMemoMock), pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
+        verify(restTemplateMock).getForObject("/api/v1/purchasecreditmemos/{code}/lines/page/{page}",
+                PurchaseDocumentLineList.class, TEST_CODE, TEST_PAGE);
     }
 
-    @Test
-    public void count_delegatesToRepo() {
-        svc.count(purchaseCreditMemoMock);
-
-        verify(repoMock).count(purchaseCreditMemoMock);
-    }
-
-    @Test
-    public void maxLineNo_delegatesToRepo() {
-        svc.maxLineNo(purchaseCreditMemoMock);
-
-        verify(repoMock).maxLineNo(purchaseCreditMemoMock);
-    }
 }
