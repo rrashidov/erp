@@ -40,7 +40,7 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/page/{page}")
-    public PurchaseDocumentList list(int page) {
+    public PurchaseDocumentList list(@PathVariable("page") int page) {
         List<PurchaseDocumentDTO> data = svc.list(page).stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
