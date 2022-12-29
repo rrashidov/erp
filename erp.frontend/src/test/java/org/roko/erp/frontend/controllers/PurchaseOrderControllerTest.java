@@ -3,6 +3,7 @@ package org.roko.erp.frontend.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,18 +33,20 @@ import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
+import org.roko.erp.frontend.services.PostFailedException;
 import org.roko.erp.frontend.services.PurchaseOrderLineService;
 import org.roko.erp.frontend.services.PurchaseOrderPostService;
 import org.roko.erp.frontend.services.PurchaseOrderService;
 import org.roko.erp.frontend.services.VendorService;
 import org.roko.erp.frontend.services.util.Feedback;
+import org.roko.erp.frontend.services.util.FeedbackType;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseOrderControllerTest {
 
-    //private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
+    private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
     private static final String TEST_NEW_PURCHASE_ORDER_CODE = "test-new-purchase-order-code";
 
@@ -308,29 +311,29 @@ public class PurchaseOrderControllerTest {
         verify(modelMock).addAttribute("paging", purchaseOrderLinePagingMock);
     }
 
-    // @Test
-    // public void post_returnsProperTemplate() throws PostFailedException {
-    //     RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
+    @Test
+    public void post_returnsProperTemplate() throws PostFailedException {
+        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
-    //     assertEquals("/purchaseOrderList", redirectView.getUrl());
+        assertEquals("/purchaseOrderList", redirectView.getUrl());
 
-    //     verify(purchaseOrderPostSvcMock).post(TEST_CODE);
+        verify(purchaseOrderPostSvcMock).post(TEST_CODE);
 
-    //     verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase order " + TEST_CODE + " posted.", httpSessionMock);
-    // }
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase order " + TEST_CODE + " posted.", httpSessionMock);
+    }
 
-    // @Test
-    // public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
-    //     doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(purchaseOrderPostSvcMock).post(TEST_CODE);
+    @Test
+    public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
+        doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(purchaseOrderPostSvcMock).post(TEST_CODE);
 
-    //     RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
+        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
-    //     assertEquals("/purchaseOrderList", redirectView.getUrl());
+        assertEquals("/purchaseOrderList", redirectView.getUrl());
 
-    //     verify(purchaseOrderPostSvcMock).post(TEST_CODE);
+        verify(purchaseOrderPostSvcMock).post(TEST_CODE);
 
-    //     verify(feedbackSvcMock).give(FeedbackType.ERROR,
-    //             "Purchase order " + TEST_CODE + " post failed: " + TEST_POST_FAILED_MSG, httpSessionMock);
-    // }
+        verify(feedbackSvcMock).give(FeedbackType.ERROR,
+                "Purchase order " + TEST_CODE + " post failed: " + TEST_POST_FAILED_MSG, httpSessionMock);
+    }
 
 }
