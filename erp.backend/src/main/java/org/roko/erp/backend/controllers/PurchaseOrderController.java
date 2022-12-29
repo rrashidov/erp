@@ -8,12 +8,16 @@ import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseOrderLineService;
+import org.roko.erp.backend.services.PurchaseOrderPostService;
 import org.roko.erp.backend.services.PurchaseOrderService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,13 +34,15 @@ public class PurchaseOrderController {
     private PurchaseOrderService svc;
     private PurchaseOrderLineService purchaseOrderLineSvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
+    private PurchaseOrderPostService purchaseOrderPostSvc;
 
     @Autowired
     public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc,
-            PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
+            PurchaseCodeSeriesService purchaseCodeSeriesSvc, PurchaseOrderPostService purchaseOrderPostSvc) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
+        this.purchaseOrderPostSvc = purchaseOrderPostSvc;
     }
 
     @GetMapping
@@ -160,5 +166,16 @@ public class PurchaseOrderController {
     public String delete(@PathVariable("code") String code) {
         svc.delete(code);
         return code;
+    }
+
+    @GetMapping("/{code}/operations/post")
+    public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
+        try {
+            purchaseOrderPostSvc.post(code);
+
+            return ResponseEntity.ok("");
+        } catch (PostFailedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,14 +18,20 @@ import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseOrderLineService;
+import org.roko.erp.backend.services.PurchaseOrderPostService;
 import org.roko.erp.backend.services.PurchaseOrderService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class PurchaseOrderControllerTest {
-    
+
+    private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
+
     private static final int TEST_MAX_LINE_NO = 345;
 
     private static final String NEW_CODE = "new-code";
@@ -61,6 +68,9 @@ public class PurchaseOrderControllerTest {
     @Mock
     private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
 
+    @Mock
+    private PurchaseOrderPostService purchaseOrderPostSvcMock;
+
     private PurchaseOrderController controller;
 
     @BeforeEach
@@ -73,7 +83,8 @@ public class PurchaseOrderControllerTest {
         purchaseOrderLineId.setPurchaseOrder(purchaseOrderMock);
         purchaseOrderLineId.setLineNo(TEST_LINE_NO);
 
-        when(purchaseOrderLineSvcMock.list(purchaseOrderMock, TEST_PAGE)).thenReturn(Arrays.asList(purchaseOrderLineMock));
+        when(purchaseOrderLineSvcMock.list(purchaseOrderMock, TEST_PAGE))
+                .thenReturn(Arrays.asList(purchaseOrderLineMock));
         when(purchaseOrderLineSvcMock.get(purchaseOrderLineId)).thenReturn(purchaseOrderLineMock);
         when(purchaseOrderLineSvcMock.fromDTO(purchaseOrderLineDtoMock)).thenReturn(purchaseOrderLineMock);
         when(purchaseOrderLineSvcMock.toDTO(purchaseOrderLineMock)).thenReturn(purchaseOrderLineDtoMock);
@@ -87,7 +98,8 @@ public class PurchaseOrderControllerTest {
         when(svcMock.fromDTO(dtoMock)).thenReturn(purchaseOrderMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, purchaseCodeSeriesSvcMock);
+        controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, purchaseCodeSeriesSvcMock,
+                purchaseOrderPostSvcMock);
     }
 
     @Test
@@ -190,5 +202,24 @@ public class PurchaseOrderControllerTest {
         purchaseOrderLineId.setLineNo(TEST_LINE_NO);
 
         verify(purchaseOrderLineSvcMock).delete(purchaseOrderLineId);
+    }
+
+    @Test
+    public void postOperation_delegatesToService() throws PostFailedException {
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        verify(purchaseOrderPostSvcMock).post(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void postOperation_returnsBadRequest_whenPostingThrowsException() throws PostFailedException{
+        doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(purchaseOrderPostSvcMock).post(TEST_CODE);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(TEST_POST_FAILED_MSG, response.getBody());
     }
 }
