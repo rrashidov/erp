@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,13 +18,19 @@ import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseCreditMemoLineService;
+import org.roko.erp.backend.services.PurchaseCreditMemoPostService;
 import org.roko.erp.backend.services.PurchaseCreditMemoService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class PurchaseCreditMemoControllerTest {
+
+    private static final String TEST_POST_FAILED_EXCEPTION = "test-post-failed-exception";
 
     private static final int TEST_COUNT = 222;
 
@@ -61,6 +68,9 @@ public class PurchaseCreditMemoControllerTest {
     @Mock
     private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
 
+    @Mock
+    private PurchaseCreditMemoPostService purchaseCreditMemoPostSvcMock;
+
     private PurchaseCreditMemoController controller;
 
     @BeforeEach
@@ -88,7 +98,8 @@ public class PurchaseCreditMemoControllerTest {
         when(svcMock.toDTO(purchaseCreditMemoMock)).thenReturn(dtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new PurchaseCreditMemoController(svcMock, purchaseCreditMemoLineSvcMock, purchaseCodeSeriesSvcMock);
+        controller = new PurchaseCreditMemoController(svcMock, purchaseCreditMemoLineSvcMock, purchaseCodeSeriesSvcMock,
+                purchaseCreditMemoPostSvcMock);
     }
 
     @Test
@@ -157,7 +168,8 @@ public class PurchaseCreditMemoControllerTest {
 
         verify(purchaseCreditMemoLineSvcMock).create(purchaseCreditMemoLineMock);
 
-        verify(purchaseCreditMemoLineMock).setPurchaseCreditMemoLineId(purchaseCreditMemoLineIdArgumentCaptor.capture());
+        verify(purchaseCreditMemoLineMock)
+                .setPurchaseCreditMemoLineId(purchaseCreditMemoLineIdArgumentCaptor.capture());
 
         PurchaseCreditMemoLineId purchaseCreditMemoLineId = purchaseCreditMemoLineIdArgumentCaptor.getValue();
 
@@ -172,7 +184,7 @@ public class PurchaseCreditMemoControllerTest {
         PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
         purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemoMock);
         purchaseCreditMemoLineId.setLineNo(TEST_LINE_NO);
-        
+
         verify(purchaseCreditMemoLineSvcMock).update(purchaseCreditMemoLineId, purchaseCreditMemoLineMock);
     }
 
@@ -185,5 +197,26 @@ public class PurchaseCreditMemoControllerTest {
         purchaseCreditMemoLineId.setLineNo(TEST_LINE_NO);
 
         verify(purchaseCreditMemoLineSvcMock).delete(purchaseCreditMemoLineId);
+    }
+
+    @Test
+    public void operationPost_delegatesToService() throws PostFailedException {
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        verify(purchaseCreditMemoPostSvcMock).post(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void operationPost_returnsBadRequest_whenPostThrowsException() throws PostFailedException {
+        doThrow(new PostFailedException(TEST_POST_FAILED_EXCEPTION)).when(purchaseCreditMemoPostSvcMock).post(TEST_CODE);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        verify(purchaseCreditMemoPostSvcMock).post(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(TEST_POST_FAILED_EXCEPTION, response.getBody());
     }
 }
