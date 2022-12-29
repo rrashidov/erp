@@ -72,13 +72,44 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
         cs05.setLastCode("PPO000000");
         codeSerieSvc.create(cs05);
 
+        // posted purchase credit memo code serie
+        CodeSerie cs06 = new CodeSerie();
+        cs06.setCode("CS06");
+        cs06.setName("Posted Purchase Credit Memo");
+        cs06.setFirstCode("PPCM000000");
+        cs06.setLastCode("PPCM000000");
+        codeSerieSvc.create(cs06);
+
+        // posted sales order code serie
+        CodeSerie cs07 = new CodeSerie();
+        cs07.setCode("CS07");
+        cs07.setName("Posted Sales Orders");
+        cs07.setFirstCode("PSO000000");
+        cs07.setLastCode("PSO000000");
+        codeSerieSvc.create(cs07);
+
+        // posted sales credit memo code serie
+        CodeSerie cs08 = new CodeSerie();
+        cs08.setCode("CS08");
+        cs08.setName("Posted Sales Credit Memo");
+        cs08.setFirstCode("PSCM000000");
+        cs08.setLastCode("PSCM000000");
+        codeSerieSvc.create(cs08);
+
         // modify setup
         Setup setup = setupSvc.get();
         setup.setSalesOrderCodeSerie(cs01);
         setup.setSalesCreditMemoCodeSerie(cs02);
+
         setup.setPurchaseOrderCodeSerie(cs03);
         setup.setPurchaseCreditMemoCodeSerie(cs04);
+
         setup.setPostedPurchaseOrderCodeSerie(cs05);
+        setup.setPostedPurchaseCreditMemoCodeSerie(cs06);
+
+        setup.setPostedSalesOrderCodeSerie(cs07);
+        setup.setPostedSalesCreditMemoCodeSerie(cs08);
+
         setupSvc.update(setup);
     }
 
