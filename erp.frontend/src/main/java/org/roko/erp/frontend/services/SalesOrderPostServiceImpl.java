@@ -1,23 +1,27 @@
 package org.roko.erp.frontend.services;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class SalesOrderPostServiceImpl implements SalesOrderPostService {
 
+    private RestTemplate restTemplate;
+
     @Autowired
-    public SalesOrderPostServiceImpl(SalesOrderService salesOrderSvc, SalesOrderLineService salesOrderLineSvc,
-            PostedSalesOrderService postedSalesOrderSvc, PostedSalesOrderLineService postedSalesOrderLineSvc,
-            ItemService itemSvc, ItemLedgerEntryService itemLedgerEntrySvc, CustomerLedgerEntryService customerLedgerEntrySvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, SalesCodeSeriesService salesCodeSeriesSvc) {
+    public SalesOrderPostServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    @Transactional(rollbackOn = PostFailedException.class)
     public void post(String code) throws PostFailedException {
+        try {
+            restTemplate.getForObject("/api/v1/salesorders/{code}/operations/post", String.class, code);
+        } catch (HttpClientErrorException e){
+            throw new PostFailedException(e.getMessage());
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package org.roko.erp.frontend.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,19 +38,20 @@ import org.roko.erp.frontend.rules.sales.SalesOrderModelRule;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
+import org.roko.erp.frontend.services.PostFailedException;
 import org.roko.erp.frontend.services.SalesCodeSeriesService;
 import org.roko.erp.frontend.services.SalesOrderLineService;
 import org.roko.erp.frontend.services.SalesOrderPostService;
 import org.roko.erp.frontend.services.SalesOrderService;
 import org.roko.erp.frontend.services.util.Feedback;
+import org.roko.erp.frontend.services.util.FeedbackType;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesOrderControllerTest {
 
-    // private static final String TEST_POST_FAILED_EXCEPTION_MSG =
-    // "test-post-failed-exception-msg";
+    private static final String TEST_POST_FAILED_EXCEPTION_MSG = "test-post-failed-exception-msg";
 
     private static final String NEW_SALES_ORDER_CODE = "new-sales-order-code";
 
@@ -333,32 +335,31 @@ public class SalesOrderControllerTest {
         verify(modelMock).addAttribute("paging", salesOrderLinePagingMock);
     }
 
-    // @Test
-    // public void post_callsRespectiveService() throws PostFailedException {
-    // RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
+    @Test
+    public void post_callsRespectiveService() throws PostFailedException {
+        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
-    // assertEquals("/salesOrderList", redirectView.getUrl());
+        assertEquals("/salesOrderList", redirectView.getUrl());
 
-    // verify(salesOrderPostSvcMock).post(TEST_CODE);
+        verify(salesOrderPostSvcMock).post(TEST_CODE);
 
-    // verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales Order " + TEST_CODE +
-    // " posted.", httpSessionMock);
-    // }
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales Order " + TEST_CODE +
+                " posted.", httpSessionMock);
+    }
 
-    // @Test
-    // public void postReturnsErrorFeedback_whenPostingFails() throws
-    // PostFailedException {
-    // doThrow(new
-    // PostFailedException(TEST_POST_FAILED_EXCEPTION_MSG)).when(salesOrderPostSvcMock).post(TEST_CODE);
+    @Test
+    public void postReturnsErrorFeedback_whenPostingFails() throws PostFailedException {
+        doThrow(new PostFailedException(TEST_POST_FAILED_EXCEPTION_MSG)).when(salesOrderPostSvcMock).post(TEST_CODE);
 
-    // RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
+        RedirectView redirectView = controller.post(TEST_CODE, httpSessionMock);
 
-    // assertEquals("/salesOrderList", redirectView.getUrl());
+        assertEquals("/salesOrderList", redirectView.getUrl());
 
-    // verify(salesOrderPostSvcMock).post(TEST_CODE);
+        verify(salesOrderPostSvcMock).post(TEST_CODE);
 
-    // verify(feedbackSvcMock).give(FeedbackType.ERROR,
-    // "Sales Order " + TEST_CODE + " post failed: " +
-    // TEST_POST_FAILED_EXCEPTION_MSG, httpSessionMock);
-    // }
+        verify(feedbackSvcMock).give(FeedbackType.ERROR,
+                "Sales Order " + TEST_CODE + " post failed: " +
+                        TEST_POST_FAILED_EXCEPTION_MSG,
+                httpSessionMock);
+    }
 }
