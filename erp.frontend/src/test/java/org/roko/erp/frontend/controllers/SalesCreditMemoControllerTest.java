@@ -3,6 +3,7 @@ package org.roko.erp.frontend.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -33,17 +34,19 @@ import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
+import org.roko.erp.frontend.services.PostFailedException;
 import org.roko.erp.frontend.services.SalesCreditMemoLineService;
 import org.roko.erp.frontend.services.SalesCreditMemoPostService;
 import org.roko.erp.frontend.services.SalesCreditMemoService;
 import org.roko.erp.frontend.services.util.Feedback;
+import org.roko.erp.frontend.services.util.FeedbackType;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesCreditMemoControllerTest {
 
-    //private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
+    private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
     private static final String NEW_SALES_CREDIT_MEMO_CODE = "new-sales-credit-memo-code";
 
@@ -181,7 +184,8 @@ public class SalesCreditMemoControllerTest {
         when(salesCreditMemoLineList.getData()).thenReturn(salesCreditMemoLines);
         when(salesCreditMemoLineList.getCount()).thenReturn(TEST_SALES_CREDIT_MEMO_LINE_COUNT);
 
-        when(salesCreditMemoLineSvcMock.list(TEST_SALES_CREDIT_MEMO_CODE, TEST_PAGE)).thenReturn(salesCreditMemoLineList);
+        when(salesCreditMemoLineSvcMock.list(TEST_SALES_CREDIT_MEMO_CODE, TEST_PAGE))
+                .thenReturn(salesCreditMemoLineList);
 
         when(pagingSvcMock.generate("salesCreditMemo", TEST_PAGE, (int) TEST_COUNT)).thenReturn(pagingDataMock);
         when(pagingSvcMock.generate("salesCreditMemoCard", TEST_SALES_CREDIT_MEMO_CODE, TEST_PAGE,
@@ -300,31 +304,31 @@ public class SalesCreditMemoControllerTest {
         verify(modelMock).addAttribute("paging", salesCreditMemoLinePagingMock);
     }
 
-    // @Test
-    // public void post_returnsProperTemplate() throws PostFailedException {
-    //     RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
+    @Test
+    public void post_returnsProperTemplate() throws PostFailedException {
+        RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
 
-    //     assertEquals("/salesCreditMemoList", redirectView.getUrl());
+        assertEquals("/salesCreditMemoList", redirectView.getUrl());
 
-    //     verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
+        verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
 
-    //     verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " posted.",
-    //             httpSessionMock);
-    // }
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " posted.",
+                httpSessionMock);
+    }
 
-    // @Test
-    // public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
-    //     doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(salesCreditMemoPostSvcMock)
-    //             .post(TEST_SALES_CREDIT_MEMO_CODE);
+    @Test
+    public void postReturnsProperFeedback_whenPostingFails() throws PostFailedException {
+        doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(salesCreditMemoPostSvcMock)
+                .post(TEST_SALES_CREDIT_MEMO_CODE);
 
-    //     RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
+        RedirectView redirectView = controller.post(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
 
-    //     assertEquals("/salesCreditMemoList", redirectView.getUrl());
+        assertEquals("/salesCreditMemoList", redirectView.getUrl());
 
-    //     verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
+        verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
 
-    //     verify(feedbackSvcMock).give(FeedbackType.ERROR,
-    //             "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post failed: " + TEST_POST_FAILED_MSG,
-    //             httpSessionMock);
-    // }
+        verify(feedbackSvcMock).give(FeedbackType.ERROR,
+                "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post failed: " + TEST_POST_FAILED_MSG,
+                httpSessionMock);
+    }
 }
