@@ -1,11 +1,10 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
+import org.roko.erp.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.list.PostedSalesDocumentLineList;
+import org.roko.erp.dto.list.PostedSalesDocumentList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PostedSalesCreditMemo;
-import org.roko.erp.frontend.model.PostedSalesCreditMemoLine;
 import org.roko.erp.frontend.services.PostedSalesCreditMemoLineService;
 import org.roko.erp.frontend.services.PostedSalesCreditMemoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +30,11 @@ public class PostedSalesCreditMemoController {
 
     @GetMapping("/postedSalesCreditMemoList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<PostedSalesCreditMemo> postedSalesCreditMemos = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("postedSalesCreditMemo", page, svc.count());
+        PostedSalesDocumentList postedSalesCreditMemos = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("postedSalesCreditMemo", page,
+                (int) postedSalesCreditMemos.getCount());
 
-        model.addAttribute("postedSalesCreditMemos", postedSalesCreditMemos);
+        model.addAttribute("postedSalesCreditMemos", postedSalesCreditMemos.getData());
         model.addAttribute("paging", pagingData);
 
         return "postedSalesCreditMemoList.html";
@@ -43,14 +43,14 @@ public class PostedSalesCreditMemoController {
     @GetMapping("/postedSalesCreditMemoCard")
     public String card(@RequestParam(name = "code") String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        PostedSalesCreditMemo postedSalesCreditMemo = svc.get(code);
-        List<PostedSalesCreditMemoLine> postedSalesCreditMemoLines = postedSalesCreditMemoLineSvc
-                .list(postedSalesCreditMemo, page);
+        PostedSalesDocumentDTO postedSalesCreditMemo = svc.get(code);
+        PostedSalesDocumentLineList postedSalesCreditMemoLines = postedSalesCreditMemoLineSvc
+                .list(code, page);
         PagingData pagingData = pagingSvc.generate("postedSalesCreditMemoCard", code, page,
-                postedSalesCreditMemoLineSvc.count(postedSalesCreditMemo));
+                (int) postedSalesCreditMemoLines.getCount());
 
         model.addAttribute("postedSalesCreditMemo", postedSalesCreditMemo);
-        model.addAttribute("postedSalesCreditMemoLines", postedSalesCreditMemoLines);
+        model.addAttribute("postedSalesCreditMemoLines", postedSalesCreditMemoLines.getData());
         model.addAttribute("paging", pagingData);
 
         return "postedSalesCreditMemoCard.html";

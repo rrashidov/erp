@@ -1,64 +1,30 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PostedSalesCreditMemo;
-import org.roko.erp.frontend.repositories.PostedSalesCreditMemoRepository;
+import org.roko.erp.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.list.PostedSalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PostedSalesCreditMemoServiceImpl implements PostedSalesCreditMemoService {
 
-    private PostedSalesCreditMemoRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public PostedSalesCreditMemoServiceImpl(PostedSalesCreditMemoRepository repo) {
-        this.repo = repo;
+    public PostedSalesCreditMemoServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(PostedSalesCreditMemo postedSalesCreditMemo) {
-        repo.save(postedSalesCreditMemo);
+    public PostedSalesDocumentDTO get(String code) {
+        return restTemplate.getForObject("/api/v1/postedsalescreditmemos/{code}", PostedSalesDocumentDTO.class, code);
     }
 
     @Override
-    public PostedSalesCreditMemo get(String code) {
-        Optional<PostedSalesCreditMemo> postedSalesCreditMemoOptional = repo.findById(code);
-
-        if (postedSalesCreditMemoOptional.isPresent()) {
-            return postedSalesCreditMemoOptional.get();
-        }
-        
-        return null;
+    public PostedSalesDocumentList list(int page) {
+        return restTemplate.getForObject("/api/v1/postedsalescreditmemos/page/{page}", PostedSalesDocumentList.class,
+                page);
     }
 
-    @Override
-    public List<PostedSalesCreditMemo> list() {
-        List<PostedSalesCreditMemo> postedSalesCreditMemos = repo.findAll();
-
-        postedSalesCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return postedSalesCreditMemos;
-    }
-
-    @Override
-    public List<PostedSalesCreditMemo> list(int page) {
-        List<PostedSalesCreditMemo> postedSalesCreditMemos = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        postedSalesCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return postedSalesCreditMemos;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-    
 }
