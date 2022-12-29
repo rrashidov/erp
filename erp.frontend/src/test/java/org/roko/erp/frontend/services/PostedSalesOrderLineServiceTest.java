@@ -1,42 +1,22 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PostedSalesOrder;
-import org.roko.erp.frontend.model.PostedSalesOrderLine;
-import org.roko.erp.frontend.repositories.PostedSalesOrderLineRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.roko.erp.dto.list.PostedSalesDocumentLineList;
+import org.springframework.web.client.RestTemplate;
 
 public class PostedSalesOrderLineServiceTest {
 
+    private static final String TEST_CODE = "test-code";
+
     private static final int TEST_PAGE = 12;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
-
     @Mock
-    private Page<PostedSalesOrderLine> pageMock;
-
-    @Mock
-    private PostedSalesOrder postedSalesOrderMock;
-
-    @Mock
-    private PostedSalesOrderLine postedSalesOrderLineMock;
-
-    @Mock
-    private PostedSalesOrderLineRepository repoMock;
+    private RestTemplate restTemplateMock;
 
     private PostedSalesOrderLineService svc;
 
@@ -44,41 +24,15 @@ public class PostedSalesOrderLineServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(repoMock.findFor(eq(postedSalesOrderMock), any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new PostedSalesOrderLineServiceImpl(repoMock);
+        svc = new PostedSalesOrderLineServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo() {
-        svc.create(postedSalesOrderLineMock);
+    public void listWithPage_callsBackend() {
+        svc.list(TEST_CODE, TEST_PAGE);
 
-        verify(repoMock).save(postedSalesOrderLineMock);
+        verify(restTemplateMock).getForObject("/api/v1/postedsalesorders/{code}/lines/page/{page}",
+                PostedSalesDocumentLineList.class, TEST_CODE, TEST_PAGE);
     }
 
-    @Test
-    public void list_delegatesToRepo() {
-        svc.list(postedSalesOrderMock);
-
-        verify(repoMock).findFor(postedSalesOrderMock);
-    }
-
-    @Test
-    public void listWithPage_delegatesToRepo() {
-        svc.list(postedSalesOrderMock, TEST_PAGE);
-
-        verify(repoMock).findFor(eq(postedSalesOrderMock), pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
-    }
-
-    @Test
-    public void count_delegatesToRepo() {
-        svc.count(postedSalesOrderMock);
-
-        verify(repoMock).count(postedSalesOrderMock);
-    }
 }

@@ -1,18 +1,12 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.PostedSalesOrder;
+import org.roko.erp.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.list.PostedSalesDocumentList;
 
 public interface PostedSalesOrderService {
     
-    public void create(PostedSalesOrder postedSalesOrder);
+    public PostedSalesDocumentDTO get(String code);
 
-    public PostedSalesOrder get(String code);
+    public PostedSalesDocumentList list(int page);
 
-    public List<PostedSalesOrder> list();
-
-    public List<PostedSalesOrder> list(int page);
-
-    public int count();
 }

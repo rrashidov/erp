@@ -1,64 +1,29 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PostedSalesOrder;
-import org.roko.erp.frontend.repositories.PostedSalesOrderRepository;
+import org.roko.erp.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.list.PostedSalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PostedSalesOrderServiceImpl implements PostedSalesOrderService {
 
-    private PostedSalesOrderRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public PostedSalesOrderServiceImpl(PostedSalesOrderRepository repo) {
-        this.repo = repo;
+    public PostedSalesOrderServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(PostedSalesOrder postedSalesOrder) {
-        repo.save(postedSalesOrder);
+    public PostedSalesDocumentDTO get(String code) {
+        return restTemplate.getForObject("/api/v1/postedsalesorders/{code}", PostedSalesDocumentDTO.class, code);
     }
 
     @Override
-    public PostedSalesOrder get(String code) {
-        Optional<PostedSalesOrder> postedSalesOrderOptional = repo.findById(code);
-
-        if (postedSalesOrderOptional.isPresent()) {
-            return postedSalesOrderOptional.get();
-        }
-        
-        return null;
+    public PostedSalesDocumentList list(int page) {
+        return restTemplate.getForObject("/api/v1/postedsalesorders/page/{page}", PostedSalesDocumentList.class, page);
     }
 
-    @Override
-    public List<PostedSalesOrder> list() {
-        List<PostedSalesOrder> postedSalesOrders = repo.findAll();
-
-        postedSalesOrders.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return postedSalesOrders;
-    }
-
-    @Override
-    public List<PostedSalesOrder> list(int page) {
-        List<PostedSalesOrder> postedSalesOrders = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        postedSalesOrders.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return postedSalesOrders;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-    
 }

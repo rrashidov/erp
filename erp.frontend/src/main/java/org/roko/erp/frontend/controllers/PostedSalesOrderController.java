@@ -1,11 +1,10 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
+import org.roko.erp.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.list.PostedSalesDocumentLineList;
+import org.roko.erp.dto.list.PostedSalesDocumentList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PostedSalesOrder;
-import org.roko.erp.frontend.model.PostedSalesOrderLine;
 import org.roko.erp.frontend.services.PostedSalesOrderLineService;
 import org.roko.erp.frontend.services.PostedSalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +30,10 @@ public class PostedSalesOrderController {
 
     @GetMapping("/postedSalesOrderList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<PostedSalesOrder> postedSalesOrders = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("postedSalesOrder", page, svc.count());
+        PostedSalesDocumentList postedSalesOrders = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("postedSalesOrder", page, (int) postedSalesOrders.getCount());
 
-        model.addAttribute("postedSalesOrders", postedSalesOrders);
+        model.addAttribute("postedSalesOrders", postedSalesOrders.getData());
         model.addAttribute("paging", pagingData);
 
         return "postedSalesOrderList.html";
@@ -43,12 +42,15 @@ public class PostedSalesOrderController {
     @GetMapping("/postedSalesOrderCard")
     public String card(@RequestParam(name = "code") String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        PostedSalesOrder postedSalesOrder = svc.get(code);
-        List<PostedSalesOrderLine> postedSalesOrderLines = lineSvc.list(postedSalesOrder, page);
-        PagingData pagingData = pagingSvc.generate("postedSalesOrderCard", code, page, lineSvc.count(postedSalesOrder));
+        PostedSalesDocumentDTO postedSalesOrder = svc.get(code);
+
+        PostedSalesDocumentLineList postedSalesOrderLines = lineSvc.list(code, page);
+
+        PagingData pagingData = pagingSvc.generate("postedSalesOrderCard", code, page,
+                (int) postedSalesOrderLines.getCount());
 
         model.addAttribute("postedSalesOrder", postedSalesOrder);
-        model.addAttribute("postedSalesOrderLines", postedSalesOrderLines);
+        model.addAttribute("postedSalesOrderLines", postedSalesOrderLines.getData());
         model.addAttribute("paging", pagingData);
 
         return "postedSalesOrderCard.html";

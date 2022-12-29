@@ -32,9 +32,9 @@
                 <tbody>
                     <tr th:each="postedSalesOrder : ${postedSalesOrders}">
                         <td th:text="${postedSalesOrder.code}"></td>
-                        <td th:text="${postedSalesOrder.customer.name}"></td>
+                        <td th:text="${postedSalesOrder.customerName}"></td>
                         <td th:text="${postedSalesOrder.date}"></td>
-                        <td th:text="${postedSalesOrder.paymentMethod.name}"></td>
+                        <td th:text="${postedSalesOrder.paymentMethodName}"></td>
                         <td th:text="${postedSalesOrder.amount}"></td>
                         <td><a class="btn btn-primary" th:href="@{/postedSalesOrderCard?code={code}(code=${postedSalesOrder.code})}">Card</a> </td>
                     </tr>

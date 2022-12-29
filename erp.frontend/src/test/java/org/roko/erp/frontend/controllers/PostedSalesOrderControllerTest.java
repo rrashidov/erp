@@ -12,10 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.dto.PostedSalesDocumentDTO;
+import org.roko.erp.dto.PostedSalesDocumentLineDTO;
+import org.roko.erp.dto.list.PostedSalesDocumentLineList;
+import org.roko.erp.dto.list.PostedSalesDocumentList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PostedSalesOrder;
-import org.roko.erp.frontend.model.PostedSalesOrderLine;
 import org.roko.erp.frontend.services.PostedSalesOrderLineService;
 import org.roko.erp.frontend.services.PostedSalesOrderService;
 import org.springframework.ui.Model;
@@ -25,18 +27,19 @@ public class PostedSalesOrderControllerTest {
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 123;
-    private static final int TEST_COUNT = 234;
-    private static final int TEST_LINE_COUNT = 345;
 
-    private List<PostedSalesOrder> postedSalesOrders;
+    private static final long TEST_COUNT = 234;
+    private static final long TEST_LINE_COUNT = 345;
 
-    private List<PostedSalesOrderLine> postedSalesOrderLines = new ArrayList<>();
+    private List<PostedSalesDocumentDTO> postedSalesOrders = new ArrayList<>();
 
-    @Mock
-    private PostedSalesOrder postedSalesOrderMock;
+    private List<PostedSalesDocumentLineDTO> postedSalesOrderLines = new ArrayList<>();
 
     @Mock
-    private PostedSalesOrderLine postedSalesOrderLineMock;
+    private PostedSalesDocumentDTO postedSalesOrderMock;
+
+    @Mock
+    private PostedSalesDocumentLineDTO postedSalesOrderLineMock;
 
     @Mock
     private PagingData pagingDataMock;
@@ -56,6 +59,12 @@ public class PostedSalesOrderControllerTest {
     @Mock
     private PagingService pagingSvcMock;
 
+    @Mock
+    private PostedSalesDocumentList postedSalesOrderList;
+
+    @Mock
+    private PostedSalesDocumentLineList postedSalesOrderLineList;
+
     private PostedSalesOrderController controller;
 
     @BeforeEach
@@ -66,15 +75,19 @@ public class PostedSalesOrderControllerTest {
 
         postedSalesOrders = Arrays.asList(postedSalesOrderMock);
 
-        when(svcMock.list(TEST_PAGE)).thenReturn(postedSalesOrders);
-        when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(postedSalesOrderList.getData()).thenReturn(postedSalesOrders);
+        when(postedSalesOrderList.getCount()).thenReturn(TEST_COUNT);
+
+        when(svcMock.list(TEST_PAGE)).thenReturn(postedSalesOrderList);
         when(svcMock.get(TEST_CODE)).thenReturn(postedSalesOrderMock);
 
-        when(lineSvcMock.list(postedSalesOrderMock, TEST_PAGE)).thenReturn(postedSalesOrderLines);
-        when(lineSvcMock.count(postedSalesOrderMock)).thenReturn(TEST_LINE_COUNT);
+        when(postedSalesOrderLineList.getData()).thenReturn(postedSalesOrderLines);
+        when(postedSalesOrderLineList.getCount()).thenReturn(TEST_LINE_COUNT);
 
-        when(pagingSvcMock.generate("postedSalesOrder", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedSalesOrderCard", TEST_CODE, TEST_PAGE, TEST_LINE_COUNT)).thenReturn(linePagingDataMock);
+        when(lineSvcMock.list(TEST_CODE, TEST_PAGE)).thenReturn(postedSalesOrderLineList);
+
+        when(pagingSvcMock.generate("postedSalesOrder", TEST_PAGE, (int) TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("postedSalesOrderCard", TEST_CODE, TEST_PAGE, (int) TEST_LINE_COUNT)).thenReturn(linePagingDataMock);
 
         controller = new PostedSalesOrderController(svcMock, lineSvcMock, pagingSvcMock);
     }
