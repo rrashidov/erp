@@ -79,13 +79,13 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     PaymentMethodDTO pm02 = new PaymentMethodDTO();
     pm02.setCode("PM02");
     pm02.setName("Cash");
-    //pm02.setBankAccount(ba01);
+    pm02.setBankAccountCode("BA01");
     paymentMethodSvc.create(pm02);
 
     PaymentMethodDTO pm03 = new PaymentMethodDTO();
     pm03.setCode("PM03");
     pm03.setName("By card");
-    //pm03.setBankAccount(ba02);
+    pm03.setBankAccountCode("BA02");
     paymentMethodSvc.create(pm03);
 
     initBulkPaymentMethods();
