@@ -2,6 +2,7 @@ package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,14 +19,20 @@ import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesOrderLineService;
+import org.roko.erp.backend.services.SalesOrderPostService;
 import org.roko.erp.backend.services.SalesOrderService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class SalesOrderControllerTest {
-    
+
+    private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
+
     private static final int TEST_COUNT = 222;
 
     private static final String TEST_CODE = "test-code";
@@ -41,7 +48,7 @@ public class SalesOrderControllerTest {
 
     @Mock
     private SalesOrder salesOrderMock;
-    
+
     @Mock
     private SalesDocumentDTO salesOrderDtoMock;
 
@@ -63,10 +70,13 @@ public class SalesOrderControllerTest {
     @Mock
     private SalesCodeSeriesService salesCodeSeriesSvcMock;
 
+    @Mock
+    private SalesOrderPostService salesOrderPostSvcMock;
+
     private SalesOrderController controller;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
         when(salesCodeSeriesSvcMock.orderCode()).thenReturn(TEST_CODE);
@@ -93,7 +103,8 @@ public class SalesOrderControllerTest {
         when(svcMock.toDTO(salesOrderMock)).thenReturn(salesOrderDtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new SalesOrderController(svcMock, salesOrderLineSvcMock, salesCodeSeriesSvcMock);
+        controller = new SalesOrderController(svcMock, salesOrderLineSvcMock, salesCodeSeriesSvcMock,
+                salesOrderPostSvcMock);
     }
 
     @Test
@@ -177,7 +188,7 @@ public class SalesOrderControllerTest {
         controller.post(salesOrderDtoMock);
 
         verify(svcMock).create(salesOrderMock);
-        
+
         verify(salesOrderMock).setCode(TEST_CODE);
 
         verify(salesCodeSeriesSvcMock).orderCode();
@@ -195,5 +206,24 @@ public class SalesOrderControllerTest {
         controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
+    }
+
+    @Test
+    public void postOperation_delegatesToService() throws PostFailedException {
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        verify(salesOrderPostSvcMock).post(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void postOperation_returnsBadRequest_whenPostingThrowsException() throws PostFailedException {
+        doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(salesOrderPostSvcMock).post(TEST_CODE);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(TEST_POST_FAILED_MSG, response.getBody());
     }
 }

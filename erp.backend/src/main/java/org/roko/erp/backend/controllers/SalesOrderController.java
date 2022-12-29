@@ -8,12 +8,16 @@ import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesOrderLineService;
+import org.roko.erp.backend.services.SalesOrderPostService;
 import org.roko.erp.backend.services.SalesOrderService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,13 +34,15 @@ public class SalesOrderController {
     private SalesOrderService svc;
     private SalesOrderLineService salesOrderLineSvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
+    private SalesOrderPostService salesOrderPostSvc;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, SalesOrderLineService salesOrderLineSvc,
-            SalesCodeSeriesService salesCodeSeriesSvc) {
+            SalesCodeSeriesService salesCodeSeriesSvc, SalesOrderPostService salesOrderPostSvc) {
         this.svc = svc;
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
+        this.salesOrderPostSvc = salesOrderPostSvc;
     }
 
     @GetMapping("/page/{page}")
@@ -147,6 +153,16 @@ public class SalesOrderController {
     public String delete(@PathVariable("code") String code) {
         svc.delete(code);
         return code;
+    }
+
+    @GetMapping("/{code}/operations/post")
+    public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
+        try {
+            salesOrderPostSvc.post(code);
+            return ResponseEntity.ok("");
+        } catch (PostFailedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 }
