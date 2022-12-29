@@ -8,12 +8,16 @@ import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesCreditMemoLineService;
+import org.roko.erp.backend.services.SalesCreditMemoPostService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,13 +34,15 @@ public class SalesCreditMemoController {
     private SalesCreditMemoService svc;
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
+    private SalesCreditMemoPostService salesCreditMemoPostSvc;
 
     @Autowired
     public SalesCreditMemoController(SalesCreditMemoService svc, SalesCreditMemoLineService salesCreditMemoLineSvc,
-            SalesCodeSeriesService salesCodeSeriesSvc) {
+            SalesCodeSeriesService salesCodeSeriesSvc, SalesCreditMemoPostService salesCreditMemoPostSvc) {
         this.svc = svc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
+        this.salesCreditMemoPostSvc = salesCreditMemoPostSvc;
     }
 
     @GetMapping("/page/{page}")
@@ -149,5 +155,15 @@ public class SalesCreditMemoController {
     public String delete(@PathVariable("code") String code) {
         svc.delete(code);
         return code;
+    }
+
+    @GetMapping("/{code}/operations/post")
+    public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
+        try {
+            salesCreditMemoPostSvc.post(code);
+            return ResponseEntity.ok("");
+        } catch (PostFailedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

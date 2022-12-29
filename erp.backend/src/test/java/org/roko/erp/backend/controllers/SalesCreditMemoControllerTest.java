@@ -2,6 +2,7 @@ package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,14 +19,20 @@ import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesCreditMemoLineService;
+import org.roko.erp.backend.services.SalesCreditMemoPostService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class SalesCreditMemoControllerTest {
-    
+
+    private static final String TEST_POST_FAILED_EXCEPTION_MSG = "test-post-failed-exception-msg";
+
     private static final String GENERATED_CODE = "generated-code";
 
     private static final int TEST_COUNT = 222;
@@ -62,6 +69,9 @@ public class SalesCreditMemoControllerTest {
     @Mock
     private SalesCodeSeriesService salesCodeSeriesSvcMock;
 
+    @Mock
+    private SalesCreditMemoPostService salesCreditMemoPostSvcMock;
+
     private SalesCreditMemoController controller;
 
     @BeforeEach
@@ -70,7 +80,8 @@ public class SalesCreditMemoControllerTest {
 
         when(salesCodeSeriesSvcMock.creditMemoCode()).thenReturn(GENERATED_CODE);
 
-        when(salesCreditMemoLineSvcMock.list(salesCreditMemoMock, TEST_PAGE)).thenReturn(Arrays.asList(salesCreditMemoLineMock));
+        when(salesCreditMemoLineSvcMock.list(salesCreditMemoMock, TEST_PAGE))
+                .thenReturn(Arrays.asList(salesCreditMemoLineMock));
         when(salesCreditMemoLineSvcMock.fromDTO(salesDocumentLineDtoMock)).thenReturn(salesCreditMemoLineMock);
         when(salesCreditMemoLineSvcMock.toDTO(salesCreditMemoLineMock)).thenReturn(salesDocumentLineDtoMock);
         when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(TEST_COUNT);
@@ -83,7 +94,8 @@ public class SalesCreditMemoControllerTest {
         when(svcMock.toDTO(salesCreditMemoMock)).thenReturn(dtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new SalesCreditMemoController(svcMock, salesCreditMemoLineSvcMock, salesCodeSeriesSvcMock);
+        controller = new SalesCreditMemoController(svcMock, salesCreditMemoLineSvcMock, salesCodeSeriesSvcMock,
+                salesCreditMemoPostSvcMock);
     }
 
     @Test
@@ -140,7 +152,8 @@ public class SalesCreditMemoControllerTest {
     public void putLine_delegatesToService() {
         controller.putLine(TEST_CODE, TEST_LINE_NO, salesDocumentLineDtoMock);
 
-        verify(salesCreditMemoLineSvcMock).update(salesCreditMemoLineIdArgumentCaptor.capture(), eq(salesCreditMemoLineMock));
+        verify(salesCreditMemoLineSvcMock).update(salesCreditMemoLineIdArgumentCaptor.capture(),
+                eq(salesCreditMemoLineMock));
 
         SalesCreditMemoLineId salesCreditMemoLineId = salesCreditMemoLineIdArgumentCaptor.getValue();
 
@@ -183,5 +196,24 @@ public class SalesCreditMemoControllerTest {
         controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
+    }
+
+    @Test
+    public void operationPost_delegatesToService() throws PostFailedException{
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        verify(salesCreditMemoPostSvcMock).post(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void operationPost_returnsBadRequest_whenPostingThrowsException() throws PostFailedException {
+        doThrow(new PostFailedException(TEST_POST_FAILED_EXCEPTION_MSG)).when(salesCreditMemoPostSvcMock).post(TEST_CODE);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(TEST_POST_FAILED_EXCEPTION_MSG, response.getBody());
     }
 }
