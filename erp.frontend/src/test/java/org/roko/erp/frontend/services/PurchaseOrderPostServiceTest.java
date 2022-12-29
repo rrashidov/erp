@@ -9,13 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class PurchaseOrderPostServiceTest {
-
-    private static final String TEST_ERROR_MSG = "test-error-msg";
 
     private static final String TEST_CODE = "test-code";
 
