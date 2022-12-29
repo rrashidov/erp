@@ -86,6 +86,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccountDTO dto = new BankAccountDTO();
         dto.setCode(bankAccount.getCode());
         dto.setName(bankAccount.getName());
+        dto.setBalance(bankAccount.getBalance());
         return dto;
     }
 
