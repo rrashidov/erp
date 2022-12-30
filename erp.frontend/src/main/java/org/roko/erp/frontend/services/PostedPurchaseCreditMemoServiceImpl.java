@@ -1,64 +1,31 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PostedPurchaseCreditMemo;
-import org.roko.erp.frontend.repositories.PostedPurchaseCreditMemoRepository;
+import org.roko.erp.dto.PostedPurchaseDocumentDTO;
+import org.roko.erp.dto.list.PostedPurchaseDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PostedPurchaseCreditMemoServiceImpl implements PostedPurchaseCreditMemoService {
 
-    private PostedPurchaseCreditMemoRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public PostedPurchaseCreditMemoServiceImpl(PostedPurchaseCreditMemoRepository repo) {
-        this.repo = repo;
+    public PostedPurchaseCreditMemoServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(PostedPurchaseCreditMemo postedPurchaseCreditMemo) {
-        repo.save(postedPurchaseCreditMemo);
+    public PostedPurchaseDocumentDTO get(String code) {
+        return restTemplate.getForObject("/api/v1/postedpurchasecreditmemos/{code}", PostedPurchaseDocumentDTO.class,
+                code);
     }
 
     @Override
-    public PostedPurchaseCreditMemo get(String code) {
-        Optional<PostedPurchaseCreditMemo> postedPurchaseCreditMemoOptional = repo.findById(code);
-
-        if (postedPurchaseCreditMemoOptional.isPresent()) {
-            return postedPurchaseCreditMemoOptional.get();
-        }
-
-        return null;
-    }
-
-    @Override
-    public List<PostedPurchaseCreditMemo> list() {
-        List<PostedPurchaseCreditMemo> postedPurchaseCreditMemos = repo.findAll();
-
-        postedPurchaseCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return postedPurchaseCreditMemos;
-    }
-
-    @Override
-    public List<PostedPurchaseCreditMemo> list(int page) {
-        List<PostedPurchaseCreditMemo> postedPurchaseCreditMemos = repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-
-        postedPurchaseCreditMemos.stream()
-            .forEach(x -> x.setAmount(repo.amount(x)));
-
-        return postedPurchaseCreditMemos;
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
+    public PostedPurchaseDocumentList list(int page) {
+        return restTemplate.getForObject("/api/v1/postedpurchasecreditmemos/page/{page}",
+                PostedPurchaseDocumentList.class, page);
     }
 
 }

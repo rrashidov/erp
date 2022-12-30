@@ -1,84 +1,38 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PostedPurchaseCreditMemo;
-import org.roko.erp.frontend.model.PostedPurchaseCreditMemoLine;
-import org.roko.erp.frontend.repositories.PostedPurchaseCreditMemoLineRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.roko.erp.dto.list.PostedPurchaseDocumentLineList;
+import org.springframework.web.client.RestTemplate;
 
 public class PostedPurchaseCreditMemoLineServiceTest {
-    
+
+    private static final String TEST_CODE = "test-code";
+
     private static final int TEST_PAGE = 12;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
-
     @Mock
-    private PostedPurchaseCreditMemo postedPurchaseCreditMemoMock;
-
-    @Mock
-    private PostedPurchaseCreditMemoLine postedPurchaseCreditMemoLineMock;
-
-    @Mock
-    private PostedPurchaseCreditMemoLineRepository repoMock;
-
-    @Mock
-    private Page<PostedPurchaseCreditMemoLine> pageMock;
+    private RestTemplate restTemplateMock;
 
     private PostedPurchaseCreditMemoLineService svc;
 
     @BeforeEach
-    public void setup () {
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(repoMock.findFor(eq(postedPurchaseCreditMemoMock), any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new PostedPurchaseCreditMemoLineServiceImpl(repoMock);
+        svc = new PostedPurchaseCreditMemoLineServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo() {
-        svc.create(postedPurchaseCreditMemoLineMock);
+    public void listWithPage_callsBackend() {
+        svc.list(TEST_CODE, TEST_PAGE);
 
-        verify(repoMock).save(postedPurchaseCreditMemoLineMock);
+        verify(restTemplateMock).getForObject("/api/v1/postedpurchasecreditmemos/{code}/lines/page/{page}",
+                PostedPurchaseDocumentLineList.class, TEST_CODE, TEST_PAGE);
     }
 
-    @Test
-    public void list_delegatesToRepo() {
-        svc.list(postedPurchaseCreditMemoMock);
-
-        verify(repoMock).findFor(postedPurchaseCreditMemoMock);
-    }
-
-    @Test
-    public void listWithPage_delegatesToRepo() {
-        svc.list(postedPurchaseCreditMemoMock, TEST_PAGE);
-
-        verify(repoMock).findFor(eq(postedPurchaseCreditMemoMock), pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
-    }
-
-    @Test
-    public void count_delegatesToRepo() {
-        svc.count(postedPurchaseCreditMemoMock);
-
-        verify(repoMock).count(postedPurchaseCreditMemoMock);
-    }
 }

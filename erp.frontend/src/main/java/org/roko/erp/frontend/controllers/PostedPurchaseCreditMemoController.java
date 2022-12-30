@@ -1,11 +1,10 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
+import org.roko.erp.dto.PostedPurchaseDocumentDTO;
+import org.roko.erp.dto.list.PostedPurchaseDocumentLineList;
+import org.roko.erp.dto.list.PostedPurchaseDocumentList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PostedPurchaseCreditMemo;
-import org.roko.erp.frontend.model.PostedPurchaseCreditMemoLine;
 import org.roko.erp.frontend.services.PostedPurchaseCreditMemoLineService;
 import org.roko.erp.frontend.services.PostedPurchaseCreditMemoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +30,11 @@ public class PostedPurchaseCreditMemoController {
 
     @GetMapping("/postedPurchaseCreditMemoList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<PostedPurchaseCreditMemo> postedPurchaseCreditMemos = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("postedPurchaseCreditMemo", 1, svc.count());
+        PostedPurchaseDocumentList postedPurchaseCreditMemos = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("postedPurchaseCreditMemo", page,
+                (int) postedPurchaseCreditMemos.getCount());
 
-        model.addAttribute("postedPurchaseCreditMemos", postedPurchaseCreditMemos);
+        model.addAttribute("postedPurchaseCreditMemos", postedPurchaseCreditMemos.getData());
         model.addAttribute("paging", pagingData);
 
         return "postedPurchaseCreditMemoList.html";
@@ -43,14 +43,14 @@ public class PostedPurchaseCreditMemoController {
     @GetMapping("/postedPurchaseCreditMemoCard")
     public String card(@RequestParam(name = "code") String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        PostedPurchaseCreditMemo postedPurchaseCreditMemo = svc.get(code);
-        List<PostedPurchaseCreditMemoLine> postedPurchaseCreditMemoLines = postedPurchaseCreditMemoLineSvc
-                .list(postedPurchaseCreditMemo, page);
+        PostedPurchaseDocumentDTO postedPurchaseCreditMemo = svc.get(code);
+        PostedPurchaseDocumentLineList postedPurchaseCreditMemoLines = postedPurchaseCreditMemoLineSvc
+                .list(code, page);
         PagingData pagingData = pagingSvc.generate("postedPurchaseCreditMemoCard", code, page,
-                postedPurchaseCreditMemoLineSvc.count(postedPurchaseCreditMemo));
+                (int) postedPurchaseCreditMemoLines.getCount());
 
         model.addAttribute("postedPurchaseCreditMemo", postedPurchaseCreditMemo);
-        model.addAttribute("postedPurchaseCreditMemoLines", postedPurchaseCreditMemoLines);
+        model.addAttribute("postedPurchaseCreditMemoLines", postedPurchaseCreditMemoLines.getData());
         model.addAttribute("paging", pagingData);
 
         return "postedPurchaseCreditMemoCard.html";

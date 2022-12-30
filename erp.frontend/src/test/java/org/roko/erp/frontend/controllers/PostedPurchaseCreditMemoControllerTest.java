@@ -12,10 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.dto.PostedPurchaseDocumentDTO;
+import org.roko.erp.dto.PostedPurchaseDocumentLineDTO;
+import org.roko.erp.dto.list.PostedPurchaseDocumentLineList;
+import org.roko.erp.dto.list.PostedPurchaseDocumentList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PostedPurchaseCreditMemo;
-import org.roko.erp.frontend.model.PostedPurchaseCreditMemoLine;
 import org.roko.erp.frontend.services.PostedPurchaseCreditMemoLineService;
 import org.roko.erp.frontend.services.PostedPurchaseCreditMemoService;
 import org.springframework.ui.Model;
@@ -25,15 +27,15 @@ public class PostedPurchaseCreditMemoControllerTest {
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 23;
-    private static final int TEST_COUNT = 123;
-    private static final int TEST_LINE_COUNT = 234;
+    private static final long TEST_COUNT = 123;
+    private static final long TEST_LINE_COUNT = 234;
 
-    private List<PostedPurchaseCreditMemo> postedPurchaseCreditMemos = new ArrayList<>();
+    private List<PostedPurchaseDocumentDTO> postedPurchaseCreditMemos = new ArrayList<>();
 
-    private List<PostedPurchaseCreditMemoLine> postedPurchaseCreditMemoLines = new ArrayList<>();
+    private List<PostedPurchaseDocumentLineDTO> postedPurchaseCreditMemoLines = new ArrayList<>();
 
     @Mock
-    private PostedPurchaseCreditMemo postedPurchaseCreditMemoMock;
+    private PostedPurchaseDocumentDTO postedPurchaseCreditMemoMock;
 
     @Mock
     private Model modelMock;
@@ -53,6 +55,12 @@ public class PostedPurchaseCreditMemoControllerTest {
     @Mock
     private PagingService pagingSvcMock;
 
+    @Mock
+    private PostedPurchaseDocumentList postedPurchaseCreditMemoList;
+
+    @Mock
+    private PostedPurchaseDocumentLineList postedPurchaseCreditMemoLineList;
+
     private PostedPurchaseCreditMemoController controller;
 
     @BeforeEach
@@ -61,15 +69,19 @@ public class PostedPurchaseCreditMemoControllerTest {
 
         postedPurchaseCreditMemos = Arrays.asList(postedPurchaseCreditMemoMock);
 
-        when(svcMock.list(TEST_PAGE)).thenReturn(postedPurchaseCreditMemos);
-        when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(postedPurchaseCreditMemoList.getData()).thenReturn(postedPurchaseCreditMemos);
+        when(postedPurchaseCreditMemoList.getCount()).thenReturn(TEST_COUNT);
+
+        when(svcMock.list(TEST_PAGE)).thenReturn(postedPurchaseCreditMemoList);
         when(svcMock.get(TEST_CODE)).thenReturn(postedPurchaseCreditMemoMock);
 
-        when(postedPurchaseCreditMemoLineSvcMock.list(postedPurchaseCreditMemoMock, TEST_PAGE)).thenReturn(postedPurchaseCreditMemoLines);
-        when(postedPurchaseCreditMemoLineSvcMock.count(postedPurchaseCreditMemoMock)).thenReturn(TEST_LINE_COUNT);
+        when(postedPurchaseCreditMemoLineList.getData()).thenReturn(postedPurchaseCreditMemoLines);
+        when(postedPurchaseCreditMemoLineList.getCount()).thenReturn(TEST_LINE_COUNT);
 
-        when(pagingSvcMock.generate("postedPurchaseCreditMemo", 1, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("postedPurchaseCreditMemoCard", TEST_CODE, TEST_PAGE, TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
+        when(postedPurchaseCreditMemoLineSvcMock.list(TEST_CODE, TEST_PAGE)).thenReturn(postedPurchaseCreditMemoLineList);
+
+        when(pagingSvcMock.generate("postedPurchaseCreditMemo", TEST_PAGE, (int) TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("postedPurchaseCreditMemoCard", TEST_CODE, TEST_PAGE, (int) TEST_LINE_COUNT)).thenReturn(linesPagingDataMock);
 
         controller = new PostedPurchaseCreditMemoController(svcMock, postedPurchaseCreditMemoLineSvcMock, pagingSvcMock);
     }

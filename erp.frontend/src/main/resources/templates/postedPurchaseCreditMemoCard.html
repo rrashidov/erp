@@ -30,7 +30,7 @@
                     <div class="col-sm-6">
                         <label for="customer" class="form-label">Vendor</label>
                         <input readonly type="text" class="form-control" id="vendorName" placeholder="" value=""
-                            th:field="*{vendor.name}">
+                            th:field="*{vendorName}">
                     </div>
 
                     <div class="col-sm-6">
@@ -42,7 +42,7 @@
                     <div class="col-sm-6">
                         <label for="paymentMethod" class="form-label">Payment Method</label>
                         <input readonly type="text" class="form-control" id="paymentMethod" placeholder="" value=""
-                            th:field="*{paymentMethod.name}">
+                            th:field="*{paymentMethodName}">
                     </div>
 
                     <div class="col-sm-6">
@@ -70,8 +70,8 @@
                             </thead>
                             <tbody>
                                 <tr th:each="postedPurchaseCreditMemoLine : ${postedPurchaseCreditMemoLines}">
-                                    <td th:text="${postedPurchaseCreditMemoLine.postedPurchaseCreditMemoLineId.lineNo}"></td>
-                                    <td th:text="${postedPurchaseCreditMemoLine.item.name}"></td>
+                                    <td th:text="${postedPurchaseCreditMemoLine.lineNo}"></td>
+                                    <td th:text="${postedPurchaseCreditMemoLine.itemName}"></td>
                                     <td th:text="${postedPurchaseCreditMemoLine.quantity}"></td>
                                     <td th:text="${postedPurchaseCreditMemoLine.price}"></td>
                                     <td th:text="${postedPurchaseCreditMemoLine.amount}"></td>
