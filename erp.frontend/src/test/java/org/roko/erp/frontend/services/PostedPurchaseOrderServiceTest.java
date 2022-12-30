@@ -1,50 +1,23 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.PostedPurchaseOrder;
-import org.roko.erp.frontend.repositories.PostedPurchaseOrderRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.roko.erp.dto.PostedPurchaseDocumentDTO;
+import org.roko.erp.dto.list.PostedPurchaseDocumentList;
+import org.springframework.web.client.RestTemplate;
 
 public class PostedPurchaseOrderServiceTest {
-    
-    private static final String NON_EXISTING_CODE = "non-existing-code";
 
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 12;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
-
     @Mock
-    private Page<PostedPurchaseOrder> pageMock;
-
-    @Mock
-    private PostedPurchaseOrder postedPurchaseOrderMock;
-
-    @Mock
-    private PostedPurchaseOrder postedPurchaseOrderMock1;
-
-    @Mock
-    private PostedPurchaseOrder postedPurchaseOrderMock2;
-
-    @Mock
-    private PostedPurchaseOrderRepository repoMock;
+    private RestTemplate restTemplateMock;
 
     private PostedPurchaseOrderService svc;
 
@@ -52,60 +25,23 @@ public class PostedPurchaseOrderServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
-        when(repoMock.findAll()).thenReturn(Arrays.asList(postedPurchaseOrderMock, postedPurchaseOrderMock1, postedPurchaseOrderMock2));
-
-        svc = new PostedPurchaseOrderServiceImpl(repoMock);
+        svc = new PostedPurchaseOrderServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo(){
-        svc.create(postedPurchaseOrderMock);
-
-        verify(repoMock).save(postedPurchaseOrderMock);
-    }
-
-    @Test
-    public void get_delegatesToRepo() {
+    public void get_callsBackend() {
         svc.get(TEST_CODE);
 
-        verify(repoMock).findById(TEST_CODE);
-    }
-
-    @Test
-    public void getReturnsNull_whenCalledWithNonExistingCode(){
-        PostedPurchaseOrder postedPurchaseOrder = svc.get(NON_EXISTING_CODE);
-
-        assertNull(postedPurchaseOrder);
-    }
-
-    @Test
-    public void list_delegatesToRepo() {
-        svc.list();
-
-        verify(repoMock).findAll();
-
-        verify(repoMock).amount(postedPurchaseOrderMock);
-        verify(repoMock).amount(postedPurchaseOrderMock1);
-        verify(repoMock).amount(postedPurchaseOrderMock2);
+        verify(restTemplateMock).getForObject("/api/v1/postedpurchaseorders/{code}", PostedPurchaseDocumentDTO.class,
+                TEST_CODE);
     }
 
     @Test
     public void listWithPage_delegatesToRepo() {
         svc.list(TEST_PAGE);
 
-        verify(repoMock).findAll(pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
+        verify(restTemplateMock).getForObject("/api/v1/postedpurchaseorders/page/{page}",
+                PostedPurchaseDocumentList.class, TEST_PAGE);
     }
 
-    @Test
-    public void count_delegatesToRepo(){
-        svc.count();
-
-        verify(repoMock).count();
-    }
 }

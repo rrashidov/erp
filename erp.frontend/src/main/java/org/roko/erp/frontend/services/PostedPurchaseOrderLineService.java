@@ -1,17 +1,9 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.PostedPurchaseOrder;
-import org.roko.erp.frontend.model.PostedPurchaseOrderLine;
+import org.roko.erp.dto.list.PostedPurchaseDocumentLineList;
 
 public interface PostedPurchaseOrderLineService {
     
-    public void create(PostedPurchaseOrderLine postedPurchaseOrderLine);
+    public PostedPurchaseDocumentLineList list(String code, int page);
 
-    public List<PostedPurchaseOrderLine> list(PostedPurchaseOrder postedPurchaseOrder);
-
-    public List<PostedPurchaseOrderLine> list(PostedPurchaseOrder postedPurchaseOrder, int page);
-
-    public int count(PostedPurchaseOrder postedPurchaseOrder);
 }

@@ -1,11 +1,10 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
+import org.roko.erp.dto.PostedPurchaseDocumentDTO;
+import org.roko.erp.dto.list.PostedPurchaseDocumentLineList;
+import org.roko.erp.dto.list.PostedPurchaseDocumentList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.PostedPurchaseOrder;
-import org.roko.erp.frontend.model.PostedPurchaseOrderLine;
 import org.roko.erp.frontend.services.PostedPurchaseOrderLineService;
 import org.roko.erp.frontend.services.PostedPurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +30,10 @@ public class PostedPurchaseOrderController {
 
     @GetMapping("/postedPurchaseOrderList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        List<PostedPurchaseOrder> postedPurchaseOrders = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("postedPurchaseOrder", page, svc.count());
+        PostedPurchaseDocumentList postedPurchaseOrders = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("postedPurchaseOrder", page, (int) postedPurchaseOrders.getCount());
 
-        model.addAttribute("postedPurchaseOrders", postedPurchaseOrders);
+        model.addAttribute("postedPurchaseOrders", postedPurchaseOrders.getData());
         model.addAttribute("paging", pagingData);
 
         return "postedPurchaseOrderList.html";
@@ -43,14 +42,14 @@ public class PostedPurchaseOrderController {
     @GetMapping("/postedPurchaseOrderCard")
     public String card(@RequestParam(name = "code") String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        PostedPurchaseOrder postedPurchaseOrder = svc.get(code);
-        List<PostedPurchaseOrderLine> postedPurchaseOrderLines = postedPurchaseOrderLineSvc.list(postedPurchaseOrder,
+        PostedPurchaseDocumentDTO postedPurchaseOrder = svc.get(code);
+        PostedPurchaseDocumentLineList postedPurchaseOrderLines = postedPurchaseOrderLineSvc.list(code,
                 page);
         PagingData pagingData = pagingSvc.generate("postedPurchaseOrderCard", code, page,
-                postedPurchaseOrderLineSvc.count(postedPurchaseOrder));
+                (int) postedPurchaseOrderLines.getCount());
 
         model.addAttribute("postedPurchaseOrder", postedPurchaseOrder);
-        model.addAttribute("postedPurchaseOrderLines", postedPurchaseOrderLines);
+        model.addAttribute("postedPurchaseOrderLines", postedPurchaseOrderLines.getData());
         model.addAttribute("paging", pagingData);
 
         return "postedPurchaseOrderCard.html";
