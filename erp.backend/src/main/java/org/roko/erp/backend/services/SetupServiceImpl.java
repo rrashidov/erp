@@ -68,15 +68,31 @@ public class SetupServiceImpl implements SetupService {
 
         dto.setCode(setup.getCode());
 
-        dto.setSalesOrderCodeSerieCode(setup.getSalesOrderCodeSerie().getCode());
-        dto.setSalesCreditMemoCodeSerieCode(setup.getSalesCreditMemoCodeSerie().getCode());
-        dto.setPostedSalesOrderCodeSerieCode(setup.getPostedSalesOrderCodeSerie().getCode());
-        dto.setPostedSalesCreditMemoCodeSerieCode(setup.getPostedSalesCreditMemoCodeSerie().getCode());
+        if (setup.getSalesOrderCodeSerie() != null) {
+            dto.setSalesOrderCodeSerieCode(setup.getSalesOrderCodeSerie().getCode());
+        }
+        if (setup.getSalesCreditMemoCodeSerie() != null) {
+            dto.setSalesCreditMemoCodeSerieCode(setup.getSalesCreditMemoCodeSerie().getCode());
+        }
+        if (setup.getPostedSalesOrderCodeSerie() != null){
+            dto.setPostedSalesOrderCodeSerieCode(setup.getPostedSalesOrderCodeSerie().getCode());
+        }
+        if (setup.getPostedSalesCreditMemoCodeSerie() != null) {
+            dto.setPostedSalesCreditMemoCodeSerieCode(setup.getPostedSalesCreditMemoCodeSerie().getCode());
+        }
 
-        dto.setPurchaseOrderCodeSerieCode(setup.getPurchaseOrderCodeSerie().getCode());
-        dto.setPurchaseCreditMemoCodeSerieCode(setup.getPurchaseCreditMemoCodeSerie().getCode());
-        dto.setPostedPurchaseOrderCodeSerieCode(setup.getPostedPurchaseOrderCodeSerie().getCode());
-        dto.setPostedPurchaseCreditMemoCodeSerieCode(setup.getPostedPurchaseCreditMemoCodeSerie().getCode());
+        if (setup.getPurchaseOrderCodeSerie() != null){
+            dto.setPurchaseOrderCodeSerieCode(setup.getPurchaseOrderCodeSerie().getCode());
+        }
+        if (setup.getPurchaseCreditMemoCodeSerie() != null){
+            dto.setPurchaseCreditMemoCodeSerieCode(setup.getPurchaseCreditMemoCodeSerie().getCode());
+        }
+        if (setup.getPostedPurchaseOrderCodeSerie() != null) {
+            dto.setPostedPurchaseOrderCodeSerieCode(setup.getPostedPurchaseOrderCodeSerie().getCode());
+        }
+        if (setup.getPostedPurchaseCreditMemoCodeSerie() != null){
+            dto.setPostedPurchaseCreditMemoCodeSerieCode(setup.getPostedPurchaseCreditMemoCodeSerie().getCode());
+        }
 
         return dto;
     }

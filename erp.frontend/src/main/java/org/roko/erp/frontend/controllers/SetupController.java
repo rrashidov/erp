@@ -1,7 +1,7 @@
 package org.roko.erp.frontend.controllers;
 
+import org.roko.erp.dto.SetupDTO;
 import org.roko.erp.frontend.controllers.model.SetupModel;
-import org.roko.erp.frontend.model.Setup;
 import org.roko.erp.frontend.services.CodeSerieService;
 import org.roko.erp.frontend.services.SetupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class SetupController {
-    
+
     private SetupService svc;
     private CodeSerieService codeSerieSvc;
 
@@ -25,19 +25,19 @@ public class SetupController {
     }
 
     @GetMapping("/setupCard")
-    public String card(Model model){
-        Setup setup = svc.get();
+    public String card(Model model) {
+        SetupDTO setup = svc.get();
 
         model.addAttribute("setup", transferToModel(setup));
-        model.addAttribute("codeSeries", codeSerieSvc.list());
-        
+        model.addAttribute("codeSeries", codeSerieSvc.list().getData());
+
         return "setupCard.html";
     }
 
     @PostMapping("/setupCard")
-    public RedirectView post(@ModelAttribute SetupModel setupModel){
-        Setup setup = svc.get();
-        
+    public RedirectView post(@ModelAttribute SetupModel setupModel) {
+        SetupDTO setup = svc.get();
+
         transferFromModel(setupModel, setup);
 
         svc.update(setup);
@@ -45,59 +45,59 @@ public class SetupController {
         return new RedirectView("/");
     }
 
-    private void transferFromModel(SetupModel setupModel, Setup setup) {
-        // if (!setupModel.getSalesOrderCodeSerie().isEmpty()) {
-        //     setup.setSalesOrderCodeSerie(codeSerieSvc.get(setupModel.getSalesOrderCodeSerie()));
-        // }
-        // if (!setupModel.getSalesCreditMemoCodeSerie().isEmpty()) {
-        //     setup.setSalesCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getSalesCreditMemoCodeSerie()));
-        // }
-        // if (!setupModel.getPostedSalesOrderCodeSerie().isEmpty()) {
-        //     setup.setPostedSalesOrderCodeSerie(codeSerieSvc.get(setupModel.getPostedSalesOrderCodeSerie()));
-        // }
-        // if (!setupModel.getPostedSalesCreditMemoCodeSerie().isEmpty()) {
-        //     setup.setPostedSalesCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPostedSalesCreditMemoCodeSerie()));
-        // }
-        // if (!setupModel.getPurchaseOrderCodeSerie().isEmpty()) {
-        //     setup.setPurchaseOrderCodeSerie(codeSerieSvc.get(setupModel.getPurchaseOrderCodeSerie()));
-        // }
-        // if (!setupModel.getPurchaseCreditMemoCodeSerie().isEmpty()) {
-        //     setup.setPurchaseCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPurchaseCreditMemoCodeSerie()));
-        // }
-        // if (!setupModel.getPostedPurchaseOrderCodeSerie().isEmpty()) {
-        //     setup.setPostedPurchaseOrderCodeSerie(codeSerieSvc.get(setupModel.getPostedPurchaseOrderCodeSerie()));
-        // }
-        // if (!setupModel.getPostedPurchaseCreditMemoCodeSerie().isEmpty()) {
-        //     setup.setPostedPurchaseCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPostedPurchaseCreditMemoCodeSerie()));
-        // }
+    private void transferFromModel(SetupModel setupModel, SetupDTO setup) {
+        if (!setupModel.getSalesOrderCodeSerie().isEmpty()) {
+            setup.setSalesOrderCodeSerieCode(setupModel.getSalesOrderCodeSerie());
+        }
+        if (!setupModel.getSalesCreditMemoCodeSerie().isEmpty()) {
+            setup.setSalesCreditMemoCodeSerieCode(setupModel.getSalesCreditMemoCodeSerie());
+        }
+        if (!setupModel.getPostedSalesOrderCodeSerie().isEmpty()) {
+            setup.setPostedSalesOrderCodeSerieCode(setupModel.getPostedSalesOrderCodeSerie());
+        }
+        if (!setupModel.getPostedSalesCreditMemoCodeSerie().isEmpty()) {
+            setup.setPostedSalesCreditMemoCodeSerieCode(setupModel.getPostedSalesCreditMemoCodeSerie());
+        }
+        if (!setupModel.getPurchaseOrderCodeSerie().isEmpty()) {
+            setup.setPurchaseOrderCodeSerieCode(setupModel.getPurchaseOrderCodeSerie());
+        }
+        if (!setupModel.getPurchaseCreditMemoCodeSerie().isEmpty()) {
+            setup.setPurchaseCreditMemoCodeSerieCode(setupModel.getPurchaseCreditMemoCodeSerie());
+        }
+        if (!setupModel.getPostedPurchaseOrderCodeSerie().isEmpty()) {
+            setup.setPostedPurchaseOrderCodeSerieCode(setupModel.getPostedPurchaseOrderCodeSerie());
+        }
+        if (!setupModel.getPostedPurchaseCreditMemoCodeSerie().isEmpty()) {
+            setup.setPostedPurchaseCreditMemoCodeSerieCode(setupModel.getPostedPurchaseCreditMemoCodeSerie());
+        }
     }
 
-    private SetupModel transferToModel(Setup setup){
+    private SetupModel transferToModel(SetupDTO setup) {
         SetupModel setupModel = new SetupModel();
 
-        if (setup.getSalesOrderCodeSerie() != null){
-            setupModel.setSalesOrderCodeSerie(setup.getSalesOrderCodeSerie().getCode());
+        if (setup.getSalesOrderCodeSerieCode() != null) {
+            setupModel.setSalesOrderCodeSerie(setup.getSalesOrderCodeSerieCode());
         }
-        if (setup.getPostedSalesOrderCodeSerie() != null){
-            setupModel.setPostedSalesOrderCodeSerie(setup.getPostedSalesOrderCodeSerie().getCode());
+        if (setup.getPostedSalesOrderCodeSerieCode() != null) {
+            setupModel.setPostedSalesOrderCodeSerie(setup.getPostedSalesOrderCodeSerieCode());
         }
-        if (setup.getSalesCreditMemoCodeSerie() != null){
-            setupModel.setSalesCreditMemoCodeSerie(setup.getSalesCreditMemoCodeSerie().getCode());
+        if (setup.getSalesCreditMemoCodeSerieCode() != null) {
+            setupModel.setSalesCreditMemoCodeSerie(setup.getSalesCreditMemoCodeSerieCode());
         }
-        if (setup.getPostedSalesCreditMemoCodeSerie() != null){
-            setupModel.setPostedSalesCreditMemoCodeSerie(setup.getPostedSalesCreditMemoCodeSerie().getCode());
+        if (setup.getPostedSalesCreditMemoCodeSerieCode() != null) {
+            setupModel.setPostedSalesCreditMemoCodeSerie(setup.getPostedSalesCreditMemoCodeSerieCode());
         }
-        if (setup.getPurchaseOrderCodeSerie() != null){
-            setupModel.setPurchaseOrderCodeSerie(setup.getPurchaseOrderCodeSerie().getCode());
+        if (setup.getPurchaseOrderCodeSerieCode() != null) {
+            setupModel.setPurchaseOrderCodeSerie(setup.getPurchaseOrderCodeSerieCode());
         }
-        if (setup.getPostedPurchaseOrderCodeSerie() != null){
-            setupModel.setPostedPurchaseOrderCodeSerie(setup.getPostedPurchaseOrderCodeSerie().getCode());
+        if (setup.getPostedPurchaseOrderCodeSerieCode() != null) {
+            setupModel.setPostedPurchaseOrderCodeSerie(setup.getPostedPurchaseOrderCodeSerieCode());
         }
-        if (setup.getPurchaseCreditMemoCodeSerie() != null){
-            setupModel.setPurchaseCreditMemoCodeSerie(setup.getPurchaseCreditMemoCodeSerie().getCode());
+        if (setup.getPurchaseCreditMemoCodeSerieCode() != null) {
+            setupModel.setPurchaseCreditMemoCodeSerie(setup.getPurchaseCreditMemoCodeSerieCode());
         }
-        if (setup.getPostedPurchaseCreditMemoCodeSerie() != null){
-            setupModel.setPostedPurchaseCreditMemoCodeSerie(setup.getPostedPurchaseCreditMemoCodeSerie().getCode());
+        if (setup.getPostedPurchaseCreditMemoCodeSerieCode() != null) {
+            setupModel.setPostedPurchaseCreditMemoCodeSerie(setup.getPostedPurchaseCreditMemoCodeSerieCode());
         }
 
         return setupModel;

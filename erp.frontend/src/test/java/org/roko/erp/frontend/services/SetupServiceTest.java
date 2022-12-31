@@ -1,66 +1,42 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.model.CodeSerie;
-import org.roko.erp.frontend.model.Setup;
-import org.roko.erp.frontend.repositories.SetupRepository;
+import org.roko.erp.dto.SetupDTO;
+import org.springframework.web.client.RestTemplate;
 
 public class SetupServiceTest {
 
     @Mock
-    private CodeSerie codeSerieMock;
+    private SetupDTO setupMock;
 
     @Mock
-    private Setup setupMock;
-
-    @Mock
-    private SetupRepository repoMock;
+    private RestTemplate restTemplateMock;
 
     private SetupService svc;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(setupMock.getSalesOrderCodeSerie()).thenReturn(codeSerieMock);
-
-        when(repoMock.findById("")).thenReturn(Optional.of(setupMock));
-
-        svc = new SetupServiceImpl(repoMock);
+        svc = new SetupServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void getReturnsSetup_ifItExists(){
-        Setup setup = svc.get();
+    public void get_callsBackend() {
+        svc.get();
 
-        assertEquals(setupMock, setup);
+        verify(restTemplateMock).getForObject("/api/v1/setup", SetupDTO.class);
     }
 
     @Test
-    public void getCreatesNewSetup_ifItDoesNotExist(){
-        when(repoMock.findById("")).thenReturn(Optional.empty());
-
-        Setup setup = svc.get();
-
-        assertNull(setup.getSalesOrderCodeSerie());
-
-        verify(repoMock).save(setup);
-    }
-
-    @Test
-    public void update_savesSetupToDB(){
+    public void update_callsBackend() {
         svc.update(setupMock);
 
-        verify(repoMock).save(setupMock);
+        verify(restTemplateMock).put("/api/v1/setup", setupMock);
     }
 }

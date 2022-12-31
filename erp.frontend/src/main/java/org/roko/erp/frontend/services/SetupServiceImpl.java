@@ -1,54 +1,28 @@
 package org.roko.erp.frontend.services;
 
-import java.util.Optional;
-
-import org.roko.erp.frontend.model.Setup;
-import org.roko.erp.frontend.repositories.SetupRepository;
+import org.roko.erp.dto.SetupDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class SetupServiceImpl implements SetupService {
 
-    private SetupRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public SetupServiceImpl(SetupRepository repo) {
-        this.repo = repo;
+    public SetupServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public Setup get() {
-        Optional<Setup> setupOptional = repo.findById("");
-
-        if (setupOptional.isPresent()) {
-            return setupOptional.get();
-        }
-
-        Setup setup = new Setup();
-        repo.save(setup);
-
-        return setup;
+    public SetupDTO get() {
+        return restTemplate.getForObject("/api/v1/setup", SetupDTO.class);
     }
 
     @Override
-    public void update(Setup setup) {
-        Setup setupFromDB = repo.findById("").get();
-
-        transferFields(setup, setupFromDB);
-
-        repo.save(setup);
+    public void update(SetupDTO setup) {
+        restTemplate.put("/api/v1/setup", setup);
     }
 
-    private void transferFields(Setup source, Setup target) {
-        target.setSalesOrderCodeSerie(source.getSalesOrderCodeSerie());
-        target.setSalesCreditMemoCodeSerie(source.getSalesCreditMemoCodeSerie());
-        target.setPostedSalesOrderCodeSerie(source.getPostedSalesOrderCodeSerie());
-        target.setPostedSalesCreditMemoCodeSerie(source.getPostedSalesCreditMemoCodeSerie());
-
-        target.setPurchaseOrderCodeSerie(source.getPurchaseOrderCodeSerie());
-        target.setPurchaseCreditMemoCodeSerie(source.getPurchaseCreditMemoCodeSerie());
-        target.setPostedPurchaseOrderCodeSerie(source.getPostedPurchaseOrderCodeSerie());
-        target.setPostedPurchaseCreditMemoCodeSerie(source.getPostedPurchaseCreditMemoCodeSerie());
-    }
 }

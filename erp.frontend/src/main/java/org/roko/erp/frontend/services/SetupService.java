@@ -1,11 +1,11 @@
 package org.roko.erp.frontend.services;
 
-import org.roko.erp.frontend.model.Setup;
+import org.roko.erp.dto.SetupDTO;
 
 public interface SetupService {
 
-    public Setup get();
+    public SetupDTO get();
 
-    public void update(Setup setup);
+    public void update(SetupDTO setup);
     
 }
