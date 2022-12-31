@@ -34,7 +34,6 @@ import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
-import org.roko.erp.frontend.services.PurchaseCodeSeriesService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoLineService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoPostService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoService;
@@ -124,9 +123,6 @@ public class PurchaseCreditMemoControllerTest {
         private PurchaseCreditMemoPostService purchaseCreditMemoPostSvcMock;
 
         @Mock
-        private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
-
-        @Mock
         private FeedbackService feedbackSvcMock;
 
         @Mock
@@ -204,8 +200,6 @@ public class PurchaseCreditMemoControllerTest {
 
                 when(purchaseCreditMemoLineSvcMock.list(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_PAGE))
                                 .thenReturn(purchaseCreditMemoLineList);
-
-                when(purchaseCodeSeriesSvcMock.creditMemoCode()).thenReturn(TEST_NEW_CREDIT_MEMO_CODE);
 
                 when(feedbackSvcMock.get(httpSessionMock)).thenReturn(feedbackMock);
 

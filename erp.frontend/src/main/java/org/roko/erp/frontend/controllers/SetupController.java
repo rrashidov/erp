@@ -46,30 +46,30 @@ public class SetupController {
     }
 
     private void transferFromModel(SetupModel setupModel, Setup setup) {
-        if (!setupModel.getSalesOrderCodeSerie().isEmpty()) {
-            setup.setSalesOrderCodeSerie(codeSerieSvc.get(setupModel.getSalesOrderCodeSerie()));
-        }
-        if (!setupModel.getSalesCreditMemoCodeSerie().isEmpty()) {
-            setup.setSalesCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getSalesCreditMemoCodeSerie()));
-        }
-        if (!setupModel.getPostedSalesOrderCodeSerie().isEmpty()) {
-            setup.setPostedSalesOrderCodeSerie(codeSerieSvc.get(setupModel.getPostedSalesOrderCodeSerie()));
-        }
-        if (!setupModel.getPostedSalesCreditMemoCodeSerie().isEmpty()) {
-            setup.setPostedSalesCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPostedSalesCreditMemoCodeSerie()));
-        }
-        if (!setupModel.getPurchaseOrderCodeSerie().isEmpty()) {
-            setup.setPurchaseOrderCodeSerie(codeSerieSvc.get(setupModel.getPurchaseOrderCodeSerie()));
-        }
-        if (!setupModel.getPurchaseCreditMemoCodeSerie().isEmpty()) {
-            setup.setPurchaseCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPurchaseCreditMemoCodeSerie()));
-        }
-        if (!setupModel.getPostedPurchaseOrderCodeSerie().isEmpty()) {
-            setup.setPostedPurchaseOrderCodeSerie(codeSerieSvc.get(setupModel.getPostedPurchaseOrderCodeSerie()));
-        }
-        if (!setupModel.getPostedPurchaseCreditMemoCodeSerie().isEmpty()) {
-            setup.setPostedPurchaseCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPostedPurchaseCreditMemoCodeSerie()));
-        }
+        // if (!setupModel.getSalesOrderCodeSerie().isEmpty()) {
+        //     setup.setSalesOrderCodeSerie(codeSerieSvc.get(setupModel.getSalesOrderCodeSerie()));
+        // }
+        // if (!setupModel.getSalesCreditMemoCodeSerie().isEmpty()) {
+        //     setup.setSalesCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getSalesCreditMemoCodeSerie()));
+        // }
+        // if (!setupModel.getPostedSalesOrderCodeSerie().isEmpty()) {
+        //     setup.setPostedSalesOrderCodeSerie(codeSerieSvc.get(setupModel.getPostedSalesOrderCodeSerie()));
+        // }
+        // if (!setupModel.getPostedSalesCreditMemoCodeSerie().isEmpty()) {
+        //     setup.setPostedSalesCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPostedSalesCreditMemoCodeSerie()));
+        // }
+        // if (!setupModel.getPurchaseOrderCodeSerie().isEmpty()) {
+        //     setup.setPurchaseOrderCodeSerie(codeSerieSvc.get(setupModel.getPurchaseOrderCodeSerie()));
+        // }
+        // if (!setupModel.getPurchaseCreditMemoCodeSerie().isEmpty()) {
+        //     setup.setPurchaseCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPurchaseCreditMemoCodeSerie()));
+        // }
+        // if (!setupModel.getPostedPurchaseOrderCodeSerie().isEmpty()) {
+        //     setup.setPostedPurchaseOrderCodeSerie(codeSerieSvc.get(setupModel.getPostedPurchaseOrderCodeSerie()));
+        // }
+        // if (!setupModel.getPostedPurchaseCreditMemoCodeSerie().isEmpty()) {
+        //     setup.setPostedPurchaseCreditMemoCodeSerie(codeSerieSvc.get(setupModel.getPostedPurchaseCreditMemoCodeSerie()));
+        // }
     }
 
     private SetupModel transferToModel(Setup setup){

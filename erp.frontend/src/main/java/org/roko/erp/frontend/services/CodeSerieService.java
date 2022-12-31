@@ -1,24 +1,20 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.CodeSerie;
+import org.roko.erp.dto.CodeSerieDTO;
+import org.roko.erp.dto.list.CodeSerieList;
 
 public interface CodeSerieService {
     
-    public void create(CodeSerie codeSerie);
+    public void create(CodeSerieDTO codeSerie);
 
-    public void update(String code, CodeSerie codeSerie);
+    public void update(String code, CodeSerieDTO codeSerie);
 
     public void delete(String code);
 
-    public CodeSerie get(String code);
+    public CodeSerieDTO get(String code);
 
-    public List<CodeSerie> list();
+    public CodeSerieList list();
 
-    public List<CodeSerie> list(int page);
+    public CodeSerieList list(int page);
 
-    public int count();
-
-    public String generate(String code);
 }

@@ -1,146 +1,54 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.CodeSerie;
-import org.roko.erp.frontend.repositories.CodeSerieRepository;
-import org.roko.erp.frontend.services.util.Pair;
-import org.springframework.data.domain.PageRequest;
+import org.roko.erp.dto.CodeSerieDTO;
+import org.roko.erp.dto.list.CodeSerieList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CodeSerieServiceImpl implements CodeSerieService {
 
-    private CodeSerieRepository repo;
+    private RestTemplate restTemplate;
 
-    public CodeSerieServiceImpl(CodeSerieRepository repo) {
-        this.repo = repo;
+    @Autowired
+    public CodeSerieServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(CodeSerie codeSerie) {
-        repo.save(codeSerie);
+    public void create(CodeSerieDTO codeSerie) {
+        restTemplate.postForObject("/api/v1/codeseries", codeSerie, String.class);
     }
 
     @Override
-    public void update(String code, CodeSerie codeSerie) {
-        CodeSerie codeSerieFromDB = repo.findById(code).get();
-
-        transferFields(codeSerie, codeSerieFromDB);
-
-        repo.save(codeSerieFromDB);
+    public void update(String code, CodeSerieDTO codeSerie) {
+        restTemplate.put("/api/v1/codeseries/{code}", codeSerie, code);
     }
 
     @Override
     public void delete(String code) {
-        CodeSerie codeSerie = repo.findById(code).get();
-
-        repo.delete(codeSerie);
+        restTemplate.delete("/api/v1/codeseries/{code}", code);
     }
 
     @Override
-    public CodeSerie get(String code) {
-        Optional<CodeSerie> codeSerieOptional = repo.findById(code);
-
-        if (codeSerieOptional.isPresent()) {
-            return codeSerieOptional.get();
+    public CodeSerieDTO get(String code) {
+        try {
+            return restTemplate.getForObject("/api/v1/codeseries/{code}", CodeSerieDTO.class, code);
+        } catch (HttpClientErrorException e){
+            return null;
         }
-
-        return null;
     }
 
     @Override
-    public List<CodeSerie> list() {
-        return repo.findAll();
+    public CodeSerieList list() {
+        return restTemplate.getForObject("/api/v1/codeseries", CodeSerieList.class);
     }
 
     @Override
-    public List<CodeSerie> list(int page) {
-        return repo.findAll(PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-    }
-
-    @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
-    }
-
-    @Override
-    public String generate(String code) {
-        CodeSerie codeSerie = repo.findById(code).get();
-
-        String newCode = generateNewCode(codeSerie);
-
-        codeSerie.setLastCode(newCode);
-
-        repo.save(codeSerie);
-
-        return newCode;
-    }
-
-    private String generateNewCode(CodeSerie codeSerie) {
-        String lastCode = codeSerie.getLastCode();
-
-        Pair<String, String> codePair = splitCode(lastCode);
-
-        int currentNumber = strip(codePair.getT2());
-
-        int increasedNumber = currentNumber + 1;
-
-        String increasedNumberString = pad(codePair.getT2(), increasedNumber);
-
-        return codePair.getT1() + increasedNumberString;
-    }
-
-    private String pad(String originalNumberString, int increasedNumber) {
-        String increasedNumberString = Integer.toString(increasedNumber);
-
-        if (increasedNumberString.length() == originalNumberString.length()) {
-            return increasedNumberString;
-        }
-
-        int symbolsToPad = originalNumberString.length() - increasedNumberString.length();
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < symbolsToPad; i++) {
-            sb.append("0");
-        }
-        sb.append(increasedNumberString);
-
-        return sb.toString();
-    }
-
-    private int strip(String numberString) {
-        OptionalInt firstIndexOfNonZeroNum = numberString.chars()
-            .filter(c -> c != '0')
-            .map(c -> numberString.indexOf(c))
-            .findFirst();
-
-        if (!firstIndexOfNonZeroNum.isPresent()) {
-            return 0;
-        }
-
-        return Integer.parseInt(numberString.substring(firstIndexOfNonZeroNum.getAsInt()));
-    }
-
-    private void transferFields(CodeSerie source, CodeSerie target) {
-        target.setName(source.getName());
-        target.setFirstCode(source.getFirstCode());
-        target.setLastCode(source.getLastCode());
-    }
-
-    private Pair<String, String> splitCode(String code) {
-        OptionalInt firstIndexOfNumberChar = code.chars()
-            .filter(x -> Character.isDigit(x))
-            .map(x -> code.indexOf(x))
-            .findFirst();
-
-        String codeString = code.substring(0, firstIndexOfNumberChar.getAsInt());
-        String numString = code.substring(firstIndexOfNumberChar.getAsInt());
-
-        return new Pair<String, String>(codeString, numString);
+    public CodeSerieList list(int page) {
+        return restTemplate.getForObject("/api/v1/codeseries/page/{page}", CodeSerieList.class, page);
     }
 
 }

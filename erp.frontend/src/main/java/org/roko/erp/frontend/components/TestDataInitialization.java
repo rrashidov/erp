@@ -1,13 +1,12 @@
 package org.roko.erp.frontend.components;
 
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.VendorDTO;
-import org.roko.erp.frontend.model.CodeSerie;
 import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.model.Setup;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.CodeSerieService;
 import org.roko.erp.frontend.services.CustomerService;
@@ -152,73 +151,73 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
   }
 
   private void initCodeSeries() {
-    CodeSerie cs1 = new CodeSerie();
+    CodeSerieDTO cs1 = new CodeSerieDTO();
     cs1.setCode("CS01");
     cs1.setName("Sales Order");
-    cs1.setFirstCode("SO000000");
-    cs1.setLastCode("SO000000");
+    cs1.setFirstCode("BSO000000");
+    cs1.setLastCode("BSO000000");
     codeSerieSvc.create(cs1);
 
-    CodeSerie cs2 = new CodeSerie();
+    CodeSerieDTO cs2 = new CodeSerieDTO();
     cs2.setCode("CS02");
     cs2.setName("Sales Credit Memo");
     cs2.setFirstCode("SCM000000");
     cs2.setLastCode("SCM000000");
     codeSerieSvc.create(cs2);
 
-    CodeSerie cs3 = new CodeSerie();
+    CodeSerieDTO cs3 = new CodeSerieDTO();
     cs3.setCode("CS03");
     cs3.setName("Posted Sales Order");
     cs3.setFirstCode("PSO000000");
     cs3.setLastCode("PSO000000");
     codeSerieSvc.create(cs3);
 
-    CodeSerie cs4 = new CodeSerie();
+    CodeSerieDTO cs4 = new CodeSerieDTO();
     cs4.setCode("CS04");
     cs4.setName("Posted Sales Credit Memo");
     cs4.setFirstCode("PSCM000000");
     cs4.setLastCode("PSCM000000");
     codeSerieSvc.create(cs4);
 
-    CodeSerie cs5 = new CodeSerie();
+    CodeSerieDTO cs5 = new CodeSerieDTO();
     cs5.setCode("CS05");
     cs5.setName("Purchase Order");
     cs5.setFirstCode("PO000000");
     cs5.setLastCode("PO000000");
     codeSerieSvc.create(cs5);
 
-    CodeSerie cs6 = new CodeSerie();
+    CodeSerieDTO cs6 = new CodeSerieDTO();
     cs6.setCode("CS06");
     cs6.setName("Purchase Credit Memo");
     cs6.setFirstCode("PCM000000");
     cs6.setLastCode("PCM000000");
     codeSerieSvc.create(cs6);
 
-    CodeSerie cs7 = new CodeSerie();
+    CodeSerieDTO cs7 = new CodeSerieDTO();
     cs7.setCode("CS07");
     cs7.setName("Posted Purchase Order");
     cs7.setFirstCode("PPO000000");
     cs7.setLastCode("PPO000000");
     codeSerieSvc.create(cs7);
 
-    CodeSerie cs8 = new CodeSerie();
+    CodeSerieDTO cs8 = new CodeSerieDTO();
     cs8.setCode("CS08");
     cs8.setName("Posted Purchase Credit Memo");
     cs8.setFirstCode("PPCM000000");
     cs8.setLastCode("PPCM000000");
     codeSerieSvc.create(cs8);
 
-    Setup setup = setupSvc.get();
-    setup.setSalesOrderCodeSerie(cs1);
-    setup.setSalesCreditMemoCodeSerie(cs2);
-    setup.setPostedSalesOrderCodeSerie(cs3);
-    setup.setPostedSalesCreditMemoCodeSerie(cs4);
-    setup.setPurchaseOrderCodeSerie(cs5);
-    setup.setPurchaseCreditMemoCodeSerie(cs6);
-    setup.setPostedPurchaseOrderCodeSerie(cs7);
-    setup.setPostedPurchaseCreditMemoCodeSerie(cs8);
+    // Setup setup = setupSvc.get();
+    // setup.setSalesOrderCodeSerie(cs1);
+    // setup.setSalesCreditMemoCodeSerie(cs2);
+    // setup.setPostedSalesOrderCodeSerie(cs3);
+    // setup.setPostedSalesCreditMemoCodeSerie(cs4);
+    // setup.setPurchaseOrderCodeSerie(cs5);
+    // setup.setPurchaseCreditMemoCodeSerie(cs6);
+    // setup.setPostedPurchaseOrderCodeSerie(cs7);
+    // setup.setPostedPurchaseCreditMemoCodeSerie(cs8);
 
-    setupSvc.update(setup);
+    // setupSvc.update(setup);
   }
 
   // private void initBulkVendors(PaymentMethod pm01) {

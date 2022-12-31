@@ -14,9 +14,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.dto.CodeSerieDTO;
+import org.roko.erp.dto.list.CodeSerieList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.CodeSerie;
 import org.roko.erp.frontend.services.CodeSerieService;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
@@ -25,20 +26,20 @@ public class CodeSerieControllerTest {
     
     private static final int TEST_PAGE = 123;
 
-    private static final int TEST_COUNT = 345;
+    private static final long TEST_COUNT = 345;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
     private static final String TEST_FIRST_CODE = "test-first-code";
     private static final String TEST_LAST_CODE = "test-last-code";
 
-    private List<CodeSerie> codeSeries;
+    private List<CodeSerieDTO> codeSeries;
 
     @Mock
-    private CodeSerie codeSerieMock;
+    private CodeSerieDTO codeSerieMock;
 
     @Captor
-    private ArgumentCaptor<CodeSerie> codeSerieArgumentCaptor;
+    private ArgumentCaptor<CodeSerieDTO> codeSerieArgumentCaptor;
 
     @Mock
     private PagingData pagingDataMock;
@@ -51,6 +52,9 @@ public class CodeSerieControllerTest {
 
     @Mock
     private PagingService pagingSvcMock;
+
+    @Mock
+    private CodeSerieList codeSerieList;
 
     private CodeSerieController controller;
 
@@ -65,11 +69,13 @@ public class CodeSerieControllerTest {
         when(codeSerieMock.getFirstCode()).thenReturn(TEST_FIRST_CODE);
         when(codeSerieMock.getLastCode()).thenReturn(TEST_LAST_CODE);
 
-        when(svcMock.list(TEST_PAGE)).thenReturn(codeSeries);
-        when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(codeSerieList.getData()).thenReturn(codeSeries);
+        when(codeSerieList.getCount()).thenReturn(TEST_COUNT);
+
+        when(svcMock.list(TEST_PAGE)).thenReturn(codeSerieList);
         when(svcMock.get(TEST_CODE)).thenReturn(codeSerieMock);
 
-        when(pagingSvcMock.generate("codeSerie", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("codeSerie", TEST_PAGE, (int) TEST_COUNT)).thenReturn(pagingDataMock);
         
         controller = new CodeSerieController(svcMock, pagingSvcMock);
     }
@@ -92,7 +98,7 @@ public class CodeSerieControllerTest {
 
         verify(modelMock).addAttribute(eq("codeSerie"), codeSerieArgumentCaptor.capture());
 
-        CodeSerie codeSerie = codeSerieArgumentCaptor.getValue();
+        CodeSerieDTO codeSerie = codeSerieArgumentCaptor.getValue();
 
         assertEquals("", codeSerie.getCode());
         assertEquals("", codeSerie.getName());
@@ -108,7 +114,7 @@ public class CodeSerieControllerTest {
 
         verify(modelMock).addAttribute(eq("codeSerie"), codeSerieArgumentCaptor.capture());
 
-        CodeSerie codeSerie = codeSerieArgumentCaptor.getValue();
+        CodeSerieDTO codeSerie = codeSerieArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, codeSerie.getCode());
         assertEquals(TEST_NAME, codeSerie.getName());

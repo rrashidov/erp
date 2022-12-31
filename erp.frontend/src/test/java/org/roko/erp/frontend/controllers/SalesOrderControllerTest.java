@@ -39,7 +39,6 @@ import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
-import org.roko.erp.frontend.services.SalesCodeSeriesService;
 import org.roko.erp.frontend.services.SalesOrderLineService;
 import org.roko.erp.frontend.services.SalesOrderPostService;
 import org.roko.erp.frontend.services.SalesOrderService;
@@ -60,8 +59,6 @@ public class SalesOrderControllerTest {
     private static final String TEST_CODE = "test-code";
     private static final String TEST_CUSTOMER_CODE = "test-customer-code";
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
-
-    private static final String TEST_NEW_SALES_ORDER_CODE = "test-new-sales-order-code";
 
     private static final int TEST_PAGE = 123;
 
@@ -146,9 +143,6 @@ public class SalesOrderControllerTest {
     private SalesOrderPostService salesOrderPostSvcMock;
 
     @Mock
-    private SalesCodeSeriesService salesCodeSeriesSvcMock;
-
-    @Mock
     private HttpSession httpSessionMock;
 
     @Mock
@@ -216,8 +210,6 @@ public class SalesOrderControllerTest {
         when(pagingSvcMock.generate("salesOrder", TEST_PAGE, (int) TEST_COUNT)).thenReturn(pagingDataMock);
         when(pagingSvcMock.generate("salesOrderCard", TEST_CODE, TEST_PAGE, (int) TEST_SALES_ORDER_LINE_COUNT))
                 .thenReturn(salesOrderLinePagingMock);
-
-        when(salesCodeSeriesSvcMock.orderCode()).thenReturn(TEST_NEW_SALES_ORDER_CODE);
 
         when(feedbackSvcMock.get(httpSessionMock)).thenReturn(feedbackMock);
 
