@@ -6,6 +6,7 @@ import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
+import org.roko.erp.dto.SetupDTO;
 import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.CodeSerieService;
@@ -137,7 +138,7 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     v3.setPaymentMethodCode("PM03");
     vendorService.create(v3);
 
-    //initBulkVendors(pm03);
+    initBulkVendors();
 
     // init items
     initItems();
@@ -207,29 +208,29 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
     cs8.setLastCode("PPCM000000");
     codeSerieSvc.create(cs8);
 
-    // Setup setup = setupSvc.get();
-    // setup.setSalesOrderCodeSerie(cs1);
-    // setup.setSalesCreditMemoCodeSerie(cs2);
-    // setup.setPostedSalesOrderCodeSerie(cs3);
-    // setup.setPostedSalesCreditMemoCodeSerie(cs4);
-    // setup.setPurchaseOrderCodeSerie(cs5);
-    // setup.setPurchaseCreditMemoCodeSerie(cs6);
-    // setup.setPostedPurchaseOrderCodeSerie(cs7);
-    // setup.setPostedPurchaseCreditMemoCodeSerie(cs8);
+    SetupDTO setup = setupSvc.get();
+    setup.setSalesOrderCodeSerieCode("CS01");
+    setup.setSalesCreditMemoCodeSerieCode("CS02");
+    setup.setPostedSalesOrderCodeSerieCode("CS03");
+    setup.setPostedSalesCreditMemoCodeSerieCode("CS04");
+    setup.setPurchaseOrderCodeSerieCode("CS05");
+    setup.setPurchaseCreditMemoCodeSerieCode("CS06");
+    setup.setPostedPurchaseOrderCodeSerieCode("CS07");
+    setup.setPostedPurchaseCreditMemoCodeSerieCode("CS08");
 
-    // setupSvc.update(setup);
+    setupSvc.update(setup);
   }
 
-  // private void initBulkVendors(PaymentMethod pm01) {
-  //   for (int i = 0; i < 100; i++) {
-  //     Vendor v1 = new Vendor();
-  //     v1.setCode("VEND000" + i);
-  //     v1.setName("Vendor " + i);
-  //     v1.setAddress("Address " + i);
-  //     v1.setPaymentMethod(pm01);
-  //     vendorService.create(v1);
-  //   }
-  // }
+  private void initBulkVendors() {
+    for (int i = 0; i < 100; i++) {
+      VendorDTO v1 = new VendorDTO();
+      v1.setCode("VEND000" + i);
+      v1.setName("Vendor " + i);
+      v1.setAddress("Address " + i);
+      v1.setPaymentMethodCode("PM01");
+      vendorService.create(v1);
+    }
+  }
 
   private void initBulkCustomers(String pmCode) {
     for (int i = 0; i < 100; i++) {
