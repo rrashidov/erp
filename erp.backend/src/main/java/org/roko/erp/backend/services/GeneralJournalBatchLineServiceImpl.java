@@ -19,13 +19,11 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
 
     private GeneralJournalBatchLineRepository repo;
     private BankAccountService bankAccountSvc;
-    private GeneralJournalBatchService generalJournalBatchSvc;
 
     @Autowired
     public GeneralJournalBatchLineServiceImpl(GeneralJournalBatchLineRepository repo,
             GeneralJournalBatchService generalJournalBatchSvc, BankAccountService bankAccountSvc) {
         this.repo = repo;
-        this.generalJournalBatchSvc = generalJournalBatchSvc;
         this.bankAccountSvc = bankAccountSvc;
     }
 
@@ -77,12 +75,7 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
 
     @Override
     public GeneralJournalBatchLine fromDTO(GeneralJournalBatchLineDTO dto) {
-        GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
-        generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchSvc.get(dto.getGeneralJournalBatchCode()));
-        generalJournalBatchLineId.setLineNo(dto.getLineNo());
-
         GeneralJournalBatchLine generalJournalBatchLine = new GeneralJournalBatchLine();
-        generalJournalBatchLine.setGeneralJournalBatchLineId(generalJournalBatchLineId);
         generalJournalBatchLine.setSourceType(GeneralJournalBatchLineType.valueOf(dto.getType()));
         generalJournalBatchLine.setSourceCode(dto.getCode());
         generalJournalBatchLine.setSourceName(dto.getName());

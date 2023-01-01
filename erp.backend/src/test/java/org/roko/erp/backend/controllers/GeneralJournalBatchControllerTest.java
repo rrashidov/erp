@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.GeneralJournalBatch;
@@ -29,6 +31,9 @@ public class GeneralJournalBatchControllerTest {
     private static final int TEST_PAGE = 123;
 
     private static final int TEST_LINE_NO = 1234;
+
+    @Captor
+    private ArgumentCaptor<GeneralJournalBatchLineId> generalJournalBatchLineIdArgumentCaptor;
 
     @Mock
     private GeneralJournalBatch generalJournalBatchMock;
@@ -137,6 +142,13 @@ public class GeneralJournalBatchControllerTest {
         controller.postLine(TEST_CODE, generalJournalBatchLineDtoMock);
 
         verify(generalJournalBatchLineSvcMock).create(generalJournalBatchLineMock);
+
+        verify(generalJournalBatchLineMock).setGeneralJournalBatchLineId(generalJournalBatchLineIdArgumentCaptor.capture());
+
+        GeneralJournalBatchLineId generalJournalBatchLineId = generalJournalBatchLineIdArgumentCaptor.getValue();
+
+        assertEquals(generalJournalBatchMock, generalJournalBatchLineId.getGeneralJournalBatch());
+        assertEquals(TEST_COUNT + 1, generalJournalBatchLineId.getLineNo());
     }
 
     @Test

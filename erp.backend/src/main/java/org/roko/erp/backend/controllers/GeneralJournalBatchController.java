@@ -79,7 +79,14 @@ public class GeneralJournalBatchController {
 
     @PostMapping("/{code}/lines")
     public int postLine(@PathVariable("code") String code, @RequestBody GeneralJournalBatchLineDTO dto) {
+        GeneralJournalBatch generalJournalBatch = svc.get(code);
+
+        GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
+        generalJournalBatchLineId.setGeneralJournalBatch(svc.get(code));
+        generalJournalBatchLineId.setLineNo(generalJournalBatchLineSvc.count(generalJournalBatch) + 1);
+
         GeneralJournalBatchLine generalJournalBatchLine = generalJournalBatchLineSvc.fromDTO(dto);
+        generalJournalBatchLine.setGeneralJournalBatchLineId(generalJournalBatchLineId);
         generalJournalBatchLineSvc.create(generalJournalBatchLine);
         return 0;
     }

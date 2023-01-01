@@ -209,8 +209,6 @@ public class GeneralJournalBatchLineServiceTest {
     public void fromDTO_returnsProperResult() {
         GeneralJournalBatchLine generalJournalBatchLine = svc.fromDTO(dtoMock);
 
-        assertEquals(generalJournalBatchMock, generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
-        assertEquals(TEST_LINE_NO, generalJournalBatchLine.getGeneralJournalBatchLineId().getLineNo());
         assertEquals(TEST_GENERAL_JOURNAL_LINE_TYPE, generalJournalBatchLine.getSourceType());
         assertEquals(TEST_SOURCE_CODE, generalJournalBatchLine.getSourceCode());
         assertEquals(TEST_SOURCE_NAME, generalJournalBatchLine.getSourceName());
