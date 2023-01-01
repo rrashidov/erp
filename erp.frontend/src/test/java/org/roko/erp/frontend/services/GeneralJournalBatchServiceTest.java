@@ -1,24 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.repositories.GeneralJournalBatchRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.roko.erp.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.list.GeneralJournalBatchList;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 public class GeneralJournalBatchServiceTest {
 
@@ -28,17 +22,11 @@ public class GeneralJournalBatchServiceTest {
 
     private static final int TEST_PAGE = 12;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
+    @Mock
+    private GeneralJournalBatchDTO generalJournalBatchMock;
 
     @Mock
-    private Page<GeneralJournalBatch> pageMock;
-
-    @Mock
-    private GeneralJournalBatch generalJournalBatchMock;
-
-    @Mock
-    private GeneralJournalBatchRepository generalJournalBatchRepoMock;
+    private RestTemplate restTemplateMock;
 
     private GeneralJournalBatchService svc;
 
@@ -46,71 +34,52 @@ public class GeneralJournalBatchServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(generalJournalBatchRepoMock.findById(TEST_CODE)).thenReturn(Optional.of(generalJournalBatchMock));
-        when(generalJournalBatchRepoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
-
-        svc = new GeneralJournalBatchServiceImpl(generalJournalBatchRepoMock);
+        svc = new GeneralJournalBatchServiceImpl(restTemplateMock);
     }
 
     @Test
-    public void create_delegatesToRepo() {
+    public void create_callsBackend() {
         svc.create(generalJournalBatchMock);
 
-        verify(generalJournalBatchRepoMock).save(generalJournalBatchMock);
+        verify(restTemplateMock).postForObject("/api/v1/generaljournalbatches", generalJournalBatchMock, String.class);
     }
 
     @Test
-    public void update_delegatesToRepo() {
+    public void update_callsBackend() {
         svc.update(TEST_CODE, generalJournalBatchMock);
 
-        verify(generalJournalBatchRepoMock).findById(TEST_CODE);
-        verify(generalJournalBatchRepoMock).save(generalJournalBatchMock);
+        verify(restTemplateMock).put("/api/v1/generaljournalbatches/{code}", generalJournalBatchMock, TEST_CODE);
     }
 
     @Test
-    public void delete_delegatesToRepo(){
+    public void delete_callsBackend() {
         svc.delete(TEST_CODE);
 
-        verify(generalJournalBatchRepoMock).delete(generalJournalBatchMock);
+        verify(restTemplateMock).delete("/api/v1/generaljournalbatches/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo(){
+    public void get_callsBackend() {
         svc.get(TEST_CODE);
 
-        verify(generalJournalBatchRepoMock).findById(TEST_CODE);
+        verify(restTemplateMock).getForObject("/api/v1/generaljournalbatches/{code}", GeneralJournalBatchDTO.class,
+                TEST_CODE);
     }
 
     @Test
-    public void getReturnsNull_whenCalledWithNonExistingCode(){
-        GeneralJournalBatch generalJournalBatch = svc.get(NON_EXISTING_CODE);
+    public void getReturnsNull_whenCalledWithNonExistingCode() {
+        when(restTemplateMock.getForObject("/api/v1/generaljournalbatches/{code}", GeneralJournalBatchDTO.class, NON_EXISTING_CODE)).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
+        GeneralJournalBatchDTO generalJournalBatch = svc.get(NON_EXISTING_CODE);
 
         assertNull(generalJournalBatch);
     }
 
     @Test
-    public void list_delegatesToRepo(){
-        svc.list();
-
-        verify(generalJournalBatchRepoMock).findAll();
-    }
-
-    @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
-        verify(generalJournalBatchRepoMock).findAll(pageableArgumentCaptor.capture());
-
-        Pageable pageable = pageableArgumentCaptor.getValue();
-
-        assertEquals(TEST_PAGE - 1, pageable.getPageNumber());
-        assertEquals(PagingServiceImpl.RECORDS_PER_PAGE, pageable.getPageSize());
+        verify(restTemplateMock).getForObject("/api/v1/generaljournalbatches/pages/{page}",
+                GeneralJournalBatchList.class, TEST_PAGE);
     }
 
-    @Test
-    public void count_delegatesToRepo(){
-        svc.count();
-
-        verify(generalJournalBatchRepoMock).count();
-    }
 }

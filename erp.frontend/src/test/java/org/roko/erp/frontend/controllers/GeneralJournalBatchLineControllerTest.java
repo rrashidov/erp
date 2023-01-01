@@ -17,16 +17,17 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.dto.list.BankAccountList;
+import org.roko.erp.dto.list.CustomerList;
+import org.roko.erp.dto.list.VendorList;
 import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineModel;
 import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineSource;
-import org.roko.erp.frontend.model.Customer;
-import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.model.GeneralJournalBatchLine;
 import org.roko.erp.frontend.model.GeneralJournalBatchLineOperationType;
 import org.roko.erp.frontend.model.GeneralJournalBatchLineType;
-import org.roko.erp.frontend.model.Vendor;
-import org.roko.erp.frontend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.GeneralJournalBatchLineService;
@@ -38,7 +39,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class GeneralJournalBatchLineControllerTest {
 
-    // private static final int BANK_ACCOUNTS_COUNT = 2;
+    private static final int BANK_ACCOUNTS_COUNT = 2;
 
     private static final String TEST_BANK_ACCOUNT_CODE_1 = "test-bank-account-code-1";
     private static final String TEST_BANK_ACCOUNT_CODE_2 = "test-bank-account-code-2";
@@ -75,19 +76,16 @@ public class GeneralJournalBatchLineControllerTest {
     private static final String TEST_DOCUMENT_CODE = "test-document-code";
     private static final Double TEST_AMOUNT = 12.12;
 
+    private List<BankAccountDTO> bankAccounts;
+
     @Captor
     private ArgumentCaptor<List<GeneralJournalBatchLineSource>> sourcesArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<GeneralJournalBatchLine> generalJournalBatchLineArgumentCaptor;
+    private ArgumentCaptor<GeneralJournalBatchLineDTO> generalJournalBatchLineArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<GeneralJournalBatchLineModel> generalJournalBatchLineModelArgumentCaptor;
-
-    private GeneralJournalBatchLineId generalJournalBatchLineId;
-
-    @Mock
-    private BankAccountList bankAccounts;
 
     @Mock
     private GeneralJournalBatchLineService svcMock;
@@ -96,7 +94,7 @@ public class GeneralJournalBatchLineControllerTest {
     private GeneralJournalBatchService generalJournalBatchSvcMock;
 
     @Mock
-    private GeneralJournalBatch generalJournalBatchMock;
+    private GeneralJournalBatchDTO generalJournalBatchMock;
 
     @Mock
     private Model modelMock;
@@ -120,25 +118,34 @@ public class GeneralJournalBatchLineControllerTest {
     private CustomerService customerSvcMock;
 
     @Mock
-    private Customer customerMock1;
+    private CustomerDTO customerMock1;
 
     @Mock
-    private Customer customerMock2;
+    private CustomerDTO customerMock2;
 
     @Mock
-    private Customer customerMock3;
+    private CustomerDTO customerMock3;
 
     @Mock
     private VendorService vendorSvcMock;
 
     @Mock
-    private Vendor vendorMock1;
+    private VendorDTO vendorMock1;
 
     @Mock
-    private Vendor vendorMock2;
+    private VendorDTO vendorMock2;
 
     @Mock
-    private GeneralJournalBatchLine generalJournalBatchLineMock;
+    private GeneralJournalBatchLineDTO generalJournalBatchLineMock;
+
+    @Mock
+    private CustomerList customerList;
+
+    @Mock
+    private VendorList vendorList;
+
+    @Mock
+    private BankAccountList bankAccountList;
 
     private GeneralJournalBatchLineController controller;
 
@@ -146,7 +153,7 @@ public class GeneralJournalBatchLineControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        when(bankAccounts.getData()).thenReturn(Arrays.asList(bankAccountMock1, bankAccountMock2));
+        bankAccounts = Arrays.asList(bankAccountMock1, bankAccountMock2);
 
         when(bankAccountMock1.getCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_1);
         when(bankAccountMock1.getName()).thenReturn(TEST_BANK_ACCOUNT_NAME_1);
@@ -154,7 +161,9 @@ public class GeneralJournalBatchLineControllerTest {
         when(bankAccountMock2.getCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_2);
         when(bankAccountMock2.getName()).thenReturn(TEST_BANK_ACCOUNT_NAME_2);
 
-        when(bankAccountSvcMock.list()).thenReturn(bankAccounts);
+        when(bankAccountList.getData()).thenReturn(bankAccounts);
+
+        when(bankAccountSvcMock.list()).thenReturn(bankAccountList);
         when(bankAccountSvcMock.get(TEST_BANK_ACCOUNT_CODE_1)).thenReturn(bankAccountMock1);
 
         when(customerMock1.getCode()).thenReturn(TEST_CUSTOMER_CODE_1);
@@ -166,7 +175,9 @@ public class GeneralJournalBatchLineControllerTest {
         when(customerMock3.getCode()).thenReturn(TEST_CUSTOMER_CODE_3);
         when(customerMock3.getName()).thenReturn(TEST_CUSTOMER_NAME_3);
 
-        //when(customerSvcMock.list()).thenReturn(Arrays.asList(customerMock1, customerMock2, customerMock3));
+        when(customerList.getData()).thenReturn(Arrays.asList(customerMock1, customerMock2, customerMock3));
+
+        when(customerSvcMock.list()).thenReturn(customerList);
 
         when(vendorMock1.getCode()).thenReturn(TEST_VENDOR_CODE_1);
         when(vendorMock1.getName()).thenReturn(TEST_VENDOR_NAME_1);
@@ -174,190 +185,195 @@ public class GeneralJournalBatchLineControllerTest {
         when(vendorMock2.getCode()).thenReturn(TEST_VENDOR_CODE_2);
         when(vendorMock2.getName()).thenReturn(TEST_VENDOR_NAME_2);
 
-        //when(vendorSvcMock.list()).thenReturn(Arrays.asList(vendorMock1, vendorMock2));
+        when(vendorList.getData()).thenReturn(Arrays.asList(vendorMock1, vendorMock2));
+
+        when(vendorSvcMock.list()).thenReturn(vendorList);
 
         when(generalJournalBatchLineModelMock.getGeneralJournalBatchCode()).thenReturn(TEST_CODE);
 
         when(generalJournalBatchSvcMock.get(TEST_CODE)).thenReturn(generalJournalBatchMock);
 
-        generalJournalBatchLineId = new GeneralJournalBatchLineId();
-        generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchMock);
-        generalJournalBatchLineId.setLineNo(TEST_LINE_NO);
-
-        when(generalJournalBatchLineMock.getGeneralJournalBatchLineId()).thenReturn(generalJournalBatchLineId);
-        when(generalJournalBatchLineMock.getSourceType()).thenReturn(TEST_SOURCE_TYPE);
-        when(generalJournalBatchLineMock.getSourceCode()).thenReturn(TEST_SOURCE_CODE);
-        when(generalJournalBatchLineMock.getSourceName()).thenReturn(TEST_SOURCE_NAME);
-        when(generalJournalBatchLineMock.getOperationType()).thenReturn(TEST_OPERATION_TYPE);
+        when(generalJournalBatchLineMock.getGeneralJournalBatchCode()).thenReturn(TEST_CODE);
+        when(generalJournalBatchLineMock.getLineNo()).thenReturn(TEST_LINE_NO);
+        when(generalJournalBatchLineMock.getType()).thenReturn(TEST_SOURCE_TYPE.name());
+        when(generalJournalBatchLineMock.getCode()).thenReturn(TEST_SOURCE_CODE);
+        when(generalJournalBatchLineMock.getName()).thenReturn(TEST_SOURCE_NAME);
+        when(generalJournalBatchLineMock.getOperationType()).thenReturn(TEST_OPERATION_TYPE.name());
         when(generalJournalBatchLineMock.getDate()).thenReturn(TEST_DATE);
         when(generalJournalBatchLineMock.getDocumentCode()).thenReturn(TEST_DOCUMENT_CODE);
         when(generalJournalBatchLineMock.getAmount()).thenReturn(TEST_AMOUNT);
-        //when(generalJournalBatchLineMock.getTarget()).thenReturn(bankAccountMock1);
+        when(generalJournalBatchLineMock.getBankAccountCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_1);
 
-        when(svcMock.get(generalJournalBatchLineId)).thenReturn(generalJournalBatchLineMock);
+        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
+        when(generalJournalBatchLineModelMock.getOperationType()).thenReturn(GeneralJournalBatchLineOperationType.EMPTY);
+
+        when(svcMock.get(TEST_CODE, TEST_LINE_NO)).thenReturn(generalJournalBatchLineMock);
 
         controller = new GeneralJournalBatchLineController(svcMock, generalJournalBatchSvcMock, bankAccountSvcMock,
                 customerSvcMock, vendorSvcMock);
     }
 
-    // @Test
-    // public void wizard_returnsProperTemplate() {
-    //     String template = controller.wizard(TEST_CODE, 0, modelMock);
+    @Test
+    public void wizard_returnsProperTemplate() {
+        String template = controller.wizard(TEST_CODE, 0, modelMock);
 
-    //     verify(modelMock).addAttribute(eq("generalJournalBatchLine"), any(GeneralJournalBatchLineModel.class));
+        verify(modelMock).addAttribute(eq("generalJournalBatchLine"), any(GeneralJournalBatchLineModel.class));
 
-    //     assertEquals("generalJournalBatchLineWizardFirstPage.html", template);
-    // }
+        assertEquals("generalJournalBatchLineWizardFirstPage.html", template);
+    }
 
-    // // @Test
-    // // public void wizard_returnsProperTemplate_whenCalledForExisting() {
-    // //     controller.wizard(TEST_CODE, TEST_LINE_NO, modelMock);
+    @Test
+    public void wizard_returnsProperTemplate_whenCalledForExisting() {
+        controller.wizard(TEST_CODE, TEST_LINE_NO, modelMock);
 
-    // //     verify(modelMock).addAttribute(eq("generalJournalBatchLine"),
-    // //             generalJournalBatchLineModelArgumentCaptor.capture());
+        verify(modelMock).addAttribute(eq("generalJournalBatchLine"),
+                generalJournalBatchLineModelArgumentCaptor.capture());
 
-    // //     GeneralJournalBatchLineModel generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor
-    // //             .getValue();
+        GeneralJournalBatchLineModel generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor
+                .getValue();
 
-    // //     assertEquals(TEST_CODE, generalJournalBatchLineModel.getGeneralJournalBatchCode());
-    // //     assertEquals(TEST_LINE_NO, generalJournalBatchLineModel.getLineNo());
-    // //     assertEquals(TEST_SOURCE_TYPE, generalJournalBatchLineModel.getSourceType());
-    // //     assertEquals(TEST_SOURCE_CODE, generalJournalBatchLineModel.getSourceCode());
-    // //     assertEquals(TEST_SOURCE_NAME, generalJournalBatchLineModel.getSourceName());
-    // //     assertEquals(TEST_OPERATION_TYPE, generalJournalBatchLineModel.getOperationType());
-    // //     assertEquals(TEST_DATE, generalJournalBatchLineModel.getDate());
-    // //     assertEquals(TEST_DOCUMENT_CODE, generalJournalBatchLineModel.getDocumentCode());
-    // //     assertEquals(TEST_AMOUNT, generalJournalBatchLineModel.getAmount());
-    // //     assertEquals(TEST_BANK_ACCOUNT_CODE_1, generalJournalBatchLineModel.getBankAccountCode());
-    // // }
+        assertEquals(TEST_CODE, generalJournalBatchLineModel.getGeneralJournalBatchCode());
+        assertEquals(TEST_LINE_NO, generalJournalBatchLineModel.getLineNo());
+        assertEquals(TEST_SOURCE_TYPE, generalJournalBatchLineModel.getSourceType());
+        assertEquals(TEST_SOURCE_CODE, generalJournalBatchLineModel.getSourceCode());
+        assertEquals(TEST_SOURCE_NAME, generalJournalBatchLineModel.getSourceName());
+        assertEquals(TEST_OPERATION_TYPE, generalJournalBatchLineModel.getOperationType());
+        assertEquals(TEST_DATE, generalJournalBatchLineModel.getDate());
+        assertEquals(TEST_DOCUMENT_CODE, generalJournalBatchLineModel.getDocumentCode());
+        assertEquals(TEST_AMOUNT, generalJournalBatchLineModel.getAmount());
+        assertEquals(TEST_BANK_ACCOUNT_CODE_1, generalJournalBatchLineModel.getBankAccountCode());
+    }
 
-    // // @Test
-    // // public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeBankAccount() {
-    // //     when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
+    @Test
+    public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeBankAccount() {
+        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
         
-    // //     String template = controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
+        String template = controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
 
-    // //     verify(modelMock).addAttribute("generalJournalBatchLine", generalJournalBatchLineModelMock);
-    // //     verify(modelMock).addAttribute(eq("sources"), sourcesArgumentCaptor.capture());
+        verify(modelMock).addAttribute("generalJournalBatchLine", generalJournalBatchLineModelMock);
+        verify(modelMock).addAttribute(eq("sources"), sourcesArgumentCaptor.capture());
 
-    // //     List<GeneralJournalBatchLineSource> sources = sourcesArgumentCaptor.getValue();
+        List<GeneralJournalBatchLineSource> sources = sourcesArgumentCaptor.getValue();
 
-    // //     assertBankAccounts(sources);
+        assertBankAccounts(sources);
 
-    // //     assertEquals("generalJournalBatchLineWizardSecondPage.html", template);
-    // // }
+        assertEquals("generalJournalBatchLineWizardSecondPage.html", template);
+    }
 
-    // @Test
-    // public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeCustomer() {
-    //     when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.CUSTOMER);
+    @Test
+    public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeCustomer() {
+        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.CUSTOMER);
         
-    //     controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
+        controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
 
-    //     verify(modelMock).addAttribute(eq("sources"), sourcesArgumentCaptor.capture());
+        verify(modelMock).addAttribute(eq("sources"), sourcesArgumentCaptor.capture());
 
-    //     List<GeneralJournalBatchLineSource> sources = sourcesArgumentCaptor.getValue();
+        List<GeneralJournalBatchLineSource> sources = sourcesArgumentCaptor.getValue();
 
-    //     assertCustomers(sources);
-    // }
+        assertCustomers(sources);
+    }
 
-    // @Test
-    // public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeVendor() {
-    //     when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.VENDOR);
+    @Test
+    public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeVendor() {
+        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.VENDOR);
         
-    //     controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
+        controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
 
-    //     verify(modelMock).addAttribute(eq("sources"), sourcesArgumentCaptor.capture());
+        verify(modelMock).addAttribute(eq("sources"), sourcesArgumentCaptor.capture());
 
-    //     List<GeneralJournalBatchLineSource> sources = sourcesArgumentCaptor.getValue();
+        List<GeneralJournalBatchLineSource> sources = sourcesArgumentCaptor.getValue();
 
-    //     assertVendors(sources);
-    // }
+        assertVendors(sources);
+    }
 
-    // @Test
-    // public void postGeneralJournalBatchLineWizardSecondPage_returnsProperTemplate_whenSourceTypeBankAccount() {
-    //     when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
-    //     when(generalJournalBatchLineModelMock.getSourceCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_1);
+    @Test
+    public void postGeneralJournalBatchLineWizardSecondPage_returnsProperTemplate_whenSourceTypeBankAccount() {
+        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
+        when(generalJournalBatchLineModelMock.getSourceCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_1);
 
-    //     String template = controller.postGeneralJournalBatchLineWizardSecondPage(generalJournalBatchLineModelMock, modelMock);
+        String template = controller.postGeneralJournalBatchLineWizardSecondPage(generalJournalBatchLineModelMock, modelMock);
 
-    //     verify(modelMock).addAttribute("generalJournalBatchLine", generalJournalBatchLineModelMock);
-    //     verify(modelMock).addAttribute("bankAccounts", bankAccounts);
+        verify(modelMock).addAttribute("generalJournalBatchLine", generalJournalBatchLineModelMock);
+        verify(modelMock).addAttribute("bankAccounts", bankAccounts);
 
-    //     verify(generalJournalBatchLineModelMock).setSourceName(TEST_BANK_ACCOUNT_NAME_1);
+        verify(generalJournalBatchLineModelMock).setSourceName(TEST_BANK_ACCOUNT_NAME_1);
 
-    //     assertEquals("generalJournalBatchLineWizardThirdPage.html", template);
-    // }
+        assertEquals("generalJournalBatchLineWizardThirdPage.html", template);
+    }
 
-    // @Test
-    // public void postGeneralJournalBatchLineWizardThirdPage_createsAndReturnsProperResult_whenCalledForNew() {
-    //     RedirectView redirectView = controller
-    //             .postGeneralJournalBatchLineWizardThirdPage(generalJournalBatchLineModelMock, redirectAttributesMock);
+    @Test
+    public void postGeneralJournalBatchLineWizardThirdPage_createsAndReturnsProperResult_whenCalledForNew() {
+        RedirectView redirectView = controller
+                .postGeneralJournalBatchLineWizardThirdPage(generalJournalBatchLineModelMock, redirectAttributesMock);
 
-    //     assertEquals("/generalJournalBatchCard", redirectView.getUrl());
+        assertEquals("/generalJournalBatchCard", redirectView.getUrl());
 
-    //     verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+        verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
 
-    //     verify(svcMock).create(generalJournalBatchLineArgumentCaptor.capture());
+        verify(svcMock).create(eq(TEST_CODE), generalJournalBatchLineArgumentCaptor.capture());
 
-    //     GeneralJournalBatchLine generalJournalBatchLine = generalJournalBatchLineArgumentCaptor.getValue();
+        // TODO
+        //GeneralJournalBatchLineDTO generalJournalBatchLine = generalJournalBatchLineArgumentCaptor.getValue();
 
-    //     assertEquals(generalJournalBatchMock,
-    //             generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
-    // }
+        // assertEquals(generalJournalBatchMock,
+        //         generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
+    }
 
-    // @Test
-    // public void postGeneralJournalBatchLineWizardThirdPage_updatesAndReturnsProperResult_whenCalledForExisting(){
-    //     when(generalJournalBatchLineModelMock.getLineNo()).thenReturn(TEST_LINE_NO);
+    @Test
+    public void postGeneralJournalBatchLineWizardThirdPage_updatesAndReturnsProperResult_whenCalledForExisting(){
+        when(generalJournalBatchLineModelMock.getLineNo()).thenReturn(TEST_LINE_NO);
 
-    //     controller.postGeneralJournalBatchLineWizardThirdPage(generalJournalBatchLineModelMock, redirectAttributesMock);
+        controller.postGeneralJournalBatchLineWizardThirdPage(generalJournalBatchLineModelMock, redirectAttributesMock);
 
-    //     verify(svcMock).update(eq(generalJournalBatchLineId), generalJournalBatchLineArgumentCaptor.capture());
+        verify(svcMock).update(eq(TEST_CODE), eq(TEST_LINE_NO), generalJournalBatchLineArgumentCaptor.capture());
 
-    //     GeneralJournalBatchLine generalJournalBatchLine = generalJournalBatchLineArgumentCaptor.getValue();
+        // TODO
 
-    //     assertEquals(generalJournalBatchMock, generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
-    // }
+        // GeneralJournalBatchLineDTO generalJournalBatchLine = generalJournalBatchLineArgumentCaptor.getValue();
 
-    // @Test
-    // public void deleteGeneralJournalBatchLine_returnsProperTemplate() {
-    //     RedirectView redirectView = controller.deleteGeneralJournalBatchLine(TEST_CODE, TEST_LINE_NO, redirectAttributesMock);
+        //assertEquals(generalJournalBatchMock, generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
+    }
 
-    //     assertEquals("/generalJournalBatchCard", redirectView.getUrl());
+    @Test
+    public void deleteGeneralJournalBatchLine_returnsProperTemplate() {
+        RedirectView redirectView = controller.deleteGeneralJournalBatchLine(TEST_CODE, TEST_LINE_NO, redirectAttributesMock);
 
-    //     verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+        assertEquals("/generalJournalBatchCard", redirectView.getUrl());
 
-    //     verify(svcMock).delete(generalJournalBatchLineId);
-    // }
+        verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
 
-    // private void assertVendors(List<GeneralJournalBatchLineSource> sources) {
-    //     assertEquals(VENDORS_COUNT, sources.size());
+        verify(svcMock).delete(TEST_CODE, TEST_LINE_NO);
+    }
 
-    //     assertEquals(TEST_VENDOR_CODE_1, sources.get(0).getCode());
-    //     assertEquals(TEST_VENDOR_CODE_2, sources.get(1).getCode());
+    private void assertVendors(List<GeneralJournalBatchLineSource> sources) {
+        assertEquals(VENDORS_COUNT, sources.size());
 
-    //     assertEquals(TEST_VENDOR_NAME_1, sources.get(0).getName());
-    //     assertEquals(TEST_VENDOR_NAME_2, sources.get(1).getName());
-    // }
+        assertEquals(TEST_VENDOR_CODE_1, sources.get(0).getCode());
+        assertEquals(TEST_VENDOR_CODE_2, sources.get(1).getCode());
 
-    // // private void assertBankAccounts(List<GeneralJournalBatchLineSource> sources) {
-    // //     assertEquals(BANK_ACCOUNTS_COUNT, sources.size());
+        assertEquals(TEST_VENDOR_NAME_1, sources.get(0).getName());
+        assertEquals(TEST_VENDOR_NAME_2, sources.get(1).getName());
+    }
 
-    // //     assertEquals(TEST_BANK_ACCOUNT_CODE_1, sources.get(0).getCode());
-    // //     assertEquals(TEST_BANK_ACCOUNT_CODE_2, sources.get(1).getCode());
+    private void assertBankAccounts(List<GeneralJournalBatchLineSource> sources) {
+        assertEquals(BANK_ACCOUNTS_COUNT, sources.size());
 
-    // //     assertEquals(TEST_BANK_ACCOUNT_NAME_1, sources.get(0).getName());
-    // //     assertEquals(TEST_BANK_ACCOUNT_NAME_2, sources.get(1).getName());
-    // // }
+        assertEquals(TEST_BANK_ACCOUNT_CODE_1, sources.get(0).getCode());
+        assertEquals(TEST_BANK_ACCOUNT_CODE_2, sources.get(1).getCode());
 
-    // private void assertCustomers(List<GeneralJournalBatchLineSource> sources) {
-    //     assertEquals(CUSTOMERS_COUNT, sources.size());
+        assertEquals(TEST_BANK_ACCOUNT_NAME_1, sources.get(0).getName());
+        assertEquals(TEST_BANK_ACCOUNT_NAME_2, sources.get(1).getName());
+    }
 
-    //     assertEquals(TEST_CUSTOMER_CODE_1, sources.get(0).getCode());
-    //     assertEquals(TEST_CUSTOMER_CODE_2, sources.get(1).getCode());
-    //     assertEquals(TEST_CUSTOMER_CODE_3, sources.get(2).getCode());
+    private void assertCustomers(List<GeneralJournalBatchLineSource> sources) {
+        assertEquals(CUSTOMERS_COUNT, sources.size());
 
-    //     assertEquals(TEST_CUSTOMER_NAME_1, sources.get(0).getName());
-    //     assertEquals(TEST_CUSTOMER_NAME_2, sources.get(1).getName());
-    //     assertEquals(TEST_CUSTOMER_NAME_3, sources.get(2).getName());
-    // }
+        assertEquals(TEST_CUSTOMER_CODE_1, sources.get(0).getCode());
+        assertEquals(TEST_CUSTOMER_CODE_2, sources.get(1).getCode());
+        assertEquals(TEST_CUSTOMER_CODE_3, sources.get(2).getCode());
+
+        assertEquals(TEST_CUSTOMER_NAME_1, sources.get(0).getName());
+        assertEquals(TEST_CUSTOMER_NAME_2, sources.get(1).getName());
+        assertEquals(TEST_CUSTOMER_NAME_3, sources.get(2).getName());
+    }
 }

@@ -1,13 +1,12 @@
 package org.roko.erp.frontend.controllers;
 
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
 
+import org.roko.erp.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.list.GeneralJournalBatchLineList;
+import org.roko.erp.dto.list.GeneralJournalBatchList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.model.GeneralJournalBatchLine;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.GeneralJournalBatchLineService;
 import org.roko.erp.frontend.services.GeneralJournalBatchPostService;
@@ -46,10 +45,10 @@ public class GeneralJournalBatchController {
 
     @GetMapping("/generalJournalBatchList")
     public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model, HttpSession httpSession) {
-        List<GeneralJournalBatch> generalJournalBatches = svc.list(page);
-        PagingData pagingData = pagingSvc.generate("generalJournalBatch", page, svc.count());
+        GeneralJournalBatchList generalJournalBatches = svc.list(page);
+        PagingData pagingData = pagingSvc.generate("generalJournalBatch", page, (int) generalJournalBatches.getCount());
 
-        model.addAttribute("generalJournalBatches", generalJournalBatches);
+        model.addAttribute("generalJournalBatches", generalJournalBatches.getData());
         model.addAttribute("paging", pagingData);
         model.addAttribute("feedback", feedbackSvc.get(httpSession));
 
@@ -59,17 +58,17 @@ public class GeneralJournalBatchController {
     @GetMapping("/generalJournalBatchCard")
     public String card(@RequestParam(name = "code", required = false) String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        GeneralJournalBatch generalJournalBatch = new GeneralJournalBatch();
+        GeneralJournalBatchDTO generalJournalBatch = new GeneralJournalBatchDTO();
 
         if (code != null) {
             generalJournalBatch = svc.get(code);
 
-            List<GeneralJournalBatchLine> generalJournalBatchLines = generalJournalBatchLineSvc
-                    .list(generalJournalBatch, page);
+            GeneralJournalBatchLineList generalJournalBatchLines = generalJournalBatchLineSvc
+                    .list(code, page);
             PagingData pagingData = pagingSvc.generate("generalJournalBatchCard", code, page,
-                    generalJournalBatchLineSvc.count(generalJournalBatch));
+            (int) generalJournalBatchLines.getCount());
 
-            model.addAttribute("generalJournalBatchLines", generalJournalBatchLines);
+            model.addAttribute("generalJournalBatchLines", generalJournalBatchLines.getData());
             model.addAttribute("paging", pagingData);
         }
 
@@ -79,7 +78,7 @@ public class GeneralJournalBatchController {
     }
 
     @PostMapping("/generalJournalBatchCard")
-    public RedirectView post(@ModelAttribute GeneralJournalBatch generalJournalBatch) {
+    public RedirectView post(@ModelAttribute GeneralJournalBatchDTO generalJournalBatch) {
         svc.create(generalJournalBatch);
 
         return new RedirectView("/generalJournalBatchList");

@@ -1,24 +1,18 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-
-import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.model.GeneralJournalBatchLine;
-import org.roko.erp.frontend.model.jpa.GeneralJournalBatchLineId;
+import org.roko.erp.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.list.GeneralJournalBatchLineList;
 
 public interface GeneralJournalBatchLineService {
-    
-    public void create(GeneralJournalBatchLine generalJournalBatchLine);
 
-    public void update(GeneralJournalBatchLineId id, GeneralJournalBatchLine generalJournalBatchLine);
+    public void create(String code, GeneralJournalBatchLineDTO generalJournalBatchLine);
 
-    public GeneralJournalBatchLine get(GeneralJournalBatchLineId generalJournalBatchLineId);
+    public void update(String code, int lineNo, GeneralJournalBatchLineDTO generalJournalBatchLine);
 
-    public List<GeneralJournalBatchLine> list(GeneralJournalBatch generalJournalBatch);
+    public GeneralJournalBatchLineDTO get(String code, int lineNo);
 
-    public List<GeneralJournalBatchLine> list(GeneralJournalBatch generalJournalBatch, int page);
+    public GeneralJournalBatchLineList list(String code, int page);
 
-    public void delete(GeneralJournalBatchLineId generalJournalBatchLineId);
+    public void delete(String code, int lineNo);
 
-    public int count(GeneralJournalBatch generalJournalBatch);
 }

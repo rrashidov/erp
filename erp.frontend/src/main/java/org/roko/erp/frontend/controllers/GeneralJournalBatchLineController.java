@@ -2,13 +2,14 @@ package org.roko.erp.frontend.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.roko.erp.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineModel;
 import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineSource;
-import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.model.GeneralJournalBatchLine;
+import org.roko.erp.frontend.model.GeneralJournalBatchLineOperationType;
 import org.roko.erp.frontend.model.GeneralJournalBatchLineType;
-import org.roko.erp.frontend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.GeneralJournalBatchLineService;
@@ -51,11 +52,7 @@ public class GeneralJournalBatchLineController {
         generalJournalBatchLineModel.setGeneralJournalBatchCode(code);
 
         if (lineNo != 0) {
-            GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
-            generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchSvc.get(code));
-            generalJournalBatchLineId.setLineNo(lineNo);
-
-            GeneralJournalBatchLine generalJournalBatchLine = svc.get(generalJournalBatchLineId);
+            GeneralJournalBatchLineDTO generalJournalBatchLine = svc.get(code, lineNo);
             toModel(generalJournalBatchLine, generalJournalBatchLineModel);
         }
 
@@ -94,7 +91,7 @@ public class GeneralJournalBatchLineController {
         setSourceName(generalJournalBatchLine);
 
         model.addAttribute("generalJournalBatchLine", generalJournalBatchLine);
-        model.addAttribute("bankAccounts", bankAccountSvc.list());
+        model.addAttribute("bankAccounts", bankAccountSvc.list().getData());
 
         return "generalJournalBatchLineWizardThirdPage.html";
     }
@@ -104,7 +101,7 @@ public class GeneralJournalBatchLineController {
             @ModelAttribute GeneralJournalBatchLineModel generalJournalBatchLine,
             RedirectAttributes redirectAttributes) {
 
-        GeneralJournalBatch generalJournalBatch = generalJournalBatchSvc
+        GeneralJournalBatchDTO generalJournalBatch = generalJournalBatchSvc
                 .get(generalJournalBatchLine.getGeneralJournalBatchCode());
 
         if (generalJournalBatchLine.getLineNo() == 0) {
@@ -121,65 +118,52 @@ public class GeneralJournalBatchLineController {
     @GetMapping("/deleteGeneralJournalBatchLine")
     public RedirectView deleteGeneralJournalBatchLine(@RequestParam(name = "generalJournalBatchCode") String code,
             @RequestParam(name = "lineNo") int lineNo, RedirectAttributes redirectAttributes) {
-        GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
-        generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchSvc.get(code));
-        generalJournalBatchLineId.setLineNo(lineNo);
-
-        svc.delete(generalJournalBatchLineId);
+        svc.delete(code, lineNo);
 
         redirectAttributes.addAttribute("code", code);
 
         return new RedirectView("/generalJournalBatchCard");
     }
 
-    private void create(GeneralJournalBatch generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
-        GeneralJournalBatchLineId id = new GeneralJournalBatchLineId();
-        id.setGeneralJournalBatch(generalJournalBatch);
-        id.setLineNo(svc.count(generalJournalBatch) + 1);
-
-        GeneralJournalBatchLine line = new GeneralJournalBatchLine();
-        line.setGeneralJournalBatchLineId(id);
+    private void create(GeneralJournalBatchDTO generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
+        GeneralJournalBatchLineDTO line = new GeneralJournalBatchLineDTO();
 
         fromModel(line, generalJournalBatchLine);
 
-        svc.create(line);
+        svc.create(generalJournalBatchLine.getGeneralJournalBatchCode(), line);
     }
 
-    private void update(GeneralJournalBatch generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
-        GeneralJournalBatchLineId id = new GeneralJournalBatchLineId();
-        id.setGeneralJournalBatch(generalJournalBatch);
-        id.setLineNo(generalJournalBatchLine.getLineNo());
-
-        GeneralJournalBatchLine line = svc.get(id);
+    private void update(GeneralJournalBatchDTO generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
+        GeneralJournalBatchLineDTO line = svc.get(generalJournalBatchLine.getGeneralJournalBatchCode(), generalJournalBatchLine.getLineNo());
 
         fromModel(line, generalJournalBatchLine);
 
-        svc.update(id, line);
+        svc.update(generalJournalBatchLine.getGeneralJournalBatchCode(), generalJournalBatchLine.getLineNo(), line);
     }
 
-    public void fromModel(GeneralJournalBatchLine line, GeneralJournalBatchLineModel model) {
-        line.setSourceType(model.getSourceType());
-        line.setSourceCode(model.getSourceCode());
-        line.setSourceName(model.getSourceName());
-        line.setOperationType(model.getOperationType());
+    public void fromModel(GeneralJournalBatchLineDTO line, GeneralJournalBatchLineModel model) {
+        line.setType(model.getSourceType().name());
+        line.setCode(model.getSourceCode());
+        line.setName(model.getSourceName());
+        line.setOperationType(model.getOperationType().name());
         line.setDocumentCode(model.getDocumentCode());
         line.setDate(model.getDate());
         line.setAmount(model.getAmount());
-        //line.setTarget(bankAccountSvc.get(model.getBankAccountCode()));
+        line.setBankAccountCode(model.getBankAccountCode());
     }
 
-    private void toModel(GeneralJournalBatchLine generalJournalBatchLine,
+    private void toModel(GeneralJournalBatchLineDTO generalJournalBatchLine,
             GeneralJournalBatchLineModel generalJournalBatchLineModel) {
-        generalJournalBatchLineModel.setLineNo(generalJournalBatchLine.getGeneralJournalBatchLineId().getLineNo());
-        generalJournalBatchLineModel.setSourceType(generalJournalBatchLine.getSourceType());
-        generalJournalBatchLineModel.setSourceCode(generalJournalBatchLine.getSourceCode());
-        generalJournalBatchLineModel.setSourceName(generalJournalBatchLine.getSourceName());
-        generalJournalBatchLineModel.setOperationType(generalJournalBatchLine.getOperationType());
+        generalJournalBatchLineModel.setLineNo(generalJournalBatchLine.getLineNo());
+        generalJournalBatchLineModel.setSourceType(GeneralJournalBatchLineType.valueOf(generalJournalBatchLine.getType()));
+        generalJournalBatchLineModel.setSourceCode(generalJournalBatchLine.getCode());
+        generalJournalBatchLineModel.setSourceName(generalJournalBatchLine.getName());
+        generalJournalBatchLineModel.setOperationType(GeneralJournalBatchLineOperationType.valueOf(generalJournalBatchLine.getOperationType()));
         generalJournalBatchLineModel.setDocumentCode(generalJournalBatchLine.getDocumentCode());
         generalJournalBatchLineModel.setDate(generalJournalBatchLine.getDate());
         generalJournalBatchLineModel.setAmount(generalJournalBatchLine.getAmount());
-        if (generalJournalBatchLine.getTarget() != null) {
-            generalJournalBatchLineModel.setBankAccountCode(generalJournalBatchLine.getTarget().getCode());
+        if (generalJournalBatchLine.getBankAccountCode() != null) {
+            generalJournalBatchLineModel.setBankAccountCode(generalJournalBatchLine.getBankAccountCode());
         }
     }
 
@@ -199,30 +183,7 @@ public class GeneralJournalBatchLineController {
     }
 
     private void addVendors(List<GeneralJournalBatchLineSource> sources) {
-        // sources.addAll(vendorSvc.list().stream()
-        //         .map(x -> {
-        //             GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
-        //             s.setCode(x.getCode());
-        //             s.setName(x.getName());
-        //             return s;
-        //         })
-        //         .collect(Collectors.toList()));
-    }
-
-    private void addCustomers(List<GeneralJournalBatchLineSource> sources) {
-        // sources.addAll(customerSvc.list().stream()
-        //         .map(c -> {
-        //             GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
-        //             s.setCode(c.getCode());
-        //             s.setName(c.getName());
-        //             return s;
-        //         })
-        //         .collect(Collectors.toList()));
-    }
-
-    private void addBankAccounts(List<GeneralJournalBatchLineSource> sources) {
-        /*
-        sources.addAll(bankAccountSvc.list().stream()
+        sources.addAll(vendorSvc.list().getData().stream()
                 .map(x -> {
                     GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
                     s.setCode(x.getCode());
@@ -230,6 +191,27 @@ public class GeneralJournalBatchLineController {
                     return s;
                 })
                 .collect(Collectors.toList()));
-        */
+    }
+
+    private void addCustomers(List<GeneralJournalBatchLineSource> sources) {
+        sources.addAll(customerSvc.list().getData().stream()
+                .map(c -> {
+                    GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
+                    s.setCode(c.getCode());
+                    s.setName(c.getName());
+                    return s;
+                })
+                .collect(Collectors.toList()));
+    }
+
+    private void addBankAccounts(List<GeneralJournalBatchLineSource> sources) {
+        sources.addAll(bankAccountSvc.list().getData().stream()
+                .map(x -> {
+                    GeneralJournalBatchLineSource s = new GeneralJournalBatchLineSource();
+                    s.setCode(x.getCode());
+                    s.setName(x.getName());
+                    return s;
+                })
+                .collect(Collectors.toList()));
     }
 }

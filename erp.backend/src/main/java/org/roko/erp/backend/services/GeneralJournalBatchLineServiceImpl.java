@@ -100,8 +100,10 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
         dto.setOperationType(generalJournalBatchLine.getOperationType().name());
         dto.setDate(generalJournalBatchLine.getDate());
         dto.setAmount(generalJournalBatchLine.getAmount());
-        dto.setBankAccountCode(generalJournalBatchLine.getTarget().getCode());
-        dto.setBankAccountName(generalJournalBatchLine.getTarget().getName());
+        if (generalJournalBatchLine.getTarget() != null) {
+            dto.setBankAccountCode(generalJournalBatchLine.getTarget().getCode());
+            dto.setBankAccountName(generalJournalBatchLine.getTarget().getName());    
+        }
         return dto;
     }
 

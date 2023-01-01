@@ -61,19 +61,19 @@
                             </thead>
                             <tbody>
                                 <tr th:each="generalJournalBatchLine : ${generalJournalBatchLines}">
-                                    <td th:text="${generalJournalBatchLine.generalJournalBatchLineId.lineNo}"></td>
-                                    <td th:text="${generalJournalBatchLine.sourceType}"></td>
-                                    <td th:text="${generalJournalBatchLine.sourceName}"></td>
+                                    <td th:text="${generalJournalBatchLine.lineNo}"></td>
+                                    <td th:text="${generalJournalBatchLine.type}"></td>
+                                    <td th:text="${generalJournalBatchLine.name}"></td>
                                     <td th:text="${generalJournalBatchLine.operationType}"></td>
                                     <td th:text="${generalJournalBatchLine.documentCode}"></td>
                                     <td th:text="${generalJournalBatchLine.date}"></td>
                                     <td th:text="${generalJournalBatchLine.amount}"></td>
-                                    <td th:if="${generalJournalBatchLine.target} != null" th:text="${generalJournalBatchLine.target.name}"></td>
-                                    <td th:unless="${generalJournalBatchLine.target} != null"></td>
+                                    <td th:if="${generalJournalBatchLine.bankAccountCode} != null" th:text="${generalJournalBatchLine.bankAccountName}"></td>
+                                    <td th:unless="${generalJournalBatchLine.bankAccountCode} != null"></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.generalJournalBatchLineId.lineNo})}">Edit</a>
+                                            th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.lineNo})}">Edit</a>
                                         <a class="btn btn-primary"
-                                            th:href="@{/deleteGeneralJournalBatchLine?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.generalJournalBatchLineId.lineNo})}">Delete</a>
+                                            th:href="@{/deleteGeneralJournalBatchLine?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.lineNo})}">Delete</a>
                                     </td>
                                 </tr>
 

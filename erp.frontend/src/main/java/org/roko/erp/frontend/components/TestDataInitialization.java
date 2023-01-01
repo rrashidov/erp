@@ -3,10 +3,10 @@ package org.roko.erp.frontend.components;
 import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.dto.CustomerDTO;
+import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.VendorDTO;
-import org.roko.erp.frontend.model.GeneralJournalBatch;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.CodeSerieService;
 import org.roko.erp.frontend.services.CustomerService;
@@ -244,7 +244,7 @@ public class TestDataInitialization implements ApplicationListener<ContextRefres
 
   private void initBulkGeneralJournalBatches() {
     for (int i = 0; i < 110; i++) {
-      GeneralJournalBatch genJournalBatch = new GeneralJournalBatch();
+      GeneralJournalBatchDTO genJournalBatch = new GeneralJournalBatchDTO();
       genJournalBatch.setCode("GEN" + i);
       genJournalBatch.setName("General Journal Batch " + i);
 

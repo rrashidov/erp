@@ -1,83 +1,47 @@
 package org.roko.erp.frontend.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.roko.erp.frontend.controllers.paging.PagingServiceImpl;
-import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.model.GeneralJournalBatchLine;
-import org.roko.erp.frontend.model.jpa.GeneralJournalBatchLineId;
-import org.roko.erp.frontend.repositories.GeneralJournalBatchLineRepository;
+import org.roko.erp.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.list.GeneralJournalBatchLineList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLineService {
 
-    private GeneralJournalBatchLineRepository repo;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public GeneralJournalBatchLineServiceImpl(GeneralJournalBatchLineRepository repo) {
-        this.repo = repo;
+    public GeneralJournalBatchLineServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public void create(GeneralJournalBatchLine generalJournalBatchLine) {
-        repo.save(generalJournalBatchLine);
+    public void create(String code, GeneralJournalBatchLineDTO generalJournalBatchLine) {
+        restTemplate.postForObject("/api/v1/generaljournalbatches/{code}/lines", generalJournalBatchLine, Integer.class,
+                code);
     }
 
     @Override
-    public void update(GeneralJournalBatchLineId id, GeneralJournalBatchLine generalJournalBatchLine) {
-        GeneralJournalBatchLine generalJournalBatchLineFromDB = repo.findById(id).get();
-
-        transferFields(generalJournalBatchLine, generalJournalBatchLineFromDB);
-
-        repo.save(generalJournalBatchLineFromDB);
+    public void update(String code, int lineNo, GeneralJournalBatchLineDTO generalJournalBatchLine) {
+        restTemplate.put("/api/v1/generaljournalbatches/{code}/lines/{lineNo}", generalJournalBatchLine, code, lineNo);
     }
 
     @Override
-    public GeneralJournalBatchLine get(GeneralJournalBatchLineId generalJournalBatchLineId) {
-        Optional<GeneralJournalBatchLine> generalJournalBatchLineOptional = repo.findById(generalJournalBatchLineId);
-
-        if (generalJournalBatchLineOptional.isPresent()) {
-            return generalJournalBatchLineOptional.get();
-        }
-        return null;
+    public GeneralJournalBatchLineDTO get(String code, int lineNo) {
+        return restTemplate.getForObject("/api/v1/generaljournalbatches/{code}/lines/{lineNo}",
+                GeneralJournalBatchLineDTO.class, code, lineNo);
     }
 
     @Override
-    public List<GeneralJournalBatchLine> list(GeneralJournalBatch generalJournalBatch) {
-        return repo.findFor(generalJournalBatch);
+    public GeneralJournalBatchLineList list(String code, int page) {
+        return restTemplate.getForObject("/api/v1/generaljournalbatches/{code}/lines/page/{page}",
+                GeneralJournalBatchLineList.class, code, page);
     }
 
     @Override
-    public List<GeneralJournalBatchLine> list(GeneralJournalBatch generalJournalBatch, int page) {
-        return repo.findFor(generalJournalBatch, PageRequest.of(page - 1, PagingServiceImpl.RECORDS_PER_PAGE)).toList();
-    }
-
-    @Override
-    public void delete(GeneralJournalBatchLineId generalJournalBatchLineId) {
-        GeneralJournalBatchLine generalJournalBatchLine = repo.findById(generalJournalBatchLineId).get();
-
-        repo.delete(generalJournalBatchLine);
-    }
-
-    @Override
-    public int count(GeneralJournalBatch generalJournalBatch) {
-        return repo.count(generalJournalBatch);
-    }
-
-    private void transferFields(GeneralJournalBatchLine source,
-            GeneralJournalBatchLine target) {
-        target.setSourceType(source.getSourceType());
-        target.setSourceCode(source.getSourceCode());
-        target.setOperationType(source.getOperationType());
-        target.setDocumentCode(source.getDocumentCode());
-        target.setOperationType(source.getOperationType());
-        target.setDate(source.getDate());
-        target.setAmount(source.getAmount());
-        target.setTarget(source.getTarget());
+    public void delete(String code, int lineNo) {
+        restTemplate.delete("/api/v1/generaljournalbatches/{code}/lines/{lineNo}", code, lineNo);
     }
 
 }

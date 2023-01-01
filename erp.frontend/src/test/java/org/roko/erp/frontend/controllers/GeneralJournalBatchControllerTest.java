@@ -17,10 +17,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.dto.GeneralJournalBatchDTO;
+import org.roko.erp.dto.GeneralJournalBatchLineDTO;
+import org.roko.erp.dto.list.GeneralJournalBatchLineList;
+import org.roko.erp.dto.list.GeneralJournalBatchList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.GeneralJournalBatch;
-import org.roko.erp.frontend.model.GeneralJournalBatchLine;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.GeneralJournalBatchLineService;
 import org.roko.erp.frontend.services.GeneralJournalBatchPostService;
@@ -35,20 +37,20 @@ public class GeneralJournalBatchControllerTest {
     private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
     private static final int TEST_PAGE = 123;
-    private static final int TEST_COUNT = 234;
+    private static final long TEST_COUNT = 234;
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
 
-    private List<GeneralJournalBatch> generalJournalBatchList;
+    private List<GeneralJournalBatchDTO> generalJournalBatches;
 
-    private List<GeneralJournalBatchLine> generalJournalBatchLines;
+    private List<GeneralJournalBatchLineDTO> generalJournalBatchLines;
 
     @Mock
-    private GeneralJournalBatch generalJournalBatchMock;
+    private GeneralJournalBatchDTO generalJournalBatchMock;
 
     @Captor
-    private ArgumentCaptor<GeneralJournalBatch> generalJournalBatchArgumentCaptor;
+    private ArgumentCaptor<GeneralJournalBatchDTO> generalJournalBatchArgumentCaptor;
 
     @Mock
     private PagingData pagingDataMock;
@@ -66,7 +68,7 @@ public class GeneralJournalBatchControllerTest {
     private PagingService pagingSvcMock;
 
     @Mock
-    private GeneralJournalBatchLine generalJournalbatchLineMock;
+    private GeneralJournalBatchLineDTO generalJournalbatchLineMock;
 
     @Mock
     private GeneralJournalBatchPostService generalJournalBatchPostSvcMock;
@@ -77,32 +79,40 @@ public class GeneralJournalBatchControllerTest {
     @Mock
     private HttpSession httpSessionMock;
 
+    @Mock
+    private GeneralJournalBatchList generalJournalBatchList;
+
+    @Mock
+    private GeneralJournalBatchLineList generalJournalBatchLineList;
+
     private GeneralJournalBatchController controller;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        generalJournalBatchList = Arrays.asList(generalJournalBatchMock);
+        generalJournalBatches = Arrays.asList(generalJournalBatchMock);
 
         generalJournalBatchLines = Arrays.asList(generalJournalbatchLineMock);
 
         when(generalJournalBatchMock.getCode()).thenReturn(TEST_CODE);
         when(generalJournalBatchMock.getName()).thenReturn(TEST_NAME);
 
-        when(pagingSvcMock.generate("generalJournalBatch", TEST_PAGE, TEST_COUNT)).thenReturn(pagingDataMock);
-        when(pagingSvcMock.generate("generalJournalBatchCard", TEST_CODE, TEST_PAGE, TEST_COUNT))
+        when(pagingSvcMock.generate("generalJournalBatch", TEST_PAGE, (int) TEST_COUNT)).thenReturn(pagingDataMock);
+        when(pagingSvcMock.generate("generalJournalBatchCard", TEST_CODE, TEST_PAGE, (int) TEST_COUNT))
                 .thenReturn(pagingDataMock);
 
+        when(generalJournalBatchList.getData()).thenReturn(generalJournalBatches);
+        when(generalJournalBatchList.getCount()).thenReturn(TEST_COUNT);
+
         when(svcMock.list(TEST_PAGE)).thenReturn(generalJournalBatchList);
-        when(svcMock.count()).thenReturn(TEST_COUNT);
         when(svcMock.get(TEST_CODE)).thenReturn(generalJournalBatchMock);
 
-        when(generalJournalBatchLineSvcMock.list(generalJournalBatchMock, TEST_PAGE))
-                .thenReturn(generalJournalBatchLines);
-        when(generalJournalBatchLineSvcMock.count(generalJournalBatchMock)).thenReturn(TEST_COUNT);
-        when(generalJournalBatchLineSvcMock.list(generalJournalBatchMock, TEST_PAGE))
-                .thenReturn(generalJournalBatchLines);
+        when(generalJournalBatchLineList.getData()).thenReturn(generalJournalBatchLines);
+        when(generalJournalBatchLineList.getCount()).thenReturn(TEST_COUNT);
+
+        when(generalJournalBatchLineSvcMock.list(TEST_CODE, TEST_PAGE))
+                .thenReturn(generalJournalBatchLineList);
 
         controller = new GeneralJournalBatchController(svcMock, generalJournalBatchLineSvcMock,
                 generalJournalBatchPostSvcMock, pagingSvcMock, feedbackSvcMock);
@@ -114,7 +124,7 @@ public class GeneralJournalBatchControllerTest {
 
         assertEquals("generalJournalBatchList.html", template);
 
-        verify(modelMock).addAttribute("generalJournalBatches", generalJournalBatchList);
+        verify(modelMock).addAttribute("generalJournalBatches", generalJournalBatches);
         verify(modelMock).addAttribute("paging", pagingDataMock);
     }
 
@@ -126,7 +136,7 @@ public class GeneralJournalBatchControllerTest {
 
         verify(modelMock).addAttribute(eq("generalJournalBatch"), generalJournalBatchArgumentCaptor.capture());
 
-        GeneralJournalBatch generalJournalBatch = generalJournalBatchArgumentCaptor.getValue();
+        GeneralJournalBatchDTO generalJournalBatch = generalJournalBatchArgumentCaptor.getValue();
 
         assertEquals("", generalJournalBatch.getCode());
         assertEquals("", generalJournalBatch.getName());
@@ -142,7 +152,7 @@ public class GeneralJournalBatchControllerTest {
         verify(modelMock).addAttribute("generalJournalBatchLines", generalJournalBatchLines);
         verify(modelMock).addAttribute("paging", pagingDataMock);
 
-        GeneralJournalBatch generalJournalBatch = generalJournalBatchArgumentCaptor.getValue();
+        GeneralJournalBatchDTO generalJournalBatch = generalJournalBatchArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, generalJournalBatch.getCode());
         assertEquals(TEST_NAME, generalJournalBatch.getName());
