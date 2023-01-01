@@ -2,22 +2,26 @@ package org.roko.erp.frontend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class GeneralJournalBatchPostServiceImpl implements GeneralJournalBatchPostService {
 
+    private RestTemplate restTemplate;
+
     @Autowired
-    public GeneralJournalBatchPostServiceImpl(GeneralJournalBatchService generalJournalBatchSvc,
-            GeneralJournalBatchLineService generalJournalBatchLineSvc,
-            CustomerLedgerEntryService customerLedgerEntrySvc, CustomerService customerSvc,
-            VendorLedgerEntryService vendorLedgerEntrySvc, VendorService vendorSvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, BankAccountService bankAccountSvc) {
+    public GeneralJournalBatchPostServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    @Transactional(rollbackFor = PostFailedException.class)
     public void post(String code) throws PostFailedException {
+        try {
+            restTemplate.getForObject("/api/v1/generaljournalbatches/{code}/operations/post", String.class, code);
+        } catch (HttpClientErrorException e) {
+            throw new PostFailedException(e.getMessage());
+        }
     }
 
 }
