@@ -1,12 +1,9 @@
 package org.roko.erp.backend.controllers;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.roko.erp.backend.model.Item;
-import org.roko.erp.backend.model.ItemLedgerEntry;
-import org.roko.erp.backend.model.ItemLedgerEntryType;
 import org.roko.erp.backend.services.ItemLedgerEntryService;
 import org.roko.erp.backend.services.ItemService;
 import org.roko.erp.dto.ItemDTO;
@@ -76,14 +73,6 @@ public class ItemController {
     @GetMapping("/{code}/ledgerentries/page/{page}")
     public ItemLedgerEntryList ledgerEntries(@PathVariable("code") String code, @PathVariable("page") int page) {
         Item item = svc.get(code);
-
-        ItemLedgerEntry itemLedgerEntry = new ItemLedgerEntry();
-        itemLedgerEntry.setItem(item);
-        itemLedgerEntry.setType(ItemLedgerEntryType.PURCHASE_ORDER);
-        itemLedgerEntry.setQuantity(12.12);
-        itemLedgerEntry.setDate(new Date());
-        itemLedgerEntry.setDocumentCode("PPO" + System.currentTimeMillis());
-        itemLedgerEntrySvc.create(itemLedgerEntry);
 
         List<ItemLedgerEntryDTO> data = itemLedgerEntrySvc.list(item, page).stream()
                 .map(x -> itemLedgerEntrySvc.toDTO(x))
