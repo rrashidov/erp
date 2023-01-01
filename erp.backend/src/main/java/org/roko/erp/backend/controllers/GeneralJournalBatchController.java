@@ -7,12 +7,16 @@ import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.backend.services.GeneralJournalBatchLineService;
+import org.roko.erp.backend.services.GeneralJournalBatchPostService;
 import org.roko.erp.backend.services.GeneralJournalBatchService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.roko.erp.dto.list.GeneralJournalBatchLineList;
 import org.roko.erp.dto.list.GeneralJournalBatchList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +32,15 @@ public class GeneralJournalBatchController {
 
     private GeneralJournalBatchService svc;
     private GeneralJournalBatchLineService generalJournalBatchLineSvc;
+    private GeneralJournalBatchPostService generalJournalBatchPostSvc;
 
     @Autowired
     public GeneralJournalBatchController(GeneralJournalBatchService svc,
-            GeneralJournalBatchLineService generalJournalBatchLineSvc) {
+            GeneralJournalBatchLineService generalJournalBatchLineSvc,
+            GeneralJournalBatchPostService generalJournalBatchPostSvc) {
         this.svc = svc;
         this.generalJournalBatchLineSvc = generalJournalBatchLineSvc;
+        this.generalJournalBatchPostSvc = generalJournalBatchPostSvc;
     }
 
     @GetMapping("/pages/{page}")
@@ -138,5 +145,16 @@ public class GeneralJournalBatchController {
     public String delete(@PathVariable("code") String code) {
         svc.delete(code);
         return code;
+    }
+
+    @GetMapping("/{code}/operations/post")
+    public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
+        try {
+            generalJournalBatchPostSvc.post(code);
+
+            return ResponseEntity.ok("");
+        } catch (PostFailedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

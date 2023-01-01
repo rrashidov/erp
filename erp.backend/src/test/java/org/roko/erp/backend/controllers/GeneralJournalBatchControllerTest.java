@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,13 +17,19 @@ import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.backend.services.GeneralJournalBatchLineService;
+import org.roko.erp.backend.services.GeneralJournalBatchPostService;
 import org.roko.erp.backend.services.GeneralJournalBatchService;
+import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.roko.erp.dto.list.GeneralJournalBatchLineList;
 import org.roko.erp.dto.list.GeneralJournalBatchList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class GeneralJournalBatchControllerTest {
+
+    private static final String TEST_FAILED_MSG = "test-failed-msg";
 
     private static final int TEST_COUNT = 222;
 
@@ -53,6 +60,9 @@ public class GeneralJournalBatchControllerTest {
     @Mock
     private GeneralJournalBatchLineDTO generalJournalBatchLineDtoMock;
 
+    @Mock
+    private GeneralJournalBatchPostService generalJournalBatchPostSvcMock;
+
     private GeneralJournalBatchController controller;
 
     @BeforeEach
@@ -68,7 +78,8 @@ public class GeneralJournalBatchControllerTest {
         when(generalJournalBatchLineSvcMock.get(generalJournalBatchLineId)).thenReturn(generalJournalBatchLineMock);
         when(generalJournalBatchLineSvcMock.fromDTO(generalJournalBatchLineDtoMock))
                 .thenReturn(generalJournalBatchLineMock);
-        when(generalJournalBatchLineSvcMock.toDTO(generalJournalBatchLineMock)).thenReturn(generalJournalBatchLineDtoMock);
+        when(generalJournalBatchLineSvcMock.toDTO(generalJournalBatchLineMock))
+                .thenReturn(generalJournalBatchLineDtoMock);
         when(generalJournalBatchLineSvcMock.count(generalJournalBatchMock)).thenReturn(TEST_COUNT);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(generalJournalBatchMock));
@@ -77,7 +88,8 @@ public class GeneralJournalBatchControllerTest {
         when(svcMock.toDTO(generalJournalBatchMock)).thenReturn(dtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new GeneralJournalBatchController(svcMock, generalJournalBatchLineSvcMock);
+        controller = new GeneralJournalBatchController(svcMock, generalJournalBatchLineSvcMock,
+                generalJournalBatchPostSvcMock);
     }
 
     @Test
@@ -143,7 +155,8 @@ public class GeneralJournalBatchControllerTest {
 
         verify(generalJournalBatchLineSvcMock).create(generalJournalBatchLineMock);
 
-        verify(generalJournalBatchLineMock).setGeneralJournalBatchLineId(generalJournalBatchLineIdArgumentCaptor.capture());
+        verify(generalJournalBatchLineMock)
+                .setGeneralJournalBatchLineId(generalJournalBatchLineIdArgumentCaptor.capture());
 
         GeneralJournalBatchLineId generalJournalBatchLineId = generalJournalBatchLineIdArgumentCaptor.getValue();
 
@@ -171,5 +184,24 @@ public class GeneralJournalBatchControllerTest {
         generalJournalBatchLineId.setLineNo(TEST_LINE_NO);
 
         verify(generalJournalBatchLineSvcMock).delete(generalJournalBatchLineId);
+    }
+
+    @Test
+    public void operationPost_delegatesToService() throws PostFailedException {
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        verify(generalJournalBatchPostSvcMock).post(TEST_CODE);
+    }
+
+    @Test
+    public void operationPost_returnsBadRequest_whenPostingFails() throws PostFailedException {
+        doThrow(new PostFailedException(TEST_FAILED_MSG)).when(generalJournalBatchPostSvcMock).post(TEST_CODE);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(TEST_FAILED_MSG, response.getBody());
     }
 }
