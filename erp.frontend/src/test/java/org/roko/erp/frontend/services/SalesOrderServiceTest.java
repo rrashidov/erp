@@ -38,28 +38,28 @@ public class SalesOrderServiceTest {
     }
 
     @Test
-    public void create_delegatesToRepo() {
+    public void create_callsBackend() {
         svc.create(salesOrderMock);
 
         verify(restTemplate).postForObject("/api/v1/salesorders", salesOrderMock, String.class);
     }
 
     @Test
-    public void update_delegatesToRepo() {
+    public void update_callsBackend() {
         svc.update(TEST_CODE, salesOrderMock);
 
         verify(restTemplate).put("/api/v1/salesorders/{code}", salesOrderMock, TEST_CODE);
     }
 
     @Test
-    public void delete_delegatesToRepo() {
+    public void delete_calllsBackend() {
         svc.delete(TEST_CODE);
 
         verify(restTemplate).delete("/api/v1/salesorders/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo() {
+    public void get_callsBackend() {
         svc.get(TEST_CODE);
 
         verify(restTemplate).getForObject("/api/v1/salesorders/{code}", SalesDocumentDTO.class, TEST_CODE);
@@ -75,7 +75,7 @@ public class SalesOrderServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplate).getForObject("/api/v1/salesorders/page/{page}", SalesDocumentList.class, TEST_PAGE);

@@ -66,7 +66,7 @@ public class GeneralJournalBatchLineServiceTest {
     }
 
     @Test
-    public void delete_delegatesToRepo() {
+    public void delete_callsBackend() {
         svc.delete(TEST_CODE, TEST_LINE_NO);
 
         verify(restTemplateMock).delete("/api/v1/generaljournalbatches/{code}/lines/{lineNo}", TEST_CODE, TEST_LINE_NO);

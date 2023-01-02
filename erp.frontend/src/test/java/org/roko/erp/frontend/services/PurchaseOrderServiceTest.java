@@ -60,7 +60,7 @@ public class PurchaseOrderServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplate).getForObject("/api/v1/purchaseorders/page/{page}", PurchaseDocumentList.class, TEST_PAGE);

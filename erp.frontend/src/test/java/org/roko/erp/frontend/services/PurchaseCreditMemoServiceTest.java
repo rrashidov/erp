@@ -46,21 +46,21 @@ public class PurchaseCreditMemoServiceTest {
     }
 
     @Test
-    public void delete_delegatesToRepo() {
+    public void delete_callsBackend() {
         svc.delete(TEST_CODE);
 
         verify(restTemplateMock).delete("/api/v1/purchasecreditmemos/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo() {
+    public void get_callsBackend() {
         svc.get(TEST_CODE);
 
         verify(restTemplateMock).getForObject("/api/v1/purchasecreditmemos/{code}", PurchaseDocumentDTO.class, TEST_CODE);
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/purchasecreditmemos/page/{page}", PurchaseDocumentList.class, TEST_PAGE);

@@ -37,7 +37,7 @@ public class PostedPurchaseOrderServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_dcallsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/postedpurchaseorders/page/{page}",

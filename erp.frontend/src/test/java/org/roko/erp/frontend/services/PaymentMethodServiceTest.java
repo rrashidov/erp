@@ -36,28 +36,28 @@ public class PaymentMethodServiceTest {
     }
 
     @Test
-    public void create_delegatesToRepo() {
+    public void create_callsBackend() {
         svc.create(paymentMethodMock);
 
         verify(restTemplateMock).postForObject("/api/v1/paymentmethods", paymentMethodMock, String.class);
     }
 
     @Test
-    public void update_delegatesToRepo() {
+    public void update_callsBackend() {
         svc.update(TEST_CODE, paymentMethodMock);
 
         verify(restTemplateMock).put("/api/v1/paymentmethods/{code}", paymentMethodMock, TEST_CODE);
     }
 
     @Test
-    public void delete_delegatesToRepo() {
+    public void delete_callsBackend() {
         svc.delete(TEST_CODE);
 
         verify(restTemplateMock).delete("/api/v1/paymentmethods/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo() {
+    public void get_callsBackend() {
         svc.get(TEST_CODE);
 
         verify(restTemplateMock).getForObject("/api/v1/paymentmethods/{code}", PaymentMethodDTO.class, TEST_CODE);
@@ -73,14 +73,14 @@ public class PaymentMethodServiceTest {
     }
 
     @Test
-    public void list_delegatesToRepo() {
+    public void list_callsBackend() {
         svc.list();
 
         verify(restTemplateMock).getForObject("/api/v1/paymentmethods", PaymentMethodList.class);
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/paymentmethods/page/{page}", PaymentMethodList.class, TEST_PAGE);

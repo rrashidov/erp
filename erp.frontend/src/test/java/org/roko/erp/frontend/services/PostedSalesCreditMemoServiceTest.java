@@ -29,7 +29,7 @@ public class PostedSalesCreditMemoServiceTest {
     }
 
     @Test
-    public void get_delegatesToRepo() {
+    public void get_callsBackend() {
         svc.get(TEST_CODE);
 
         verify(restTemplateMock).getForObject("/api/v1/postedsalescreditmemos/{code}", PostedSalesDocumentDTO.class,
@@ -37,7 +37,7 @@ public class PostedSalesCreditMemoServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/postedsalescreditmemos/page/{page}",

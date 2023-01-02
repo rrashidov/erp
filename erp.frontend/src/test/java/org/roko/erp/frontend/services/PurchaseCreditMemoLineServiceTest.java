@@ -65,7 +65,7 @@ public class PurchaseCreditMemoLineServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_CODE, TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/purchasecreditmemos/{code}/lines/page/{page}",

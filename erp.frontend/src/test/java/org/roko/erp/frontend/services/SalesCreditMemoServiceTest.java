@@ -46,21 +46,21 @@ public class SalesCreditMemoServiceTest {
     }
 
     @Test
-    public void delete_delegatesToRepo() {
+    public void delete_callsBackend() {
         svc.delete(TEST_CODE);
 
         verify(restTemplate).delete("/api/v1/salescreditmemos/{code}", TEST_CODE);
     }
 
     @Test
-    public void get_delegatesToRepo() {
+    public void get_callsBackend() {
         svc.get(TEST_CODE);
 
         verify(restTemplate).getForObject("/api/v1/salescreditmemos/{code}", SalesDocumentDTO.class, TEST_CODE);
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplate).getForObject("/api/v1/salescreditmemos/page/{page}", SalesDocumentList.class, TEST_PAGE);

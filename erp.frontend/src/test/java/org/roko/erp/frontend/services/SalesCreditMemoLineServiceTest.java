@@ -57,7 +57,7 @@ public class SalesCreditMemoLineServiceTest {
     }
 
     @Test
-    public void get_delegatesToRepo() {
+    public void get_callsBackend() {
         svc.get(TEST_CODE, TEST_LINE_NO);
 
         verify(restTemplateMock).getForObject("/api/v1/salescreditmemos/{code}/lines/{lineNo}",
@@ -65,7 +65,7 @@ public class SalesCreditMemoLineServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_CODE, TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/salescreditmemos/{code}/lines/page/{page}",

@@ -37,7 +37,7 @@ public class PostedPurchaseCreditMemoServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/postedpurchasecreditmemos/page/{page}",

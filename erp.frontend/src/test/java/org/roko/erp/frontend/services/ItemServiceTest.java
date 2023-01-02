@@ -82,7 +82,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/items/page/{page}", ItemList.class, TEST_PAGE);

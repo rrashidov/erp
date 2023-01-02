@@ -43,7 +43,7 @@ public class CodeSerieServiceTest {
     }
 
     @Test
-    public void update_delegatesToRepo() {
+    public void update_callsBackend() {
         svc.update(TEST_CODE, codeSerieMock);
 
         verify(restTemplateMock).put("/api/v1/codeseries/{code}", codeSerieMock, TEST_CODE);

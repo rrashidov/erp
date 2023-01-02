@@ -28,7 +28,7 @@ public class CustomerLedgerEntryServiceTest {
     }
 
     @Test
-    public void listWithPage_delegatesToRepo() {
+    public void listWithPage_callsBackend() {
         svc.list(TEST_CUSTOMER_CODE, TEST_PAGE);
 
         verify(restTemplateMock).getForObject("/api/v1/customers/{code}/ledgerentries/page/{page}",
