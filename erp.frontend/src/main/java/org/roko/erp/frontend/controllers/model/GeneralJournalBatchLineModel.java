@@ -2,8 +2,8 @@ package org.roko.erp.frontend.controllers.model;
 
 import java.util.Date;
 
-import org.roko.erp.frontend.model.GeneralJournalBatchLineOperationType;
-import org.roko.erp.frontend.model.GeneralJournalBatchLineType;
+import org.roko.erp.dto.GeneralJournalBatchLineOperationType;
+import org.roko.erp.dto.GeneralJournalBatchLineType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class GeneralJournalBatchLineModel {

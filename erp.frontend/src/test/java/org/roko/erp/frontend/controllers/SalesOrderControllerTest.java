@@ -32,8 +32,6 @@ import org.roko.erp.frontend.controllers.model.SalesOrderLineModel;
 import org.roko.erp.frontend.controllers.model.SalesOrderModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
-import org.roko.erp.frontend.model.SalesOrderLine;
-import org.roko.erp.frontend.model.jpa.SalesOrderLineId;
 import org.roko.erp.frontend.rules.sales.SalesOrderModelRule;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.FeedbackService;
@@ -80,13 +78,7 @@ public class SalesOrderControllerTest {
     private ArgumentCaptor<SalesOrderModel> salesOrderModelArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<SalesOrderLine> salesOrderLineArgumentCaptor;
-
-    @Captor
     private ArgumentCaptor<SalesOrderLineModel> salesOrderLineModelArgumentCaptor;
-
-    @Captor
-    private ArgumentCaptor<SalesOrderLineId> salesOrderLineIdArgumentCaptor;
 
     @Mock
     private Date dateMock;
@@ -102,9 +94,6 @@ public class SalesOrderControllerTest {
 
     @Mock
     private SalesOrderModel salesOrderModelMock;
-
-    @Mock
-    private SalesOrderLine salesOrderLineMock;
 
     @Mock
     private PagingData pagingDataMock;

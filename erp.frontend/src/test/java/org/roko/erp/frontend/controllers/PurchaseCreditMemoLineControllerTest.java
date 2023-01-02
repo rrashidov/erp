@@ -19,7 +19,6 @@ import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.frontend.controllers.model.PurchaseCreditMemoLineModel;
-import org.roko.erp.frontend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoLineService;
 import org.springframework.ui.Model;
@@ -47,9 +46,6 @@ public class PurchaseCreditMemoLineControllerTest {
 
     @Captor
     private ArgumentCaptor<PurchaseCreditMemoLineModel> purchaseCreditMemoLineModelArgumentCaptor;
-
-    @Captor
-    private ArgumentCaptor<PurchaseCreditMemoLineId> purchaseCreditMemoLineIdArgumentCaptor;
 
     @Mock
     private PurchaseDocumentLineDTO purchaseCreditMemoLineMock;

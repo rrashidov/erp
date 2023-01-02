@@ -51,7 +51,7 @@
                         <label for="operationType" class="form-label">Operation Type</label>
                         <select class="form-select" aria-label="Default select example" th:field="*{operationType}">
                             <option
-                                th:each="operationType : ${T(org.roko.erp.frontend.model.GeneralJournalBatchLineOperationType).values()}"
+                                th:each="operationType : ${T(org.roko.erp.dto.GeneralJournalBatchLineOperationType).values()}"
                                 th:value="${operationType}" th:text="${operationType}"></option>
                         </select>
                     </div>

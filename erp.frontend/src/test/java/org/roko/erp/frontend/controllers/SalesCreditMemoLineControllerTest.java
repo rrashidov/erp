@@ -19,7 +19,6 @@ import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.frontend.controllers.model.SalesCreditMemoLineModel;
-import org.roko.erp.frontend.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.SalesCreditMemoLineService;
 import org.roko.erp.frontend.services.SalesCreditMemoService;
@@ -48,9 +47,6 @@ public class SalesCreditMemoLineControllerTest {
 
     @Captor
     private ArgumentCaptor<SalesDocumentLineDTO> salesCreditMemoLineArgumentCaptor;
-
-    @Captor
-    private ArgumentCaptor<SalesCreditMemoLineId> salesCreditMemoLineIdArgumentCaptor;
 
     @Mock
     private Model modelMock;

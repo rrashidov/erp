@@ -32,7 +32,7 @@
                     <div class="col-sm-6">
                         <label for="sourceType" class="form-label">Source Type</label>
                         <select class="form-select" aria-label="Default select example" th:field="*{sourceType}">
-                            <option th:each="sourceType : ${T(org.roko.erp.frontend.model.GeneralJournalBatchLineType).values()}"
+                            <option th:each="sourceType : ${T(org.roko.erp.dto.GeneralJournalBatchLineType).values()}"
                                 th:value="${sourceType}" th:text="${sourceType}"></option>
                         </select>
                     </div>
