@@ -13,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.dto.list.CodeSerieList;
 import org.roko.erp.frontend.model.CodeSerie;
-import org.roko.erp.frontend.repositories.CodeSerieRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -34,9 +33,6 @@ public class CodeSerieServiceTest {
 
     @Mock
     private CodeSerieDTO codeSerieMock;
-
-    @Mock
-    private CodeSerieRepository repoMock;
 
     @Mock
     private RestTemplate restTemplateMock;

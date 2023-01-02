@@ -13,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.frontend.model.Customer;
-import org.roko.erp.frontend.repositories.CustomerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -40,9 +39,6 @@ public class CustomerServiceTest {
 
     @Mock
     private CustomerDTO customerMock;
-
-    @Mock
-    private CustomerRepository repoMock;
 
     @Mock
     private RestTemplate restTemplateMock;

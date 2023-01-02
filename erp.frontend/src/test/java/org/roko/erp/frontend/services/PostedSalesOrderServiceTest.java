@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.PostedSalesDocumentDTO;
 import org.roko.erp.dto.list.PostedSalesDocumentList;
-import org.roko.erp.frontend.repositories.PostedSalesOrderRepository;
 import org.springframework.web.client.RestTemplate;
 
 public class PostedSalesOrderServiceTest {
@@ -16,9 +15,6 @@ public class PostedSalesOrderServiceTest {
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 12;
-
-    @Mock
-    private PostedSalesOrderRepository repoMock;
 
     @Mock
     private RestTemplate restTemplateMock;

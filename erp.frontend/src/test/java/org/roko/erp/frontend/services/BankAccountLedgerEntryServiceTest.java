@@ -12,7 +12,6 @@ import org.roko.erp.dto.BankAccountLedgerEntryDTO;
 import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.roko.erp.frontend.model.BankAccount;
 import org.roko.erp.frontend.model.BankAccountLedgerEntry;
-import org.roko.erp.frontend.repositories.BankAccountLedgerEntryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.client.RestTemplate;
@@ -34,9 +33,6 @@ public class BankAccountLedgerEntryServiceTest {
 
     @Mock
     private BankAccountLedgerEntryDTO bankAccountLedgerEntryMock;
-
-    @Mock
-    private BankAccountLedgerEntryRepository repoMock;
 
     @Mock
     private RestTemplate restTemplateMock;

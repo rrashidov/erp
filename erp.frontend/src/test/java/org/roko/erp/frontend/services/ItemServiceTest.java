@@ -13,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.frontend.model.Item;
-import org.roko.erp.frontend.repositories.ItemRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -45,9 +44,6 @@ public class ItemServiceTest {
 
     @Mock
     private Page<Item> pageMock;
-
-    @Mock
-    private ItemRepository repoMock;
 
     @Mock
     private RestTemplate restTemplateMock;

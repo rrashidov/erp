@@ -14,7 +14,6 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.list.BankAccountList;
 import org.roko.erp.frontend.model.BankAccount;
-import org.roko.erp.frontend.repositories.BankAccountRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -41,9 +40,6 @@ public class BankAccountServiceTest {
 
     @Mock
     private BankAccount bankAccountMock2;
-
-    @Mock
-    private BankAccountRepository repoMock;
 
     @Mock
     private RestTemplate restTemplateMock;
