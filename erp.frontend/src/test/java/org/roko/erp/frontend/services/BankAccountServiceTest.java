@@ -7,15 +7,10 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.list.BankAccountList;
-import org.roko.erp.frontend.model.BankAccount;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -26,20 +21,8 @@ public class BankAccountServiceTest {
 
     private static final int TEST_PAGE = 123;
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
-
-    @Mock
-    private Page<BankAccount> pageMock;
-
     @Mock
     private BankAccountDTO bankAccountMock;
-
-    @Mock
-    private BankAccount bankAccountMock1;
-
-    @Mock
-    private BankAccount bankAccountMock2;
 
     @Mock
     private RestTemplate restTemplateMock;

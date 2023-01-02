@@ -6,15 +6,10 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.dto.list.CodeSerieList;
-import org.roko.erp.frontend.model.CodeSerie;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,12 +19,6 @@ public class CodeSerieServiceTest {
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 12;
-
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
-
-    @Mock
-    private Page<CodeSerie> pageMock;
 
     @Mock
     private CodeSerieDTO codeSerieMock;

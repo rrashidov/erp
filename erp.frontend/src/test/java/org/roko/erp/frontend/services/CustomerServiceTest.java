@@ -6,15 +6,10 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.list.CustomerList;
-import org.roko.erp.frontend.model.Customer;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,18 +19,6 @@ public class CustomerServiceTest {
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_PAGE = 12;
-
-    @Captor
-    private ArgumentCaptor<Pageable> pageableArgumentCaptor;
-
-    @Mock
-    private Page<Customer> pageMock;
-
-    @Mock
-    private Customer customerMock1;
-
-    @Mock
-    private Customer customerMock2;
 
     @Mock
     private CustomerDTO customerMock;

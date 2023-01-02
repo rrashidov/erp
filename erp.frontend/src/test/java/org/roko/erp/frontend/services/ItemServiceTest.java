@@ -6,15 +6,10 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.list.ItemList;
-import org.roko.erp.frontend.model.Item;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -27,23 +22,8 @@ public class ItemServiceTest {
 
     private static final String TEST_ID = "test-id";
 
-    @Captor
-    private ArgumentCaptor<Pageable> pageAbleArgumentCaptor;
-
-    @Mock
-    private Item itemFromDBMock;
-
     @Mock
     private ItemDTO itemMock;
-
-    @Mock
-    private Item itemMock1;
-
-    @Mock
-    private Item itemMock2;
-
-    @Mock
-    private Page<Item> pageMock;
 
     @Mock
     private RestTemplate restTemplateMock;
