@@ -4,7 +4,6 @@ import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.list.CustomerLedgerEntryList;
 import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.dto.list.PaymentMethodList;
-import org.roko.erp.frontend.controllers.model.CustomerModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CustomerLedgerEntryService;
@@ -56,10 +55,11 @@ public class CustomerController {
     public String card(@RequestParam(name = "code", required = false) String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             Model model) {
-        CustomerModel customerModel = new CustomerModel();
+        CustomerDTO customerModel = new CustomerDTO();
 
         if (code != null) {
             CustomerDTO customer = svc.get(code);
+
             customerModel.setCode(customer.getCode());
             customerModel.setName(customer.getName());
             customerModel.setAddress(customer.getAddress());
@@ -81,7 +81,7 @@ public class CustomerController {
     }
 
     @PostMapping("/customerCard")
-    public RedirectView post(@ModelAttribute CustomerModel customerModel) {
+    public RedirectView post(@ModelAttribute CustomerDTO customerModel) {
         CustomerDTO customer = svc.get(customerModel.getCode());
 
         if (customer == null){
@@ -104,11 +104,10 @@ public class CustomerController {
         return new RedirectView("/customerList");
     }
 
-    private void transferFields(CustomerModel customerModel, CustomerDTO customer) {
-        
-        customer.setName(customerModel.getName());
-        customer.setAddress(customerModel.getAddress());
-        customer.setPaymentMethodCode(customerModel.getPaymentMethodCode());
+    private void transferFields(CustomerDTO source, CustomerDTO target) {
+        target.setName(source.getName());
+        target.setAddress(source.getAddress());
+        target.setPaymentMethodCode(source.getPaymentMethodCode());
     }
 
 }

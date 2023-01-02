@@ -21,7 +21,6 @@ import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.list.CustomerLedgerEntryList;
 import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.dto.list.PaymentMethodList;
-import org.roko.erp.frontend.controllers.model.CustomerModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CustomerLedgerEntryService;
@@ -61,7 +60,7 @@ public class CustomerControllerTest {
     private PaymentMethodDTO paymentMethodMock;
 
     @Mock
-    private CustomerModel customerModelMock;
+    private CustomerDTO customerModelMock;
 
     @Mock
     private PaymentMethodService paymentMethodSvcMock;
@@ -76,7 +75,7 @@ public class CustomerControllerTest {
     private ArgumentCaptor<CustomerDTO> customerArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<CustomerModel> customerModelArgumentCaptor;
+    private ArgumentCaptor<CustomerDTO> customerModelArgumentCaptor;
 
     @Mock
     private PagingData pagingDataMock;
@@ -165,7 +164,7 @@ public class CustomerControllerTest {
         verify(modelMock).addAttribute(eq("customer"), customerModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("paymentMethods", paymentMethods);
 
-        CustomerModel customerModel = customerModelArgumentCaptor.getValue();
+        CustomerDTO customerModel = customerModelArgumentCaptor.getValue();
 
         assertEquals("", customerModel.getCode());
         assertEquals("", customerModel.getName());
@@ -184,7 +183,7 @@ public class CustomerControllerTest {
         verify(modelMock).addAttribute("customerLedgerEntries", customerLedgerEntries);
         verify(modelMock).addAttribute("paging", customerLedgerEntriesPagingData);
 
-        CustomerModel customerModel = customerModelArgumentCaptor.getValue();
+        CustomerDTO customerModel = customerModelArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, customerModel.getCode());
         assertEquals(TEST_NAME, customerModel.getName());
