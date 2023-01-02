@@ -76,10 +76,10 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
     @Override
     public GeneralJournalBatchLine fromDTO(GeneralJournalBatchLineDTO dto) {
         GeneralJournalBatchLine generalJournalBatchLine = new GeneralJournalBatchLine();
-        generalJournalBatchLine.setSourceType(GeneralJournalBatchLineType.valueOf(dto.getType()));
+        generalJournalBatchLine.setSourceType(GeneralJournalBatchLineType.valueOf(dto.getType().name()));
         generalJournalBatchLine.setSourceCode(dto.getCode());
         generalJournalBatchLine.setSourceName(dto.getName());
-        generalJournalBatchLine.setOperationType(GeneralJournalBatchLineOperationType.valueOf(dto.getOperationType()));
+        generalJournalBatchLine.setOperationType(GeneralJournalBatchLineOperationType.valueOf(dto.getOperationType().name()));
         generalJournalBatchLine.setDate(dto.getDate());
         generalJournalBatchLine.setAmount(dto.getAmount());
         generalJournalBatchLine.setDocumentCode(dto.getDocumentCode());
@@ -93,11 +93,11 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
         dto.setGeneralJournalBatchCode(
                 generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch().getCode());
         dto.setLineNo(generalJournalBatchLine.getGeneralJournalBatchLineId().getLineNo());
-        dto.setType(generalJournalBatchLine.getSourceType().name());
+        dto.setType(org.roko.erp.dto.GeneralJournalBatchLineType.valueOf(generalJournalBatchLine.getSourceType().name()));
         dto.setCode(generalJournalBatchLine.getSourceCode());
         dto.setName(generalJournalBatchLine.getSourceName());
         dto.setDocumentCode(generalJournalBatchLine.getDocumentCode());
-        dto.setOperationType(generalJournalBatchLine.getOperationType().name());
+        dto.setOperationType(org.roko.erp.dto.GeneralJournalBatchLineOperationType.valueOf(generalJournalBatchLine.getOperationType().name()));
         dto.setDate(generalJournalBatchLine.getDate());
         dto.setAmount(generalJournalBatchLine.getAmount());
         if (generalJournalBatchLine.getTarget() != null) {

@@ -37,6 +37,7 @@ public class GeneralJournalBatchLineServiceTest {
     private static final int TEST_LINE_NO = 123;
 
     private static final GeneralJournalBatchLineType TEST_GENERAL_JOURNAL_LINE_TYPE = GeneralJournalBatchLineType.CUSTOMER;
+
     private static final String TEST_SOURCE_CODE = "test-source-code";
     private static final String TEST_SOURCE_NAME = "test-source-name";
 
@@ -46,6 +47,8 @@ public class GeneralJournalBatchLineServiceTest {
     private static final double TEST_AMOUNT = 123.12;
 
     private static final int TEST_PAGE = 123;
+    private static final org.roko.erp.dto.GeneralJournalBatchLineType TEST_GENERAL_JOURNAL_LINE_TYPE_DTO = org.roko.erp.dto.GeneralJournalBatchLineType.CUSTOMER;
+    private static final org.roko.erp.dto.GeneralJournalBatchLineOperationType TEST_GENERAL_JOURNAL_OPERATION_TYPE_DTO = org.roko.erp.dto.GeneralJournalBatchLineOperationType.PAYMENT;
 
     @Captor
     private ArgumentCaptor<Pageable> pageableArgumentCaptor;
@@ -92,10 +95,10 @@ public class GeneralJournalBatchLineServiceTest {
 
         when(dtoMock.getGeneralJournalBatchCode()).thenReturn(TEST_CODE);
         when(dtoMock.getLineNo()).thenReturn(TEST_LINE_NO);
-        when(dtoMock.getType()).thenReturn(TEST_GENERAL_JOURNAL_LINE_TYPE.name());
+        when(dtoMock.getType()).thenReturn(TEST_GENERAL_JOURNAL_LINE_TYPE_DTO);
         when(dtoMock.getCode()).thenReturn(TEST_SOURCE_CODE);
         when(dtoMock.getName()).thenReturn(TEST_SOURCE_NAME);
-        when(dtoMock.getOperationType()).thenReturn(TEST_GENERAL_JOURNAL_OPERATION_TYPE.name());
+        when(dtoMock.getOperationType()).thenReturn(TEST_GENERAL_JOURNAL_OPERATION_TYPE_DTO);
         when(dtoMock.getDocumentCode()).thenReturn(TEST_DOCUMENT_CODE);
         when(dtoMock.getDate()).thenReturn(TEST_DATE);
         when(dtoMock.getAmount()).thenReturn(TEST_AMOUNT);
@@ -194,10 +197,10 @@ public class GeneralJournalBatchLineServiceTest {
 
         assertEquals(TEST_CODE, dto.getGeneralJournalBatchCode());
         assertEquals(TEST_LINE_NO, dto.getLineNo());
-        assertEquals(TEST_GENERAL_JOURNAL_LINE_TYPE.name(), dto.getType());
+        assertEquals(TEST_GENERAL_JOURNAL_LINE_TYPE.name(), dto.getType().name());
         assertEquals(TEST_SOURCE_CODE, dto.getCode());
         assertEquals(TEST_SOURCE_NAME, dto.getName());
-        assertEquals(TEST_GENERAL_JOURNAL_OPERATION_TYPE.name(), dto.getOperationType());
+        assertEquals(TEST_GENERAL_JOURNAL_OPERATION_TYPE.name(), dto.getOperationType().name());
         assertEquals(TEST_DOCUMENT_CODE, dto.getDocumentCode());
         assertEquals(TEST_DATE, dto.getDate());
         assertEquals(TEST_AMOUNT, dto.getAmount());

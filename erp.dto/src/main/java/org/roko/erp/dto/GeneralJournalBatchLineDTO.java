@@ -6,10 +6,10 @@ public class GeneralJournalBatchLineDTO {
     
     private String generalJournalBatchCode;
     private int lineNo;
-    private String type;
+    private GeneralJournalBatchLineType type;
     private String code;
     private String name;
-    private String operationType;
+    private GeneralJournalBatchLineOperationType operationType;
     private String documentCode;
     private Date date;
     private double amount;
@@ -28,12 +28,6 @@ public class GeneralJournalBatchLineDTO {
     public void setLineNo(int lineNo) {
         this.lineNo = lineNo;
     }
-    public String getType() {
-        return type;
-    }
-    public void setType(String type) {
-        this.type = type;
-    }
     public String getCode() {
         return code;
     }
@@ -45,12 +39,6 @@ public class GeneralJournalBatchLineDTO {
     }
     public void setName(String name) {
         this.name = name;
-    }
-    public String getOperationType() {
-        return operationType;
-    }
-    public void setOperationType(String operationType) {
-        this.operationType = operationType;
     }
     public String getDocumentCode() {
         return documentCode;
@@ -81,6 +69,18 @@ public class GeneralJournalBatchLineDTO {
     }
     public void setBankAccountName(String bankAccountName) {
         this.bankAccountName = bankAccountName;
+    }
+    public GeneralJournalBatchLineType getType() {
+        return type;
+    }
+    public void setType(GeneralJournalBatchLineType type) {
+        this.type = type;
+    }
+    public GeneralJournalBatchLineOperationType getOperationType() {
+        return operationType;
+    }
+    public void setOperationType(GeneralJournalBatchLineOperationType operationType) {
+        this.operationType = operationType;
     }
     
 }

@@ -125,7 +125,8 @@ public class GeneralJournalBatchLineController {
         return new RedirectView("/generalJournalBatchCard");
     }
 
-    private void create(GeneralJournalBatchDTO generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
+    private void create(GeneralJournalBatchDTO generalJournalBatch,
+            GeneralJournalBatchLineModel generalJournalBatchLine) {
         GeneralJournalBatchLineDTO line = new GeneralJournalBatchLineDTO();
 
         fromModel(line, generalJournalBatchLine);
@@ -133,8 +134,10 @@ public class GeneralJournalBatchLineController {
         svc.create(generalJournalBatchLine.getGeneralJournalBatchCode(), line);
     }
 
-    private void update(GeneralJournalBatchDTO generalJournalBatch, GeneralJournalBatchLineModel generalJournalBatchLine) {
-        GeneralJournalBatchLineDTO line = svc.get(generalJournalBatchLine.getGeneralJournalBatchCode(), generalJournalBatchLine.getLineNo());
+    private void update(GeneralJournalBatchDTO generalJournalBatch,
+            GeneralJournalBatchLineModel generalJournalBatchLine) {
+        GeneralJournalBatchLineDTO line = svc.get(generalJournalBatchLine.getGeneralJournalBatchCode(),
+                generalJournalBatchLine.getLineNo());
 
         fromModel(line, generalJournalBatchLine);
 
@@ -142,10 +145,10 @@ public class GeneralJournalBatchLineController {
     }
 
     public void fromModel(GeneralJournalBatchLineDTO line, GeneralJournalBatchLineModel model) {
-        line.setType(model.getSourceType().name());
+        line.setType(org.roko.erp.dto.GeneralJournalBatchLineType.valueOf(model.getSourceType().name()));
         line.setCode(model.getSourceCode());
         line.setName(model.getSourceName());
-        line.setOperationType(model.getOperationType().name());
+        line.setOperationType(org.roko.erp.dto.GeneralJournalBatchLineOperationType.valueOf(model.getOperationType().name()));
         line.setDocumentCode(model.getDocumentCode());
         line.setDate(model.getDate());
         line.setAmount(model.getAmount());
@@ -155,10 +158,12 @@ public class GeneralJournalBatchLineController {
     private void toModel(GeneralJournalBatchLineDTO generalJournalBatchLine,
             GeneralJournalBatchLineModel generalJournalBatchLineModel) {
         generalJournalBatchLineModel.setLineNo(generalJournalBatchLine.getLineNo());
-        generalJournalBatchLineModel.setSourceType(GeneralJournalBatchLineType.valueOf(generalJournalBatchLine.getType()));
+        generalJournalBatchLineModel
+                .setSourceType(GeneralJournalBatchLineType.valueOf(generalJournalBatchLine.getType().name()));
         generalJournalBatchLineModel.setSourceCode(generalJournalBatchLine.getCode());
         generalJournalBatchLineModel.setSourceName(generalJournalBatchLine.getName());
-        generalJournalBatchLineModel.setOperationType(GeneralJournalBatchLineOperationType.valueOf(generalJournalBatchLine.getOperationType()));
+        generalJournalBatchLineModel.setOperationType(
+                GeneralJournalBatchLineOperationType.valueOf(generalJournalBatchLine.getOperationType().name()));
         generalJournalBatchLineModel.setDocumentCode(generalJournalBatchLine.getDocumentCode());
         generalJournalBatchLineModel.setDate(generalJournalBatchLine.getDate());
         generalJournalBatchLineModel.setAmount(generalJournalBatchLine.getAmount());

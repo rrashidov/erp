@@ -76,6 +76,10 @@ public class GeneralJournalBatchLineControllerTest {
     private static final String TEST_DOCUMENT_CODE = "test-document-code";
     private static final Double TEST_AMOUNT = 12.12;
 
+    private static final org.roko.erp.dto.GeneralJournalBatchLineType TEST_SOURCE_TYPE_DTO = org.roko.erp.dto.GeneralJournalBatchLineType.VENDOR;
+
+    private static final org.roko.erp.dto.GeneralJournalBatchLineOperationType TEST_OPERATION_TYPE_DTO = org.roko.erp.dto.GeneralJournalBatchLineOperationType.PAYMENT;
+
     private List<BankAccountDTO> bankAccounts;
 
     @Captor
@@ -195,10 +199,10 @@ public class GeneralJournalBatchLineControllerTest {
 
         when(generalJournalBatchLineMock.getGeneralJournalBatchCode()).thenReturn(TEST_CODE);
         when(generalJournalBatchLineMock.getLineNo()).thenReturn(TEST_LINE_NO);
-        when(generalJournalBatchLineMock.getType()).thenReturn(TEST_SOURCE_TYPE.name());
+        when(generalJournalBatchLineMock.getType()).thenReturn(TEST_SOURCE_TYPE_DTO);
         when(generalJournalBatchLineMock.getCode()).thenReturn(TEST_SOURCE_CODE);
         when(generalJournalBatchLineMock.getName()).thenReturn(TEST_SOURCE_NAME);
-        when(generalJournalBatchLineMock.getOperationType()).thenReturn(TEST_OPERATION_TYPE.name());
+        when(generalJournalBatchLineMock.getOperationType()).thenReturn(TEST_OPERATION_TYPE_DTO);
         when(generalJournalBatchLineMock.getDate()).thenReturn(TEST_DATE);
         when(generalJournalBatchLineMock.getDocumentCode()).thenReturn(TEST_DOCUMENT_CODE);
         when(generalJournalBatchLineMock.getAmount()).thenReturn(TEST_AMOUNT);
