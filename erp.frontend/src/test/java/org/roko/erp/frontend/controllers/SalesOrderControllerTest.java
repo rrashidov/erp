@@ -28,8 +28,6 @@ import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
-import org.roko.erp.frontend.controllers.model.SalesOrderLineModel;
-import org.roko.erp.frontend.controllers.model.SalesOrderModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.rules.sales.SalesOrderModelRule;
@@ -75,10 +73,10 @@ public class SalesOrderControllerTest {
     private ArgumentCaptor<SalesDocumentDTO> salesOrderArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<SalesOrderModel> salesOrderModelArgumentCaptor;
+    private ArgumentCaptor<SalesDocumentDTO> salesOrderModelArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<SalesOrderLineModel> salesOrderLineModelArgumentCaptor;
+    private ArgumentCaptor<SalesDocumentLineDTO> salesOrderLineModelArgumentCaptor;
 
     @Mock
     private Date dateMock;
@@ -93,7 +91,7 @@ public class SalesOrderControllerTest {
     private CustomerDTO customerMock;
 
     @Mock
-    private SalesOrderModel salesOrderModelMock;
+    private SalesDocumentDTO salesOrderModelMock;
 
     @Mock
     private PagingData pagingDataMock;
@@ -226,7 +224,7 @@ public class SalesOrderControllerTest {
         verify(modelMock).addAttribute(eq("salesOrderModel"), salesOrderModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("customers", customers);
 
-        SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
+        SalesDocumentDTO salesOrderModel = salesOrderModelArgumentCaptor.getValue();
 
         assertEquals("", salesOrderModel.getCode());
         assertEquals("", salesOrderModel.getCustomerCode());
@@ -241,7 +239,7 @@ public class SalesOrderControllerTest {
         verify(modelMock).addAttribute(eq("salesOrderModel"), salesOrderModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("customers", customers);
 
-        SalesOrderModel salesOrderModel = salesOrderModelArgumentCaptor.getValue();
+        SalesDocumentDTO salesOrderModel = salesOrderModelArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, salesOrderModel.getCode());
         assertEquals(TEST_CUSTOMER_CODE, salesOrderModel.getCustomerCode());

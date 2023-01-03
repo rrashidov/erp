@@ -2,15 +2,24 @@ package org.roko.erp.dto;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class SalesDocumentDTO {
     
-    private String code;
-    private String customerCode;
-    private String customerName;
+    private String code = "";
+
+    private String customerCode = "";
+
+    private String customerName = "";
+
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private Date date;
-    private String paymentMethodCode;
-    private String paymentMethodName;
-    private double amount;
+
+    private String paymentMethodCode = "";
+
+    private String paymentMethodName = "";
+
+    private double amount = 0.0;
     
     public String getCode() {
         return code;

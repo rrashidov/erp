@@ -10,7 +10,6 @@ import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
-import org.roko.erp.frontend.controllers.model.SalesOrderModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CustomerService;
@@ -72,7 +71,7 @@ public class SalesOrderController {
 
     @GetMapping("/salesOrderWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
-        SalesOrderModel salesOrderModel = new SalesOrderModel();
+        SalesDocumentDTO salesOrderModel = new SalesDocumentDTO();
 
         if (code != null) {
             SalesDocumentDTO salesOrder = svc.get(code);
@@ -88,7 +87,7 @@ public class SalesOrderController {
     }
 
     @PostMapping("/salesOrderWizardFirstPage")
-    public String postWizardFirstPage(@ModelAttribute SalesOrderModel salesOrderModel, Model model) {
+    public String postWizardFirstPage(@ModelAttribute SalesDocumentDTO salesOrderModel, Model model) {
         CustomerDTO customer = customerSvc.get(salesOrderModel.getCustomerCode());
 
         salesOrderModel.setCustomerName(customer.getName());
@@ -104,7 +103,7 @@ public class SalesOrderController {
     }
 
     @PostMapping("/salesOrderWizardSecondPage")
-    public RedirectView postWizardSecondPage(@ModelAttribute SalesOrderModel salesOrderModel,
+    public RedirectView postWizardSecondPage(@ModelAttribute SalesDocumentDTO salesOrderModel,
             RedirectAttributes redirectAttributes) {
 
         if (salesOrderModel.getCode().isEmpty()) {
@@ -162,7 +161,7 @@ public class SalesOrderController {
         return new RedirectView("/salesOrderList");
     }
 
-    private SalesDocumentDTO fromModel(SalesOrderModel salesOrderModelMock) {
+    private SalesDocumentDTO fromModel(SalesDocumentDTO salesOrderModelMock) {
         SalesDocumentDTO salesOrder = new SalesDocumentDTO();
         salesOrder.setCustomerCode(salesOrderModelMock.getCustomerCode());
         salesOrder.setDate(salesOrderModelMock.getDate());
@@ -170,14 +169,14 @@ public class SalesOrderController {
         return salesOrder;
     }
 
-    private void toModel(SalesDocumentDTO salesOrder, SalesOrderModel salesOrderModel) {
+    private void toModel(SalesDocumentDTO salesOrder, SalesDocumentDTO salesOrderModel) {
         salesOrderModel.setCode(salesOrder.getCode());
         salesOrderModel.setCustomerCode(salesOrder.getCustomerCode());
         salesOrderModel.setDate(salesOrder.getDate());
         salesOrderModel.setPaymentMethodCode(salesOrder.getPaymentMethodCode());
     }
 
-    private void fromModel(SalesDocumentDTO salesOrder, SalesOrderModel salesOrderModel) {
+    private void fromModel(SalesDocumentDTO salesOrder, SalesDocumentDTO salesOrderModel) {
         salesOrder.setCustomerCode(salesOrderModel.getCustomerCode());
         salesOrder.setDate(salesOrderModel.getDate());
         salesOrder.setPaymentMethodCode(salesOrderModel.getPaymentMethodCode());

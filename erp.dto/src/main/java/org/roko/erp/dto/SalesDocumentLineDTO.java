@@ -2,13 +2,13 @@ package org.roko.erp.dto;
 
 public class SalesDocumentLineDTO {
     
-    private String salesDocumentCode;
-    private int lineNo;
-    private String itemCode;
-    private String itemName;
-    private double quantity;
-    private double price;
-    private double amount;
+    private String salesDocumentCode = "";
+    private int lineNo = 0;
+    private String itemCode = "";
+    private String itemName = "";
+    private double quantity = 0.0;
+    private double price = 0.0;
+    private double amount = 0.0;
 
     public String getSalesDocumentCode() {
         return salesDocumentCode;

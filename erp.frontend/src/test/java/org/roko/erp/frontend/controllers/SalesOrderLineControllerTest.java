@@ -19,7 +19,6 @@ import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.dto.list.SalesDocumentLineList;
-import org.roko.erp.frontend.controllers.model.SalesOrderLineModel;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.SalesOrderLineService;
 import org.roko.erp.frontend.services.SalesOrderService;
@@ -44,7 +43,7 @@ public class SalesOrderLineControllerTest {
     private List<ItemDTO> items = new ArrayList<>();
 
     @Captor
-    private ArgumentCaptor<SalesOrderLineModel> salesOrderLineModelArgumentCaptor;
+    private ArgumentCaptor<SalesDocumentLineDTO> salesOrderLineModelArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<SalesDocumentLineDTO> salesOrderLineArgumentCaptor;
@@ -59,7 +58,7 @@ public class SalesOrderLineControllerTest {
     private SalesDocumentLineDTO salesOrderLineMock;
 
     @Mock
-    private SalesOrderLineModel salesOrderLineModelMock;
+    private SalesDocumentLineDTO salesOrderLineModelMock;
 
     @Mock
     private Model modelMock;
@@ -100,7 +99,7 @@ public class SalesOrderLineControllerTest {
         when(salesOrderLineSvcMock.list(TEST_CODE, TEST_PAGE)).thenReturn(salesOrderLineList);
         when(salesOrderLineSvcMock.get(TEST_CODE, TEST_SALES_ORDER_LINENO)).thenReturn(salesOrderLineMock);
 
-        when(salesOrderLineModelMock.getSalesOrderCode()).thenReturn(TEST_CODE);
+        when(salesOrderLineModelMock.getSalesDocumentCode()).thenReturn(TEST_CODE);
         when(salesOrderLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(salesOrderLineModelMock.getQuantity()).thenReturn(TEST_SALES_ORDER_LINE_QTY);
         when(salesOrderLineModelMock.getPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
@@ -129,9 +128,9 @@ public class SalesOrderLineControllerTest {
         verify(modelMock).addAttribute("items", items);
         verify(modelMock).addAttribute(eq("salesOrderLine"), salesOrderLineModelArgumentCaptor.capture());
 
-        SalesOrderLineModel salesOrderLineModel = salesOrderLineModelArgumentCaptor.getValue();
+        SalesDocumentLineDTO salesOrderLineModel = salesOrderLineModelArgumentCaptor.getValue();
 
-        assertEquals(TEST_CODE, salesOrderLineModel.getSalesOrderCode());
+        assertEquals(TEST_CODE, salesOrderLineModel.getSalesDocumentCode());
         assertEquals("", salesOrderLineModel.getItemCode());
     }
 
@@ -144,10 +143,10 @@ public class SalesOrderLineControllerTest {
         verify(modelMock).addAttribute("items", items);
         verify(modelMock).addAttribute(eq("salesOrderLine"), salesOrderLineModelArgumentCaptor.capture());
 
-        SalesOrderLineModel salesOrderLineModel = salesOrderLineModelArgumentCaptor.getValue();
+        SalesDocumentLineDTO salesOrderLineModel = salesOrderLineModelArgumentCaptor.getValue();
 
         assertEquals(TEST_SALES_ORDER_LINENO, salesOrderLineModel.getLineNo());
-        assertEquals(TEST_CODE, salesOrderLineModel.getSalesOrderCode());
+        assertEquals(TEST_CODE, salesOrderLineModel.getSalesDocumentCode());
         assertEquals(TEST_ITEM_CODE, salesOrderLineModel.getItemCode());
         assertEquals(TEST_SALES_ORDER_LINE_QTY, salesOrderLineModel.getQuantity());
         assertEquals(TEST_ITEM_SALES_PRICE, salesOrderLineModel.getPrice());

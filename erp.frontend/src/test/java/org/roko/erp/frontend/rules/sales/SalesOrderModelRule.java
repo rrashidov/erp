@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.roko.erp.frontend.controllers.model.SalesOrderModel;
+import org.roko.erp.dto.SalesDocumentDTO;
 
 public class SalesOrderModelRule {
     
@@ -17,7 +17,7 @@ public class SalesOrderModelRule {
     public static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
 
     @Mock
-    public SalesOrderModel mock;
+    public SalesDocumentDTO mock;
 
     public SalesOrderModelRule() {
         MockitoAnnotations.openMocks(this);
