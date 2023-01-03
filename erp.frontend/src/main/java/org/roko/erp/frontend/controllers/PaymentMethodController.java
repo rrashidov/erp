@@ -3,7 +3,6 @@ package org.roko.erp.frontend.controllers;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.list.BankAccountList;
 import org.roko.erp.dto.list.PaymentMethodList;
-import org.roko.erp.frontend.controllers.model.PaymentMethodModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.BankAccountService;
@@ -45,7 +44,7 @@ public class PaymentMethodController {
 
     @GetMapping("/paymentMethodCard")
     public String card(@RequestParam(name="code", required=false) String code, Model model){
-        PaymentMethodModel paymentMethodModel = new PaymentMethodModel();
+        PaymentMethodDTO paymentMethodModel = new PaymentMethodDTO();
 
         if (code != null){
             PaymentMethodDTO paymentMethod = svc.get(code);
@@ -63,7 +62,7 @@ public class PaymentMethodController {
     }
 
     @PostMapping("/paymentMethodCard")
-    public RedirectView postCard(@ModelAttribute PaymentMethodModel model){
+    public RedirectView postCard(@ModelAttribute PaymentMethodDTO model){
         PaymentMethodDTO paymentMethod = svc.get(model.getCode());
 
         if (paymentMethod == null) {

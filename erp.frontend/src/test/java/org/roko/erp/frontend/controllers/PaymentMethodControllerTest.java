@@ -19,7 +19,6 @@ import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.list.BankAccountList;
 import org.roko.erp.dto.list.PaymentMethodList;
-import org.roko.erp.frontend.controllers.model.PaymentMethodModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.BankAccountService;
@@ -49,10 +48,10 @@ public class PaymentMethodControllerTest {
     private ArgumentCaptor<PaymentMethodDTO> paymentMethodArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<PaymentMethodModel> paymentMethodModelArgumentCaptor;
+    private ArgumentCaptor<PaymentMethodDTO> paymentMethodModelArgumentCaptor;
 
     @Mock
-    private PaymentMethodModel paymentMethodModelMock;
+    private PaymentMethodDTO paymentMethodModelMock;
 
     @Mock
     private PaymentMethodDTO paymentMethodMock;
@@ -140,7 +139,7 @@ public class PaymentMethodControllerTest {
         verify(modelMock).addAttribute("bankAccounts", bankAccounts);
         verify(modelMock).addAttribute(eq("paymentMethod"), paymentMethodModelArgumentCaptor.capture());
 
-        PaymentMethodModel paymentMethodModel = paymentMethodModelArgumentCaptor.getValue();
+        PaymentMethodDTO paymentMethodModel = paymentMethodModelArgumentCaptor.getValue();
         assertEquals(TEST_CODE, paymentMethodModel.getCode());
         assertEquals(TEST_NAME, paymentMethodModel.getName());
         assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethodModel.getBankAccountCode());
