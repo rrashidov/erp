@@ -1,7 +1,6 @@
 package org.roko.erp.frontend.controllers;
 
 import org.roko.erp.dto.SetupDTO;
-import org.roko.erp.frontend.controllers.model.SetupModel;
 import org.roko.erp.frontend.services.CodeSerieService;
 import org.roko.erp.frontend.services.SetupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class SetupController {
     }
 
     @PostMapping("/setupCard")
-    public RedirectView post(@ModelAttribute SetupModel setupModel) {
+    public RedirectView post(@ModelAttribute SetupDTO setupModel) {
         SetupDTO setup = svc.get();
 
         transferFromModel(setupModel, setup);
@@ -45,59 +44,59 @@ public class SetupController {
         return new RedirectView("/");
     }
 
-    private void transferFromModel(SetupModel setupModel, SetupDTO setup) {
-        if (!setupModel.getSalesOrderCodeSerie().isEmpty()) {
-            setup.setSalesOrderCodeSerieCode(setupModel.getSalesOrderCodeSerie());
+    private void transferFromModel(SetupDTO setupModel, SetupDTO setup) {
+        if (!setupModel.getSalesOrderCodeSerieCode().isEmpty()) {
+            setup.setSalesOrderCodeSerieCode(setupModel.getSalesOrderCodeSerieCode());
         }
-        if (!setupModel.getSalesCreditMemoCodeSerie().isEmpty()) {
-            setup.setSalesCreditMemoCodeSerieCode(setupModel.getSalesCreditMemoCodeSerie());
+        if (!setupModel.getSalesCreditMemoCodeSerieCode().isEmpty()) {
+            setup.setSalesCreditMemoCodeSerieCode(setupModel.getSalesCreditMemoCodeSerieCode());
         }
-        if (!setupModel.getPostedSalesOrderCodeSerie().isEmpty()) {
-            setup.setPostedSalesOrderCodeSerieCode(setupModel.getPostedSalesOrderCodeSerie());
+        if (!setupModel.getPostedSalesOrderCodeSerieCode().isEmpty()) {
+            setup.setPostedSalesOrderCodeSerieCode(setupModel.getPostedSalesOrderCodeSerieCode());
         }
-        if (!setupModel.getPostedSalesCreditMemoCodeSerie().isEmpty()) {
-            setup.setPostedSalesCreditMemoCodeSerieCode(setupModel.getPostedSalesCreditMemoCodeSerie());
+        if (!setupModel.getPostedSalesCreditMemoCodeSerieCode().isEmpty()) {
+            setup.setPostedSalesCreditMemoCodeSerieCode(setupModel.getPostedSalesCreditMemoCodeSerieCode());
         }
-        if (!setupModel.getPurchaseOrderCodeSerie().isEmpty()) {
-            setup.setPurchaseOrderCodeSerieCode(setupModel.getPurchaseOrderCodeSerie());
+        if (!setupModel.getPurchaseOrderCodeSerieCode().isEmpty()) {
+            setup.setPurchaseOrderCodeSerieCode(setupModel.getPurchaseOrderCodeSerieCode());
         }
-        if (!setupModel.getPurchaseCreditMemoCodeSerie().isEmpty()) {
-            setup.setPurchaseCreditMemoCodeSerieCode(setupModel.getPurchaseCreditMemoCodeSerie());
+        if (!setupModel.getPurchaseCreditMemoCodeSerieCode().isEmpty()) {
+            setup.setPurchaseCreditMemoCodeSerieCode(setupModel.getPurchaseCreditMemoCodeSerieCode());
         }
-        if (!setupModel.getPostedPurchaseOrderCodeSerie().isEmpty()) {
-            setup.setPostedPurchaseOrderCodeSerieCode(setupModel.getPostedPurchaseOrderCodeSerie());
+        if (!setupModel.getPostedPurchaseOrderCodeSerieCode().isEmpty()) {
+            setup.setPostedPurchaseOrderCodeSerieCode(setupModel.getPostedPurchaseOrderCodeSerieCode());
         }
-        if (!setupModel.getPostedPurchaseCreditMemoCodeSerie().isEmpty()) {
-            setup.setPostedPurchaseCreditMemoCodeSerieCode(setupModel.getPostedPurchaseCreditMemoCodeSerie());
+        if (!setupModel.getPostedPurchaseCreditMemoCodeSerieCode().isEmpty()) {
+            setup.setPostedPurchaseCreditMemoCodeSerieCode(setupModel.getPostedPurchaseCreditMemoCodeSerieCode());
         }
     }
 
-    private SetupModel transferToModel(SetupDTO setup) {
-        SetupModel setupModel = new SetupModel();
+    private SetupDTO transferToModel(SetupDTO setup) {
+        SetupDTO setupModel = new SetupDTO();
 
         if (setup.getSalesOrderCodeSerieCode() != null) {
-            setupModel.setSalesOrderCodeSerie(setup.getSalesOrderCodeSerieCode());
+            setupModel.setSalesOrderCodeSerieCode(setup.getSalesOrderCodeSerieCode());
         }
         if (setup.getPostedSalesOrderCodeSerieCode() != null) {
-            setupModel.setPostedSalesOrderCodeSerie(setup.getPostedSalesOrderCodeSerieCode());
+            setupModel.setPostedSalesOrderCodeSerieCode(setup.getPostedSalesOrderCodeSerieCode());
         }
         if (setup.getSalesCreditMemoCodeSerieCode() != null) {
-            setupModel.setSalesCreditMemoCodeSerie(setup.getSalesCreditMemoCodeSerieCode());
+            setupModel.setSalesCreditMemoCodeSerieCode(setup.getSalesCreditMemoCodeSerieCode());
         }
         if (setup.getPostedSalesCreditMemoCodeSerieCode() != null) {
-            setupModel.setPostedSalesCreditMemoCodeSerie(setup.getPostedSalesCreditMemoCodeSerieCode());
+            setupModel.setPostedSalesCreditMemoCodeSerieCode(setup.getPostedSalesCreditMemoCodeSerieCode());
         }
         if (setup.getPurchaseOrderCodeSerieCode() != null) {
-            setupModel.setPurchaseOrderCodeSerie(setup.getPurchaseOrderCodeSerieCode());
+            setupModel.setPurchaseOrderCodeSerieCode(setup.getPurchaseOrderCodeSerieCode());
         }
         if (setup.getPostedPurchaseOrderCodeSerieCode() != null) {
-            setupModel.setPostedPurchaseOrderCodeSerie(setup.getPostedPurchaseOrderCodeSerieCode());
+            setupModel.setPostedPurchaseOrderCodeSerieCode(setup.getPostedPurchaseOrderCodeSerieCode());
         }
         if (setup.getPurchaseCreditMemoCodeSerieCode() != null) {
-            setupModel.setPurchaseCreditMemoCodeSerie(setup.getPurchaseCreditMemoCodeSerieCode());
+            setupModel.setPurchaseCreditMemoCodeSerieCode(setup.getPurchaseCreditMemoCodeSerieCode());
         }
         if (setup.getPostedPurchaseCreditMemoCodeSerieCode() != null) {
-            setupModel.setPostedPurchaseCreditMemoCodeSerie(setup.getPostedPurchaseCreditMemoCodeSerieCode());
+            setupModel.setPostedPurchaseCreditMemoCodeSerieCode(setup.getPostedPurchaseCreditMemoCodeSerieCode());
         }
 
         return setupModel;

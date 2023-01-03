@@ -16,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.dto.SetupDTO;
 import org.roko.erp.dto.list.CodeSerieList;
-import org.roko.erp.frontend.controllers.model.SetupModel;
 import org.roko.erp.frontend.services.CodeSerieService;
 import org.roko.erp.frontend.services.SetupService;
 import org.springframework.ui.Model;
@@ -30,7 +29,7 @@ public class SetupControllerTest {
     private SetupDTO setupMock;
 
     @Mock
-    private SetupModel setupModelMock;
+    private SetupDTO setupModelMock;
 
     @Mock
     private Model modelMock;
@@ -65,13 +64,13 @@ public class SetupControllerTest {
 
         assertEquals("setupCard.html", template);
 
-        verify(modelMock).addAttribute(eq("setup"), any(SetupModel.class));
+        verify(modelMock).addAttribute(eq("setup"), any(SetupDTO.class));
         verify(modelMock).addAttribute("codeSeries", codeSeries);
     }
 
     @Test
     public void postCardUpdatesSetup(){
-        RedirectView redirectView = controller.post(new SetupModel());
+        RedirectView redirectView = controller.post(new SetupDTO());
 
         assertEquals("/", redirectView.getUrl());
 
