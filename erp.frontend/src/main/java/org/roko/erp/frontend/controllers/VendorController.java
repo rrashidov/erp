@@ -4,7 +4,6 @@ import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.VendorLedgerEntryList;
 import org.roko.erp.dto.list.VendorList;
-import org.roko.erp.frontend.controllers.model.VendorModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.PaymentMethodService;
@@ -50,7 +49,7 @@ public class VendorController {
     @GetMapping("/vendorCard")
     public String card(@RequestParam(name = "code", required = false) String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        VendorModel vendorModel = new VendorModel();
+        VendorDTO vendorModel = new VendorDTO();
 
         if (code != null) {
             VendorDTO vendor = vendorSvc.get(code);
@@ -76,7 +75,7 @@ public class VendorController {
     }
 
     @PostMapping("/vendorCard")
-    public RedirectView post(@ModelAttribute VendorModel vendorModel) {
+    public RedirectView post(@ModelAttribute VendorDTO vendorModel) {
         VendorDTO vendor = vendorSvc.get(vendorModel.getCode());
 
         if (vendor == null) {

@@ -20,7 +20,6 @@ import org.roko.erp.dto.VendorLedgerEntryDTO;
 import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.VendorLedgerEntryList;
 import org.roko.erp.dto.list.VendorList;
-import org.roko.erp.frontend.controllers.model.VendorModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.PaymentMethodService;
@@ -57,13 +56,13 @@ public class VendorControllerTest {
     private PaymentMethodDTO paymentMethodMock;
 
     @Mock
-    private VendorModel vendorModelMock;
+    private VendorDTO vendorModelMock;
 
     @Captor
     private ArgumentCaptor<VendorDTO> vendorArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<VendorModel> vendorModelArgumentCaptor;
+    private ArgumentCaptor<VendorDTO> vendorModelArgumentCaptor;
 
     @Mock
     private PagingData pagingDataMock;
@@ -160,7 +159,7 @@ public class VendorControllerTest {
         verify(modelMock).addAttribute(eq("vendor"), vendorModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("paymentMethods", paymentMethods);
 
-        VendorModel vendorModel = vendorModelArgumentCaptor.getValue();
+        VendorDTO vendorModel = vendorModelArgumentCaptor.getValue();
 
         assertEquals("", vendorModel.getCode());
         assertEquals("", vendorModel.getName());
@@ -179,7 +178,7 @@ public class VendorControllerTest {
         verify(modelMock).addAttribute("vendorLedgerEntries", vendorLedgerEntries);
         verify(modelMock).addAttribute("paging", vendorLedgerEntryPagingDataMock);
 
-        VendorModel vendorModel = vendorModelArgumentCaptor.getValue();
+        VendorDTO vendorModel = vendorModelArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, vendorModel.getCode());
         assertEquals(TEST_NAME, vendorModel.getName());
