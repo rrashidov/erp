@@ -10,7 +10,6 @@ import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
-import org.roko.erp.frontend.controllers.model.SalesCreditMemoModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CustomerService;
@@ -73,7 +72,7 @@ public class SalesCreditMemoController {
 
     @GetMapping("/salesCreditMemoWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
-        SalesCreditMemoModel salesCreditMemoModel = new SalesCreditMemoModel();
+        SalesDocumentDTO salesCreditMemoModel = new SalesDocumentDTO();
 
         if (code != null) {
             SalesDocumentDTO salesCreditMemo = svc.get(code);
@@ -89,7 +88,7 @@ public class SalesCreditMemoController {
     }
 
     @PostMapping("/salesCreditMemoWizardFirstPage")
-    public String postWizardFirstPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel, Model model) {
+    public String postWizardFirstPage(@ModelAttribute SalesDocumentDTO salesCreditMemoModel, Model model) {
         CustomerDTO customer = customerSvc.get(salesCreditMemoModel.getCustomerCode());
 
         salesCreditMemoModel.setCustomerName(customer.getName());
@@ -98,13 +97,14 @@ public class SalesCreditMemoController {
 
         PaymentMethodList paymentMethodList = paymentMethodSvc.list();
 
+        model.addAttribute("salesCreditMemoModel", salesCreditMemoModel);
         model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "salesCreditMemoWizardSecondPage.html";
     }
 
     @PostMapping("/salesCreditMemoWizardSecondPage")
-    public RedirectView postWizardSecondPage(@ModelAttribute SalesCreditMemoModel salesCreditMemoModel,
+    public RedirectView postWizardSecondPage(@ModelAttribute SalesDocumentDTO salesCreditMemoModel,
             RedirectAttributes redirectAttributesMock) {
         if (salesCreditMemoModel.getCode().isEmpty()) {
             String code = createSalesCreditMemo(salesCreditMemoModel);
@@ -155,7 +155,7 @@ public class SalesCreditMemoController {
         return new RedirectView("/salesCreditMemoList");
     }
 
-    private String createSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
+    private String createSalesCreditMemo(SalesDocumentDTO salesCreditMemoModel) {
         SalesDocumentDTO salesCreditMemo = new SalesDocumentDTO();
         salesCreditMemo.setCustomerCode(salesCreditMemoModel.getCustomerCode());
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
@@ -164,7 +164,7 @@ public class SalesCreditMemoController {
         return svc.create(salesCreditMemo);
     }
 
-    private void updateSalesCreditMemo(SalesCreditMemoModel salesCreditMemoModel) {
+    private void updateSalesCreditMemo(SalesDocumentDTO salesCreditMemoModel) {
         SalesDocumentDTO salesCreditMemo = svc.get(salesCreditMemoModel.getCode());
         salesCreditMemo.setCustomerCode(salesCreditMemoModel.getCustomerCode());
         salesCreditMemo.setDate(salesCreditMemoModel.getDate());
@@ -173,7 +173,7 @@ public class SalesCreditMemoController {
         svc.update(salesCreditMemoModel.getCode(), salesCreditMemo);
     }
 
-    private void toModel(SalesDocumentDTO salesCreditMemo, SalesCreditMemoModel salesCreditMemoModel) {
+    private void toModel(SalesDocumentDTO salesCreditMemo, SalesDocumentDTO salesCreditMemoModel) {
         salesCreditMemoModel.setCode(salesCreditMemo.getCode());
         salesCreditMemoModel.setCustomerCode(salesCreditMemo.getCustomerCode());
         salesCreditMemoModel.setCustomerName(salesCreditMemo.getCustomerName());

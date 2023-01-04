@@ -18,7 +18,6 @@ import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.ItemList;
-import org.roko.erp.frontend.controllers.model.SalesCreditMemoLineModel;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.SalesCreditMemoLineService;
 import org.roko.erp.frontend.services.SalesCreditMemoService;
@@ -43,7 +42,7 @@ public class SalesCreditMemoLineControllerTest {
     private List<ItemDTO> items = new ArrayList<>();
 
     @Captor
-    private ArgumentCaptor<SalesCreditMemoLineModel> salesCreditMemoLineModelArgumentCaptor;
+    private ArgumentCaptor<SalesDocumentLineDTO> salesCreditMemoLineModelArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<SalesDocumentLineDTO> salesCreditMemoLineArgumentCaptor;
@@ -52,7 +51,7 @@ public class SalesCreditMemoLineControllerTest {
     private Model modelMock;
 
     @Mock
-    private SalesCreditMemoLineModel salesCreditMemoLineModelMock;
+    private SalesDocumentLineDTO salesCreditMemoLineModelMock;
 
     @Mock
     private ItemDTO itemMock;
@@ -102,7 +101,7 @@ public class SalesCreditMemoLineControllerTest {
 
         when(salesCreditMemoSvcMock.get(TEST_SALES_CREDIT_MEMO_CODE)).thenReturn(salesCreditMemoMock);
 
-        when(salesCreditMemoLineModelMock.getSalesCreditMemoCode()).thenReturn(TEST_SALES_CREDIT_MEMO_CODE);
+        when(salesCreditMemoLineModelMock.getSalesDocumentCode()).thenReturn(TEST_SALES_CREDIT_MEMO_CODE);
         when(salesCreditMemoLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(salesCreditMemoLineModelMock.getQuantity()).thenReturn(TEST_QTY);
         when(salesCreditMemoLineModelMock.getPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
@@ -133,10 +132,10 @@ public class SalesCreditMemoLineControllerTest {
         verify(modelMock).addAttribute(eq("salesCreditMemoLineModel"),
                 salesCreditMemoLineModelArgumentCaptor.capture());
 
-        SalesCreditMemoLineModel salesCreditMemoLineModel = salesCreditMemoLineModelArgumentCaptor.getValue();
+        SalesDocumentLineDTO salesCreditMemoLineModel = salesCreditMemoLineModelArgumentCaptor.getValue();
 
         assertEquals(TEST_LINE_NO, salesCreditMemoLineModel.getLineNo());
-        assertEquals(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoLineModel.getSalesCreditMemoCode());
+        assertEquals(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoLineModel.getSalesDocumentCode());
         assertEquals(TEST_ITEM_CODE, salesCreditMemoLineModel.getItemCode());
         assertEquals(TEST_ITEM_NAME, salesCreditMemoLineModel.getItemName());
         assertEquals(TEST_PRICE, salesCreditMemoLineModel.getPrice());
@@ -208,8 +207,9 @@ public class SalesCreditMemoLineControllerTest {
     }
 
     @Test
-    public void deleting_deletesEntity(){
-        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO, redirectAttributesMock);
+    public void deleting_deletesEntity() {
+        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO,
+                redirectAttributesMock);
 
         assertEquals("/salesCreditMemoCard", redirectView.getUrl());
 

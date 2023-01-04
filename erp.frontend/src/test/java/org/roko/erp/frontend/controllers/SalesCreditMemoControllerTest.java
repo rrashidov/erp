@@ -28,7 +28,6 @@ import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
-import org.roko.erp.frontend.controllers.model.SalesCreditMemoModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CustomerService;
@@ -74,7 +73,7 @@ public class SalesCreditMemoControllerTest {
     private ArgumentCaptor<SalesDocumentDTO> salesCreditMemoArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<SalesCreditMemoModel> salesCreditMemoModelArgumentCaptor;
+    private ArgumentCaptor<SalesDocumentDTO> salesCreditMemoModelArgumentCaptor;
 
     @Mock
     private Date dateMock;
@@ -95,7 +94,7 @@ public class SalesCreditMemoControllerTest {
     private RedirectAttributes redirectAttributesMock;
 
     @Mock
-    private SalesCreditMemoModel salesCreditMemoModelMock;
+    private SalesDocumentDTO salesCreditMemoModelMock;
 
     @Mock
     private PagingData pagingDataMock;
@@ -217,7 +216,7 @@ public class SalesCreditMemoControllerTest {
         verify(modelMock).addAttribute(eq("salesCreditMemoModel"), salesCreditMemoModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("customers", customers);
 
-        SalesCreditMemoModel salesCreditMemoModel = salesCreditMemoModelArgumentCaptor.getValue();
+        SalesDocumentDTO salesCreditMemoModel = salesCreditMemoModelArgumentCaptor.getValue();
 
         assertEquals("", salesCreditMemoModel.getCode());
         assertEquals("", salesCreditMemoModel.getCustomerCode());
@@ -234,7 +233,7 @@ public class SalesCreditMemoControllerTest {
         verify(modelMock).addAttribute(eq("salesCreditMemoModel"), salesCreditMemoModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("customers", customers);
 
-        SalesCreditMemoModel salesCreditMemoModel = salesCreditMemoModelArgumentCaptor.getValue();
+        SalesDocumentDTO salesCreditMemoModel = salesCreditMemoModelArgumentCaptor.getValue();
 
         assertEquals(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoModel.getCode());
         assertEquals(TEST_CUSTOMER_CODE, salesCreditMemoModel.getCustomerCode());
