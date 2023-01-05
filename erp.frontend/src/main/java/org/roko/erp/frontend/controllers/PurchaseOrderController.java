@@ -10,7 +10,6 @@ import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.roko.erp.dto.list.VendorList;
-import org.roko.erp.frontend.controllers.model.PurchaseOrderModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.FeedbackService;
@@ -74,7 +73,7 @@ public class PurchaseOrderController {
 
     @GetMapping("/purchaseOrderWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
-        PurchaseOrderModel purchaseOrderModel = new PurchaseOrderModel();
+        PurchaseDocumentDTO purchaseOrderModel = new PurchaseDocumentDTO();
 
         if (code != null) {
             PurchaseDocumentDTO purchaseOrder = svc.get(code);
@@ -90,7 +89,7 @@ public class PurchaseOrderController {
     }
 
     @PostMapping("/purchaseOrderWizardFirstPage")
-    public String postPurchaseOrderWizardFirstPage(@ModelAttribute PurchaseOrderModel purchaseOrderModel, Model model) {
+    public String postPurchaseOrderWizardFirstPage(@ModelAttribute PurchaseDocumentDTO purchaseOrderModel, Model model) {
         VendorDTO vendor = vendorSvc.get(purchaseOrderModel.getVendorCode());
 
         purchaseOrderModel.setVendorName(vendor.getName());
@@ -106,7 +105,7 @@ public class PurchaseOrderController {
     }
 
     @PostMapping("/purchaseOrderWizardSecondPage")
-    public RedirectView postPurchaseOrderWizardSecondPage(@ModelAttribute PurchaseOrderModel purchaseOrderModel,
+    public RedirectView postPurchaseOrderWizardSecondPage(@ModelAttribute PurchaseDocumentDTO purchaseOrderModel,
             RedirectAttributes redirectAttributes) {
         if (purchaseOrderModel.getCode().isEmpty()) {
             PurchaseDocumentDTO purchaseOrder = fromModel(purchaseOrderModel);
@@ -165,7 +164,7 @@ public class PurchaseOrderController {
         return new RedirectView("/purchaseOrderList");
     }
 
-    private PurchaseDocumentDTO fromModel(PurchaseOrderModel purchaseOrderModel) {
+    private PurchaseDocumentDTO fromModel(PurchaseDocumentDTO purchaseOrderModel) {
         PurchaseDocumentDTO purchaseOrder = new PurchaseDocumentDTO();
         purchaseOrder.setVendorCode(purchaseOrderModel.getVendorCode());
         purchaseOrder.setDate(purchaseOrderModel.getDate());
@@ -173,13 +172,13 @@ public class PurchaseOrderController {
         return purchaseOrder;
     }
 
-    private void fromModel(PurchaseDocumentDTO purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
+    private void fromModel(PurchaseDocumentDTO purchaseOrder, PurchaseDocumentDTO purchaseOrderModel) {
         purchaseOrder.setVendorCode(purchaseOrderModel.getVendorCode());
         purchaseOrder.setDate(purchaseOrderModel.getDate());
         purchaseOrder.setPaymentMethodCode(purchaseOrderModel.getPaymentMethodCode());
     }
 
-    private void toModel(PurchaseDocumentDTO purchaseOrder, PurchaseOrderModel purchaseOrderModel) {
+    private void toModel(PurchaseDocumentDTO purchaseOrder, PurchaseDocumentDTO purchaseOrderModel) {
         purchaseOrderModel.setCode(purchaseOrder.getCode());
         purchaseOrderModel.setDate(purchaseOrder.getDate());
         purchaseOrderModel.setPaymentMethodCode(purchaseOrder.getPaymentMethodCode());

@@ -28,7 +28,6 @@ import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.roko.erp.dto.list.VendorList;
-import org.roko.erp.frontend.controllers.model.PurchaseOrderModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.FeedbackService;
@@ -73,7 +72,7 @@ public class PurchaseOrderControllerTest {
     private List<PurchaseDocumentLineDTO> purchaseOrderLines = new ArrayList<>();
 
     @Captor
-    private ArgumentCaptor<PurchaseOrderModel> purchaseOrderModelArgumentCaptor;
+    private ArgumentCaptor<PurchaseDocumentDTO> purchaseOrderModelArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<PurchaseDocumentDTO> purchaseOrderArgumentCaptor;
@@ -97,7 +96,7 @@ public class PurchaseOrderControllerTest {
     private VendorDTO vendorMock;
 
     @Mock
-    private PurchaseOrderModel purchaseOrderModelMock;
+    private PurchaseDocumentDTO purchaseOrderModelMock;
 
     @Mock
     private VendorService vendorSvcMock;
@@ -223,7 +222,7 @@ public class PurchaseOrderControllerTest {
         verify(modelMock).addAttribute(eq("purchaseOrderModel"), purchaseOrderModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("vendors", vendors);
 
-        PurchaseOrderModel purchaseOrderModel = purchaseOrderModelArgumentCaptor.getValue();
+        PurchaseDocumentDTO purchaseOrderModel = purchaseOrderModelArgumentCaptor.getValue();
 
         assertEquals("", purchaseOrderModel.getCode());
         assertEquals("", purchaseOrderModel.getVendorCode());
@@ -240,7 +239,7 @@ public class PurchaseOrderControllerTest {
         verify(modelMock).addAttribute(eq("purchaseOrderModel"), purchaseOrderModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("vendors", vendors);
 
-        PurchaseOrderModel purchaseOrderModel = purchaseOrderModelArgumentCaptor.getValue();
+        PurchaseDocumentDTO purchaseOrderModel = purchaseOrderModelArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, purchaseOrderModel.getCode());
         assertEquals(TEST_VENDOR_CODE, purchaseOrderModel.getVendorCode());

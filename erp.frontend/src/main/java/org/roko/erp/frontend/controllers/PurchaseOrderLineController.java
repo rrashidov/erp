@@ -3,7 +3,6 @@ package org.roko.erp.frontend.controllers;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.ItemList;
-import org.roko.erp.frontend.controllers.model.PurchaseOrderLineModel;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.PurchaseOrderLineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,8 @@ public class PurchaseOrderLineController {
     @GetMapping("/purchaseOrderLineWizard")
     public String purchaseOrderLineWizard(@RequestParam(name = "purchaseOrderCode") String code,
             @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
-        PurchaseOrderLineModel purchaseOrderLineModel = new PurchaseOrderLineModel();
-        purchaseOrderLineModel.setPurchaseOrderCode(code);
+        PurchaseDocumentLineDTO purchaseOrderLineModel = new PurchaseDocumentLineDTO();
+        purchaseOrderLineModel.setPurchaseDocumentCode(code);
 
         if (lineNo != null){
             PurchaseDocumentLineDTO purchaseOrderLine = svc.get(code, lineNo);
@@ -49,7 +48,7 @@ public class PurchaseOrderLineController {
     }
 
     @PostMapping("/purchaseOrderLineWizardFirstPage")
-    public String postPurchaseOrderLineWizardFirstPage(@ModelAttribute PurchaseOrderLineModel purchaseOrderLineModel,
+    public String postPurchaseOrderLineWizardFirstPage(@ModelAttribute PurchaseDocumentLineDTO purchaseOrderLineModel,
             Model model) {
         ItemDTO item = itemSvc.get(purchaseOrderLineModel.getItemCode());
         
@@ -63,7 +62,7 @@ public class PurchaseOrderLineController {
     }
 
     @PostMapping("/purchaseOrderLineWizardSecondPage")
-    public String postPurchaseOrderLineWizardSecondPage(@ModelAttribute PurchaseOrderLineModel purchaseOrderLineModel, Model model){
+    public String postPurchaseOrderLineWizardSecondPage(@ModelAttribute PurchaseDocumentLineDTO purchaseOrderLineModel, Model model){
         purchaseOrderLineModel.setAmount(purchaseOrderLineModel.getQuantity() * purchaseOrderLineModel.getPrice());
 
         model.addAttribute("purchaseOrderLineModel", purchaseOrderLineModel);
@@ -73,7 +72,7 @@ public class PurchaseOrderLineController {
 
     @PostMapping("/purchaseOrderLineWizardThirdPage")
     public RedirectView postPurchaseOrderLineWizardThirdPage(
-            @ModelAttribute PurchaseOrderLineModel purchaseOrderLineModel, RedirectAttributes redirectAttributes) {
+            @ModelAttribute PurchaseDocumentLineDTO purchaseOrderLineModel, RedirectAttributes redirectAttributes) {
 
         if (purchaseOrderLineModel.getLineNo() == 0){
             create(purchaseOrderLineModel);    
@@ -81,7 +80,7 @@ public class PurchaseOrderLineController {
             update(purchaseOrderLineModel);
         }
         
-        redirectAttributes.addAttribute("code", purchaseOrderLineModel.getPurchaseOrderCode());
+        redirectAttributes.addAttribute("code", purchaseOrderLineModel.getPurchaseDocumentCode());
 
         return new RedirectView("/purchaseOrderCard");
     }
@@ -96,19 +95,19 @@ public class PurchaseOrderLineController {
         return new RedirectView("/purchaseOrderCard");
     }
 
-    private void create(PurchaseOrderLineModel purchaseOrderLineModel) {
+    private void create(PurchaseDocumentLineDTO purchaseOrderLineModel) {
         PurchaseDocumentLineDTO purchaseOrderLine = fromModel(purchaseOrderLineModel);
-        svc.create(purchaseOrderLineModel.getPurchaseOrderCode(), purchaseOrderLine);
+        svc.create(purchaseOrderLineModel.getPurchaseDocumentCode(), purchaseOrderLine);
     }
 
-    private void update(PurchaseOrderLineModel purchaseOrderLineModel) {
-        PurchaseDocumentLineDTO purchaseOrderLine = svc.get(purchaseOrderLineModel.getPurchaseOrderCode(), purchaseOrderLineModel.getLineNo());
+    private void update(PurchaseDocumentLineDTO purchaseOrderLineModel) {
+        PurchaseDocumentLineDTO purchaseOrderLine = svc.get(purchaseOrderLineModel.getPurchaseDocumentCode(), purchaseOrderLineModel.getLineNo());
         fromModel(purchaseOrderLine, purchaseOrderLineModel);
 
-        svc.update(purchaseOrderLineModel.getPurchaseOrderCode(), purchaseOrderLineModel.getLineNo(), purchaseOrderLine);
+        svc.update(purchaseOrderLineModel.getPurchaseDocumentCode(), purchaseOrderLineModel.getLineNo(), purchaseOrderLine);
     }
 
-    private PurchaseDocumentLineDTO fromModel(PurchaseOrderLineModel purchaseOrderLineModel) {
+    private PurchaseDocumentLineDTO fromModel(PurchaseDocumentLineDTO purchaseOrderLineModel) {
         PurchaseDocumentLineDTO purchaseOrderLine = new PurchaseDocumentLineDTO();
         purchaseOrderLine.setItemCode(purchaseOrderLineModel.getItemCode());
         purchaseOrderLine.setQuantity(purchaseOrderLineModel.getQuantity());
@@ -118,14 +117,14 @@ public class PurchaseOrderLineController {
         return purchaseOrderLine;
     }
 
-    private void fromModel(PurchaseDocumentLineDTO purchaseOrderLine, PurchaseOrderLineModel purchaseOrderLineModel) {
+    private void fromModel(PurchaseDocumentLineDTO purchaseOrderLine, PurchaseDocumentLineDTO purchaseOrderLineModel) {
         purchaseOrderLine.setItemCode(purchaseOrderLineModel.getItemCode());
         purchaseOrderLine.setQuantity(purchaseOrderLineModel.getQuantity());
         purchaseOrderLine.setPrice(purchaseOrderLineModel.getPrice());
         purchaseOrderLine.setAmount(purchaseOrderLineModel.getAmount());
     }
 
-    private void toModel(PurchaseDocumentLineDTO purchaseOrderLine, PurchaseOrderLineModel purchaseOrderLineModel) {
+    private void toModel(PurchaseDocumentLineDTO purchaseOrderLine, PurchaseDocumentLineDTO purchaseOrderLineModel) {
         purchaseOrderLineModel.setLineNo(purchaseOrderLine.getLineNo());
         purchaseOrderLineModel.setItemCode(purchaseOrderLine.getItemCode());
         purchaseOrderLineModel.setItemName(purchaseOrderLine.getItemName());

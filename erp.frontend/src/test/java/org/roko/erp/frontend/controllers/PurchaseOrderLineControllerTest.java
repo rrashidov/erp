@@ -18,7 +18,6 @@ import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.ItemList;
-import org.roko.erp.frontend.controllers.model.PurchaseOrderLineModel;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.PurchaseOrderLineService;
 import org.roko.erp.frontend.services.PurchaseOrderService;
@@ -42,7 +41,7 @@ public class PurchaseOrderLineControllerTest {
     private List<ItemDTO> items = new ArrayList<>();
 
     @Captor
-    private ArgumentCaptor<PurchaseOrderLineModel> purchaseOrderLineModelArgumentCaptor;
+    private ArgumentCaptor<PurchaseDocumentLineDTO> purchaseOrderLineModelArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<PurchaseDocumentLineDTO> purchaseOrderLineArgumentCaptor;
@@ -60,7 +59,7 @@ public class PurchaseOrderLineControllerTest {
     private ItemDTO itemMock;
 
     @Mock
-    private PurchaseOrderLineModel purchaseOrderLineModelMock;
+    private PurchaseDocumentLineDTO purchaseOrderLineModelMock;
 
     @Mock
     private Model modelMock;
@@ -97,7 +96,7 @@ public class PurchaseOrderLineControllerTest {
         when(itemMock.getName()).thenReturn(TEST_ITEM_NAME);
         when(itemMock.getPurchasePrice()).thenReturn(TEST_ITEM_PURCHASE_PRICE);
 
-        when(purchaseOrderLineModelMock.getPurchaseOrderCode()).thenReturn(TEST_PURCHASE_ORDER_CODE);
+        when(purchaseOrderLineModelMock.getPurchaseDocumentCode()).thenReturn(TEST_PURCHASE_ORDER_CODE);
         when(purchaseOrderLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(purchaseOrderLineModelMock.getQuantity()).thenReturn(TEST_QTY);
         when(purchaseOrderLineModelMock.getPrice()).thenReturn(TEST_PRICE);
@@ -122,9 +121,9 @@ public class PurchaseOrderLineControllerTest {
         verify(modelMock).addAttribute(eq("purchaseOrderLineModel"), purchaseOrderLineModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("items", items);
 
-        PurchaseOrderLineModel purchaseOrderLineModel = purchaseOrderLineModelArgumentCaptor.getValue();
+        PurchaseDocumentLineDTO purchaseOrderLineModel = purchaseOrderLineModelArgumentCaptor.getValue();
 
-        assertEquals(TEST_PURCHASE_ORDER_CODE, purchaseOrderLineModel.getPurchaseOrderCode());
+        assertEquals(TEST_PURCHASE_ORDER_CODE, purchaseOrderLineModel.getPurchaseDocumentCode());
         assertEquals(0, purchaseOrderLineModel.getLineNo());
         assertEquals("", purchaseOrderLineModel.getItemCode());
         assertEquals("", purchaseOrderLineModel.getItemName());
@@ -142,9 +141,9 @@ public class PurchaseOrderLineControllerTest {
         verify(modelMock).addAttribute(eq("purchaseOrderLineModel"), purchaseOrderLineModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("items", items);
 
-        PurchaseOrderLineModel purchaseOrderLineModel = purchaseOrderLineModelArgumentCaptor.getValue();
+        PurchaseDocumentLineDTO purchaseOrderLineModel = purchaseOrderLineModelArgumentCaptor.getValue();
 
-        assertEquals(TEST_PURCHASE_ORDER_CODE, purchaseOrderLineModel.getPurchaseOrderCode());
+        assertEquals(TEST_PURCHASE_ORDER_CODE, purchaseOrderLineModel.getPurchaseDocumentCode());
         assertEquals(TEST_LINE_NO, purchaseOrderLineModel.getLineNo());
         assertEquals(TEST_ITEM_CODE, purchaseOrderLineModel.getItemCode());
         assertEquals(TEST_ITEM_NAME, purchaseOrderLineModel.getItemName());
