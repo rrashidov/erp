@@ -3,7 +3,6 @@ package org.roko.erp.frontend.controllers;
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.ItemList;
-import org.roko.erp.frontend.controllers.model.PurchaseCreditMemoLineModel;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoLineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,8 @@ public class PurchaseCreditMemoLineController {
     @GetMapping("/purchaseCreditMemoLineWizard")
     public String wizard(@RequestParam(name = "purchaseCreditMemoCode") String purchaseCreditMemoCode,
             @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
-        PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = new PurchaseCreditMemoLineModel();
-        purchaseCreditMemoLineModel.setPurchaseCreditMemoCode(purchaseCreditMemoCode);
+        PurchaseDocumentLineDTO purchaseCreditMemoLineModel = new PurchaseDocumentLineDTO();
+        purchaseCreditMemoLineModel.setPurchaseDocumentCode(purchaseCreditMemoCode);
 
         if (lineNo != null) {
             PurchaseDocumentLineDTO purchaseCreditMemoLine = svc.get(purchaseCreditMemoCode, lineNo);
@@ -50,7 +49,7 @@ public class PurchaseCreditMemoLineController {
 
     @PostMapping("/purchaseCreditMemoLineWizardFirstPage")
     public String postPurchaseCreditMemoLineWizardFirstPage(
-            @ModelAttribute PurchaseCreditMemoLineModel purchaseCreditMemoLineModel, Model model) {
+            @ModelAttribute PurchaseDocumentLineDTO purchaseCreditMemoLineModel, Model model) {
         ItemDTO item = itemSvc.get(purchaseCreditMemoLineModel.getItemCode());
 
         purchaseCreditMemoLineModel.setItemName(item.getName());
@@ -66,7 +65,7 @@ public class PurchaseCreditMemoLineController {
 
     @PostMapping("/purchaseCreditMemoLineWizardSecondPage")
     public String postPurchaseCreditMemoLineWizardSecondPage(
-            @ModelAttribute PurchaseCreditMemoLineModel purchaseCreditMemoLineModel, Model model) {
+            @ModelAttribute PurchaseDocumentLineDTO purchaseCreditMemoLineModel, Model model) {
         purchaseCreditMemoLineModel
                 .setAmount(purchaseCreditMemoLineModel.getQuantity() * purchaseCreditMemoLineModel.getPrice());
 
@@ -77,7 +76,7 @@ public class PurchaseCreditMemoLineController {
 
     @PostMapping("/purchaseCreditMemoLineWizardThirdPage")
     public RedirectView postPurchaseCreditMemoLineWizardThirdPage(
-            @ModelAttribute PurchaseCreditMemoLineModel purchaseCreditMemoLineModel,
+            @ModelAttribute PurchaseDocumentLineDTO purchaseCreditMemoLineModel,
             RedirectAttributes redirectAttributes) {
         if (purchaseCreditMemoLineModel.getLineNo() == 0) {
             // create
@@ -87,7 +86,7 @@ public class PurchaseCreditMemoLineController {
             update(purchaseCreditMemoLineModel);
         }
 
-        redirectAttributes.addAttribute("code", purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
+        redirectAttributes.addAttribute("code", purchaseCreditMemoLineModel.getPurchaseDocumentCode());
 
         return new RedirectView("/purchaseCreditMemoCard");
     }
@@ -103,7 +102,7 @@ public class PurchaseCreditMemoLineController {
     }
 
     private void toModel(PurchaseDocumentLineDTO purchaseCreditMemoLine,
-            PurchaseCreditMemoLineModel purchaseCreditMemoLineModel) {
+    PurchaseDocumentLineDTO purchaseCreditMemoLineModel) {
 
         purchaseCreditMemoLineModel.setLineNo(purchaseCreditMemoLine.getLineNo());
         purchaseCreditMemoLineModel.setItemCode(purchaseCreditMemoLine.getItemCode());
@@ -113,26 +112,26 @@ public class PurchaseCreditMemoLineController {
         purchaseCreditMemoLineModel.setAmount(purchaseCreditMemoLine.getAmount());
     }
 
-    private void create(PurchaseCreditMemoLineModel purchaseCreditMemoLineModel) {
+    private void create(PurchaseDocumentLineDTO purchaseCreditMemoLineModel) {
         PurchaseDocumentLineDTO purchaseCreditMemoLine = new PurchaseDocumentLineDTO();
         purchaseCreditMemoLine.setItemCode(purchaseCreditMemoLineModel.getItemCode());
         purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
         purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
         purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
 
-        svc.create(purchaseCreditMemoLineModel.getPurchaseCreditMemoCode(), purchaseCreditMemoLine);
+        svc.create(purchaseCreditMemoLineModel.getPurchaseDocumentCode(), purchaseCreditMemoLine);
     }
 
-    private void update(PurchaseCreditMemoLineModel purchaseCreditMemoLineModel) {
+    private void update(PurchaseDocumentLineDTO purchaseCreditMemoLineModel) {
         PurchaseDocumentLineDTO purchaseCreditMemoLine = svc
-                .get(purchaseCreditMemoLineModel.getPurchaseCreditMemoCode(), purchaseCreditMemoLineModel.getLineNo());
+                .get(purchaseCreditMemoLineModel.getPurchaseDocumentCode(), purchaseCreditMemoLineModel.getLineNo());
 
         purchaseCreditMemoLine.setItemCode(purchaseCreditMemoLineModel.getItemCode());
         purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
         purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
         purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
 
-        svc.update(purchaseCreditMemoLineModel.getPurchaseCreditMemoCode(), purchaseCreditMemoLineModel.getLineNo(),
+        svc.update(purchaseCreditMemoLineModel.getPurchaseDocumentCode(), purchaseCreditMemoLineModel.getLineNo(),
                 purchaseCreditMemoLine);
     }
 

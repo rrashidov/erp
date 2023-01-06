@@ -7,7 +7,6 @@ import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.roko.erp.dto.list.VendorList;
-import org.roko.erp.frontend.controllers.model.PurchaseCreditMemoModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.FeedbackService;
@@ -71,7 +70,7 @@ public class PurchaseCreditMemoController {
 
     @GetMapping("/purchaseCreditMemoWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
-        PurchaseCreditMemoModel purchaseCreditMemoModel = new PurchaseCreditMemoModel();
+        PurchaseDocumentDTO purchaseCreditMemoModel = new PurchaseDocumentDTO();
 
         if (code != null) {
             PurchaseDocumentDTO purchaseCreditMemo = svc.get(code);
@@ -87,7 +86,7 @@ public class PurchaseCreditMemoController {
     }
 
     @PostMapping("/purchaseCreditMemoWizardFirstPage")
-    public String postPurchaseCreditMemoWizardFirstPage(@ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel,
+    public String postPurchaseCreditMemoWizardFirstPage(@ModelAttribute PurchaseDocumentDTO purchaseCreditMemoModel,
             Model model) {
         VendorDTO vendor = vendorSvc.get(purchaseCreditMemoModel.getVendorCode());
 
@@ -102,7 +101,7 @@ public class PurchaseCreditMemoController {
 
     @PostMapping("/purchaseCreditMemoWizardSecondPage")
     public RedirectView postPurchaseCreditMemoWizardSecondPage(
-            @ModelAttribute PurchaseCreditMemoModel purchaseCreditMemoModel, RedirectAttributes redirectAttributes) {
+            @ModelAttribute PurchaseDocumentDTO purchaseCreditMemoModel, RedirectAttributes redirectAttributes) {
         if (purchaseCreditMemoModel.getCode().isEmpty()) {
             String purchaseCreditMemoCode = createPurchaseCreditMemo(purchaseCreditMemoModel);
 
@@ -154,25 +153,25 @@ public class PurchaseCreditMemoController {
         return new RedirectView("/purchaseCreditMemoList");
     }
 
-    private String createPurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
+    private String createPurchaseCreditMemo(PurchaseDocumentDTO purchaseCreditMemoModel) {
         PurchaseDocumentDTO purchaseCreditMemo = new PurchaseDocumentDTO();
         fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
         return svc.create(purchaseCreditMemo);
     }
 
-    private void updatePurchaseCreditMemo(PurchaseCreditMemoModel purchaseCreditMemoModel) {
+    private void updatePurchaseCreditMemo(PurchaseDocumentDTO purchaseCreditMemoModel) {
         PurchaseDocumentDTO purchaseCreditMemo = svc.get(purchaseCreditMemoModel.getCode());
         fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
         svc.update(purchaseCreditMemoModel.getCode(), purchaseCreditMemo);
     }
 
-    private void fromModel(PurchaseCreditMemoModel purchaseCreditMemoModel, PurchaseDocumentDTO purchaseCreditMemo) {
+    private void fromModel(PurchaseDocumentDTO purchaseCreditMemoModel, PurchaseDocumentDTO purchaseCreditMemo) {
         purchaseCreditMemo.setVendorCode(purchaseCreditMemoModel.getVendorCode());
         purchaseCreditMemo.setDate(purchaseCreditMemoModel.getDate());
         purchaseCreditMemo.setPaymentMethodCode(purchaseCreditMemoModel.getPaymentMethodCode());
     }
 
-    private void toModel(PurchaseDocumentDTO purchaseCreditMemo, PurchaseCreditMemoModel purchaseCreditMemoModel) {
+    private void toModel(PurchaseDocumentDTO purchaseCreditMemo, PurchaseDocumentDTO purchaseCreditMemoModel) {
         purchaseCreditMemoModel.setCode(purchaseCreditMemo.getCode());
         purchaseCreditMemoModel.setVendorCode(purchaseCreditMemo.getVendorCode());
         purchaseCreditMemoModel.setVendorName(purchaseCreditMemo.getVendorName());

@@ -28,7 +28,6 @@ import org.roko.erp.dto.list.PaymentMethodList;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.roko.erp.dto.list.VendorList;
-import org.roko.erp.frontend.controllers.model.PurchaseCreditMemoModel;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.FeedbackService;
@@ -72,7 +71,7 @@ public class PurchaseCreditMemoControllerTest {
         private List<PurchaseDocumentLineDTO> purchaseCreditMemoLines = new ArrayList<>();
 
         @Captor
-        private ArgumentCaptor<PurchaseCreditMemoModel> purchaseCreditMemoModelArgumentCaptor;
+        private ArgumentCaptor<PurchaseDocumentDTO> purchaseCreditMemoModelArgumentCaptor;
 
         @Captor
         private ArgumentCaptor<PurchaseDocumentDTO> purchaseCreditMemoArgumentCaptor;
@@ -99,7 +98,7 @@ public class PurchaseCreditMemoControllerTest {
         private PaymentMethodService paymentMethodSvcMock;
 
         @Mock
-        private PurchaseCreditMemoModel purchaseCreditMemoModelMock;
+        private PurchaseDocumentDTO purchaseCreditMemoModelMock;
 
         @Mock
         private PagingData pagingDataMock;
@@ -230,7 +229,7 @@ public class PurchaseCreditMemoControllerTest {
                                 purchaseCreditMemoModelArgumentCaptor.capture());
                 verify(modelMock).addAttribute("vendors", vendors);
 
-                PurchaseCreditMemoModel purchaseCreditMemoModel = purchaseCreditMemoModelArgumentCaptor.getValue();
+                PurchaseDocumentDTO purchaseCreditMemoModel = purchaseCreditMemoModelArgumentCaptor.getValue();
 
                 assertEquals("", purchaseCreditMemoModel.getCode());
                 assertEquals("", purchaseCreditMemoModel.getVendorCode());
@@ -249,7 +248,7 @@ public class PurchaseCreditMemoControllerTest {
                                 purchaseCreditMemoModelArgumentCaptor.capture());
                 verify(modelMock).addAttribute("vendors", vendors);
 
-                PurchaseCreditMemoModel purchaseCreditMemoModel = purchaseCreditMemoModelArgumentCaptor.getValue();
+                PurchaseDocumentDTO purchaseCreditMemoModel = purchaseCreditMemoModelArgumentCaptor.getValue();
 
                 assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE,
                                 purchaseCreditMemoModel.getCode());

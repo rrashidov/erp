@@ -18,7 +18,6 @@ import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.ItemList;
-import org.roko.erp.frontend.controllers.model.PurchaseCreditMemoLineModel;
 import org.roko.erp.frontend.services.ItemService;
 import org.roko.erp.frontend.services.PurchaseCreditMemoLineService;
 import org.springframework.ui.Model;
@@ -45,7 +44,7 @@ public class PurchaseCreditMemoLineControllerTest {
     private ArgumentCaptor<PurchaseDocumentLineDTO> purchaseCreditMemoLineArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<PurchaseCreditMemoLineModel> purchaseCreditMemoLineModelArgumentCaptor;
+    private ArgumentCaptor<PurchaseDocumentLineDTO> purchaseCreditMemoLineModelArgumentCaptor;
 
     @Mock
     private PurchaseDocumentLineDTO purchaseCreditMemoLineMock;
@@ -60,7 +59,7 @@ public class PurchaseCreditMemoLineControllerTest {
     private ItemDTO itemMock;
 
     @Mock
-    private PurchaseCreditMemoLineModel purchaseCreditMemoLineModelMock;
+    private PurchaseDocumentLineDTO purchaseCreditMemoLineModelMock;
 
     @Mock
     private Model modelMock;
@@ -89,7 +88,7 @@ public class PurchaseCreditMemoLineControllerTest {
         when(itemSvcMock.list()).thenReturn(itemList);
         when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
-        when(purchaseCreditMemoLineModelMock.getPurchaseCreditMemoCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
+        when(purchaseCreditMemoLineModelMock.getPurchaseDocumentCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
         when(purchaseCreditMemoLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(purchaseCreditMemoLineModelMock.getQuantity()).thenReturn(TEST_QTY);
         when(purchaseCreditMemoLineModelMock.getPrice()).thenReturn(TEST_ITEM_PURCHASE_PRICE);
@@ -119,9 +118,9 @@ public class PurchaseCreditMemoLineControllerTest {
         verify(modelMock).addAttribute(eq("purchaseCreditMemoLineModel"), purchaseCreditMemoLineModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("items", items);
 
-        PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = purchaseCreditMemoLineModelArgumentCaptor.getValue();
+        PurchaseDocumentLineDTO purchaseCreditMemoLineModel = purchaseCreditMemoLineModelArgumentCaptor.getValue();
 
-        assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
+        assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseDocumentCode());
         assertEquals(0, purchaseCreditMemoLineModel.getLineNo());
         assertEquals("", purchaseCreditMemoLineModel.getItemCode());
         assertEquals("", purchaseCreditMemoLineModel.getItemName());
@@ -139,9 +138,9 @@ public class PurchaseCreditMemoLineControllerTest {
         verify(modelMock).addAttribute(eq("purchaseCreditMemoLineModel"), purchaseCreditMemoLineModelArgumentCaptor.capture());
         verify(modelMock).addAttribute("items", items);
 
-        PurchaseCreditMemoLineModel purchaseCreditMemoLineModel = purchaseCreditMemoLineModelArgumentCaptor.getValue();
+        PurchaseDocumentLineDTO purchaseCreditMemoLineModel = purchaseCreditMemoLineModelArgumentCaptor.getValue();
 
-        assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseCreditMemoCode());
+        assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseDocumentCode());
         assertEquals(TEST_LINE_NO, purchaseCreditMemoLineModel.getLineNo());
         assertEquals(TEST_ITEM_CODE, purchaseCreditMemoLineModel.getItemCode());
         assertEquals(TEST_ITEM_NAME, purchaseCreditMemoLineModel.getItemName());
