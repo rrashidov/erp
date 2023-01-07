@@ -1,6 +1,7 @@
 package org.roko.erp.frontend.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,7 @@ public class GeneralJournalBatchLineController {
             @RequestParam(name = "lineNo", required = false, defaultValue = "0") int lineNo, Model model) {
                 GeneralJournalBatchLineDTO generalJournalBatchLineModel = new GeneralJournalBatchLineDTO();
         generalJournalBatchLineModel.setGeneralJournalBatchCode(code);
+        generalJournalBatchLineModel.setDate(new Date());
 
         if (lineNo != 0) {
             GeneralJournalBatchLineDTO generalJournalBatchLine = svc.get(code, lineNo);
@@ -90,7 +92,7 @@ public class GeneralJournalBatchLineController {
         setSourceName(generalJournalBatchLine);
 
         model.addAttribute("generalJournalBatchLine", generalJournalBatchLine);
-        model.addAttribute("bankAccounts", bankAccountSvc.list().getData());
+        model.addAttribute("bankAccounts", bankAccountSvc.list().getData()); 
 
         return "generalJournalBatchLineWizardThirdPage.html";
     }
