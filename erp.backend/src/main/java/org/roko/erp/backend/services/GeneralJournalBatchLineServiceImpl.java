@@ -74,6 +74,11 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
     }
 
     @Override
+    public int maxLineNo(GeneralJournalBatch generalJournalBatch) {
+        return repo.maxLineNo(generalJournalBatch);
+    }
+
+    @Override
     public GeneralJournalBatchLine fromDTO(GeneralJournalBatchLineDTO dto) {
         GeneralJournalBatchLine generalJournalBatchLine = new GeneralJournalBatchLine();
         generalJournalBatchLine.setSourceType(GeneralJournalBatchLineType.valueOf(dto.getType().name()));

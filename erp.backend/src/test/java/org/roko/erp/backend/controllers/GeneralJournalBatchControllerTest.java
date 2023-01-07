@@ -29,6 +29,8 @@ import org.springframework.http.ResponseEntity;
 
 public class GeneralJournalBatchControllerTest {
 
+    private static final int TEST_MAX_LINENO = 456;
+
     private static final String TEST_FAILED_MSG = "test-failed-msg";
 
     private static final int TEST_COUNT = 222;
@@ -81,6 +83,7 @@ public class GeneralJournalBatchControllerTest {
         when(generalJournalBatchLineSvcMock.toDTO(generalJournalBatchLineMock))
                 .thenReturn(generalJournalBatchLineDtoMock);
         when(generalJournalBatchLineSvcMock.count(generalJournalBatchMock)).thenReturn(TEST_COUNT);
+        when(generalJournalBatchLineSvcMock.maxLineNo(generalJournalBatchMock)).thenReturn(TEST_MAX_LINENO);
 
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(generalJournalBatchMock));
         when(svcMock.get(TEST_CODE)).thenReturn(generalJournalBatchMock);
@@ -161,7 +164,7 @@ public class GeneralJournalBatchControllerTest {
         GeneralJournalBatchLineId generalJournalBatchLineId = generalJournalBatchLineIdArgumentCaptor.getValue();
 
         assertEquals(generalJournalBatchMock, generalJournalBatchLineId.getGeneralJournalBatch());
-        assertEquals(TEST_COUNT + 1, generalJournalBatchLineId.getLineNo());
+        assertEquals(TEST_MAX_LINENO + 1, generalJournalBatchLineId.getLineNo());
     }
 
     @Test

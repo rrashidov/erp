@@ -90,7 +90,7 @@ public class GeneralJournalBatchController {
 
         GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
         generalJournalBatchLineId.setGeneralJournalBatch(svc.get(code));
-        generalJournalBatchLineId.setLineNo(generalJournalBatchLineSvc.count(generalJournalBatch) + 1);
+        generalJournalBatchLineId.setLineNo(generalJournalBatchLineSvc.maxLineNo(generalJournalBatch) + 1);
 
         GeneralJournalBatchLine generalJournalBatchLine = generalJournalBatchLineSvc.fromDTO(dto);
         generalJournalBatchLine.setGeneralJournalBatchLineId(generalJournalBatchLineId);

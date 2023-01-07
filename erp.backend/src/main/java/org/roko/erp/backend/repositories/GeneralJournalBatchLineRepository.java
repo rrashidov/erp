@@ -27,4 +27,7 @@ public interface GeneralJournalBatchLineRepository
 
         @Query("SELECT COUNT(generalJournalBatchLine) FROM GeneralJournalBatchLine generalJournalBatchLine WHERE generalJournalBatchLine.generalJournalBatch = :generalJournalBatch")
         public int count(@Param("generalJournalBatch") GeneralJournalBatch generalJournalBatch);
+
+        @Query("SELECT COALESCE(MAX(generalJournalBatchLine.generalJournalBatchLineId.lineNo), 0) FROM GeneralJournalBatchLine generalJournalBatchLine WHERE generalJournalBatchLine.generalJournalBatch = :generalJournalBatch")
+        public int maxLineNo(@Param("generalJournalBatch") GeneralJournalBatch generalJournalBatch);
 }

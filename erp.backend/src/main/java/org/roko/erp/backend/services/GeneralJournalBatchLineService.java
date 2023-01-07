@@ -23,6 +23,8 @@ public interface GeneralJournalBatchLineService {
 
     public int count(GeneralJournalBatch generalJournalBatch);
 
+    public int maxLineNo(GeneralJournalBatch generalJournalBatch);
+
     public GeneralJournalBatchLineDTO toDTO(GeneralJournalBatchLine generalJournalBatchLine);
 
     public GeneralJournalBatchLine fromDTO(GeneralJournalBatchLineDTO dto);

@@ -192,6 +192,13 @@ public class GeneralJournalBatchLineServiceTest {
     }
 
     @Test
+    public void maxLineNo_delegatesToRepo(){
+        svc.maxLineNo(generalJournalBatchMock);
+
+        verify(repoMock).maxLineNo(generalJournalBatchMock);
+    }
+
+    @Test
     public void toDTO_returnsProperValue() {
         GeneralJournalBatchLineDTO dto = svc.toDTO(generalJournalBatchLineMock);
 
