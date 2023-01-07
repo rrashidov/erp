@@ -30,14 +30,14 @@
                         th:field="*{lineNo}">
 
                     <div class="col-sm-6">
-                        <label for="sourceType" class="form-label">Source Type</label>
-                        <input readonly type="text" class="form-control" id="sourceType" placeholder="" value=""
-                            th:field="*{sourceType}">
+                        <label for="type" class="form-label">Source Type</label>
+                        <input readonly type="text" class="form-control" id="type" placeholder="" value=""
+                            th:field="*{type}">
                     </div>
 
                     <div class="col-sm-6">
-                        <label for="item" class="form-label">Source</label>
-                        <select class="form-select" aria-label="Default select example" th:field="*{sourceCode}">
+                        <label for="code" class="form-label">Source</label>
+                        <select class="form-select" aria-label="Default select example" th:field="*{code}">
                             <option selected value=""></option>
                             <option th:each="source : ${sources}" th:value="${source.code}"
                                 th:text="${source.name}">
@@ -45,8 +45,8 @@
                         </select>
                     </div>
 
-                    <input hidden type="text" class="form-control" id="sourceName" placeholder="" value=""
-                        th:field="*{sourceName}">
+                    <input hidden type="text" class="form-control" id="name" placeholder="" value=""
+                        th:field="*{name}">
 
                     <input hidden type="text" class="form-control" id="operationType" placeholder="" value=""
                         th:field="*{operationType}">

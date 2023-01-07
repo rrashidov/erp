@@ -31,17 +31,17 @@
 
                     <div class="col-sm-6">
                         <label for="sourceType" class="form-label">Source Type</label>
-                        <select class="form-select" aria-label="Default select example" th:field="*{sourceType}">
+                        <select class="form-select" aria-label="Default select example" th:field="*{type}">
                             <option th:each="sourceType : ${T(org.roko.erp.dto.GeneralJournalBatchLineType).values()}"
                                 th:value="${sourceType}" th:text="${sourceType}"></option>
                         </select>
                     </div>
 
-                    <input hidden type="text" class="form-control" id="sourceCode" placeholder="" value=""
-                        th:field="*{sourceCode}">
+                    <input hidden type="text" class="form-control" id="ode" placeholder="" value=""
+                        th:field="*{code}">
 
-                    <input hidden type="text" class="form-control" id="sourceName" placeholder="" value=""
-                        th:field="*{sourceName}">
+                    <input hidden type="text" class="form-control" id="name" placeholder="" value=""
+                        th:field="*{name}">
 
                     <input hidden type="text" class="form-control" id="operationType" placeholder="" value=""
                         th:field="*{operationType}">

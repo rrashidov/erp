@@ -8,7 +8,6 @@ import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineOperationType;
 import org.roko.erp.dto.GeneralJournalBatchLineType;
-import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineModel;
 import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineSource;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.CustomerService;
@@ -48,7 +47,7 @@ public class GeneralJournalBatchLineController {
     @GetMapping("/generalJournalBatchLineWizard")
     public String wizard(@RequestParam(name = "generalJournalBatchCode") String code,
             @RequestParam(name = "lineNo", required = false, defaultValue = "0") int lineNo, Model model) {
-        GeneralJournalBatchLineModel generalJournalBatchLineModel = new GeneralJournalBatchLineModel();
+                GeneralJournalBatchLineDTO generalJournalBatchLineModel = new GeneralJournalBatchLineDTO();
         generalJournalBatchLineModel.setGeneralJournalBatchCode(code);
 
         if (lineNo != 0) {
@@ -63,19 +62,19 @@ public class GeneralJournalBatchLineController {
 
     @PostMapping("/generalJournalBatchLineWizardFirstPage")
     public String postGeneralJournalBatchLineWizardFirstPage(
-            @ModelAttribute GeneralJournalBatchLineModel generalJournalBatchLine, Model model) {
+            @ModelAttribute GeneralJournalBatchLineDTO generalJournalBatchLine, Model model) {
 
         List<GeneralJournalBatchLineSource> sources = new ArrayList<>();
 
-        if (generalJournalBatchLine.getSourceType().equals(GeneralJournalBatchLineType.BANK_ACCOUNT)) {
+        if (generalJournalBatchLine.getType().equals(GeneralJournalBatchLineType.BANK_ACCOUNT)) {
             addBankAccounts(sources);
         }
 
-        if (generalJournalBatchLine.getSourceType().equals(GeneralJournalBatchLineType.CUSTOMER)) {
+        if (generalJournalBatchLine.getType().equals(GeneralJournalBatchLineType.CUSTOMER)) {
             addCustomers(sources);
         }
 
-        if (generalJournalBatchLine.getSourceType().equals(GeneralJournalBatchLineType.VENDOR)) {
+        if (generalJournalBatchLine.getType().equals(GeneralJournalBatchLineType.VENDOR)) {
             addVendors(sources);
         }
 
@@ -87,7 +86,7 @@ public class GeneralJournalBatchLineController {
 
     @PostMapping("/generalJournalBatchLineWizardSecondPage")
     public String postGeneralJournalBatchLineWizardSecondPage(
-            @ModelAttribute GeneralJournalBatchLineModel generalJournalBatchLine, Model model) {
+            @ModelAttribute GeneralJournalBatchLineDTO generalJournalBatchLine, Model model) {
         setSourceName(generalJournalBatchLine);
 
         model.addAttribute("generalJournalBatchLine", generalJournalBatchLine);
@@ -98,7 +97,7 @@ public class GeneralJournalBatchLineController {
 
     @PostMapping("/generalJournalBatchLineWizardThirdPage")
     public RedirectView postGeneralJournalBatchLineWizardThirdPage(
-            @ModelAttribute GeneralJournalBatchLineModel generalJournalBatchLine,
+            @ModelAttribute GeneralJournalBatchLineDTO generalJournalBatchLine,
             RedirectAttributes redirectAttributes) {
 
         GeneralJournalBatchDTO generalJournalBatch = generalJournalBatchSvc
@@ -126,7 +125,7 @@ public class GeneralJournalBatchLineController {
     }
 
     private void create(GeneralJournalBatchDTO generalJournalBatch,
-            GeneralJournalBatchLineModel generalJournalBatchLine) {
+    GeneralJournalBatchLineDTO generalJournalBatchLine) {
         GeneralJournalBatchLineDTO line = new GeneralJournalBatchLineDTO();
 
         fromModel(line, generalJournalBatchLine);
@@ -135,7 +134,7 @@ public class GeneralJournalBatchLineController {
     }
 
     private void update(GeneralJournalBatchDTO generalJournalBatch,
-            GeneralJournalBatchLineModel generalJournalBatchLine) {
+    GeneralJournalBatchLineDTO generalJournalBatchLine) {
         GeneralJournalBatchLineDTO line = svc.get(generalJournalBatchLine.getGeneralJournalBatchCode(),
                 generalJournalBatchLine.getLineNo());
 
@@ -144,10 +143,10 @@ public class GeneralJournalBatchLineController {
         svc.update(generalJournalBatchLine.getGeneralJournalBatchCode(), generalJournalBatchLine.getLineNo(), line);
     }
 
-    public void fromModel(GeneralJournalBatchLineDTO line, GeneralJournalBatchLineModel model) {
-        line.setType(org.roko.erp.dto.GeneralJournalBatchLineType.valueOf(model.getSourceType().name()));
-        line.setCode(model.getSourceCode());
-        line.setName(model.getSourceName());
+    public void fromModel(GeneralJournalBatchLineDTO line, GeneralJournalBatchLineDTO model) {
+        line.setType(model.getType());
+        line.setCode(model.getCode());
+        line.setName(model.getName());
         line.setOperationType(org.roko.erp.dto.GeneralJournalBatchLineOperationType.valueOf(model.getOperationType().name()));
         line.setDocumentCode(model.getDocumentCode());
         line.setDate(model.getDate());
@@ -156,12 +155,11 @@ public class GeneralJournalBatchLineController {
     }
 
     private void toModel(GeneralJournalBatchLineDTO generalJournalBatchLine,
-            GeneralJournalBatchLineModel generalJournalBatchLineModel) {
+    GeneralJournalBatchLineDTO generalJournalBatchLineModel) {
         generalJournalBatchLineModel.setLineNo(generalJournalBatchLine.getLineNo());
-        generalJournalBatchLineModel
-                .setSourceType(GeneralJournalBatchLineType.valueOf(generalJournalBatchLine.getType().name()));
-        generalJournalBatchLineModel.setSourceCode(generalJournalBatchLine.getCode());
-        generalJournalBatchLineModel.setSourceName(generalJournalBatchLine.getName());
+        generalJournalBatchLineModel.setType(generalJournalBatchLine.getType());
+        generalJournalBatchLineModel.setCode(generalJournalBatchLine.getCode());
+        generalJournalBatchLineModel.setName(generalJournalBatchLine.getName());
         generalJournalBatchLineModel.setOperationType(
                 GeneralJournalBatchLineOperationType.valueOf(generalJournalBatchLine.getOperationType().name()));
         generalJournalBatchLineModel.setDocumentCode(generalJournalBatchLine.getDocumentCode());
@@ -172,18 +170,18 @@ public class GeneralJournalBatchLineController {
         }
     }
 
-    private void setSourceName(GeneralJournalBatchLineModel generalJournalBatchLine) {
-        if (generalJournalBatchLine.getSourceType().equals(GeneralJournalBatchLineType.BANK_ACCOUNT)) {
+    private void setSourceName(GeneralJournalBatchLineDTO generalJournalBatchLine) {
+        if (generalJournalBatchLine.getType().equals(GeneralJournalBatchLineType.BANK_ACCOUNT)) {
             generalJournalBatchLine
-                    .setSourceName(bankAccountSvc.get(generalJournalBatchLine.getSourceCode()).getName());
+                    .setName(bankAccountSvc.get(generalJournalBatchLine.getCode()).getName());
         }
 
-        if (generalJournalBatchLine.getSourceType().equals(GeneralJournalBatchLineType.CUSTOMER)) {
-            generalJournalBatchLine.setSourceName(customerSvc.get(generalJournalBatchLine.getSourceCode()).getName());
+        if (generalJournalBatchLine.getType().equals(GeneralJournalBatchLineType.CUSTOMER)) {
+            generalJournalBatchLine.setName(customerSvc.get(generalJournalBatchLine.getCode()).getName());
         }
 
-        if (generalJournalBatchLine.getSourceType().equals(GeneralJournalBatchLineType.VENDOR)) {
-            generalJournalBatchLine.setSourceName(vendorSvc.get(generalJournalBatchLine.getSourceCode()).getName());
+        if (generalJournalBatchLine.getType().equals(GeneralJournalBatchLineType.VENDOR)) {
+            generalJournalBatchLine.setName(vendorSvc.get(generalJournalBatchLine.getCode()).getName());
         }
     }
 

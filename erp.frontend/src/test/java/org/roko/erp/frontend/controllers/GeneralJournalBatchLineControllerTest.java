@@ -26,7 +26,6 @@ import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.dto.list.BankAccountList;
 import org.roko.erp.dto.list.CustomerList;
 import org.roko.erp.dto.list.VendorList;
-import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineModel;
 import org.roko.erp.frontend.controllers.model.GeneralJournalBatchLineSource;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.CustomerService;
@@ -89,7 +88,7 @@ public class GeneralJournalBatchLineControllerTest {
     private ArgumentCaptor<GeneralJournalBatchLineDTO> generalJournalBatchLineArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<GeneralJournalBatchLineModel> generalJournalBatchLineModelArgumentCaptor;
+    private ArgumentCaptor<GeneralJournalBatchLineDTO> generalJournalBatchLineModelArgumentCaptor;
 
     @Mock
     private GeneralJournalBatchLineService svcMock;
@@ -107,7 +106,7 @@ public class GeneralJournalBatchLineControllerTest {
     private RedirectAttributes redirectAttributesMock;
 
     @Mock
-    private GeneralJournalBatchLineModel generalJournalBatchLineModelMock;
+    private GeneralJournalBatchLineDTO generalJournalBatchLineModelMock;
 
     @Mock
     private BankAccountService bankAccountSvcMock;
@@ -208,7 +207,7 @@ public class GeneralJournalBatchLineControllerTest {
         when(generalJournalBatchLineMock.getAmount()).thenReturn(TEST_AMOUNT);
         when(generalJournalBatchLineMock.getBankAccountCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_1);
 
-        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
+        when(generalJournalBatchLineModelMock.getType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
         when(generalJournalBatchLineModelMock.getOperationType()).thenReturn(GeneralJournalBatchLineOperationType.EMPTY);
 
         when(svcMock.get(TEST_CODE, TEST_LINE_NO)).thenReturn(generalJournalBatchLineMock);
@@ -221,7 +220,7 @@ public class GeneralJournalBatchLineControllerTest {
     public void wizard_returnsProperTemplate() {
         String template = controller.wizard(TEST_CODE, 0, modelMock);
 
-        verify(modelMock).addAttribute(eq("generalJournalBatchLine"), any(GeneralJournalBatchLineModel.class));
+        verify(modelMock).addAttribute(eq("generalJournalBatchLine"), any(GeneralJournalBatchLineDTO.class));
 
         assertEquals("generalJournalBatchLineWizardFirstPage.html", template);
     }
@@ -233,14 +232,14 @@ public class GeneralJournalBatchLineControllerTest {
         verify(modelMock).addAttribute(eq("generalJournalBatchLine"),
                 generalJournalBatchLineModelArgumentCaptor.capture());
 
-        GeneralJournalBatchLineModel generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor
+                GeneralJournalBatchLineDTO generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor
                 .getValue();
 
         assertEquals(TEST_CODE, generalJournalBatchLineModel.getGeneralJournalBatchCode());
         assertEquals(TEST_LINE_NO, generalJournalBatchLineModel.getLineNo());
-        assertEquals(TEST_SOURCE_TYPE, generalJournalBatchLineModel.getSourceType());
-        assertEquals(TEST_SOURCE_CODE, generalJournalBatchLineModel.getSourceCode());
-        assertEquals(TEST_SOURCE_NAME, generalJournalBatchLineModel.getSourceName());
+        assertEquals(TEST_SOURCE_TYPE, generalJournalBatchLineModel.getType());
+        assertEquals(TEST_SOURCE_CODE, generalJournalBatchLineModel.getCode());
+        assertEquals(TEST_SOURCE_NAME, generalJournalBatchLineModel.getName());
         assertEquals(TEST_OPERATION_TYPE, generalJournalBatchLineModel.getOperationType());
         assertEquals(TEST_DATE, generalJournalBatchLineModel.getDate());
         assertEquals(TEST_DOCUMENT_CODE, generalJournalBatchLineModel.getDocumentCode());
@@ -250,7 +249,7 @@ public class GeneralJournalBatchLineControllerTest {
 
     @Test
     public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeBankAccount() {
-        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
+        when(generalJournalBatchLineModelMock.getType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
         
         String template = controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
 
@@ -266,7 +265,7 @@ public class GeneralJournalBatchLineControllerTest {
 
     @Test
     public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeCustomer() {
-        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.CUSTOMER);
+        when(generalJournalBatchLineModelMock.getType()).thenReturn(GeneralJournalBatchLineType.CUSTOMER);
         
         controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
 
@@ -279,7 +278,7 @@ public class GeneralJournalBatchLineControllerTest {
 
     @Test
     public void postGeneralJournalBatchLineWizardFirstPage_returnsProperTemplate_whenSourceTypeVendor() {
-        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.VENDOR);
+        when(generalJournalBatchLineModelMock.getType()).thenReturn(GeneralJournalBatchLineType.VENDOR);
         
         controller.postGeneralJournalBatchLineWizardFirstPage(generalJournalBatchLineModelMock, modelMock);
 
@@ -292,15 +291,15 @@ public class GeneralJournalBatchLineControllerTest {
 
     @Test
     public void postGeneralJournalBatchLineWizardSecondPage_returnsProperTemplate_whenSourceTypeBankAccount() {
-        when(generalJournalBatchLineModelMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
-        when(generalJournalBatchLineModelMock.getSourceCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_1);
+        when(generalJournalBatchLineModelMock.getType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
+        when(generalJournalBatchLineModelMock.getCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_1);
 
         String template = controller.postGeneralJournalBatchLineWizardSecondPage(generalJournalBatchLineModelMock, modelMock);
 
         verify(modelMock).addAttribute("generalJournalBatchLine", generalJournalBatchLineModelMock);
         verify(modelMock).addAttribute("bankAccounts", bankAccounts);
 
-        verify(generalJournalBatchLineModelMock).setSourceName(TEST_BANK_ACCOUNT_NAME_1);
+        verify(generalJournalBatchLineModelMock).setName(TEST_BANK_ACCOUNT_NAME_1);
 
         assertEquals("generalJournalBatchLineWizardThirdPage.html", template);
     }

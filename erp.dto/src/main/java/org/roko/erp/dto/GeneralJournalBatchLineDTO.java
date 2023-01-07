@@ -2,19 +2,32 @@ package org.roko.erp.dto;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class GeneralJournalBatchLineDTO {
     
-    private String generalJournalBatchCode;
-    private int lineNo;
-    private GeneralJournalBatchLineType type;
-    private String code;
-    private String name;
-    private GeneralJournalBatchLineOperationType operationType;
-    private String documentCode;
+    private String generalJournalBatchCode = "";
+
+    private int lineNo = 0;
+
+    private GeneralJournalBatchLineType type = GeneralJournalBatchLineType.CUSTOMER;
+
+    private String code = "";
+
+    private String name = "";
+
+    private GeneralJournalBatchLineOperationType operationType = GeneralJournalBatchLineOperationType.EMPTY;
+
+    private String documentCode = "";
+
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private Date date;
-    private double amount;
-    private String bankAccountCode;
-    private String bankAccountName;
+
+    private double amount = 0.0;
+
+    private String bankAccountCode = "";
+    
+    private String bankAccountName = "";
 
     public String getGeneralJournalBatchCode() {
         return generalJournalBatchCode;
