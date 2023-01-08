@@ -49,15 +49,10 @@ public class VendorController {
     @GetMapping("/vendorCard")
     public String card(@RequestParam(name = "code", required = false) String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model) {
-        VendorDTO vendorModel = new VendorDTO();
+        VendorDTO vendor = new VendorDTO();
 
         if (code != null) {
-            VendorDTO vendor = vendorSvc.get(code);
-
-            vendorModel.setCode(vendor.getCode());
-            vendorModel.setName(vendor.getName());
-            vendorModel.setAddress(vendor.getAddress());
-            vendorModel.setPaymentMethodCode(vendor.getPaymentMethodCode());
+            vendor = vendorSvc.get(code);
 
             VendorLedgerEntryList vendorLedgerEntryList = vendorLedgerEntrySvc.list(code, page);
 
@@ -68,7 +63,7 @@ public class VendorController {
 
         PaymentMethodList paymentMethodList = paymentMethodSvc.list();
 
-        model.addAttribute("vendor", vendorModel);
+        model.addAttribute("vendor", vendor);
         model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "vendorCard.html";
@@ -81,15 +76,11 @@ public class VendorController {
         if (vendor == null) {
             vendor = new VendorDTO();
             vendor.setCode(vendorModel.getCode());
-            vendor.setName(vendorModel.getName());
-            vendor.setAddress(vendorModel.getAddress());
-            vendor.setPaymentMethodCode(vendorModel.getPaymentMethodCode());
+            transferFields(vendorModel, vendor);
 
             vendorSvc.create(vendor);
         } else {
-            vendor.setName(vendorModel.getName());
-            vendor.setAddress(vendorModel.getAddress());
-            vendor.setPaymentMethodCode(vendorModel.getPaymentMethodCode());
+            transferFields(vendorModel, vendor);
 
             vendorSvc.update(vendorModel.getCode(), vendor);
         }
@@ -103,4 +94,11 @@ public class VendorController {
 
         return new RedirectView("/vendorList");
     }
+
+    private void transferFields(VendorDTO source, VendorDTO target) {
+        target.setName(source.getName());
+        target.setAddress(source.getAddress());
+        target.setPaymentMethodCode(source.getPaymentMethodCode());
+    }
+
 }
