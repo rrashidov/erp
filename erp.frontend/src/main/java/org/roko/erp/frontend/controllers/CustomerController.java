@@ -55,15 +55,10 @@ public class CustomerController {
     public String card(@RequestParam(name = "code", required = false) String code,
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             Model model) {
-        CustomerDTO customerModel = new CustomerDTO();
+        CustomerDTO customer = new CustomerDTO();
 
         if (code != null) {
-            CustomerDTO customer = svc.get(code);
-
-            customerModel.setCode(customer.getCode());
-            customerModel.setName(customer.getName());
-            customerModel.setAddress(customer.getAddress());
-            customerModel.setPaymentMethodCode(customer.getPaymentMethodCode());
+            customer = svc.get(code);
 
             CustomerLedgerEntryList customerLedgerEntryList = customerLedgerEntrySvc.list(customer.getCode(), page);
 
@@ -74,7 +69,7 @@ public class CustomerController {
 
         PaymentMethodList paymentMethodList = paymentMethodSvc.list();
 
-        model.addAttribute("customer", customerModel);
+        model.addAttribute("customer", customer);
         model.addAttribute("paymentMethods", paymentMethodList.getData());
 
         return "customerCard.html";
