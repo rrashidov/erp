@@ -44,19 +44,16 @@ public class PaymentMethodController {
 
     @GetMapping("/paymentMethodCard")
     public String card(@RequestParam(name="code", required=false) String code, Model model){
-        PaymentMethodDTO paymentMethodModel = new PaymentMethodDTO();
+        PaymentMethodDTO paymentMethod = new PaymentMethodDTO();
 
         if (code != null){
-            PaymentMethodDTO paymentMethod = svc.get(code);
-            paymentMethodModel.setCode(paymentMethod.getCode());
-            paymentMethodModel.setName(paymentMethod.getName());
-            paymentMethodModel.setBankAccountCode(paymentMethod.getBankAccountCode());
+            paymentMethod = svc.get(code);
         }
 
         BankAccountList bankAccountList = bankAccountSvc.list();
 
         model.addAttribute("bankAccounts", bankAccountList.getData());
-        model.addAttribute("paymentMethod", paymentMethodModel);
+        model.addAttribute("paymentMethod", paymentMethod);
 
         return "paymentMethodCard.html";
     }
@@ -68,13 +65,12 @@ public class PaymentMethodController {
         if (paymentMethod == null) {
             paymentMethod = new PaymentMethodDTO();
             paymentMethod.setCode(model.getCode());
-            paymentMethod.setName(model.getName());
-            paymentMethod.setBankAccountCode(model.getBankAccountCode());
+
+            transferFields(model, paymentMethod);
     
             svc.create(paymentMethod);
         } else {
-            paymentMethod.setName(model.getName());
-            paymentMethod.setBankAccountCode(model.getBankAccountCode());
+            transferFields(model, paymentMethod);
 
             svc.update(model.getCode(), paymentMethod);
         }
@@ -88,4 +84,10 @@ public class PaymentMethodController {
 
         return new RedirectView("/paymentMethodList");
     }
+
+    private void transferFields(PaymentMethodDTO source, PaymentMethodDTO target) {
+        target.setName(source.getName());
+        target.setBankAccountCode(source.getBankAccountCode());
+    }
+
 }
