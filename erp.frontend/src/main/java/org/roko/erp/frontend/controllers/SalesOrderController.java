@@ -71,16 +71,15 @@ public class SalesOrderController {
 
     @GetMapping("/salesOrderWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
-        SalesDocumentDTO salesOrderModel = new SalesDocumentDTO();
+        SalesDocumentDTO salesOrder = new SalesDocumentDTO();
 
         if (code != null) {
-            SalesDocumentDTO salesOrder = svc.get(code);
-            toModel(salesOrder, salesOrderModel);
+            salesOrder = svc.get(code);
         }
 
         CustomerList customerList = customerSvc.list();
 
-        model.addAttribute("salesOrderModel", salesOrderModel);
+        model.addAttribute("salesOrderModel", salesOrder);
         model.addAttribute("customers", customerList.getData());
 
         return "salesOrderWizardFirstPage.html";
@@ -107,9 +106,7 @@ public class SalesOrderController {
             RedirectAttributes redirectAttributes) {
 
         if (salesOrderModel.getCode().isEmpty()) {
-            SalesDocumentDTO salesOrderToCreate = fromModel(salesOrderModel);
-
-            String code = svc.create(salesOrderToCreate);
+            String code = svc.create(salesOrderModel);
 
             redirectAttributes.addAttribute("code", code);
         } else {
@@ -159,21 +156,6 @@ public class SalesOrderController {
         }
 
         return new RedirectView("/salesOrderList");
-    }
-
-    private SalesDocumentDTO fromModel(SalesDocumentDTO salesOrderModelMock) {
-        SalesDocumentDTO salesOrder = new SalesDocumentDTO();
-        salesOrder.setCustomerCode(salesOrderModelMock.getCustomerCode());
-        salesOrder.setDate(salesOrderModelMock.getDate());
-        salesOrder.setPaymentMethodCode(salesOrderModelMock.getPaymentMethodCode());
-        return salesOrder;
-    }
-
-    private void toModel(SalesDocumentDTO salesOrder, SalesDocumentDTO salesOrderModel) {
-        salesOrderModel.setCode(salesOrder.getCode());
-        salesOrderModel.setCustomerCode(salesOrder.getCustomerCode());
-        salesOrderModel.setDate(salesOrder.getDate());
-        salesOrderModel.setPaymentMethodCode(salesOrder.getPaymentMethodCode());
     }
 
     private void fromModel(SalesDocumentDTO salesOrder, SalesDocumentDTO salesOrderModel) {
