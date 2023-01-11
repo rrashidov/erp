@@ -29,22 +29,14 @@ public class SalesOrderLineController {
     @GetMapping("/salesOrderLineWizard")
     public String salesOrderLineWizard(@RequestParam(name = "salesOrderCode") String salesOrderCode,
             @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
-        SalesDocumentLineDTO salesOrderLineModel = new SalesDocumentLineDTO();
-        salesOrderLineModel.setSalesDocumentCode(salesOrderCode);
+        SalesDocumentLineDTO salesOrderLine = new SalesDocumentLineDTO();
+        salesOrderLine.setSalesDocumentCode(salesOrderCode);
 
         if (lineNo != null) {
-            SalesDocumentLineDTO salesOrderLine = salesOrderLineSvc.get(salesOrderCode, lineNo);
-
-            salesOrderLineModel.setLineNo(lineNo);
-            salesOrderLineModel.setItemCode(salesOrderLine.getItemCode());
-            salesOrderLineModel.setItemName(salesOrderLine.getItemName());
-
-            salesOrderLineModel.setQuantity(salesOrderLine.getQuantity());
-            salesOrderLineModel.setPrice(salesOrderLine.getPrice());
-            salesOrderLineModel.setAmount(salesOrderLine.getAmount());
+            salesOrderLine = salesOrderLineSvc.get(salesOrderCode, lineNo);
         }
 
-        model.addAttribute("salesOrderLine", salesOrderLineModel);
+        model.addAttribute("salesOrderLine", salesOrderLine);
         model.addAttribute("items", itemSvc.list().getData());
 
         return "salesOrderLineWizardFirstPage.html";
@@ -91,13 +83,7 @@ public class SalesOrderLineController {
                     salesOrderLineToUpdate);
         } else {
             // create
-            SalesDocumentLineDTO salesOrderLineToCreate = new SalesDocumentLineDTO();
-            salesOrderLineToCreate.setItemCode(salesOrderLine.getItemCode());
-            salesOrderLineToCreate.setQuantity(salesOrderLine.getQuantity());
-            salesOrderLineToCreate.setPrice(salesOrderLine.getPrice());
-            salesOrderLineToCreate.setAmount(salesOrderLine.getAmount());
-
-            salesOrderLineSvc.create(salesOrderLine.getSalesDocumentCode(), salesOrderLineToCreate);
+            salesOrderLineSvc.create(salesOrderLine.getSalesDocumentCode(), salesOrderLine);
         }
 
         redirectAttributes.addAttribute("code", salesOrderLine.getSalesDocumentCode());
