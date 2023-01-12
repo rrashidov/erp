@@ -63,16 +63,9 @@ public class PaymentMethodController {
         PaymentMethodDTO paymentMethod = svc.get(model.getCode());
 
         if (paymentMethod == null) {
-            paymentMethod = new PaymentMethodDTO();
-            paymentMethod.setCode(model.getCode());
-
-            transferFields(model, paymentMethod);
-    
-            svc.create(paymentMethod);
+            svc.create(model);
         } else {
-            transferFields(model, paymentMethod);
-
-            svc.update(model.getCode(), paymentMethod);
+            svc.update(model.getCode(), model);
         }
 
         return new RedirectView("/paymentMethodList");
@@ -83,11 +76,6 @@ public class PaymentMethodController {
         svc.delete(code);
 
         return new RedirectView("/paymentMethodList");
-    }
-
-    private void transferFields(PaymentMethodDTO source, PaymentMethodDTO target) {
-        target.setName(source.getName());
-        target.setBankAccountCode(source.getBankAccountCode());
     }
 
 }

@@ -153,26 +153,14 @@ public class PaymentMethodControllerTest {
 
         assertEquals("/paymentMethodList", redirect.getUrl());
 
-        verify(svcMock).create(paymentMethodArgumentCaptor.capture());
-
-        PaymentMethodDTO paymentMethod = paymentMethodArgumentCaptor.getValue();
-
-        assertEquals(TEST_CODE, paymentMethod.getCode());
-        assertEquals(TEST_NAME, paymentMethod.getName());
-        assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethod.getBankAccountCode());
+        verify(svcMock).create(paymentMethodModelMock);
     }
 
     @Test
     public void postingCard_updates_whenCalledForExistingEntity(){
         controller.postCard(paymentMethodModelMock);
 
-        verify(svcMock).update(eq(TEST_CODE), paymentMethodArgumentCaptor.capture());
-
-        PaymentMethodDTO paymentMethod = paymentMethodArgumentCaptor.getValue();
-
-        assertEquals(TEST_CODE, paymentMethod.getCode());
-        assertEquals(TEST_NAME, paymentMethod.getName());
-        assertEquals(TEST_BANK_ACCOUNT_CODE, paymentMethod.getBankAccountCode());
+        verify(svcMock).update(TEST_CODE, paymentMethodModelMock);
     }
 
     @Test
