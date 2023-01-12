@@ -268,13 +268,7 @@ public class SalesOrderControllerTest {
 
         verify(redirectAttributesMock).addAttribute("code", NEW_SALES_ORDER_CODE);
 
-        verify(svcMock).create(salesOrderArgumentCaptor.capture());
-
-        SalesDocumentDTO createdSalesOrder = salesOrderArgumentCaptor.getValue();
-
-        assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, createdSalesOrder.getCustomerCode());
-        assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, createdSalesOrder.getPaymentMethodCode());
-        assertEquals(SalesOrderModelRule.TEST_DATE, createdSalesOrder.getDate());
+        verify(svcMock).create(salesOrderModelRule.mock);
     }
 
     @Test
@@ -283,15 +277,9 @@ public class SalesOrderControllerTest {
 
         assertEquals("/salesOrderCard", redirectView.getUrl());
 
-        verify(svcMock).update(eq(SalesOrderModelRule.TEST_SALES_ORDER_CODE), salesOrderArgumentCaptor.capture());
+        verify(svcMock).update(SalesOrderModelRule.TEST_SALES_ORDER_CODE, salesOrderModelRule.mock);
 
         verify(redirectAttributesMock).addAttribute("code", SalesOrderModelRule.TEST_SALES_ORDER_CODE);
-
-        SalesDocumentDTO updatedSalesOrder = salesOrderArgumentCaptor.getValue();
-
-        assertEquals(SalesOrderModelRule.TEST_CUSTOMER_CODE, updatedSalesOrder.getCustomerCode());
-        assertEquals(SalesOrderModelRule.TEST_PAYMENT_METHOD_CODE, updatedSalesOrder.getPaymentMethodCode());
-        assertEquals(dateMock, updatedSalesOrder.getDate());
     }
 
     @Test

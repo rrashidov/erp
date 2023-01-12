@@ -105,17 +105,15 @@ public class SalesOrderController {
     public RedirectView postWizardSecondPage(@ModelAttribute SalesDocumentDTO salesOrderModel,
             RedirectAttributes redirectAttributes) {
 
+        String salesOrderCodeToRedirectTo = "";
+
         if (salesOrderModel.getCode().isEmpty()) {
-            String code = svc.create(salesOrderModel);
-
-            redirectAttributes.addAttribute("code", code);
+            salesOrderCodeToRedirectTo = create(salesOrderModel);
         } else {
-            SalesDocumentDTO salesOrderToUpdate = svc.get(salesOrderModel.getCode());
-            fromModel(salesOrderToUpdate, salesOrderModel);
-            svc.update(salesOrderModel.getCode(), salesOrderToUpdate);
-
-            redirectAttributes.addAttribute("code", salesOrderModel.getCode());
+            salesOrderCodeToRedirectTo = update(salesOrderModel);
         }
+
+        redirectAttributes.addAttribute("code", salesOrderCodeToRedirectTo);
 
         return new RedirectView("/salesOrderCard");
     }
@@ -158,10 +156,13 @@ public class SalesOrderController {
         return new RedirectView("/salesOrderList");
     }
 
-    private void fromModel(SalesDocumentDTO salesOrder, SalesDocumentDTO salesOrderModel) {
-        salesOrder.setCustomerCode(salesOrderModel.getCustomerCode());
-        salesOrder.setDate(salesOrderModel.getDate());
-        salesOrder.setPaymentMethodCode(salesOrderModel.getPaymentMethodCode());
+    private String create(SalesDocumentDTO salesOrderModel) {
+        return svc.create(salesOrderModel);
+    }
+
+    private String update(SalesDocumentDTO salesOrderModel) {
+        svc.update(salesOrderModel.getCode(), salesOrderModel);
+        return salesOrderModel.getCode();
     }
 
 }
