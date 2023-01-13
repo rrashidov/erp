@@ -68,19 +68,9 @@ public class ItemController {
         ItemDTO itemFromDB = svc.get(item.getCode());
 
         if (itemFromDB == null) {
-            itemFromDB = new ItemDTO();
-            itemFromDB.setCode(item.getCode());
-            itemFromDB.setName(item.getName());
-            itemFromDB.setSalesPrice(item.getSalesPrice());
-            itemFromDB.setPurchasePrice(item.getPurchasePrice());
-
-            svc.create(itemFromDB);
+            svc.create(item);
         } else {
-            itemFromDB.setName(item.getName());
-            itemFromDB.setSalesPrice(item.getSalesPrice());
-            itemFromDB.setPurchasePrice(item.getPurchasePrice());
-
-            svc.update(item.getCode(), itemFromDB);
+            svc.update(item.getCode(), item);
         }
 
         return new RedirectView("/itemList");
