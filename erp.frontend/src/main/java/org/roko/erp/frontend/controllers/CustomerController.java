@@ -80,13 +80,9 @@ public class CustomerController {
         CustomerDTO customer = svc.get(customerModel.getCode());
 
         if (customer == null){
-            customer = new CustomerDTO();
-            customer.setCode(customerModel.getCode());
-            transferFields(customerModel, customer);
-            svc.create(customer);
+            svc.create(customerModel);
         } else {
-            transferFields(customerModel, customer);
-            svc.update(customerModel.getCode(), customer);
+            svc.update(customerModel.getCode(), customerModel);
         }
 
         return new RedirectView("/customerList");
@@ -97,12 +93,6 @@ public class CustomerController {
         svc.delete(code);
 
         return new RedirectView("/customerList");
-    }
-
-    private void transferFields(CustomerDTO source, CustomerDTO target) {
-        target.setName(source.getName());
-        target.setAddress(source.getAddress());
-        target.setPaymentMethodCode(source.getPaymentMethodCode());
     }
 
 }
