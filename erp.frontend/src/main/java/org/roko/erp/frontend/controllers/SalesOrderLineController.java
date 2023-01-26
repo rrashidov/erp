@@ -71,16 +71,8 @@ public class SalesOrderLineController {
 
         if (salesOrderLine.getLineNo() != 0) {
             // update
-            SalesDocumentLineDTO salesOrderLineToUpdate = salesOrderLineSvc.get(salesOrderLine.getSalesDocumentCode(),
-                    salesOrderLine.getLineNo());
-
-            salesOrderLineToUpdate.setItemCode(salesOrderLine.getItemCode());
-            salesOrderLineToUpdate.setQuantity(salesOrderLine.getQuantity());
-            salesOrderLineToUpdate.setPrice(salesOrderLine.getPrice());
-            salesOrderLineToUpdate.setAmount(salesOrderLine.getAmount());
-
             salesOrderLineSvc.update(salesOrderLine.getSalesDocumentCode(), salesOrderLine.getLineNo(),
-                    salesOrderLineToUpdate);
+                    salesOrderLine);
         } else {
             // create
             salesOrderLineSvc.create(salesOrderLine.getSalesDocumentCode(), salesOrderLine);
