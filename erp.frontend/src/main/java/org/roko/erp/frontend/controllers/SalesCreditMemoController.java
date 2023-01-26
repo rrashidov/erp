@@ -72,16 +72,15 @@ public class SalesCreditMemoController {
 
     @GetMapping("/salesCreditMemoWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
-        SalesDocumentDTO salesCreditMemoModel = new SalesDocumentDTO();
+        SalesDocumentDTO salesCreditMemo = new SalesDocumentDTO();
 
         if (code != null) {
-            SalesDocumentDTO salesCreditMemo = svc.get(code);
-            toModel(salesCreditMemo, salesCreditMemoModel);
+            salesCreditMemo = svc.get(code);
         }
 
         CustomerList customers = customerSvc.list();
 
-        model.addAttribute("salesCreditMemoModel", salesCreditMemoModel);
+        model.addAttribute("salesCreditMemoModel", salesCreditMemo);
         model.addAttribute("customers", customers.getData());
 
         return "salesCreditMemoWizardFirstPage.html";
@@ -106,15 +105,15 @@ public class SalesCreditMemoController {
     @PostMapping("/salesCreditMemoWizardSecondPage")
     public RedirectView postWizardSecondPage(@ModelAttribute SalesDocumentDTO salesCreditMemoModel,
             RedirectAttributes redirectAttributesMock) {
+        String code = salesCreditMemoModel.getCode();
+
         if (salesCreditMemoModel.getCode().isEmpty()) {
-            String code = createSalesCreditMemo(salesCreditMemoModel);
-
-            redirectAttributesMock.addAttribute("code", code);
+            code = svc.create(salesCreditMemoModel);
         } else {
-            updateSalesCreditMemo(salesCreditMemoModel);
-
-            redirectAttributesMock.addAttribute("code", salesCreditMemoModel.getCode());
+            svc.update(salesCreditMemoModel.getCode(), salesCreditMemoModel);
         }
+
+        redirectAttributesMock.addAttribute("code", code);
 
         return new RedirectView("/salesCreditMemoCard");
     }
@@ -153,32 +152,6 @@ public class SalesCreditMemoController {
         }
 
         return new RedirectView("/salesCreditMemoList");
-    }
-
-    private String createSalesCreditMemo(SalesDocumentDTO salesCreditMemoModel) {
-        SalesDocumentDTO salesCreditMemo = new SalesDocumentDTO();
-        salesCreditMemo.setCustomerCode(salesCreditMemoModel.getCustomerCode());
-        salesCreditMemo.setDate(salesCreditMemoModel.getDate());
-        salesCreditMemo.setPaymentMethodCode(salesCreditMemoModel.getPaymentMethodCode());
-
-        return svc.create(salesCreditMemo);
-    }
-
-    private void updateSalesCreditMemo(SalesDocumentDTO salesCreditMemoModel) {
-        SalesDocumentDTO salesCreditMemo = svc.get(salesCreditMemoModel.getCode());
-        salesCreditMemo.setCustomerCode(salesCreditMemoModel.getCustomerCode());
-        salesCreditMemo.setDate(salesCreditMemoModel.getDate());
-        salesCreditMemo.setPaymentMethodCode(salesCreditMemoModel.getPaymentMethodCode());
-
-        svc.update(salesCreditMemoModel.getCode(), salesCreditMemo);
-    }
-
-    private void toModel(SalesDocumentDTO salesCreditMemo, SalesDocumentDTO salesCreditMemoModel) {
-        salesCreditMemoModel.setCode(salesCreditMemo.getCode());
-        salesCreditMemoModel.setCustomerCode(salesCreditMemo.getCustomerCode());
-        salesCreditMemoModel.setCustomerName(salesCreditMemo.getCustomerName());
-        salesCreditMemoModel.setDate(salesCreditMemo.getDate());
-        salesCreditMemoModel.setPaymentMethodCode(salesCreditMemo.getPaymentMethodCode());
     }
 
 }

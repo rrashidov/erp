@@ -280,7 +280,7 @@ public class SalesCreditMemoControllerTest {
 
         verify(redirectAttributesMock).addAttribute("code", TEST_SALES_CREDIT_MEMO_CODE);
 
-        verify(svcMock).update(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoMock);
+        verify(svcMock).update(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoModelMock);
     }
 
     @Test
