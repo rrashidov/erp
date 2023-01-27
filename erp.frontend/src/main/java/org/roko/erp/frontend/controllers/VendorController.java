@@ -74,15 +74,9 @@ public class VendorController {
         VendorDTO vendor = vendorSvc.get(vendorModel.getCode());
 
         if (vendor == null) {
-            vendor = new VendorDTO();
-            vendor.setCode(vendorModel.getCode());
-            transferFields(vendorModel, vendor);
-
-            vendorSvc.create(vendor);
+            vendorSvc.create(vendorModel);
         } else {
-            transferFields(vendorModel, vendor);
-
-            vendorSvc.update(vendorModel.getCode(), vendor);
+            vendorSvc.update(vendorModel.getCode(), vendorModel);
         }
 
         return new RedirectView("/vendorList");
@@ -93,12 +87,6 @@ public class VendorController {
         vendorSvc.delete(code);
 
         return new RedirectView("/vendorList");
-    }
-
-    private void transferFields(VendorDTO source, VendorDTO target) {
-        target.setName(source.getName());
-        target.setAddress(source.getAddress());
-        target.setPaymentMethodCode(source.getPaymentMethodCode());
     }
 
 }
