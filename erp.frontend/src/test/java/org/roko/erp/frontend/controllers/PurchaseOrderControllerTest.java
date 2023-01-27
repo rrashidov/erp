@@ -287,7 +287,7 @@ public class PurchaseOrderControllerTest {
 
         verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
 
-        verify(svcMock).update(TEST_CODE, purchaseOrderMock);
+        verify(svcMock).update(TEST_CODE, purchaseOrderModelMock);
     }
 
     @Test

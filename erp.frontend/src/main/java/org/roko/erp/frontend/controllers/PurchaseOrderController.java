@@ -73,16 +73,15 @@ public class PurchaseOrderController {
 
     @GetMapping("/purchaseOrderWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
-        PurchaseDocumentDTO purchaseOrderModel = new PurchaseDocumentDTO();
+        PurchaseDocumentDTO purchaseOrder = new PurchaseDocumentDTO();
 
         if (code != null) {
-            PurchaseDocumentDTO purchaseOrder = svc.get(code);
-            toModel(purchaseOrder, purchaseOrderModel);
+            purchaseOrder = svc.get(code);
         }
 
         VendorList vendorList = vendorSvc.list();
 
-        model.addAttribute("purchaseOrderModel", purchaseOrderModel);
+        model.addAttribute("purchaseOrderModel", purchaseOrder);
         model.addAttribute("vendors", vendorList.getData());
 
         return "purchaseOrderWizardFirstPage.html";
@@ -107,21 +106,15 @@ public class PurchaseOrderController {
     @PostMapping("/purchaseOrderWizardSecondPage")
     public RedirectView postPurchaseOrderWizardSecondPage(@ModelAttribute PurchaseDocumentDTO purchaseOrderModel,
             RedirectAttributes redirectAttributes) {
+        String code = purchaseOrderModel.getCode();
+
         if (purchaseOrderModel.getCode().isEmpty()) {
-            PurchaseDocumentDTO purchaseOrder = fromModel(purchaseOrderModel);
-
-            String code = svc.create(purchaseOrder);
-
-            redirectAttributes.addAttribute("code", code);
+            code = svc.create(purchaseOrderModel);
         } else {
-            PurchaseDocumentDTO purchaseOrder = svc.get(purchaseOrderModel.getCode());
-
-            fromModel(purchaseOrder, purchaseOrderModel);
-
-            svc.update(purchaseOrderModel.getCode(), purchaseOrder);
-
-            redirectAttributes.addAttribute("code", purchaseOrder.getCode());
+            svc.update(purchaseOrderModel.getCode(), purchaseOrderModel);
         }
+
+        redirectAttributes.addAttribute("code", code);
 
         return new RedirectView("/purchaseOrderCard");
     }
@@ -164,25 +157,4 @@ public class PurchaseOrderController {
         return new RedirectView("/purchaseOrderList");
     }
 
-    private PurchaseDocumentDTO fromModel(PurchaseDocumentDTO purchaseOrderModel) {
-        PurchaseDocumentDTO purchaseOrder = new PurchaseDocumentDTO();
-        purchaseOrder.setVendorCode(purchaseOrderModel.getVendorCode());
-        purchaseOrder.setDate(purchaseOrderModel.getDate());
-        purchaseOrder.setPaymentMethodCode(purchaseOrderModel.getPaymentMethodCode());
-        return purchaseOrder;
-    }
-
-    private void fromModel(PurchaseDocumentDTO purchaseOrder, PurchaseDocumentDTO purchaseOrderModel) {
-        purchaseOrder.setVendorCode(purchaseOrderModel.getVendorCode());
-        purchaseOrder.setDate(purchaseOrderModel.getDate());
-        purchaseOrder.setPaymentMethodCode(purchaseOrderModel.getPaymentMethodCode());
-    }
-
-    private void toModel(PurchaseDocumentDTO purchaseOrder, PurchaseDocumentDTO purchaseOrderModel) {
-        purchaseOrderModel.setCode(purchaseOrder.getCode());
-        purchaseOrderModel.setDate(purchaseOrder.getDate());
-        purchaseOrderModel.setPaymentMethodCode(purchaseOrder.getPaymentMethodCode());
-        purchaseOrderModel.setVendorCode(purchaseOrder.getVendorCode());
-        purchaseOrderModel.setVendorName(purchaseOrder.getVendorName());
-    }
 }
