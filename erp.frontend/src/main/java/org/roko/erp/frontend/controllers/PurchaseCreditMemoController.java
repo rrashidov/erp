@@ -70,16 +70,15 @@ public class PurchaseCreditMemoController {
 
     @GetMapping("/purchaseCreditMemoWizard")
     public String wizard(@RequestParam(name = "code", required = false) String code, Model model) {
-        PurchaseDocumentDTO purchaseCreditMemoModel = new PurchaseDocumentDTO();
+        PurchaseDocumentDTO purchaseCreditMemo = new PurchaseDocumentDTO();
 
         if (code != null) {
-            PurchaseDocumentDTO purchaseCreditMemo = svc.get(code);
-            toModel(purchaseCreditMemo, purchaseCreditMemoModel);
+            purchaseCreditMemo = svc.get(code);
         }
 
         VendorList vendors = vendorSvc.list();
 
-        model.addAttribute("purchaseCreditMemoModel", purchaseCreditMemoModel);
+        model.addAttribute("purchaseCreditMemoModel", purchaseCreditMemo);
         model.addAttribute("vendors", vendors.getData());
 
         return "purchaseCreditMemoWizardFirstPage.html";
@@ -102,15 +101,15 @@ public class PurchaseCreditMemoController {
     @PostMapping("/purchaseCreditMemoWizardSecondPage")
     public RedirectView postPurchaseCreditMemoWizardSecondPage(
             @ModelAttribute PurchaseDocumentDTO purchaseCreditMemoModel, RedirectAttributes redirectAttributes) {
+        String code = purchaseCreditMemoModel.getCode();
+
         if (purchaseCreditMemoModel.getCode().isEmpty()) {
-            String purchaseCreditMemoCode = createPurchaseCreditMemo(purchaseCreditMemoModel);
-
-            redirectAttributes.addAttribute("code", purchaseCreditMemoCode);
+            code = svc.create(purchaseCreditMemoModel);
         } else {
-            updatePurchaseCreditMemo(purchaseCreditMemoModel);
-
-            redirectAttributes.addAttribute("code", purchaseCreditMemoModel.getCode());
+            svc.update(purchaseCreditMemoModel.getCode(), purchaseCreditMemoModel);
         }
+
+        redirectAttributes.addAttribute("code", code);
 
         return new RedirectView("/purchaseCreditMemoCard");
     }
@@ -153,29 +152,4 @@ public class PurchaseCreditMemoController {
         return new RedirectView("/purchaseCreditMemoList");
     }
 
-    private String createPurchaseCreditMemo(PurchaseDocumentDTO purchaseCreditMemoModel) {
-        PurchaseDocumentDTO purchaseCreditMemo = new PurchaseDocumentDTO();
-        fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
-        return svc.create(purchaseCreditMemo);
-    }
-
-    private void updatePurchaseCreditMemo(PurchaseDocumentDTO purchaseCreditMemoModel) {
-        PurchaseDocumentDTO purchaseCreditMemo = svc.get(purchaseCreditMemoModel.getCode());
-        fromModel(purchaseCreditMemoModel, purchaseCreditMemo);
-        svc.update(purchaseCreditMemoModel.getCode(), purchaseCreditMemo);
-    }
-
-    private void fromModel(PurchaseDocumentDTO purchaseCreditMemoModel, PurchaseDocumentDTO purchaseCreditMemo) {
-        purchaseCreditMemo.setVendorCode(purchaseCreditMemoModel.getVendorCode());
-        purchaseCreditMemo.setDate(purchaseCreditMemoModel.getDate());
-        purchaseCreditMemo.setPaymentMethodCode(purchaseCreditMemoModel.getPaymentMethodCode());
-    }
-
-    private void toModel(PurchaseDocumentDTO purchaseCreditMemo, PurchaseDocumentDTO purchaseCreditMemoModel) {
-        purchaseCreditMemoModel.setCode(purchaseCreditMemo.getCode());
-        purchaseCreditMemoModel.setVendorCode(purchaseCreditMemo.getVendorCode());
-        purchaseCreditMemoModel.setVendorName(purchaseCreditMemo.getVendorName());
-        purchaseCreditMemoModel.setDate(purchaseCreditMemo.getDate());
-        purchaseCreditMemoModel.setPaymentMethodCode(purchaseCreditMemo.getPaymentMethodCode());
-    }
 }

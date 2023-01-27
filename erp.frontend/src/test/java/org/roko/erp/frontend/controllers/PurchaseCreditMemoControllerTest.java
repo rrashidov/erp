@@ -259,25 +259,23 @@ public class PurchaseCreditMemoControllerTest {
                 assertEquals(TEST_DATE, purchaseCreditMemoModel.getDate());
         }
 
-    @Test
-     public void postingWizardFirstPage_returnsProperTemplate(){
+
+        @Test
+        public void postingWizardFirstPage_returnsProperTemplate(){
+                when(purchaseCreditMemoModelMock.getVendorCode()).thenReturn(TEST_VENDOR_CODE);
+
+                String template = controller.postPurchaseCreditMemoWizardFirstPage(purchaseCreditMemoModelMock, modelMock);
+
+                assertEquals("purchaseCreditMemoWizardSecondPage.html", template);
+
+                verify(modelMock).addAttribute("purchaseCreditMemoModel", purchaseCreditMemoModelMock);
+
+                verify(modelMock).addAttribute("paymentMethods", paymentMethods);
+
+                verify(purchaseCreditMemoModelMock).setVendorName(TEST_VENDOR_NAME);
     
-    when(purchaseCreditMemoModelMock.getVendorCode()).thenReturn(TEST_VENDOR_CODE);
-
-     String template =
-    controller.postPurchaseCreditMemoWizardFirstPage(purchaseCreditMemoModelMock,
-    modelMock);
-
-     assertEquals("purchaseCreditMemoWizardSecondPage.html", template);
-
-     verify(modelMock).addAttribute("purchaseCreditMemoModel",
-    purchaseCreditMemoModelMock);
-     verify(modelMock).addAttribute("paymentMethods", paymentMethods);
-
-     verify(purchaseCreditMemoModelMock).setVendorName(TEST_VENDOR_NAME);
-    
-    verify(purchaseCreditMemoModelMock).setPaymentMethodCode("test-payment-method-code");
-     }
+                verify(purchaseCreditMemoModelMock).setPaymentMethodCode("test-payment-method-code");
+        }
 
         @Test
         public void postingWizardSecondPage_createsNewEntity_andReturnsProperTemplate_whenCalledForNew() {
@@ -298,23 +296,18 @@ public class PurchaseCreditMemoControllerTest {
                 assertEquals(TEST_DATE, purchaseCreditMemo.getDate());
         }
 
-    @Test
-    public void
-    postingWizardSecondPage_updatesNewEntity_andReturnsProperTemplate_whenCalledForExisting(){
-    when(purchaseCreditMemoModelMock.getCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
+        @Test
+        public void postingWizardSecondPage_updatesNewEntity_andReturnsProperTemplate_whenCalledForExisting(){
+                when(purchaseCreditMemoModelMock.getCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-    RedirectView redirectView =
-    controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock,
-    redirectAttributesMock);
+                RedirectView redirectView = controller.postPurchaseCreditMemoWizardSecondPage(purchaseCreditMemoModelMock, redirectAttributesMock);
 
-    assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
+                assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
-    verify(svcMock).update(TEST_PURCHASE_CREDIT_MEMO_CODE,
-    purchaseCreditMemoMock);
+                verify(svcMock).update(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoModelMock);
 
-    verify(redirectAttributesMock).addAttribute("code",
-    TEST_PURCHASE_CREDIT_MEMO_CODE);
-    }
+                verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
+        }
 
         @Test
         public void delete_deletesEntity() {
