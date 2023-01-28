@@ -31,17 +31,16 @@ public class PurchaseCreditMemoLineController {
     @GetMapping("/purchaseCreditMemoLineWizard")
     public String wizard(@RequestParam(name = "purchaseCreditMemoCode") String purchaseCreditMemoCode,
             @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
-        PurchaseDocumentLineDTO purchaseCreditMemoLineModel = new PurchaseDocumentLineDTO();
-        purchaseCreditMemoLineModel.setPurchaseDocumentCode(purchaseCreditMemoCode);
+        PurchaseDocumentLineDTO purchaseCreditMemoLine = new PurchaseDocumentLineDTO();
+        purchaseCreditMemoLine.setPurchaseDocumentCode(purchaseCreditMemoCode);
 
         if (lineNo != null) {
-            PurchaseDocumentLineDTO purchaseCreditMemoLine = svc.get(purchaseCreditMemoCode, lineNo);
-            toModel(purchaseCreditMemoLine, purchaseCreditMemoLineModel);
+            purchaseCreditMemoLine = svc.get(purchaseCreditMemoCode, lineNo);
         }
 
         ItemList items = itemSvc.list();
 
-        model.addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModel);
+        model.addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLine);
         model.addAttribute("items", items.getData());
 
         return "purchaseCreditMemoLineWizardFirstPage.html";
@@ -80,10 +79,10 @@ public class PurchaseCreditMemoLineController {
             RedirectAttributes redirectAttributes) {
         if (purchaseCreditMemoLineModel.getLineNo() == 0) {
             // create
-            create(purchaseCreditMemoLineModel);
+            svc.create(purchaseCreditMemoLineModel.getPurchaseDocumentCode(), purchaseCreditMemoLineModel);
         } else {
             // update
-            update(purchaseCreditMemoLineModel);
+            svc.update(purchaseCreditMemoLineModel.getPurchaseDocumentCode(), purchaseCreditMemoLineModel.getLineNo(), purchaseCreditMemoLineModel);
         }
 
         redirectAttributes.addAttribute("code", purchaseCreditMemoLineModel.getPurchaseDocumentCode());
@@ -99,40 +98,6 @@ public class PurchaseCreditMemoLineController {
         redirectAttributes.addAttribute("code", code);
 
         return new RedirectView("/purchaseCreditMemoCard");
-    }
-
-    private void toModel(PurchaseDocumentLineDTO purchaseCreditMemoLine,
-    PurchaseDocumentLineDTO purchaseCreditMemoLineModel) {
-
-        purchaseCreditMemoLineModel.setLineNo(purchaseCreditMemoLine.getLineNo());
-        purchaseCreditMemoLineModel.setItemCode(purchaseCreditMemoLine.getItemCode());
-        purchaseCreditMemoLineModel.setItemName(purchaseCreditMemoLine.getItemName());
-        purchaseCreditMemoLineModel.setQuantity(purchaseCreditMemoLine.getQuantity());
-        purchaseCreditMemoLineModel.setPrice(purchaseCreditMemoLine.getPrice());
-        purchaseCreditMemoLineModel.setAmount(purchaseCreditMemoLine.getAmount());
-    }
-
-    private void create(PurchaseDocumentLineDTO purchaseCreditMemoLineModel) {
-        PurchaseDocumentLineDTO purchaseCreditMemoLine = new PurchaseDocumentLineDTO();
-        purchaseCreditMemoLine.setItemCode(purchaseCreditMemoLineModel.getItemCode());
-        purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
-        purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
-        purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
-
-        svc.create(purchaseCreditMemoLineModel.getPurchaseDocumentCode(), purchaseCreditMemoLine);
-    }
-
-    private void update(PurchaseDocumentLineDTO purchaseCreditMemoLineModel) {
-        PurchaseDocumentLineDTO purchaseCreditMemoLine = svc
-                .get(purchaseCreditMemoLineModel.getPurchaseDocumentCode(), purchaseCreditMemoLineModel.getLineNo());
-
-        purchaseCreditMemoLine.setItemCode(purchaseCreditMemoLineModel.getItemCode());
-        purchaseCreditMemoLine.setQuantity(purchaseCreditMemoLineModel.getQuantity());
-        purchaseCreditMemoLine.setPrice(purchaseCreditMemoLineModel.getPrice());
-        purchaseCreditMemoLine.setAmount(purchaseCreditMemoLineModel.getAmount());
-
-        svc.update(purchaseCreditMemoLineModel.getPurchaseDocumentCode(), purchaseCreditMemoLineModel.getLineNo(),
-                purchaseCreditMemoLine);
     }
 
 }

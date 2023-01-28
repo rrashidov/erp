@@ -201,14 +201,7 @@ public class PurchaseCreditMemoLineControllerTest {
 
         verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
 
-        verify(svcMock).update(eq(TEST_PURCHASE_CREDIT_MEMO_CODE), eq(TEST_LINE_NO), purchaseCreditMemoLineArgumentCaptor.capture());
-
-        PurchaseDocumentLineDTO purchaseCreditMemoLine = purchaseCreditMemoLineArgumentCaptor.getValue();
-
-        assertEquals(TEST_ITEM_CODE, purchaseCreditMemoLine.getItemCode());
-        assertEquals(TEST_QTY, purchaseCreditMemoLine.getQuantity());
-        assertEquals(TEST_PRICE, purchaseCreditMemoLine.getPrice());
-        assertEquals(TEST_AMOUNT, purchaseCreditMemoLine.getAmount());
+        verify(svcMock).update(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, purchaseCreditMemoLineModelMock);
     }
 
     @Test
