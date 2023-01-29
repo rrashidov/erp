@@ -518,9 +518,18 @@ There are some checks which are performed during Posting of documents which coul
 
 ## Architecture
 
-![Architecture-v1](./assets/architecture-v1.png)
+![Architecture-v2](./assets/architecture-v2.png)
 
-**erp** is simple monolith application. It handles all the user requests as well as processing the business process of posting various documents and general journal batches. The application has a single dependency which it communcates with. This is the database system where the application stores its data.
+**erp** is two component system - frontend and backend
+
+**Frontend** component is responsible for the UI (web application) of the system. It handles all user requests as well as handling all web pages.
+
+**Backend** component implements and exposes the application logic via REST API. The responsibilities of the backend component can be divided into two main groups:
+
+* data access - it allows the end user (be it via the UI/front or directly calling the REST APIs) to maintain its data - Items, Customers, Vendors, Documents, etc.
+* business logic - it allows the end user (be it via the UI/frontend or directly calling the REST APIs) to trigger post operations over different objects - Sales Orders, Purchase Order, General Journals, etc.
+
+Backend stores all its data in a relation database system. This is the only external dependency of the system.
 
 ## HowToRun
 
@@ -530,24 +539,21 @@ In order to run the application, you have to build it first. Maven is used as a 
 $ mvn clean install
 ```
 
+As described in the Architecture section, the application consists of two components - frontend and backend. Respectively they are modules of the repository. Executing Maven in the root of the repository builds both components.
+
 The minimal maven version required is **3.2.5**.
 
-The result of a successfull maven execution is a jar file located in the **./target** folder:
+The result of a successfull maven execution is a jar file located in the **./target** folder of each of the submodules.
+
+First you have to run the backend component. This is done by execution the following command in the root of the repository:
 
 ```
-$ ls ./target
-./target/erp-0.0.1-SNAPSHOT.jar
+java -jar ./erp.backend/target/backend-*.jar
 ```
 
-You can use this jar file to run the application:
+This runs the backend component with embeded H2 in-memory database.
 
-```
-java -jar ./target/erp-0.0.1-SNAPSHOT.jar
-```
-
-This runs the application with embeded H2 in-memory database. Moreover, test data is inserted in the database.
-
-The application could be run against MySQL database as well. This could be done by providing some input parameters running the application:
+Backend could be run against MySQL database as well. This could be done by providing some input parameters running the component:
 
 * DB_DRIVER - the MySQL value that should be provided is **com.mysql.cj.jdbc.Driver**;
 * DB_URL - the JDBC URL that will be used to connect to the database;
@@ -558,11 +564,17 @@ The application could be run against MySQL database as well. This could be done 
 
 Moreover, you have to specify **prod** profile to run Spring with by specifying **spring.profiles.active** environment variable.
 
-Example:
+Now that you have backend component, next you should run the frontend component. This is done by executing the following command in the root of the repository:
 
 ```
-java -Dspring.profiles.active=prod -DDB_URL=jdbc:mysql://127.0.0.1:4306/erp -DDB_USERNAME=erp -DDB_PASSWORD=*** -DDB_DRIVER=com.mysql.cj.jdbc.Driver -DDB_PLATFORM=org.hibernate.dialect.MySQL5InnoDBDialect -jar erp-0.0.1-SNAPSHOT.jar
+java -jar ./erp.frontend/target/frontend-*.jar
 ```
+
+This runs the frontend component with default configuration where it tries to communicate with backend component at **http://localhost:8082**. You can change this by providing the following input parameter:
+
+* ERP_BACKENDURL - the endpoint where frontend will use to communicate with backend component;
+
+Moreover, you have to specify **prod** profile to run Spring with by specifying **spring.profiles.active** environment variable.
 
 ## Caveats
 
