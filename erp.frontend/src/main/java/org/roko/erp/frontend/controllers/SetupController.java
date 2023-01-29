@@ -27,7 +27,7 @@ public class SetupController {
     public String card(Model model) {
         SetupDTO setup = svc.get();
 
-        model.addAttribute("setup", transferToModel(setup));
+        model.addAttribute("setup", setup);
         model.addAttribute("codeSeries", codeSerieSvc.list().getData());
 
         return "setupCard.html";
@@ -35,70 +35,9 @@ public class SetupController {
 
     @PostMapping("/setupCard")
     public RedirectView post(@ModelAttribute SetupDTO setupModel) {
-        SetupDTO setup = svc.get();
-
-        transferFromModel(setupModel, setup);
-
-        svc.update(setup);
+        svc.update(setupModel);
 
         return new RedirectView("/");
     }
 
-    private void transferFromModel(SetupDTO setupModel, SetupDTO setup) {
-        if (!setupModel.getSalesOrderCodeSerieCode().isEmpty()) {
-            setup.setSalesOrderCodeSerieCode(setupModel.getSalesOrderCodeSerieCode());
-        }
-        if (!setupModel.getSalesCreditMemoCodeSerieCode().isEmpty()) {
-            setup.setSalesCreditMemoCodeSerieCode(setupModel.getSalesCreditMemoCodeSerieCode());
-        }
-        if (!setupModel.getPostedSalesOrderCodeSerieCode().isEmpty()) {
-            setup.setPostedSalesOrderCodeSerieCode(setupModel.getPostedSalesOrderCodeSerieCode());
-        }
-        if (!setupModel.getPostedSalesCreditMemoCodeSerieCode().isEmpty()) {
-            setup.setPostedSalesCreditMemoCodeSerieCode(setupModel.getPostedSalesCreditMemoCodeSerieCode());
-        }
-        if (!setupModel.getPurchaseOrderCodeSerieCode().isEmpty()) {
-            setup.setPurchaseOrderCodeSerieCode(setupModel.getPurchaseOrderCodeSerieCode());
-        }
-        if (!setupModel.getPurchaseCreditMemoCodeSerieCode().isEmpty()) {
-            setup.setPurchaseCreditMemoCodeSerieCode(setupModel.getPurchaseCreditMemoCodeSerieCode());
-        }
-        if (!setupModel.getPostedPurchaseOrderCodeSerieCode().isEmpty()) {
-            setup.setPostedPurchaseOrderCodeSerieCode(setupModel.getPostedPurchaseOrderCodeSerieCode());
-        }
-        if (!setupModel.getPostedPurchaseCreditMemoCodeSerieCode().isEmpty()) {
-            setup.setPostedPurchaseCreditMemoCodeSerieCode(setupModel.getPostedPurchaseCreditMemoCodeSerieCode());
-        }
-    }
-
-    private SetupDTO transferToModel(SetupDTO setup) {
-        SetupDTO setupModel = new SetupDTO();
-
-        if (setup.getSalesOrderCodeSerieCode() != null) {
-            setupModel.setSalesOrderCodeSerieCode(setup.getSalesOrderCodeSerieCode());
-        }
-        if (setup.getPostedSalesOrderCodeSerieCode() != null) {
-            setupModel.setPostedSalesOrderCodeSerieCode(setup.getPostedSalesOrderCodeSerieCode());
-        }
-        if (setup.getSalesCreditMemoCodeSerieCode() != null) {
-            setupModel.setSalesCreditMemoCodeSerieCode(setup.getSalesCreditMemoCodeSerieCode());
-        }
-        if (setup.getPostedSalesCreditMemoCodeSerieCode() != null) {
-            setupModel.setPostedSalesCreditMemoCodeSerieCode(setup.getPostedSalesCreditMemoCodeSerieCode());
-        }
-        if (setup.getPurchaseOrderCodeSerieCode() != null) {
-            setupModel.setPurchaseOrderCodeSerieCode(setup.getPurchaseOrderCodeSerieCode());
-        }
-        if (setup.getPostedPurchaseOrderCodeSerieCode() != null) {
-            setupModel.setPostedPurchaseOrderCodeSerieCode(setup.getPostedPurchaseOrderCodeSerieCode());
-        }
-        if (setup.getPurchaseCreditMemoCodeSerieCode() != null) {
-            setupModel.setPurchaseCreditMemoCodeSerieCode(setup.getPurchaseCreditMemoCodeSerieCode());
-        }
-        if (setup.getPostedPurchaseCreditMemoCodeSerieCode() != null) {
-            setupModel.setPostedPurchaseCreditMemoCodeSerieCode(setup.getPostedPurchaseCreditMemoCodeSerieCode());
-        }
-
-        return setupModel;
-    }
 }

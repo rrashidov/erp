@@ -70,7 +70,7 @@ public class SetupControllerTest {
 
     @Test
     public void postCardUpdatesSetup(){
-        RedirectView redirectView = controller.post(new SetupDTO());
+        RedirectView redirectView = controller.post(setupMock);
 
         assertEquals("/", redirectView.getUrl());
 
