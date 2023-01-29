@@ -14,12 +14,6 @@ public class BackendRestTemplateProvider {
 
     @Bean
     public RestTemplate getBackendRestTemplate() {
-        System.out.println("root uri: " + rootUri);
-
-        RestTemplateBuilder b = new RestTemplateBuilder();
-
-        RestTemplateBuilder b1 = b.rootUri(rootUri);
-
-        return b1.build();
+        return new RestTemplateBuilder().rootUri(rootUri).build();
     }
 }
