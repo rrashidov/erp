@@ -589,6 +589,7 @@ It was described in the Intro section what the main goals of the project are. In
 
 The application will be developed through the following stages:
 
-* separate UI and backend;
 * refactor posting to be asynchronous;
 * separate backend into domain-based microservices - inventory, sales, purchases, etc.
+* run locally with docker-compose
+* run with k8s
