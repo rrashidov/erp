@@ -39,9 +39,10 @@ buildNumber.properties
 .vscode/
 
 # MacOS
-
 .DS_Store
 
 # Make
-
 .envrc
+
+# TODOs
+TODOs.md
