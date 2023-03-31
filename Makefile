@@ -34,3 +34,9 @@ run-erp-mysql:
 	@echo "Leftover erp-mysql container cleaned, start a new one"
 	@docker run -d -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=erp -e MYSQL_USER=erp -e MYSQL_PASSWORD=erp --name erp-mysql mysql:8.0.32
 	@echo "erp-mysql container is up and running"
+
+.PHONY: build-erp-rabbitmq
+build-erp-rabbitmq:
+	@echo "Build RabbitMQ container image to be used by erp components"
+	@docker build -t erp.rabbitmq:0.0.1 -f ./docker/Dockerfile.rabbitmq ./docker
+	@echo "Finished building RabbitMQ container image to be used by erp components"

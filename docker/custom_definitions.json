@@ -1,0 +1,151 @@
+{
+    "rabbit_version": "3.11.7",
+    "rabbitmq_version": "3.11.7",
+    "product_name": "RabbitMQ",
+    "product_version": "3.11.7",
+    "users": [
+        {
+            "name": "erp",
+            "password_hash": "N6iAz/PRKWf5dPzvvJzhsX6cHyxhPTLI+GEvRly2jz0cq73b",
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "tags": [
+                "administrator"
+            ],
+            "limits": {}
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "erp"
+        },
+        {
+            "name": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "erp",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "erp",
+            "vhost": "erp",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "topic_permissions": [],
+    "parameters": [],
+    "global_parameters": [
+        {
+            "name": "internal_cluster_id",
+            "value": "rabbitmq-cluster-id-jeHLZtfzvB0iDpUuK1vzrg"
+        }
+    ],
+    "policies": [],
+    "queues": [
+        {
+            "name": "operations.post.purchase.order",
+            "vhost": "erp",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+        {
+            "name": "operations.post.purchase.creditmemo",
+            "vhost": "erp",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+        {
+            "name": "operations.post.generaljournalbatch",
+            "vhost": "erp",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+        {
+            "name": "operations.post.sales.order",
+            "vhost": "erp",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+        {
+            "name": "operations.post.sales.creditmemo",
+            "vhost": "erp",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        }
+    ],
+    "exchanges": [
+        {
+            "name": "erp.operations.post",
+            "vhost": "erp",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        }
+    ],
+    "bindings": [
+        {
+            "source": "erp.operations.post",
+            "vhost": "erp",
+            "destination": "operations.post.generaljournalbatch",
+            "destination_type": "queue",
+            "routing_key": "generaljournalbatch",
+            "arguments": {}
+        },
+        {
+            "source": "erp.operations.post",
+            "vhost": "erp",
+            "destination": "operations.post.purchase.creditmemo",
+            "destination_type": "queue",
+            "routing_key": "purchase.creditmemo",
+            "arguments": {}
+        },
+        {
+            "source": "erp.operations.post",
+            "vhost": "erp",
+            "destination": "operations.post.purchase.order",
+            "destination_type": "queue",
+            "routing_key": "purchase.order",
+            "arguments": {}
+        },
+        {
+            "source": "erp.operations.post",
+            "vhost": "erp",
+            "destination": "operations.post.sales.creditmemo",
+            "destination_type": "queue",
+            "routing_key": "sales.creditmemo",
+            "arguments": {}
+        },
+        {
+            "source": "erp.operations.post",
+            "vhost": "erp",
+            "destination": "operations.post.sales.order",
+            "destination_type": "queue",
+            "routing_key": "sales.order",
+            "arguments": {}
+        }
+    ]
+}
+
