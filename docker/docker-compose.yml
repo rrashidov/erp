@@ -9,12 +9,20 @@ services:
       - "MYSQL_PASSWORD=erp"
     networks: 
       - my-shared-network
+    volumes:
+      - mysql-data:/var/lib/mysql
   rabbitmq:
     image: erp.rabbitmq:0.0.1
     networks: 
       - my-shared-network
   backend:
     image: erp.backend:0.0.1
+    environment:
+      - DB_DRIVER=com.mysql.cj.jdbc.Driver
+      - DB_URL=jdbc:mysql://mysql:3306/erp
+      - DB_USERNAME=erp
+      - DB_PASSWORD=erp
+      - DB_PLATFORM=org.hibernate.dialect.MySQL5InnoDBDialect
     ports:
       - "8082:8082"
     networks: 
@@ -40,3 +48,6 @@ services:
         condition: service_healthy
 networks:
   my-shared-network: {}
+
+volumes:
+  mysql-data: {}
