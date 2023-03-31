@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.0.32
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+      - "MYSQL_DATABASE=erp"
+      - "MYSQL_USER=erp"
+      - "MYSQL_PASSWORD=erp"
+    networks: 
+      - my-shared-network
+  rabbitmq:
+    image: erp.rabbitmq:0.0.1
+    networks: 
+      - my-shared-network
+  backend:
+    image: erp.backend:0.0.1
+    ports:
+      - "8082:8082"
+    networks: 
+      - my-shared-network
+    depends_on:
+      - mysql
+      - rabbitmq
+    healthcheck:
+      test: "curl -f localhost:8082/api/v1/setup"
+      interval: 10s
+      timeout: 90s
+      retries: 20
+  frontend:
+    image: erp.frontend:0.0.1
+    environment:
+      - "ERP_BACKENDURL=http://backend:8082"
+    ports:
+      - "8081:8081"
+    networks: 
+      - my-shared-network
+    depends_on:
+      backend:
+        condition: service_healthy
+networks:
+  my-shared-network: {}
