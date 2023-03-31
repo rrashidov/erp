@@ -11,6 +11,12 @@ services:
       - my-shared-network
     volumes:
       - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=root --execute \"SHOW DATABASES;\""
+      interval: 10s
+      timeout: 30s
+      retries: 30
+      start_period: 30s
   rabbitmq:
     image: erp.rabbitmq:0.0.1
     networks: 
@@ -28,8 +34,10 @@ services:
     networks: 
       - my-shared-network
     depends_on:
-      - mysql
-      - rabbitmq
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
     healthcheck:
       test: "curl -f localhost:8082/api/v1/healthcheck"
       interval: 2s
