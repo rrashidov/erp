@@ -25,3 +25,12 @@ containerize: build
 	@rm ./docker/frontend.jar
 	@rm ./docker/backend.jar
 	@echo "Finished cleaning up after container images are built"
+
+.PHONY: run-erp-mysql
+run-erp-mysql:
+	@echo "Make sure no leftover container is up and running"
+	@docker stop erp-mysql || true
+	@docker rm erp-mysql || true
+	@echo "Leftover erp-mysql container cleaned, start a new one"
+	@docker run -d -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=erp -e MYSQL_USER=erp -e MYSQL_PASSWORD=erp --name erp-mysql mysql:8.0.32
+	@echo "erp-mysql container is up and running"
