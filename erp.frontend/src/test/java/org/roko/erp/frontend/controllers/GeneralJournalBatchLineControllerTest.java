@@ -314,12 +314,6 @@ public class GeneralJournalBatchLineControllerTest {
         verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
 
         verify(svcMock).create(eq(TEST_CODE), generalJournalBatchLineArgumentCaptor.capture());
-
-        // TODO
-        //GeneralJournalBatchLineDTO generalJournalBatchLine = generalJournalBatchLineArgumentCaptor.getValue();
-
-        // assertEquals(generalJournalBatchMock,
-        //         generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
     }
 
     @Test
@@ -329,12 +323,6 @@ public class GeneralJournalBatchLineControllerTest {
         controller.postGeneralJournalBatchLineWizardThirdPage(generalJournalBatchLineModelMock, redirectAttributesMock);
 
         verify(svcMock).update(eq(TEST_CODE), eq(TEST_LINE_NO), generalJournalBatchLineArgumentCaptor.capture());
-
-        // TODO
-
-        // GeneralJournalBatchLineDTO generalJournalBatchLine = generalJournalBatchLineArgumentCaptor.getValue();
-
-        //assertEquals(generalJournalBatchMock, generalJournalBatchLine.getGeneralJournalBatchLineId().getGeneralJournalBatch());
     }
 
     @Test
