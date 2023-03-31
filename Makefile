@@ -17,6 +17,7 @@ containerize: build
 	@echo "Finished preparing docker context"
 	
 	@echo "Start building erp container images"
+	@docker build -t erp.commonjava:0.0.1 -f ./docker/Dockerfile.commonjava ./docker
 	@docker build -t erp.frontend:0.0.1 -f ./docker/Dockerfile.frontend ./docker
 	@docker build -t erp.backend:0.0.1 -f ./docker/Dockerfile.backend ./docker
 	@echo "Finished building erp container images"

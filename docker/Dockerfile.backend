@@ -1,6 +1,4 @@
-FROM openjdk:8-jdk-alpine
-
-RUN apk add --no-cache curl bash htop
+FROM erp.commonjava:0.0.1
 
 COPY backend.jar app.jar
 
