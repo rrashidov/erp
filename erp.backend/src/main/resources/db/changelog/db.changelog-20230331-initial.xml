@@ -1,0 +1,965 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.6.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet author="rrashidov" id="1680261661076-1">
+        <createTable tableName="bank_account">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="balance" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-2">
+        <createTable tableName="bank_account_ledger_entry">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="document_code" type="VARCHAR(255)"/>
+            <column name="type" type="INT"/>
+            <column name="bank_account_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-3">
+        <createTable tableName="code_serie">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="first_code" type="VARCHAR(255)"/>
+            <column name="last_code" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-4">
+        <createTable tableName="customer">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="balance" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-5">
+        <createTable tableName="customer_ledger_entry">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="document_code" type="VARCHAR(255)"/>
+            <column name="type" type="INT"/>
+            <column name="customer_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-6">
+        <createTable tableName="general_journal_batch">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-7">
+        <createTable tableName="general_journal_batch_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="document_code" type="VARCHAR(255)"/>
+            <column name="operation_type" type="INT"/>
+            <column name="source_code" type="VARCHAR(255)"/>
+            <column name="source_name" type="VARCHAR(255)"/>
+            <column name="source_type" type="INT"/>
+            <column name="general_journal_batch_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-8">
+        <createTable tableName="item">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="inventory" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="purchase_price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sales_price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-9">
+        <createTable tableName="item_ledger_entry">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="document_code" type="VARCHAR(255)"/>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="INT"/>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-10">
+        <createTable tableName="payment_method">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="bank_account_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-11">
+        <createTable tableName="posted_purchase_credit_memo">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="order_code" type="VARCHAR(255)"/>
+            <column name="order_date" type="datetime"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+            <column name="vendor_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-12">
+        <createTable tableName="posted_purchase_credit_memo_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="posted_purchase_credit_memo_code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-13">
+        <createTable tableName="posted_purchase_order">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="order_code" type="VARCHAR(255)"/>
+            <column name="order_date" type="datetime"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+            <column name="vendor_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-14">
+        <createTable tableName="posted_purchase_order_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="posted_purchase_order_code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-15">
+        <createTable tableName="posted_sales_credit_memo">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="order_code" type="VARCHAR(255)"/>
+            <column name="order_date" type="datetime"/>
+            <column name="customer_code" type="VARCHAR(255)"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-16">
+        <createTable tableName="posted_sales_credit_memo_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="posted_sales_credit_memo_code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-17">
+        <createTable tableName="posted_sales_order">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="order_code" type="VARCHAR(255)"/>
+            <column name="order_date" type="datetime"/>
+            <column name="customer_code" type="VARCHAR(255)"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-18">
+        <createTable tableName="posted_sales_order_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="posted_sales_order_code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-19">
+        <createTable tableName="purchase_credit_memo">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+            <column name="vendor_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-20">
+        <createTable tableName="purchase_credit_memo_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="purchase_credit_memo_code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-21">
+        <createTable tableName="purchase_order">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+            <column name="vendor_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-22">
+        <createTable tableName="purchase_order_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="purchase_order_code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-23">
+        <createTable tableName="sales_credit_memo">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="customer_code" type="VARCHAR(255)"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-24">
+        <createTable tableName="sales_credit_memo_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sales_credit_memo_code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-25">
+        <createTable tableName="sales_order">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="customer_code" type="VARCHAR(255)"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-26">
+        <createTable tableName="sales_order_line">
+            <column name="line_no" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sales_order_code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="item_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-27">
+        <createTable tableName="setup">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="posted_purchase_credit_memo_code_serie_code" type="VARCHAR(255)"/>
+            <column name="posted_purchase_order_code_serie_code" type="VARCHAR(255)"/>
+            <column name="posted_sales_credit_memo_code_serie_code" type="VARCHAR(255)"/>
+            <column name="posted_sales_order_code_serie_code" type="VARCHAR(255)"/>
+            <column name="purchase_credit_memo_code_serie_code" type="VARCHAR(255)"/>
+            <column name="purchase_order_code_serie_code" type="VARCHAR(255)"/>
+            <column name="sales_credit_memo_code_serie_code" type="VARCHAR(255)"/>
+            <column name="sales_order_code_serie_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-28">
+        <createTable tableName="vendor">
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="balance" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="payment_method_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-29">
+        <createTable tableName="vendor_ledger_entry">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="amount" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="datetime"/>
+            <column name="document_code" type="VARCHAR(255)"/>
+            <column name="type" type="INT"/>
+            <column name="vendor_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-30">
+        <addPrimaryKey columnNames="general_journal_batch_code, line_no" constraintName="PRIMARY" tableName="general_journal_batch_line"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-31">
+        <createIndex indexName="FK1plt7f66wm0bpadqitq5qn90b" tableName="purchase_credit_memo">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-32">
+        <createIndex indexName="FK1qthybd91e9fx2ptvcc6wlmsr" tableName="setup">
+            <column name="purchase_credit_memo_code_serie_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-33">
+        <createIndex indexName="FK2btjq8a0yt2kjji8ve4dl6mmc" tableName="posted_sales_order">
+            <column name="customer_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-34">
+        <createIndex indexName="FK4qqkc3oml09xxtm2c6f0w1h0x" tableName="sales_order">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-35">
+        <createIndex indexName="FK63demrlg075wtdv1mvntn7238" tableName="purchase_order">
+            <column name="vendor_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-36">
+        <createIndex indexName="FK7afyrcl52uq38aoh10reasboh" tableName="posted_purchase_order">
+            <column name="vendor_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-37">
+        <createIndex indexName="FK7bayf1tlqkesb5aoc7dcbj6l5" tableName="setup">
+            <column name="sales_order_code_serie_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-38">
+        <createIndex indexName="FK7o06fns0fhp8c4k4es5xfydgk" tableName="setup">
+            <column name="posted_sales_order_code_serie_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-39">
+        <createIndex indexName="FK7xiubv4obyxq65wbew8ab6pct" tableName="item_ledger_entry">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-40">
+        <createIndex indexName="FK8hhybqarcq6nbi4e9akg88ny1" tableName="posted_purchase_order_line">
+            <column name="posted_purchase_order_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-41">
+        <createIndex indexName="FK8l2bnemj0mtrvhb9d0u4dpjm7" tableName="posted_purchase_order_line">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-42">
+        <createIndex indexName="FK97iu4m5n03djbbk3og564tm7p" tableName="purchase_order">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-43">
+        <createIndex indexName="FK99v7s84f6rjs8k2x385te0cim" tableName="customer">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-44">
+        <createIndex indexName="FK9hd8w6tm5pq8ldwhuib0686il" tableName="posted_sales_order_line">
+            <column name="posted_sales_order_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-45">
+        <createIndex indexName="FK9tf3wtf4x7gvaq07u2fdfo2lj" tableName="purchase_order_line">
+            <column name="purchase_order_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-46">
+        <createIndex indexName="FK9wbp7mdpgrj4anmrkkf3bgstb" tableName="posted_sales_order_line">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-47">
+        <createIndex indexName="FK9x6d5xk3hw3h8hrctlvly5s8l" tableName="setup">
+            <column name="posted_sales_credit_memo_code_serie_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-48">
+        <createIndex indexName="FK9yu8tutotojknafodpv8n12jh" tableName="posted_sales_credit_memo">
+            <column name="customer_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-49">
+        <createIndex indexName="FKaa5ojta3lx2c3h1ms5olo9it6" tableName="posted_sales_credit_memo">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-50">
+        <createIndex indexName="FKbdue6yy0vko77olwhb52n08g3" tableName="sales_credit_memo">
+            <column name="customer_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-51">
+        <createIndex indexName="FKc3hbjpo6jw817tmuj7lob1c5e" tableName="general_journal_batch_line">
+            <column name="target_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-52">
+        <createIndex indexName="FKc8yxjftun8ylwgs2gxgp74rtd" tableName="posted_sales_credit_memo_line">
+            <column name="posted_sales_credit_memo_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-53">
+        <createIndex indexName="FKcejq5xc2eus21gahrtntqqohf" tableName="sales_order_line">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-54">
+        <createIndex indexName="FKcl00pygkl63nk4wdny949gh99" tableName="posted_purchase_order">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-55">
+        <createIndex indexName="FKcmrmo1rd3sphagl1wr3b83hr7" tableName="purchase_credit_memo_line">
+            <column name="purchase_credit_memo_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-56">
+        <createIndex indexName="FKcn80my69l3ompfspi8vkn7d31" tableName="posted_sales_credit_memo_line">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-57">
+        <createIndex indexName="FKcov4cbwx13h3xa5gopv33fns" tableName="bank_account_ledger_entry">
+            <column name="bank_account_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-58">
+        <createIndex indexName="FKg3sm9esqxr8aiiohiuoxa3f1j" tableName="setup">
+            <column name="posted_purchase_credit_memo_code_serie_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-59">
+        <createIndex indexName="FKhbbjqxdchwpt3crhob7k1ts7v" tableName="setup">
+            <column name="purchase_order_code_serie_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-60">
+        <createIndex indexName="FKhixhdk2npmsewillg8t0u98sd" tableName="sales_order">
+            <column name="customer_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-61">
+        <createIndex indexName="FKhtn1r1wy3gd916fpgjmk1p0pl" tableName="purchase_credit_memo_line">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-62">
+        <createIndex indexName="FKi6b02cd5qwv0sohlminy74c50" tableName="posted_purchase_credit_memo_line">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-63">
+        <createIndex indexName="FKj2rbl3xek6u7r6iixuw4jheph" tableName="payment_method">
+            <column name="bank_account_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-64">
+        <createIndex indexName="FKj3hxhv8tw503w8tedmabx191e" tableName="setup">
+            <column name="sales_credit_memo_code_serie_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-65">
+        <createIndex indexName="FKjdly05yvcmqde8p15ourjpyt" tableName="purchase_credit_memo">
+            <column name="vendor_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-66">
+        <createIndex indexName="FKjgnhbsruyb321obd3r74yni5x" tableName="customer_ledger_entry">
+            <column name="customer_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-67">
+        <createIndex indexName="FKk26imu94yoivlopnm2c55n62w" tableName="setup">
+            <column name="posted_purchase_order_code_serie_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-68">
+        <createIndex indexName="FKk6c0npm2fc9rs67mx4817aaxi" tableName="sales_credit_memo_line">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-69">
+        <createIndex indexName="FKkftu86tcpq5enkcyh5cxtlquh" tableName="sales_credit_memo_line">
+            <column name="sales_credit_memo_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-70">
+        <createIndex indexName="FKkjog8dbk4699fjfdnpel09dvj" tableName="sales_credit_memo">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-71">
+        <createIndex indexName="FKkliu591nn5taxv2x79giyq40s" tableName="posted_purchase_credit_memo">
+            <column name="vendor_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-72">
+        <createIndex indexName="FKmbpanpo4a5v8mhvt4nupe3y2n" tableName="purchase_order_line">
+            <column name="item_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-73">
+        <createIndex indexName="FKp882i4e5sjerpk9mvmjm6u048" tableName="posted_purchase_credit_memo">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-74">
+        <createIndex indexName="FKr2y2l3yirjgergkutsyx26mgx" tableName="sales_order_line">
+            <column name="sales_order_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-75">
+        <createIndex indexName="FKrfs25nxftw0kcdbe1xrl0wut3" tableName="vendor">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-76">
+        <createIndex indexName="FKrnhoxrijnqj8cx907wud09aah" tableName="posted_sales_order">
+            <column name="payment_method_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-77">
+        <createIndex indexName="FKs2mnid10u2w8eswlg26guba8f" tableName="posted_purchase_credit_memo_line">
+            <column name="posted_purchase_credit_memo_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-78">
+        <createIndex indexName="FKtp9ia7mxemey58kanb5eu6v8g" tableName="vendor_ledger_entry">
+            <column name="vendor_code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-79">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="purchase_credit_memo" constraintName="FK1plt7f66wm0bpadqitq5qn90b" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-80">
+        <addForeignKeyConstraint baseColumnNames="purchase_credit_memo_code_serie_code" baseTableName="setup" constraintName="FK1qthybd91e9fx2ptvcc6wlmsr" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="code_serie" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-81">
+        <addForeignKeyConstraint baseColumnNames="customer_code" baseTableName="posted_sales_order" constraintName="FK2btjq8a0yt2kjji8ve4dl6mmc" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="customer" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-82">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="sales_order" constraintName="FK4qqkc3oml09xxtm2c6f0w1h0x" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-83">
+        <addForeignKeyConstraint baseColumnNames="vendor_code" baseTableName="purchase_order" constraintName="FK63demrlg075wtdv1mvntn7238" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="vendor" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-84">
+        <addForeignKeyConstraint baseColumnNames="vendor_code" baseTableName="posted_purchase_order" constraintName="FK7afyrcl52uq38aoh10reasboh" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="vendor" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-85">
+        <addForeignKeyConstraint baseColumnNames="sales_order_code_serie_code" baseTableName="setup" constraintName="FK7bayf1tlqkesb5aoc7dcbj6l5" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="code_serie" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-86">
+        <addForeignKeyConstraint baseColumnNames="general_journal_batch_code" baseTableName="general_journal_batch_line" constraintName="FK7d0qlg21gbl8wqk6irv06nfk9" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="general_journal_batch" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-87">
+        <addForeignKeyConstraint baseColumnNames="posted_sales_order_code_serie_code" baseTableName="setup" constraintName="FK7o06fns0fhp8c4k4es5xfydgk" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="code_serie" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-88">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="item_ledger_entry" constraintName="FK7xiubv4obyxq65wbew8ab6pct" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-89">
+        <addForeignKeyConstraint baseColumnNames="posted_purchase_order_code" baseTableName="posted_purchase_order_line" constraintName="FK8hhybqarcq6nbi4e9akg88ny1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="posted_purchase_order" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-90">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="posted_purchase_order_line" constraintName="FK8l2bnemj0mtrvhb9d0u4dpjm7" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-91">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="purchase_order" constraintName="FK97iu4m5n03djbbk3og564tm7p" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-92">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="customer" constraintName="FK99v7s84f6rjs8k2x385te0cim" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-93">
+        <addForeignKeyConstraint baseColumnNames="posted_sales_order_code" baseTableName="posted_sales_order_line" constraintName="FK9hd8w6tm5pq8ldwhuib0686il" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="posted_sales_order" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-94">
+        <addForeignKeyConstraint baseColumnNames="purchase_order_code" baseTableName="purchase_order_line" constraintName="FK9tf3wtf4x7gvaq07u2fdfo2lj" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="purchase_order" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-95">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="posted_sales_order_line" constraintName="FK9wbp7mdpgrj4anmrkkf3bgstb" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-96">
+        <addForeignKeyConstraint baseColumnNames="posted_sales_credit_memo_code_serie_code" baseTableName="setup" constraintName="FK9x6d5xk3hw3h8hrctlvly5s8l" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="code_serie" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-97">
+        <addForeignKeyConstraint baseColumnNames="customer_code" baseTableName="posted_sales_credit_memo" constraintName="FK9yu8tutotojknafodpv8n12jh" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="customer" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-98">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="posted_sales_credit_memo" constraintName="FKaa5ojta3lx2c3h1ms5olo9it6" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-99">
+        <addForeignKeyConstraint baseColumnNames="customer_code" baseTableName="sales_credit_memo" constraintName="FKbdue6yy0vko77olwhb52n08g3" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="customer" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-100">
+        <addForeignKeyConstraint baseColumnNames="target_code" baseTableName="general_journal_batch_line" constraintName="FKc3hbjpo6jw817tmuj7lob1c5e" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="bank_account" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-101">
+        <addForeignKeyConstraint baseColumnNames="posted_sales_credit_memo_code" baseTableName="posted_sales_credit_memo_line" constraintName="FKc8yxjftun8ylwgs2gxgp74rtd" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="posted_sales_credit_memo" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-102">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="sales_order_line" constraintName="FKcejq5xc2eus21gahrtntqqohf" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-103">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="posted_purchase_order" constraintName="FKcl00pygkl63nk4wdny949gh99" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-104">
+        <addForeignKeyConstraint baseColumnNames="purchase_credit_memo_code" baseTableName="purchase_credit_memo_line" constraintName="FKcmrmo1rd3sphagl1wr3b83hr7" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="purchase_credit_memo" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-105">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="posted_sales_credit_memo_line" constraintName="FKcn80my69l3ompfspi8vkn7d31" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-106">
+        <addForeignKeyConstraint baseColumnNames="bank_account_code" baseTableName="bank_account_ledger_entry" constraintName="FKcov4cbwx13h3xa5gopv33fns" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="bank_account" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-107">
+        <addForeignKeyConstraint baseColumnNames="posted_purchase_credit_memo_code_serie_code" baseTableName="setup" constraintName="FKg3sm9esqxr8aiiohiuoxa3f1j" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="code_serie" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-108">
+        <addForeignKeyConstraint baseColumnNames="purchase_order_code_serie_code" baseTableName="setup" constraintName="FKhbbjqxdchwpt3crhob7k1ts7v" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="code_serie" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-109">
+        <addForeignKeyConstraint baseColumnNames="customer_code" baseTableName="sales_order" constraintName="FKhixhdk2npmsewillg8t0u98sd" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="customer" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-110">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="purchase_credit_memo_line" constraintName="FKhtn1r1wy3gd916fpgjmk1p0pl" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-111">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="posted_purchase_credit_memo_line" constraintName="FKi6b02cd5qwv0sohlminy74c50" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-112">
+        <addForeignKeyConstraint baseColumnNames="bank_account_code" baseTableName="payment_method" constraintName="FKj2rbl3xek6u7r6iixuw4jheph" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="bank_account" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-113">
+        <addForeignKeyConstraint baseColumnNames="sales_credit_memo_code_serie_code" baseTableName="setup" constraintName="FKj3hxhv8tw503w8tedmabx191e" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="code_serie" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-114">
+        <addForeignKeyConstraint baseColumnNames="vendor_code" baseTableName="purchase_credit_memo" constraintName="FKjdly05yvcmqde8p15ourjpyt" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="vendor" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-115">
+        <addForeignKeyConstraint baseColumnNames="customer_code" baseTableName="customer_ledger_entry" constraintName="FKjgnhbsruyb321obd3r74yni5x" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="customer" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-116">
+        <addForeignKeyConstraint baseColumnNames="posted_purchase_order_code_serie_code" baseTableName="setup" constraintName="FKk26imu94yoivlopnm2c55n62w" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="code_serie" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-117">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="sales_credit_memo_line" constraintName="FKk6c0npm2fc9rs67mx4817aaxi" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-118">
+        <addForeignKeyConstraint baseColumnNames="sales_credit_memo_code" baseTableName="sales_credit_memo_line" constraintName="FKkftu86tcpq5enkcyh5cxtlquh" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="sales_credit_memo" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-119">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="sales_credit_memo" constraintName="FKkjog8dbk4699fjfdnpel09dvj" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-120">
+        <addForeignKeyConstraint baseColumnNames="vendor_code" baseTableName="posted_purchase_credit_memo" constraintName="FKkliu591nn5taxv2x79giyq40s" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="vendor" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-121">
+        <addForeignKeyConstraint baseColumnNames="item_code" baseTableName="purchase_order_line" constraintName="FKmbpanpo4a5v8mhvt4nupe3y2n" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="item" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-122">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="posted_purchase_credit_memo" constraintName="FKp882i4e5sjerpk9mvmjm6u048" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-123">
+        <addForeignKeyConstraint baseColumnNames="sales_order_code" baseTableName="sales_order_line" constraintName="FKr2y2l3yirjgergkutsyx26mgx" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="sales_order" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-124">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="vendor" constraintName="FKrfs25nxftw0kcdbe1xrl0wut3" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-125">
+        <addForeignKeyConstraint baseColumnNames="payment_method_code" baseTableName="posted_sales_order" constraintName="FKrnhoxrijnqj8cx907wud09aah" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="payment_method" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-126">
+        <addForeignKeyConstraint baseColumnNames="posted_purchase_credit_memo_code" baseTableName="posted_purchase_credit_memo_line" constraintName="FKs2mnid10u2w8eswlg26guba8f" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="posted_purchase_credit_memo" validate="true"/>
+    </changeSet>
+
+    <changeSet author="rrashidov" id="1680261661076-127">
+        <addForeignKeyConstraint baseColumnNames="vendor_code" baseTableName="vendor_ledger_entry" constraintName="FKtp9ia7mxemey58kanb5eu6v8g" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="vendor" validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>

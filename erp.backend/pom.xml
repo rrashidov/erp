@@ -52,6 +52,12 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
@@ -68,6 +74,18 @@
 					<parallel>classes</parallel>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<configuration>
+				   <driver>com.mysql.cj.jdbc.Driver</driver>
+				   <url>jdbc:mysql://localhost:33060/erp</url>
+				   <username>root</username>
+				   <password>root</password>
+				   <outputChangeLogFile>src/main/resources/liquibase-outputChangeLog.xml</outputChangeLogFile>
+				</configuration>
+			 </plugin>
 		</plugins>
 	</build>
 
