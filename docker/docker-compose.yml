@@ -31,10 +31,10 @@ services:
       - mysql
       - rabbitmq
     healthcheck:
-      test: "curl -f localhost:8082/api/v1/setup"
-      interval: 10s
-      timeout: 90s
-      retries: 20
+      test: "curl -f localhost:8082/api/v1/healthcheck"
+      interval: 2s
+      timeout: 2s
+      retries: 60
   frontend:
     image: erp.frontend:0.0.1
     environment:
