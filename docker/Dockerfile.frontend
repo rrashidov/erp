@@ -1,5 +1,7 @@
 FROM openjdk:8-jdk-alpine
 
+RUN apk add --no-cache curl bash htop
+
 COPY frontend.jar app.jar
 
 ENTRYPOINT ["java","-jar","/app.jar"]
