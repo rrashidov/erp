@@ -6,7 +6,7 @@ work_dir=$(pwd)
 .PHONY: build
 build:
 	@echo "Start building erp components"
-	@${mvn_home} clean install
+	@${mvn_home} -T 1C clean install
 	@echo "Finished building erp components"
 
 .PHONY: containerize
