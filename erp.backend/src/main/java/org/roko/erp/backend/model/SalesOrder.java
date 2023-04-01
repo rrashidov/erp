@@ -20,6 +20,10 @@ public class SalesOrder {
 	@ManyToOne
 	private PaymentMethod paymentMethod;
 
+	private DocumentPostStatus postStatus = DocumentPostStatus.READY;
+
+	private String postStatusReason = "";
+
 	private double amount;
 	
 	public String getCode() {
@@ -51,5 +55,17 @@ public class SalesOrder {
 	}
 	public void setAmount(double amount) {
 		this.amount = amount;
+	}
+	public DocumentPostStatus getPostStatus() {
+		return postStatus;
+	}
+	public void setPostStatus(DocumentPostStatus postStatus) {
+		this.postStatus = postStatus;
+	}
+	public String getPostStatusReason() {
+		return postStatusReason;
+	}
+	public void setPostStatusReason(String postStatusReason) {
+		this.postStatusReason = postStatusReason;
 	}	
 }

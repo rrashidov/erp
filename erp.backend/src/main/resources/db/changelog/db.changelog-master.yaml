@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/db.changelog-20230331-initial.xml
+  - include:
+      file: db/changelog/db.changelog-20230401-salesOrderPostStatusFields.xml

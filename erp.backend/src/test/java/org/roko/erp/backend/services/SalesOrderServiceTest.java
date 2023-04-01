@@ -17,6 +17,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Customer;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.repositories.SalesOrderRepository;
@@ -31,6 +32,10 @@ public class SalesOrderServiceTest {
     private static final Date TEST_DATE = new Date();
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
     private static final String TEST_PAYMENT_METHOD_NAME = "payment-method-name";
+
+    private static final DocumentPostStatus TEST_POST_STATUS = DocumentPostStatus.SCHEDULED;
+    private static final String TEST_POST_STATUS_REASON = "test-post-status-reason";
+
     private static final double TEST_AMOUNT = 123.12;
 
     private static final String NON_EXISTING_CODE = "non-existing-code";
@@ -96,6 +101,8 @@ public class SalesOrderServiceTest {
         when(salesOrderMock.getCustomer()).thenReturn(customerMock);
         when(salesOrderMock.getDate()).thenReturn(TEST_DATE);
         when(salesOrderMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+        when(salesOrderMock.getPostStatus()).thenReturn(TEST_POST_STATUS);
+        when(salesOrderMock.getPostStatusReason()).thenReturn(TEST_POST_STATUS_REASON);
         when(salesOrderMock.getAmount()).thenReturn(TEST_AMOUNT);
         
         when(repoMock.findAll()).thenReturn(Arrays.asList(salesOrderMock, salesOrderMock1, salesOrderMock2));
@@ -190,6 +197,8 @@ public class SalesOrderServiceTest {
         assertEquals(TEST_DATE, dto.getDate());
         assertEquals(TEST_PAYMENT_METHOD_CODE, dto.getPaymentMethodCode());
         assertEquals(TEST_PAYMENT_METHOD_NAME, dto.getPaymentMethodName());
+        assertEquals(TEST_POST_STATUS.name(), dto.getPostStatus());
+        assertEquals(TEST_POST_STATUS_REASON, dto.getPostStatusReason());
         assertEquals(TEST_AMOUNT, dto.getAmount());
     }
 }

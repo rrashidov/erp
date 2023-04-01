@@ -19,6 +19,10 @@ public class SalesDocumentDTO {
 
     private String paymentMethodName = "";
 
+    private String postStatus = "";
+
+    private String postStatusReason = "";
+
     private double amount = 0.0;
     
     public String getCode() {
@@ -62,6 +66,18 @@ public class SalesDocumentDTO {
     }
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+    public String getPostStatus() {
+        return postStatus;
+    }
+    public void setPostStatus(String postStatus) {
+        this.postStatus = postStatus;
+    }
+    public String getPostStatusReason() {
+        return postStatusReason;
+    }
+    public void setPostStatusReason(String postStatusReason) {
+        this.postStatusReason = postStatusReason;
     }
     
 }

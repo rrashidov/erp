@@ -100,6 +100,8 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         dto.setDate(salesOrder.getDate());
         dto.setPaymentMethodCode(salesOrder.getPaymentMethod().getCode());
         dto.setPaymentMethodName(salesOrder.getPaymentMethod().getName());
+        dto.setPostStatus(salesOrder.getPostStatus().name());
+        dto.setPostStatusReason(salesOrder.getPostStatusReason());
         dto.setAmount(salesOrder.getAmount());
         return dto;
     }
