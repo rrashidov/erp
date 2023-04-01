@@ -37,10 +37,6 @@ services:
       - DB_PASSWORD=erp
       - DB_PLATFORM=org.hibernate.dialect.MySQL5InnoDBDialect
       - RMQ_HOSTNAME=rabbitmq
-      - RMQ_PORT=5672
-      - RMQ_VHOST=erp
-      - RMQ_USERNAME=erp
-      - RMQ_PASSWORD=erp
     ports:
       - "8082:8082"
     networks: 
