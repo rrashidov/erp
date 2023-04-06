@@ -110,5 +110,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         target.setCustomer(source.getCustomer());
         target.setDate(source.getDate());
         target.setPaymentMethod(source.getPaymentMethod());
+        target.setPostStatus(source.getPostStatus());
+        target.setPostStatusReason(source.getPostStatusReason());
     }
 }
