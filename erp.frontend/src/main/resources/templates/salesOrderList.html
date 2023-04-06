@@ -36,7 +36,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="salesOrder : ${salesOrders}">
+                    <tr th:each="salesOrder : ${salesOrders}" 
+                        th:class="${salesOrder.postStatus.toString == 'READY'} ? '' : (${salesOrder.postStatus.toString == 'SCHEDULED'} ? 'table-info' : 'table-danger')">
                         <td th:text="${salesOrder.code}"></td>
                         <td th:text="${salesOrder.customerName}"></td>
                         <td th:text="${salesOrder.date}"></td>
@@ -44,10 +45,14 @@
                         <td th:text="${salesOrder.postStatus}"></td>
                         <td th:text="${salesOrder.postStatusReason}"></td>
                         <td th:text="${salesOrder.amount}"></td>
-                        <td><a class="btn btn-primary" th:href="@{/salesOrderWizard?code={code}(code=${salesOrder.code})}">Edit</a>  <a
-                            class="btn btn-primary" th:href="@{/salesOrderCard?code={code}(code=${salesOrder.code})}">Card</a> <a
-                            class="btn btn-primary" th:href="@{/deleteSalesOrder?code={code}(code=${salesOrder.code})}">Delete</a> <a
-                            class="btn btn-primary" th:href="@{/postSalesOrder?code={code}(code=${salesOrder.code})}">Post</a></td>
+                        <td><a class="btn btn-primary"
+                                th:href="@{/salesOrderWizard?code={code}(code=${salesOrder.code})}">Edit</a> <a
+                                class="btn btn-primary"
+                                th:href="@{/salesOrderCard?code={code}(code=${salesOrder.code})}">Card</a> <a
+                                class="btn btn-primary"
+                                th:href="@{/deleteSalesOrder?code={code}(code=${salesOrder.code})}">Delete</a> <a
+                                class="btn btn-primary"
+                                th:href="@{/postSalesOrder?code={code}(code=${salesOrder.code})}">Post</a></td>
                     </tr>
 
                 </tbody>

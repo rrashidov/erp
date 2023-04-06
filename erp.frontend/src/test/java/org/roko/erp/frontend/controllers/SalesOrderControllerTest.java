@@ -311,7 +311,7 @@ public class SalesOrderControllerTest {
         verify(salesOrderPostSvcMock).post(TEST_CODE);
 
         verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales Order " + TEST_CODE +
-                " posted.", httpSessionMock);
+                " post scheduled.", httpSessionMock);
     }
 
     @Test
@@ -325,7 +325,7 @@ public class SalesOrderControllerTest {
         verify(salesOrderPostSvcMock).post(TEST_CODE);
 
         verify(feedbackSvcMock).give(FeedbackType.ERROR,
-                "Sales Order " + TEST_CODE + " post failed: " +
+                "Sales Order " + TEST_CODE + " post scheduling failed: " +
                         TEST_POST_FAILED_EXCEPTION_MSG,
                 httpSessionMock);
     }

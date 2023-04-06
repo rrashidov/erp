@@ -147,9 +147,9 @@ public class SalesOrderController {
         try {
             salesOrderPostService.post(code);
 
-            feedbackSvc.give(FeedbackType.INFO, "Sales Order " + code + " posted.", httpSession);
+            feedbackSvc.give(FeedbackType.INFO, "Sales Order " + code + " post scheduled.", httpSession);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Sales Order " + code + " post failed: " + e.getMessage(),
+            feedbackSvc.give(FeedbackType.ERROR, "Sales Order " + code + " post scheduling failed: " + e.getMessage(),
                     httpSession);
         }
 
