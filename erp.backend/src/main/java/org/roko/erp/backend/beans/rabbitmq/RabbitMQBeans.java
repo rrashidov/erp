@@ -1,9 +1,11 @@
 package org.roko.erp.backend.beans.rabbitmq;
 
+import org.roko.erp.backend.services.AsyncSalesOrderPostService;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +43,9 @@ public class RabbitMQBeans {
     @Value("${app.rabbitmq.queue.post.generaljournalbatch}")
     private String postGeneralJournalBatchQueueName;
 
+    @Autowired
+    private AsyncSalesOrderPostService salesOrderPostService;
+
     @Bean
     public ConnectionFactory connectionFactory() throws Exception {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
@@ -58,7 +63,8 @@ public class RabbitMQBeans {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(postSalesOrderQueueName);
-        container.setMessageListener(new MessageListenerAdapter(new SalesOrderPostReceiver(), "receiveMessage"));
+        container.setMessageListener(
+                new MessageListenerAdapter(new SalesOrderPostReceiver(salesOrderPostService), "receiveMessage"));
         return container;
     }
 
