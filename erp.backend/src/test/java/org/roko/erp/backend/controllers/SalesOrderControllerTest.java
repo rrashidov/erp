@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
@@ -26,10 +27,15 @@ import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class SalesOrderControllerTest {
+
+    private static final String EXCHANGE_NAME = "erp.operations.post";
+    private static final String ROUTING_KEY = "sales.order";
 
     private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
@@ -73,6 +79,9 @@ public class SalesOrderControllerTest {
     @Mock
     private SalesOrderPostService salesOrderPostSvcMock;
 
+    @Mock
+    private RabbitTemplate rabbitMQClientMock;
+
     private SalesOrderController controller;
 
     @BeforeEach
@@ -104,7 +113,7 @@ public class SalesOrderControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new SalesOrderController(svcMock, salesOrderLineSvcMock, salesCodeSeriesSvcMock,
-                salesOrderPostSvcMock);
+                rabbitMQClientMock);
     }
 
     @Test
@@ -212,14 +221,17 @@ public class SalesOrderControllerTest {
     public void postOperation_delegatesToService() throws PostFailedException {
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 
-        verify(salesOrderPostSvcMock).post(TEST_CODE);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        verify(rabbitMQClientMock).convertAndSend(EXCHANGE_NAME, ROUTING_KEY, TEST_CODE);
+
+        verify(salesOrderMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+        verify(svcMock).update(TEST_CODE, salesOrderMock);
     }
 
     @Test
     public void postOperation_returnsBadRequest_whenPostingThrowsException() throws PostFailedException {
-        doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(salesOrderPostSvcMock).post(TEST_CODE);
+        doThrow(new AmqpException(TEST_POST_FAILED_MSG)).when(rabbitMQClientMock).convertAndSend(EXCHANGE_NAME, ROUTING_KEY, TEST_CODE);
 
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 

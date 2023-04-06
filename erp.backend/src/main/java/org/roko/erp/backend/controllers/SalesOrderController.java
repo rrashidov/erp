@@ -3,18 +3,19 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesOrderLineService;
-import org.roko.erp.backend.services.SalesOrderPostService;
 import org.roko.erp.backend.services.SalesOrderService;
-import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,18 +32,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/salesorders")
 public class SalesOrderController {
 
+    private static final String EXCHANGE_NAME = "erp.operations.post";
+    private static final String ROUTING_KEY = "sales.order";
+
     private SalesOrderService svc;
     private SalesOrderLineService salesOrderLineSvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
-    private SalesOrderPostService salesOrderPostSvc;
+    private RabbitTemplate rabbitMQClient;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, SalesOrderLineService salesOrderLineSvc,
-            SalesCodeSeriesService salesCodeSeriesSvc, SalesOrderPostService salesOrderPostSvc) {
+            SalesCodeSeriesService salesCodeSeriesSvc, RabbitTemplate rabbitMQClient) {
         this.svc = svc;
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
-        this.salesOrderPostSvc = salesOrderPostSvc;
+        this.rabbitMQClient = rabbitMQClient;
     }
 
     @GetMapping("/page/{page}")
@@ -158,11 +162,19 @@ public class SalesOrderController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            salesOrderPostSvc.post(code);
+            updateSalesOrderPostStatus(code);
+            
+            rabbitMQClient.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, code);
+
             return ResponseEntity.ok("");
-        } catch (PostFailedException e) {
+        } catch (AmqpException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
+    private void updateSalesOrderPostStatus(String code) {
+        SalesOrder salesOrder = svc.get(code);
+        salesOrder.setPostStatus(DocumentPostStatus.SCHEDULED);
+        svc.update(code, salesOrder);
+    }
 }
