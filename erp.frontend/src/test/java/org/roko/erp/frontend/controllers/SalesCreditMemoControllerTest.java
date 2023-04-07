@@ -311,7 +311,7 @@ public class SalesCreditMemoControllerTest {
 
         verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
 
-        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " posted.",
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post scheduled.",
                 httpSessionMock);
     }
 
@@ -327,7 +327,7 @@ public class SalesCreditMemoControllerTest {
         verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
 
         verify(feedbackSvcMock).give(FeedbackType.ERROR,
-                "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post failed: " + TEST_POST_FAILED_MSG,
+                "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post scheduling failed: " + TEST_POST_FAILED_MSG,
                 httpSessionMock);
     }
 }

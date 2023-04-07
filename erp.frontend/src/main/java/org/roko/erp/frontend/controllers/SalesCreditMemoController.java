@@ -145,13 +145,14 @@ public class SalesCreditMemoController {
         try {
             salesCreditMemoPostSvc.post(code);
 
-            feedbackSvc.give(FeedbackType.INFO, "Sales credit memo " + code + " posted.", httpSession);
+            feedbackSvc.give(FeedbackType.INFO, "Sales credit memo " + code + " post scheduled.", httpSession);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Sales credit memo " + code + " post failed: " + e.getMessage(),
+            feedbackSvc.give(FeedbackType.ERROR, "Sales credit memo " + code + " post scheduling failed: " + e.getMessage(),
                     httpSession);
         }
 
         return new RedirectView("/salesCreditMemoList");
     }
+
 
 }
