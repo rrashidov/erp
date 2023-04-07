@@ -3,6 +3,7 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.SalesCreditMemo;
 import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
@@ -163,10 +164,19 @@ public class SalesCreditMemoController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
+            updateSalesCreditMemoPostStatus(code);
+
             rabbitMQClient.convertAndSend(SALES_CREDIT_MEMO_MSG_EXCHANGE_NAME, SALES_CREDIT_MEMO_MSG_ROUTING_KEY, code);
+            
             return ResponseEntity.ok("");
         } catch (AmqpException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    private void updateSalesCreditMemoPostStatus(String code) {
+        SalesCreditMemo salesCreditMemo = svc.get(code);
+        salesCreditMemo.setPostStatus(DocumentPostStatus.SCHEDULED);
+        svc.update(code, salesCreditMemo);
     }
 }

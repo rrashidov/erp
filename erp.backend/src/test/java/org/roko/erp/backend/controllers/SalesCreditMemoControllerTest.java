@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.SalesCreditMemo;
 import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
@@ -206,9 +207,12 @@ public class SalesCreditMemoControllerTest {
     public void operationPost_delegatesToService() throws PostFailedException {
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
         verify(rabbitMQClientMock).convertAndSend(SALES_CREDIT_MEMO_MSG_EXCHANGE_NAME, SALES_CREDIT_MEMO_MSG_ROUTING_KEY, TEST_CODE);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(salesCreditMemoMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+        verify(svcMock).update(TEST_CODE, salesCreditMemoMock);
     }
 
     @Test
