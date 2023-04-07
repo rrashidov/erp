@@ -101,6 +101,8 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
         dto.setDate(salesCreditMemo.getDate());
         dto.setPaymentMethodCode(salesCreditMemo.getPaymentMethod().getCode());
         dto.setPaymentMethodName(salesCreditMemo.getPaymentMethod().getName());
+        dto.setPostStatus(salesCreditMemo.getPostStatus().name());
+        dto.setPostStatusReason(salesCreditMemo.getPostStatusReason());
         dto.setAmount(salesCreditMemo.getAmount());
         return dto;
     }
@@ -109,6 +111,8 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
         target.setCustomer(source.getCustomer());
         target.setDate(source.getDate());
         target.setPaymentMethod(source.getPaymentMethod());
+        target.setPostStatus(source.getPostStatus());
+        target.setPostStatusReason(source.getPostStatusReason());
     }
 
 }

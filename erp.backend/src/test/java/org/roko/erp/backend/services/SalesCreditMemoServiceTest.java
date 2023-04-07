@@ -17,6 +17,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.backend.model.Customer;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.model.SalesCreditMemo;
 import org.roko.erp.backend.repositories.SalesCreditMemoRepository;
@@ -35,6 +36,9 @@ public class SalesCreditMemoServiceTest {
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
 
     private static final String TEST_SALES_CREDIT_MEMO_CODE = "test-sales-credit-memo-code";
+
+    private static final DocumentPostStatus TEST_POST_STATUS = DocumentPostStatus.FAILED;
+    private static final String TEST_POST_STATUS_REASON = "test-post-status-reason";
 
     private static final String NON_EXISTING_CODE = "non-existing-code";
 
@@ -108,6 +112,8 @@ public class SalesCreditMemoServiceTest {
         when(salesCreditMemoMock.getCustomer()).thenReturn(customerMock);
         when(salesCreditMemoMock.getDate()).thenReturn(TEST_DATE);
         when(salesCreditMemoMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+        when(salesCreditMemoMock.getPostStatus()).thenReturn(TEST_POST_STATUS);
+        when(salesCreditMemoMock.getPostStatusReason()).thenReturn(TEST_POST_STATUS_REASON);
         when(salesCreditMemoMock.getAmount()).thenReturn(TEST_AMOUNT);
 
         when(customerSvcMock.get(TEST_CUSTOMER_CODE)).thenReturn(customerMock);
@@ -127,6 +133,8 @@ public class SalesCreditMemoServiceTest {
         when(salesCreditMemoToUpdateMock.getCustomer()).thenReturn(updatedCustomerMock);
         when(salesCreditMemoToUpdateMock.getDate()).thenReturn(updatedDateMock);
         when(salesCreditMemoToUpdateMock.getPaymentMethod()).thenReturn(updatedPaymentMethodMock);
+        when(salesCreditMemoToUpdateMock.getPostStatus()).thenReturn(TEST_POST_STATUS);
+        when(salesCreditMemoToUpdateMock.getPostStatusReason()).thenReturn(TEST_POST_STATUS_REASON);
 
         svc = new SalesCreditMemoServiceImpl(repoMock, customerSvcMock, paymentMethodSvcMock);
     }
@@ -148,6 +156,8 @@ public class SalesCreditMemoServiceTest {
         verify(salesCreditMemoMock).setCustomer(updatedCustomerMock);
         verify(salesCreditMemoMock).setDate(updatedDateMock);
         verify(salesCreditMemoMock).setPaymentMethod(updatedPaymentMethodMock);
+        verify(salesCreditMemoMock).setPostStatus(TEST_POST_STATUS);
+        verify(salesCreditMemoMock).setPostStatusReason(TEST_POST_STATUS_REASON);
     }
 
     @Test
@@ -222,5 +232,7 @@ public class SalesCreditMemoServiceTest {
         assertEquals(TEST_PAYMENT_METHOD_CODE, dto.getPaymentMethodCode());
         assertEquals(TEST_PAYMENT_METHOD_NAME, dto.getPaymentMethodName());
         assertEquals(TEST_AMOUNT, dto.getAmount());
+        assertEquals(TEST_POST_STATUS.name(), dto.getPostStatus());
+        assertEquals(TEST_POST_STATUS_REASON, dto.getPostStatusReason());
     }
 }
