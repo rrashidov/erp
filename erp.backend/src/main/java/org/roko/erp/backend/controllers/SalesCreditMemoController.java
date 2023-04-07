@@ -8,13 +8,13 @@ import org.roko.erp.backend.model.SalesCreditMemoLine;
 import org.roko.erp.backend.model.jpa.SalesCreditMemoLineId;
 import org.roko.erp.backend.services.SalesCodeSeriesService;
 import org.roko.erp.backend.services.SalesCreditMemoLineService;
-import org.roko.erp.backend.services.SalesCreditMemoPostService;
 import org.roko.erp.backend.services.SalesCreditMemoService;
-import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.SalesDocumentLineDTO;
 import org.roko.erp.dto.list.SalesDocumentLineList;
 import org.roko.erp.dto.list.SalesDocumentList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,18 +31,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/salescreditmemos")
 public class SalesCreditMemoController {
 
+    private static final String SALES_CREDIT_MEMO_MSG_ROUTING_KEY = "sales.creditmemo";
+    private static final String SALES_CREDIT_MEMO_MSG_EXCHANGE_NAME = "erp.operations.post";
+
     private SalesCreditMemoService svc;
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
-    private SalesCreditMemoPostService salesCreditMemoPostSvc;
+    private RabbitTemplate rabbitMQClient;
 
     @Autowired
     public SalesCreditMemoController(SalesCreditMemoService svc, SalesCreditMemoLineService salesCreditMemoLineSvc,
-            SalesCodeSeriesService salesCodeSeriesSvc, SalesCreditMemoPostService salesCreditMemoPostSvc) {
+            SalesCodeSeriesService salesCodeSeriesSvc, RabbitTemplate rabbitMQClient) {
         this.svc = svc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
-        this.salesCreditMemoPostSvc = salesCreditMemoPostSvc;
+        this.rabbitMQClient = rabbitMQClient;
     }
 
     @GetMapping("/page/{page}")
@@ -160,9 +163,9 @@ public class SalesCreditMemoController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            salesCreditMemoPostSvc.post(code);
+            rabbitMQClient.convertAndSend(SALES_CREDIT_MEMO_MSG_EXCHANGE_NAME, SALES_CREDIT_MEMO_MSG_ROUTING_KEY, code);
             return ResponseEntity.ok("");
-        } catch (PostFailedException e) {
+        } catch (AmqpException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
