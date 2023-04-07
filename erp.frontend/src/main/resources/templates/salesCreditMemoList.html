@@ -28,16 +28,21 @@
                         <th scope="col">Customer</th>
                         <th scope="col">Date</th>
                         <th scope="col">Payment Method</th>
+                        <th scope="col">Post Status</th>
+                        <th scope="col">Reason</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="salesCreditMemo : ${salesCreditMemos}">
+                    <tr th:each="salesCreditMemo : ${salesCreditMemos}"
+                        th:class="${salesCreditMemo.postStatus.toString == 'READY'} ? '' : (${salesCreditMemo.postStatus.toString == 'SCHEDULED'} ? 'table-info' : 'table-danger')">
                         <td th:text="${salesCreditMemo.code}"></td>
                         <td th:text="${salesCreditMemo.customerName}"></td>
                         <td th:text="${salesCreditMemo.date}"></td>
                         <td th:text="${salesCreditMemo.paymentMethodName}"></td>
+                        <td th:text="${salesCreditMemo.postStatus}"></td>
+                        <td th:text="${salesCreditMemo.postStatusReason}"></td>
                         <td th:text="${salesCreditMemo.amount}"></td>
                         <td><a class="btn btn-primary" th:href="@{/salesCreditMemoWizard?code={code}(code=${salesCreditMemo.code})}">Edit</a>  <a
                             class="btn btn-primary" th:href="@{/salesCreditMemoCard?code={code}(code=${salesCreditMemo.code})}">Card</a> <a
