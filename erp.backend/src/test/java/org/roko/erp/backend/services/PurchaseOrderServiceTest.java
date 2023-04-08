@@ -16,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.Vendor;
@@ -25,6 +26,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class PurchaseOrderServiceTest {
+
+    private static final DocumentPostStatus TEST_POST_STATUS = DocumentPostStatus.FAILED;
+    private static final String TEST_POST_STATUS_REASON = "test-post-status-reason";
 
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
@@ -97,6 +101,8 @@ public class PurchaseOrderServiceTest {
         when(purchaseOrderMock.getVendor()).thenReturn(vendorMock);
         when(purchaseOrderMock.getDate()).thenReturn(TEST_DATE);
         when(purchaseOrderMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+        when(purchaseOrderMock.getPostStatus()).thenReturn(TEST_POST_STATUS);
+        when(purchaseOrderMock.getPostStatusReason()).thenReturn(TEST_POST_STATUS_REASON);
         when(purchaseOrderMock.getAmount()).thenReturn(TEST_AMOUNT);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(purchaseOrderMock));
@@ -182,6 +188,8 @@ public class PurchaseOrderServiceTest {
         assertEquals(TEST_DATE, dto.getDate());
         assertEquals(TEST_PAYMENT_METHOD_CODE, dto.getPaymentMethodCode());
         assertEquals(TEST_PAYMENT_METHOD_NAME, dto.getPaymentMethodName());
+        assertEquals(TEST_POST_STATUS.name(), dto.getPostStatus());
+        assertEquals(TEST_POST_STATUS_REASON, dto.getPostStatusReason());
         assertEquals(TEST_AMOUNT, dto.getAmount());
     }
 

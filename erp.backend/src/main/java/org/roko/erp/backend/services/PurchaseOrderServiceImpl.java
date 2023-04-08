@@ -101,6 +101,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         dto.setDate(purchaseOrder.getDate());
         dto.setPaymentMethodCode(purchaseOrder.getPaymentMethod().getCode());
         dto.setPaymentMethodName(purchaseOrder.getPaymentMethod().getName());
+        dto.setPostStatus(purchaseOrder.getPostStatus().name());
+        dto.setPostStatusReason(purchaseOrder.getPostStatusReason());
         dto.setAmount(purchaseOrder.getAmount());
         return dto;
     }
@@ -109,6 +111,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         target.setVendor(source.getVendor());
         target.setDate(source.getDate());
         target.setPaymentMethod(source.getPaymentMethod());
+        target.setPostStatus(source.getPostStatus());
+        target.setPostStatusReason(source.getPostStatusReason());
     }
 
 }
