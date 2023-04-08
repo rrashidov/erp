@@ -28,16 +28,21 @@
                         <th scope="col">Vendor</th>
                         <th scope="col">Date</th>
                         <th scope="col">Payment Method</th>
+                        <th scope="col">Post Status</th>
+                        <th scope="col">Reason</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="purchaseOrder : ${purchaseOrders}">
+                    <tr th:each="purchaseOrder : ${purchaseOrders}"
+                    th:class="${purchaseOrder.postStatus.toString == 'READY'} ? '' : (${purchaseOrder.postStatus.toString == 'SCHEDULED'} ? 'table-info' : 'table-danger')">
                         <td th:text="${purchaseOrder.code}"></td>
                         <td th:text="${purchaseOrder.vendorName}"></td>
                         <td th:text="${purchaseOrder.date}"></td>
                         <td th:text="${purchaseOrder.paymentMethodName}"></td>
+                        <td th:text="${purchaseOrder.postStatus}"></td>
+                        <td th:text="${purchaseOrder.postStatusReason}"></td>
                         <td th:text="${purchaseOrder.amount}"></td>
                         <td><a class="btn btn-primary" th:href="@{/purchaseOrderWizard?code={code}(code=${purchaseOrder.code})}">Edit</a>  <a
                             class="btn btn-primary" th:href="@{/purchaseOrderCard?code={code}(code=${purchaseOrder.code})}">Card</a> <a
