@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/db.changelog-20230401-salesOrderPostStatusFields.xml
   - include:
       file: db/changelog/db.changelog-20230407-salesCreditMemoPostStatusFields.xml
+  - include:
+      file: db/changelog/db.changelog-20230408-purchaseOrderPostStatusFields.xml
