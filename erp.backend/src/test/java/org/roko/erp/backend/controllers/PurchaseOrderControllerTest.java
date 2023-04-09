@@ -13,22 +13,27 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseOrderLineService;
-import org.roko.erp.backend.services.PurchaseOrderPostService;
 import org.roko.erp.backend.services.PurchaseOrderService;
 import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class PurchaseOrderControllerTest {
+
+    private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
+    private static final String POST_OPERATION_ROUTING_KEY = "purchase.order";
 
     private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
@@ -69,7 +74,7 @@ public class PurchaseOrderControllerTest {
     private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
 
     @Mock
-    private PurchaseOrderPostService purchaseOrderPostSvcMock;
+    private RabbitTemplate rabbitMQClientMock;
 
     private PurchaseOrderController controller;
 
@@ -99,7 +104,7 @@ public class PurchaseOrderControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, purchaseCodeSeriesSvcMock,
-                purchaseOrderPostSvcMock);
+                rabbitMQClientMock);
     }
 
     @Test
@@ -205,17 +210,22 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
-    public void postOperation_delegatesToService() throws PostFailedException {
+    public void postOperation_updatesPurchaseOrderAndSendsMessageToRabbitMQ() throws PostFailedException {
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 
-        verify(purchaseOrderPostSvcMock).post(TEST_CODE);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        verify(purchaseOrderMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+
+        verify(svcMock).update(TEST_CODE, purchaseOrderMock);
+
+        verify(rabbitMQClientMock).convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, TEST_CODE);
     }
 
     @Test
-    public void postOperation_returnsBadRequest_whenPostingThrowsException() throws PostFailedException{
-        doThrow(new PostFailedException(TEST_POST_FAILED_MSG)).when(purchaseOrderPostSvcMock).post(TEST_CODE);
+    public void postOperation_returnsBadRequest_whenPostingThrowsException() throws PostFailedException {
+        doThrow(new AmqpException(TEST_POST_FAILED_MSG)).when(rabbitMQClientMock)
+                .convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, TEST_CODE);
 
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 

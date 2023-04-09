@@ -3,18 +3,19 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
 import org.roko.erp.backend.model.jpa.PurchaseOrderLineId;
 import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseOrderLineService;
-import org.roko.erp.backend.services.PurchaseOrderPostService;
 import org.roko.erp.backend.services.PurchaseOrderService;
-import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,18 +32,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/purchaseorders")
 public class PurchaseOrderController {
 
+    private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
+    private static final String POST_OPERATION_ROUTING_KEY = "purchase.order";
+
     private PurchaseOrderService svc;
     private PurchaseOrderLineService purchaseOrderLineSvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
-    private PurchaseOrderPostService purchaseOrderPostSvc;
+    private RabbitTemplate rabbitMQClient;
 
     @Autowired
     public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc,
-            PurchaseCodeSeriesService purchaseCodeSeriesSvc, PurchaseOrderPostService purchaseOrderPostSvc) {
+            PurchaseCodeSeriesService purchaseCodeSeriesSvc, RabbitTemplate rabbitMQClient) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
-        this.purchaseOrderPostSvc = purchaseOrderPostSvc;
+        this.rabbitMQClient = rabbitMQClient;
     }
 
     @GetMapping
@@ -171,11 +175,19 @@ public class PurchaseOrderController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            purchaseOrderPostSvc.post(code);
+            updatePurchaseOrderPostStatus(code);
+
+            rabbitMQClient.convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, code);
 
             return ResponseEntity.ok("");
-        } catch (PostFailedException e) {
+        } catch (AmqpException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    private void updatePurchaseOrderPostStatus(String code) {
+        PurchaseOrder purchaseOrder = svc.get(code);
+        purchaseOrder.setPostStatus(DocumentPostStatus.SCHEDULED);
+        svc.update(code, purchaseOrder);
     }
 }
