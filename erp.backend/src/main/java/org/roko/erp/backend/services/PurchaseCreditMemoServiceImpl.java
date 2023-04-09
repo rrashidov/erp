@@ -101,6 +101,8 @@ public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService 
         dto.setDate(purchaseCreditMemo.getDate());
         dto.setPaymentMethodCode(purchaseCreditMemo.getPaymentMethod().getCode());
         dto.setPaymentMethodName(purchaseCreditMemo.getPaymentMethod().getName());
+        dto.setPostStatus(purchaseCreditMemo.getPostStatus().name());
+        dto.setPostStatusReason(purchaseCreditMemo.getPostStatusReason());
         dto.setAmount(purchaseCreditMemo.getAmount());
         return dto;
     }
@@ -109,6 +111,8 @@ public class PurchaseCreditMemoServiceImpl implements PurchaseCreditMemoService 
         target.setVendor(source.getVendor());
         target.setDate(source.getDate());
         target.setPaymentMethod(source.getPaymentMethod());
+        target.setPostStatus(source.getPostStatus());
+        target.setPostStatusReason(source.getPostStatusReason());
     }
 
 }

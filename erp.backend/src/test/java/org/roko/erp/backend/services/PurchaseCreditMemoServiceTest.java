@@ -16,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PaymentMethod;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.Vendor;
@@ -25,6 +26,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class PurchaseCreditMemoServiceTest {
+
+    private static final DocumentPostStatus TEST_POST_STATUS = DocumentPostStatus.SCHEDULED;
+    private static final String TEST_POST_STATUS_REASON = "test-post-status-reason";
 
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
@@ -95,6 +99,8 @@ public class PurchaseCreditMemoServiceTest {
         when(purchaseCreditMemoMock.getVendor()).thenReturn(vendorMock);
         when(purchaseCreditMemoMock.getDate()).thenReturn(TEST_DATE);
         when(purchaseCreditMemoMock.getPaymentMethod()).thenReturn(paymentMethodMock);
+        when(purchaseCreditMemoMock.getPostStatus()).thenReturn(TEST_POST_STATUS);
+        when(purchaseCreditMemoMock.getPostStatusReason()).thenReturn(TEST_POST_STATUS_REASON);
         when(purchaseCreditMemoMock.getAmount()).thenReturn(TEST_AMOUNT);
 
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(purchaseCreditMemoMock));
@@ -180,6 +186,8 @@ public class PurchaseCreditMemoServiceTest {
         assertEquals(TEST_DATE, dto.getDate());
         assertEquals(TEST_PAYMENT_METHOD_CODE, dto.getPaymentMethodCode());
         assertEquals(TEST_PAYMENT_METHOD_NAME, dto.getPaymentMethodName());
+        assertEquals(TEST_POST_STATUS.name(), dto.getPostStatus());
+        assertEquals(TEST_POST_STATUS_REASON, dto.getPostStatusReason());
         assertEquals(TEST_AMOUNT, dto.getAmount());
     }
 
