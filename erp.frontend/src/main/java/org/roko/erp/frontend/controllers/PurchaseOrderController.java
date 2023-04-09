@@ -148,9 +148,9 @@ public class PurchaseOrderController {
         try {
             purchaseOrderPostSvc.post(code);
 
-            feedbackSvc.give(FeedbackType.INFO, "Purchase order " + code + " posted.", httpSessionMock);
+            feedbackSvc.give(FeedbackType.INFO, "Purchase order " + code + " post scheduled.", httpSessionMock);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Purchase order " + code + " post failed: " + e.getMessage(),
+            feedbackSvc.give(FeedbackType.ERROR, "Purchase order " + code + " post scheduling failed: " + e.getMessage(),
                     httpSessionMock);
         }
 

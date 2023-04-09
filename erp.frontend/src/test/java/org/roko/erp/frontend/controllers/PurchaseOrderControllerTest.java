@@ -318,7 +318,7 @@ public class PurchaseOrderControllerTest {
 
         verify(purchaseOrderPostSvcMock).post(TEST_CODE);
 
-        verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase order " + TEST_CODE + " posted.", httpSessionMock);
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase order " + TEST_CODE + " post scheduled.", httpSessionMock);
     }
 
     @Test
@@ -332,7 +332,7 @@ public class PurchaseOrderControllerTest {
         verify(purchaseOrderPostSvcMock).post(TEST_CODE);
 
         verify(feedbackSvcMock).give(FeedbackType.ERROR,
-                "Purchase order " + TEST_CODE + " post failed: " + TEST_POST_FAILED_MSG, httpSessionMock);
+                "Purchase order " + TEST_CODE + " post scheduling failed: " + TEST_POST_FAILED_MSG, httpSessionMock);
     }
 
 }
