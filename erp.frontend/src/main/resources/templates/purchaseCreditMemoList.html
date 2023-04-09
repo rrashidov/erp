@@ -28,16 +28,21 @@
                         <th scope="col">Vendor</th>
                         <th scope="col">Date</th>
                         <th scope="col">Payment Method</th>
+                        <th scope="col">Post Status</th>
+                        <th scope="col">Reason</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="purchaseCreditMemo : ${purchaseCreditMemos}">
+                    <tr th:each="purchaseCreditMemo : ${purchaseCreditMemos}"
+                        th:class="${purchaseCreditMemo.postStatus.toString == 'READY'} ? '' : (${purchaseCreditMemo.postStatus.toString == 'SCHEDULED'} ? 'table-info' : 'table-danger')">
                         <td th:text="${purchaseCreditMemo.code}"></td>
                         <td th:text="${purchaseCreditMemo.vendorName}"></td>
                         <td th:text="${purchaseCreditMemo.date}"></td>
                         <td th:text="${purchaseCreditMemo.paymentMethodName}"></td>
+                        <td th:text="${purchaseCreditMemo.postStatus}"></td>
+                        <td th:text="${purchaseCreditMemo.postStatusReason}"></td>
                         <td th:text="${purchaseCreditMemo.amount}"></td>
                         <td><a class="btn btn-primary" th:href="@{/purchaseCreditMemoWizard?code={code}(code=${purchaseCreditMemo.code})}">Edit</a>  <a
                             class="btn btn-primary" th:href="@{/purchaseCreditMemoCard?code={code}(code=${purchaseCreditMemo.code})}">Card</a> <a
