@@ -143,9 +143,9 @@ public class PurchaseCreditMemoController {
         try {
             purchaseCreditMemoPostSvc.post(code);
 
-            feedbackSvc.give(FeedbackType.INFO, "Purchase credit memo " + code + " posted.", httpSessionMock);
+            feedbackSvc.give(FeedbackType.INFO, "Purchase credit memo " + code + " post scheduled.", httpSessionMock);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "Purchase credit memo " + code + " post failed: " + e.getMessage(),
+            feedbackSvc.give(FeedbackType.ERROR, "Purchase credit memo " + code + " post scheduling failed: " + e.getMessage(),
                     httpSessionMock);
         }
 

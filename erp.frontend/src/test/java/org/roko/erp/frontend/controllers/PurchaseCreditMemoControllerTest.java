@@ -341,7 +341,7 @@ public class PurchaseCreditMemoControllerTest {
                 verify(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
                 verify(feedbackSvcMock).give(FeedbackType.INFO,
-                                "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " posted.",
+                                "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " post scheduled.",
                                 httpSessionMock);
         }
 
@@ -358,7 +358,7 @@ public class PurchaseCreditMemoControllerTest {
                 verify(purchaseCreditMemoPostSvcMock).post(TEST_PURCHASE_CREDIT_MEMO_CODE);
 
                 verify(feedbackSvcMock).give(FeedbackType.ERROR,
-                                "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " post failed: " +
+                                "Purchase credit memo " + TEST_PURCHASE_CREDIT_MEMO_CODE + " post scheduling failed: " +
                                                 TEST_POST_FAILED_MSG,
                                 httpSessionMock);
         }
