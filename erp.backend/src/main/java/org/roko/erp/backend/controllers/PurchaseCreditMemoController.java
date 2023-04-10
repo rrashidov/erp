@@ -3,18 +3,19 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseCreditMemoLineService;
-import org.roko.erp.backend.services.PurchaseCreditMemoPostService;
 import org.roko.erp.backend.services.PurchaseCreditMemoService;
-import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,18 +32,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/purchasecreditmemos")
 public class PurchaseCreditMemoController {
 
+    private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
+    private static final String POST_OPERATION_ROUTING_KEY = "purchase.creditmemo";
+
     private PurchaseCreditMemoService svc;
     private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
-    private PurchaseCreditMemoPostService purchaseCreditMemoPostSvc;
+    private RabbitTemplate rabbitMQClient;
 
     @Autowired
     public PurchaseCreditMemoController(PurchaseCreditMemoService svc,
-            PurchaseCreditMemoLineService purchaseCreditMemoLineSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc, PurchaseCreditMemoPostService purchaseCreditMemoPostSvc) {
+            PurchaseCreditMemoLineService purchaseCreditMemoLineSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc,
+            RabbitTemplate rabbitMQClient) {
         this.svc = svc;
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
-        this.purchaseCreditMemoPostSvc = purchaseCreditMemoPostSvc;
+        this.rabbitMQClient = rabbitMQClient;
     }
 
     @GetMapping("/page/{page}")
@@ -153,10 +158,19 @@ public class PurchaseCreditMemoController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            purchaseCreditMemoPostSvc.post(code);
+            updatePurchaseCreditMemoPostStatus(code);
+
+            rabbitMQClient.convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, code);
+
             return ResponseEntity.ok("");
-        } catch (PostFailedException e) {
+        } catch (AmqpException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    private void updatePurchaseCreditMemoPostStatus(String code) {
+        PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
+        purchaseCreditMemo.setPostStatus(DocumentPostStatus.SCHEDULED);
+        svc.update(code, purchaseCreditMemo);
     }
 }

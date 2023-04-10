@@ -13,22 +13,27 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.PurchaseCreditMemoLine;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.backend.services.PurchaseCodeSeriesService;
 import org.roko.erp.backend.services.PurchaseCreditMemoLineService;
-import org.roko.erp.backend.services.PurchaseCreditMemoPostService;
 import org.roko.erp.backend.services.PurchaseCreditMemoService;
 import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.dto.list.PurchaseDocumentLineList;
 import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class PurchaseCreditMemoControllerTest {
+
+    private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
+    private static final String POST_OPERATION_ROUTING_KEY = "purchase.creditmemo";
 
     private static final String TEST_POST_FAILED_EXCEPTION = "test-post-failed-exception";
 
@@ -69,7 +74,7 @@ public class PurchaseCreditMemoControllerTest {
     private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
 
     @Mock
-    private PurchaseCreditMemoPostService purchaseCreditMemoPostSvcMock;
+    private RabbitTemplate rabbitMQClientMock;
 
     private PurchaseCreditMemoController controller;
 
@@ -99,7 +104,7 @@ public class PurchaseCreditMemoControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new PurchaseCreditMemoController(svcMock, purchaseCreditMemoLineSvcMock, purchaseCodeSeriesSvcMock,
-                purchaseCreditMemoPostSvcMock);
+                rabbitMQClientMock);
     }
 
     @Test
@@ -200,21 +205,24 @@ public class PurchaseCreditMemoControllerTest {
     }
 
     @Test
-    public void operationPost_delegatesToService() throws PostFailedException {
+    public void operationPost_updatesPurchaseCreditMemoAndSendsMessageToRabbitMQ() throws PostFailedException {
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 
-        verify(purchaseCreditMemoPostSvcMock).post(TEST_CODE);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        verify(purchaseCreditMemoMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+
+        verify(svcMock).update(TEST_CODE, purchaseCreditMemoMock);
+
+        verify(rabbitMQClientMock).convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, TEST_CODE);
     }
 
     @Test
     public void operationPost_returnsBadRequest_whenPostThrowsException() throws PostFailedException {
-        doThrow(new PostFailedException(TEST_POST_FAILED_EXCEPTION)).when(purchaseCreditMemoPostSvcMock).post(TEST_CODE);
+        doThrow(new AmqpException(TEST_POST_FAILED_EXCEPTION)).when(rabbitMQClientMock)
+                .convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, TEST_CODE);
 
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
-
-        verify(purchaseCreditMemoPostSvcMock).post(TEST_CODE);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(TEST_POST_FAILED_EXCEPTION, response.getBody());
