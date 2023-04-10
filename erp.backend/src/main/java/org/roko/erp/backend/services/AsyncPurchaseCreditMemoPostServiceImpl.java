@@ -4,7 +4,9 @@ import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.services.exc.PostFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AsyncPurchaseCreditMemoPostServiceImpl implements AsyncPurchaseCreditMemoPostService {
 
     private PurchaseCreditMemoService purchaseCreditMemoSvc;
