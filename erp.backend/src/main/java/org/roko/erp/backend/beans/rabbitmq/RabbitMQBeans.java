@@ -1,5 +1,6 @@
 package org.roko.erp.backend.beans.rabbitmq;
 
+import org.roko.erp.backend.services.AsyncPurchaseCreditMemoPostService;
 import org.roko.erp.backend.services.AsyncPurchaseOrderPostService;
 import org.roko.erp.backend.services.AsyncSalesCreditMemoPostService;
 import org.roko.erp.backend.services.AsyncSalesOrderPostService;
@@ -54,6 +55,9 @@ public class RabbitMQBeans {
     @Autowired
     private AsyncPurchaseOrderPostService purchaseOrderPostService;
 
+    @Autowired
+    private AsyncPurchaseCreditMemoPostService purchaseCreditMemoPostService;
+
     @Bean
     public ConnectionFactory connectionFactory() throws Exception {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
@@ -103,7 +107,7 @@ public class RabbitMQBeans {
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(postPurchaseCreditMemoQueueName);
         container
-                .setMessageListener(new MessageListenerAdapter(new PurchaseCreditMemoPostReceiver(), "receiveMessage"));
+                .setMessageListener(new MessageListenerAdapter(new PurchaseCreditMemoPostReceiver(purchaseCreditMemoPostService), "receiveMessage"));
         return container;
     }
 
