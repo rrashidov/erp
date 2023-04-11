@@ -80,12 +80,16 @@ public class GeneralJournalBatchServiceImpl implements GeneralJournalBatchServic
         GeneralJournalBatchDTO dto = new GeneralJournalBatchDTO();
         dto.setCode(generalJournalBatch.getCode());
         dto.setName(generalJournalBatch.getName());
+        dto.setPostStatus(generalJournalBatch.getPostStatus().name());
+        dto.setPostStatusReason(generalJournalBatch.getPostStatusReason());
         return dto;
     }
 
     private void transferFields(GeneralJournalBatch source,
             GeneralJournalBatch target) {
                 target.setName(source.getName());
+                target.setPostStatus(source.getPostStatus());
+                target.setPostStatusReason(source.getPostStatusReason());
     }
 
 }

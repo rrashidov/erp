@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.repositories.GeneralJournalBatchRepository;
 import org.roko.erp.dto.GeneralJournalBatchDTO;
@@ -25,7 +26,8 @@ public class GeneralJournalBatchServiceTest {
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
 
-    private static final String NON_EXISTING_CODE = "non-existing-code";
+    private static final DocumentPostStatus TEST_POST_STATUS = DocumentPostStatus.SCHEDULED;
+    private static final String TEST_POST_STATUS_REASON_MSG = "non-existing-code";
 
     private static final int TEST_PAGE = 12;
 
@@ -55,6 +57,8 @@ public class GeneralJournalBatchServiceTest {
 
         when(generalJournalBatchMock.getCode()).thenReturn(TEST_CODE);
         when(generalJournalBatchMock.getName()).thenReturn(TEST_NAME);
+        when(generalJournalBatchMock.getPostStatus()).thenReturn(TEST_POST_STATUS);
+        when(generalJournalBatchMock.getPostStatusReason()).thenReturn(TEST_POST_STATUS_REASON_MSG);
 
         when(generalJournalBatchRepoMock.findById(TEST_CODE)).thenReturn(Optional.of(generalJournalBatchMock));
         when(generalJournalBatchRepoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
@@ -93,7 +97,7 @@ public class GeneralJournalBatchServiceTest {
 
     @Test
     public void getReturnsNull_whenCalledWithNonExistingCode(){
-        GeneralJournalBatch generalJournalBatch = svc.get(NON_EXISTING_CODE);
+        GeneralJournalBatch generalJournalBatch = svc.get(TEST_POST_STATUS_REASON_MSG);
 
         assertNull(generalJournalBatch);
     }
@@ -130,6 +134,8 @@ public class GeneralJournalBatchServiceTest {
 
         assertEquals(TEST_CODE, dto.getCode());
         assertEquals(TEST_NAME, dto.getName());
+        assertEquals(TEST_POST_STATUS.name(), dto.getPostStatus());
+        assertEquals(TEST_POST_STATUS_REASON_MSG, dto.getPostStatusReason());
     }
 
     @Test

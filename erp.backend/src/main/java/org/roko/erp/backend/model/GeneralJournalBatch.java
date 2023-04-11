@@ -11,6 +11,10 @@ public class GeneralJournalBatch {
 	
 	private String name = "";
 	
+	private DocumentPostStatus postStatus = DocumentPostStatus.READY;
+
+	private String postStatusReason = "";
+
 	public String getCode() {
 		return code;
 	}
@@ -23,5 +27,16 @@ public class GeneralJournalBatch {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+	public DocumentPostStatus getPostStatus() {
+		return postStatus;
+	}
+	public void setPostStatus(DocumentPostStatus postStatus) {
+		this.postStatus = postStatus;
+	}
+	public String getPostStatusReason() {
+		return postStatusReason;
+	}
+	public void setPostStatusReason(String postStatusReason) {
+		this.postStatusReason = postStatusReason;
+	}		
 }
