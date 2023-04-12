@@ -1,5 +1,6 @@
 package org.roko.erp.backend.beans.rabbitmq;
 
+import org.roko.erp.backend.services.AsyncGeneralJournalBatchPostService;
 import org.roko.erp.backend.services.AsyncPurchaseCreditMemoPostService;
 import org.roko.erp.backend.services.AsyncPurchaseOrderPostService;
 import org.roko.erp.backend.services.AsyncSalesCreditMemoPostService;
@@ -58,6 +59,9 @@ public class RabbitMQBeans {
     @Autowired
     private AsyncPurchaseCreditMemoPostService purchaseCreditMemoPostService;
 
+    @Autowired
+    private AsyncGeneralJournalBatchPostService generalJournalBatchPostService;
+
     @Bean
     public ConnectionFactory connectionFactory() throws Exception {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
@@ -86,7 +90,8 @@ public class RabbitMQBeans {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(postSalesCreditMemoQueueName);
-        container.setMessageListener(new MessageListenerAdapter(new SalesCreditMemoPostReceiver(salesCreditMemoPostService), "receiveMessage"));
+        container.setMessageListener(new MessageListenerAdapter(
+                new SalesCreditMemoPostReceiver(salesCreditMemoPostService), "receiveMessage"));
         return container;
     }
 
@@ -96,7 +101,8 @@ public class RabbitMQBeans {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(postPurchaseOrderQueueName);
-        container.setMessageListener(new MessageListenerAdapter(new PurchaseOrderPostReceiver(purchaseOrderPostService), "receiveMessage"));
+        container.setMessageListener(
+                new MessageListenerAdapter(new PurchaseOrderPostReceiver(purchaseOrderPostService), "receiveMessage"));
         return container;
     }
 
@@ -107,7 +113,8 @@ public class RabbitMQBeans {
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(postPurchaseCreditMemoQueueName);
         container
-                .setMessageListener(new MessageListenerAdapter(new PurchaseCreditMemoPostReceiver(purchaseCreditMemoPostService), "receiveMessage"));
+                .setMessageListener(new MessageListenerAdapter(
+                        new PurchaseCreditMemoPostReceiver(purchaseCreditMemoPostService), "receiveMessage"));
         return container;
     }
 
@@ -118,7 +125,8 @@ public class RabbitMQBeans {
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(postGeneralJournalBatchQueueName);
         container.setMessageListener(
-                new MessageListenerAdapter(new GeneralJournalBatchPostReceiver(), "receiveMessage"));
+                new MessageListenerAdapter(new GeneralJournalBatchPostReceiver(generalJournalBatchPostService),
+                        "receiveMessage"));
         return container;
     }
 
