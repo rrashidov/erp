@@ -3,17 +3,18 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.backend.services.GeneralJournalBatchLineService;
-import org.roko.erp.backend.services.GeneralJournalBatchPostService;
 import org.roko.erp.backend.services.GeneralJournalBatchService;
-import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.roko.erp.dto.list.GeneralJournalBatchLineList;
 import org.roko.erp.dto.list.GeneralJournalBatchList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,17 +31,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/generaljournalbatches")
 public class GeneralJournalBatchController {
 
+    private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
+    private static final String POST_OPERATION_ROUTING_KEY = "generaljournalbatch";
+
     private GeneralJournalBatchService svc;
     private GeneralJournalBatchLineService generalJournalBatchLineSvc;
-    private GeneralJournalBatchPostService generalJournalBatchPostSvc;
+    private RabbitTemplate rabbitMQClient;
 
     @Autowired
     public GeneralJournalBatchController(GeneralJournalBatchService svc,
-            GeneralJournalBatchLineService generalJournalBatchLineSvc,
-            GeneralJournalBatchPostService generalJournalBatchPostSvc) {
+            GeneralJournalBatchLineService generalJournalBatchLineSvc, RabbitTemplate rabbitMQClient) {
         this.svc = svc;
         this.generalJournalBatchLineSvc = generalJournalBatchLineSvc;
-        this.generalJournalBatchPostSvc = generalJournalBatchPostSvc;
+        this.rabbitMQClient = rabbitMQClient;
     }
 
     @GetMapping("/pages/{page}")
@@ -150,11 +153,19 @@ public class GeneralJournalBatchController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            generalJournalBatchPostSvc.post(code);
+            updateGeneralJournalBatchPostStatus(code);
+
+            rabbitMQClient.convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, code);
 
             return ResponseEntity.ok("");
-        } catch (PostFailedException e) {
+        } catch (AmqpException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    private void updateGeneralJournalBatchPostStatus(String code) {
+        GeneralJournalBatch generalJournalBatch = svc.get(code);
+        generalJournalBatch.setPostStatus(DocumentPostStatus.SCHEDULED);
+        svc.update(code, generalJournalBatch);
     }
 }

@@ -13,21 +13,26 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.backend.services.GeneralJournalBatchLineService;
-import org.roko.erp.backend.services.GeneralJournalBatchPostService;
 import org.roko.erp.backend.services.GeneralJournalBatchService;
 import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.roko.erp.dto.list.GeneralJournalBatchLineList;
 import org.roko.erp.dto.list.GeneralJournalBatchList;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class GeneralJournalBatchControllerTest {
+
+    private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
+    private static final String POST_OPERATION_ROUTING_KEY = "generaljournalbatch";
 
     private static final int TEST_MAX_LINENO = 456;
 
@@ -63,7 +68,7 @@ public class GeneralJournalBatchControllerTest {
     private GeneralJournalBatchLineDTO generalJournalBatchLineDtoMock;
 
     @Mock
-    private GeneralJournalBatchPostService generalJournalBatchPostSvcMock;
+    private RabbitTemplate rabbitMQClientMock;
 
     private GeneralJournalBatchController controller;
 
@@ -91,8 +96,7 @@ public class GeneralJournalBatchControllerTest {
         when(svcMock.toDTO(generalJournalBatchMock)).thenReturn(dtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
-        controller = new GeneralJournalBatchController(svcMock, generalJournalBatchLineSvcMock,
-                generalJournalBatchPostSvcMock);
+        controller = new GeneralJournalBatchController(svcMock, generalJournalBatchLineSvcMock, rabbitMQClientMock);
     }
 
     @Test
@@ -190,17 +194,21 @@ public class GeneralJournalBatchControllerTest {
     }
 
     @Test
-    public void operationPost_delegatesToService() throws PostFailedException {
+    public void operationPost_updatesPostStatus_andSendsMessage() throws PostFailedException {
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        verify(generalJournalBatchPostSvcMock).post(TEST_CODE);
+        verify(generalJournalBatchMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+        verify(svcMock).update(TEST_CODE, generalJournalBatchMock);
+
+        verify(rabbitMQClientMock).convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, TEST_CODE);
     }
 
     @Test
     public void operationPost_returnsBadRequest_whenPostingFails() throws PostFailedException {
-        doThrow(new PostFailedException(TEST_FAILED_MSG)).when(generalJournalBatchPostSvcMock).post(TEST_CODE);
+        doThrow(new AmqpException(TEST_FAILED_MSG)).when(rabbitMQClientMock)
+                .convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, TEST_CODE);
 
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 
