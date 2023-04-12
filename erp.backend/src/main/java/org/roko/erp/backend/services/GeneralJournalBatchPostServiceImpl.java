@@ -6,6 +6,7 @@ import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.model.CustomerLedgerEntry;
 import org.roko.erp.backend.model.CustomerLedgerEntryType;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.GeneralJournalBatchLineOperationType;
@@ -55,6 +56,14 @@ public class GeneralJournalBatchPostServiceImpl implements GeneralJournalBatchPo
         for (GeneralJournalBatchLine generalJournalBatchLine : generalJournalBatchLines) {
             postGeneralJournalBatchLine(generalJournalBatchLine);
         }
+
+        updateGeneralJournalBatchPostStatus(code, generalJournalBatch);
+    }
+
+    private void updateGeneralJournalBatchPostStatus(String code, GeneralJournalBatch generalJournalBatch) {
+        generalJournalBatch.setPostStatus(DocumentPostStatus.READY);
+        generalJournalBatch.setPostStatusReason("");
+        generalJournalBatchSvc.update(code, generalJournalBatch);
     }
 
     private void postGeneralJournalBatchLine(GeneralJournalBatchLine generalJournalBatchLine) {

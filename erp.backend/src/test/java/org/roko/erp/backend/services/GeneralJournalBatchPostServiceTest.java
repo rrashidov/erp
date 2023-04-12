@@ -22,6 +22,7 @@ import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.model.Customer;
 import org.roko.erp.backend.model.CustomerLedgerEntry;
 import org.roko.erp.backend.model.CustomerLedgerEntryType;
+import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
 import org.roko.erp.backend.model.GeneralJournalBatchLineOperationType;
@@ -547,5 +548,19 @@ public class GeneralJournalBatchPostServiceTest {
         svc.post(TEST_CODE);
 
         verify(generalJournalBatchLineSvcMock).delete(generalJournalBatchLineId);
+    }
+
+    @Test
+    public void generalJournalBatchPostStatusIsUpdated_whenPostSuceeds() throws PostFailedException {
+        when(generalJournalBatchLineMock.getSourceType()).thenReturn(GeneralJournalBatchLineType.CUSTOMER);
+        when(generalJournalBatchLineMock.getSourceCode()).thenReturn(TEST_CUSTOMER_CODE);
+        when(generalJournalBatchLineMock.getOperationType()).thenReturn(GeneralJournalBatchLineOperationType.ORDER);
+        
+        svc.post(TEST_CODE);
+
+        verify(generalJournalBatchMock).setPostStatus(DocumentPostStatus.READY);
+        verify(generalJournalBatchMock).setPostStatusReason("");
+
+        verify(generalJournalBatchSvcMock).update(TEST_CODE, generalJournalBatchMock);
     }
 }
