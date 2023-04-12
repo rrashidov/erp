@@ -30,13 +30,18 @@
                     <tr>
                         <th scope="col">Code</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Post Status</th>
+                        <th scope="col">Reason</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="generalJournalBatch : ${generalJournalBatches}">
+                    <tr th:each="generalJournalBatch : ${generalJournalBatches}"
+                        th:class="${generalJournalBatch.postStatus.toString == 'READY'} ? '' : (${generalJournalBatch.postStatus.toString == 'SCHEDULED'} ? 'table-info' : 'table-danger')">
                         <td th:text="${generalJournalBatch.code}"></td>
                         <td th:text="${generalJournalBatch.name}"></td>
+                        <td th:text="${generalJournalBatch.postStatus}"></td>
+                        <td th:text="${generalJournalBatch.postStatusReason}"></td>
                         <td><a class="btn btn-primary"
                                 th:href="@{/generalJournalBatchCard?code={code}(code=${generalJournalBatch.code})}">Edit</a>
                             <a class="btn btn-primary"
