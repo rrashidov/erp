@@ -183,7 +183,7 @@ public class GeneralJournalBatchControllerTest {
         assertEquals("/generalJournalBatchList", redirectView.getUrl());
 
         verify(generalJournalBatchPostSvcMock).post(TEST_CODE);
-        verify(feedbackSvcMock).give(FeedbackType.INFO, "General journal batch " + TEST_CODE + " posted.", httpSessionMock);
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "General journal batch " + TEST_CODE + " post scheduled.", httpSessionMock);
     }
 
     @Test
@@ -195,6 +195,6 @@ public class GeneralJournalBatchControllerTest {
         assertEquals("/generalJournalBatchList", redirectView.getUrl());
 
         verify(generalJournalBatchPostSvcMock).post(TEST_CODE);
-        verify(feedbackSvcMock).give(FeedbackType.ERROR, "General journal batch " + TEST_CODE + " post failed: " + TEST_POST_FAILED_MSG, httpSessionMock);
+        verify(feedbackSvcMock).give(FeedbackType.ERROR, "General journal batch " + TEST_CODE + " post scheduling failed: " + TEST_POST_FAILED_MSG, httpSessionMock);
     }
 }

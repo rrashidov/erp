@@ -96,9 +96,9 @@ public class GeneralJournalBatchController {
         try {
             generalJournalBatchPostSvc.post(code);
 
-            feedbackSvc.give(FeedbackType.INFO, "General journal batch " + code + " posted.", httpSession);
+            feedbackSvc.give(FeedbackType.INFO, "General journal batch " + code + " post scheduled.", httpSession);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "General journal batch " + code + " post failed: " + e.getMessage(), httpSession);
+            feedbackSvc.give(FeedbackType.ERROR, "General journal batch " + code + " post scheduling failed: " + e.getMessage(), httpSession);
         }
 
         return new RedirectView("/generalJournalBatchList");
