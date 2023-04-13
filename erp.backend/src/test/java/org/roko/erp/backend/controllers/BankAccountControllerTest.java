@@ -19,6 +19,8 @@ import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.BankAccountLedgerEntryDTO;
 import org.roko.erp.dto.list.BankAccountLedgerEntryList;
 import org.roko.erp.dto.list.BankAccountList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 public class BankAccountControllerTest {
@@ -121,9 +123,12 @@ public class BankAccountControllerTest {
 
     @Test
     public void delete_delegatesToRepo() {
-        controller.delete(TEST_CODE);
+        ResponseEntity<String> response = controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(TEST_CODE, response.getBody());
     }
 
     @Test
