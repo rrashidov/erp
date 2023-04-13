@@ -19,6 +19,8 @@ import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.dto.VendorLedgerEntryDTO;
 import org.roko.erp.dto.list.VendorLedgerEntryList;
 import org.roko.erp.dto.list.VendorList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 public class VendorControllerTest {
@@ -27,7 +29,7 @@ public class VendorControllerTest {
 
     private static final int TEST_COUNT = 222;
 
-    private static final String TESST_CODE = "tesst-code";
+    private static final String TEST_CODE = "tesst-code";
 
     private static final int TEST_PAGE = 123;
 
@@ -61,7 +63,7 @@ public class VendorControllerTest {
 
         when(svcMock.list()).thenReturn(Arrays.asList(vendorMock));
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(vendorMock));
-        when(svcMock.get(TESST_CODE)).thenReturn(vendorMock);
+        when(svcMock.get(TEST_CODE)).thenReturn(vendorMock);
         when(svcMock.fromDTO(dtoMock)).thenReturn(vendorMock);
         when(svcMock.toDTO(vendorMock)).thenReturn(dtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
@@ -87,9 +89,9 @@ public class VendorControllerTest {
 
     @Test
     public void get_delegatesToService() {
-        controller.get(TESST_CODE);
+        controller.get(TEST_CODE);
 
-        verify(svcMock).get(TESST_CODE);
+        verify(svcMock).get(TEST_CODE);
         verify(svcMock).toDTO(vendorMock);
     }
 
@@ -109,21 +111,24 @@ public class VendorControllerTest {
 
     @Test
     public void put_delegatesToService() {
-        controller.put(TESST_CODE, dtoMock);
+        controller.put(TEST_CODE, dtoMock);
 
-        verify(svcMock).update(TESST_CODE, vendorMock);
+        verify(svcMock).update(TEST_CODE, vendorMock);
     }
 
     @Test
     public void delete_delegatesToService() {
-        controller.delete(TESST_CODE);
+        ResponseEntity<String> response = controller.delete(TEST_CODE);
 
-        verify(svcMock).delete(TESST_CODE);
+        verify(svcMock).delete(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(TEST_CODE, response.getBody());
     }
 
     @Test
     public void listLedgerEntries_returnsProperValue() {
-        VendorLedgerEntryList list = controller.listLedgerEntries(TESST_CODE, TEST_PAGE);
+        VendorLedgerEntryList list = controller.listLedgerEntries(TEST_CODE, TEST_PAGE);
 
         assertEquals(vendorLedgerEntryDtoMock, list.getData().get(0));
         assertEquals(TEST_COUNT, list.getCount());
