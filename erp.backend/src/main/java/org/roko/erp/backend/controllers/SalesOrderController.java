@@ -35,6 +35,8 @@ public class SalesOrderController {
     private static final String EXCHANGE_NAME = "erp.operations.post";
     private static final String ROUTING_KEY = "sales.order";
 
+    private static final String POST_SCHEDULED_ERR_TMPL = "Sales Order %s already scheduled for posting";
+
     private SalesOrderService svc;
     private SalesOrderLineService salesOrderLineSvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
@@ -162,7 +164,13 @@ public class SalesOrderController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            updateSalesOrderPostStatus(code);
+            SalesOrder salesOrder = svc.get(code);
+
+            if (salesOrder.getPostStatus().equals(DocumentPostStatus.SCHEDULED)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(POST_SCHEDULED_ERR_TMPL, code));
+            };
+
+            updateSalesOrderPostStatus(salesOrder);
             
             rabbitMQClient.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, code);
 
@@ -172,10 +180,9 @@ public class SalesOrderController {
         }
     }
 
-    private void updateSalesOrderPostStatus(String code) {
-        SalesOrder salesOrder = svc.get(code);
+    private void updateSalesOrderPostStatus(SalesOrder salesOrder) {
         salesOrder.setPostStatus(DocumentPostStatus.SCHEDULED);
         salesOrder.setPostStatusReason("");
-        svc.update(code, salesOrder);
+        svc.update(salesOrder.getCode(), salesOrder);
     }
 }

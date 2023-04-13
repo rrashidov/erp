@@ -88,6 +88,9 @@ public class SalesOrderControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
+        when(salesOrderMock.getCode()).thenReturn(TEST_CODE);
+        when(salesOrderMock.getPostStatus()).thenReturn(DocumentPostStatus.READY);
+
         when(salesCodeSeriesSvcMock.orderCode()).thenReturn(TEST_CODE);
 
         when(salesOrderLineId.getSalesOrder()).thenReturn(salesOrderMock);
@@ -232,11 +235,23 @@ public class SalesOrderControllerTest {
 
     @Test
     public void postOperation_returnsBadRequest_whenPostingThrowsException() throws PostFailedException {
-        doThrow(new AmqpException(TEST_POST_FAILED_MSG)).when(rabbitMQClientMock).convertAndSend(EXCHANGE_NAME, ROUTING_KEY, TEST_CODE);
+        doThrow(new AmqpException(TEST_POST_FAILED_MSG)).when(rabbitMQClientMock).convertAndSend(EXCHANGE_NAME,
+                ROUTING_KEY, TEST_CODE);
 
         ResponseEntity<String> response = controller.operationPost(TEST_CODE);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(TEST_POST_FAILED_MSG, response.getBody());
     }
+
+    @Test
+    public void postOperation_returnsBadRequest_whenSalesOrderAlreadyScheduledForPosting() throws PostFailedException {
+        when(salesOrderMock.getPostStatus()).thenReturn(DocumentPostStatus.SCHEDULED);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(String.format("Sales Order %s already scheduled for posting", TEST_CODE), response.getBody());
+    }
+
 }
