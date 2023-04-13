@@ -50,6 +50,8 @@ public class SalesCreditMemoControllerTest {
 
     private static final int TEST_MAX_LINE_NO = 345;
 
+    private static final String POST_SCHEDULED_ERR_TMP = "Sales Credit Memo %s already scheduled for posting";
+
     @Captor
     private ArgumentCaptor<SalesCreditMemoLineId> salesCreditMemoLineIdArgumentCaptor;
 
@@ -82,6 +84,9 @@ public class SalesCreditMemoControllerTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(salesCreditMemoMock.getCode()).thenReturn(TEST_CODE);
+        when(salesCreditMemoMock.getPostStatus()).thenReturn(DocumentPostStatus.READY);
 
         when(salesCodeSeriesSvcMock.creditMemoCode()).thenReturn(GENERATED_CODE);
 
@@ -226,4 +231,15 @@ public class SalesCreditMemoControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(TEST_POST_FAILED_EXCEPTION_MSG, response.getBody());
     }
+
+    @Test
+    public void operationPost_returnsBadRequest_whenSalesCreditMemoAlreadyScheduledForPosting() throws PostFailedException {
+        when(salesCreditMemoMock.getPostStatus()).thenReturn(DocumentPostStatus.SCHEDULED);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(String.format(POST_SCHEDULED_ERR_TMP, TEST_CODE), response.getBody());
+    }
+
 }

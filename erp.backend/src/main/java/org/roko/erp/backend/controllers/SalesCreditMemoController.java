@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/salescreditmemos")
 public class SalesCreditMemoController {
 
+    private static final String POST_SCHEDULED_ERR_TMP = "Sales Credit Memo %s already scheduled for posting";
+
     private static final String SALES_CREDIT_MEMO_MSG_ROUTING_KEY = "sales.creditmemo";
     private static final String SALES_CREDIT_MEMO_MSG_EXCHANGE_NAME = "erp.operations.post";
 
@@ -164,7 +166,13 @@ public class SalesCreditMemoController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            updateSalesCreditMemoPostStatus(code);
+            SalesCreditMemo salesCreditMemo = svc.get(code);
+
+            if (salesCreditMemo.getPostStatus().equals(DocumentPostStatus.SCHEDULED)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(POST_SCHEDULED_ERR_TMP, code));
+            }
+
+            updateSalesCreditMemoPostStatus(salesCreditMemo);
 
             rabbitMQClient.convertAndSend(SALES_CREDIT_MEMO_MSG_EXCHANGE_NAME, SALES_CREDIT_MEMO_MSG_ROUTING_KEY, code);
             
@@ -174,10 +182,9 @@ public class SalesCreditMemoController {
         }
     }
 
-    private void updateSalesCreditMemoPostStatus(String code) {
-        SalesCreditMemo salesCreditMemo = svc.get(code);
+    private void updateSalesCreditMemoPostStatus(SalesCreditMemo salesCreditMemo) {
         salesCreditMemo.setPostStatus(DocumentPostStatus.SCHEDULED);
         salesCreditMemo.setPostStatusReason("");
-        svc.update(code, salesCreditMemo);
+        svc.update(salesCreditMemo.getCode(), salesCreditMemo);
     }
 }
