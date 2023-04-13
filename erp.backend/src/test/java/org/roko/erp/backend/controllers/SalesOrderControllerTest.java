@@ -226,6 +226,7 @@ public class SalesOrderControllerTest {
         verify(rabbitMQClientMock).convertAndSend(EXCHANGE_NAME, ROUTING_KEY, TEST_CODE);
 
         verify(salesOrderMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+        verify(salesOrderMock).setPostStatusReason("");
         verify(svcMock).update(TEST_CODE, salesOrderMock);
     }
 

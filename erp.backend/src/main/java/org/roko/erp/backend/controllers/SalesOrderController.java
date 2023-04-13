@@ -175,6 +175,7 @@ public class SalesOrderController {
     private void updateSalesOrderPostStatus(String code) {
         SalesOrder salesOrder = svc.get(code);
         salesOrder.setPostStatus(DocumentPostStatus.SCHEDULED);
+        salesOrder.setPostStatusReason("");
         svc.update(code, salesOrder);
     }
 }
