@@ -146,9 +146,12 @@ public class PurchaseCreditMemoControllerTest {
 
     @Test
     public void delete_delegatesToService() {
-        controller.delete(TEST_CODE);
+        ResponseEntity<String> response = controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(TEST_CODE, response.getBody());
     }
 
     @Test
