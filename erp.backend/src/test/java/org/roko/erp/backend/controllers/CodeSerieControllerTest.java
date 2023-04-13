@@ -15,6 +15,8 @@ import org.roko.erp.backend.model.CodeSerie;
 import org.roko.erp.backend.services.CodeSerieService;
 import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.dto.list.CodeSerieList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 public class CodeSerieControllerTest {
@@ -99,8 +101,11 @@ public class CodeSerieControllerTest {
 
     @Test
     public void delete_delegatesToService() {
-        controller.delete(TEST_CODE);
+        ResponseEntity<String> response = controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(TEST_CODE, response.getBody());
     }
 }
