@@ -19,6 +19,8 @@ import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.CustomerLedgerEntryDTO;
 import org.roko.erp.dto.list.CustomerLedgerEntryList;
 import org.roko.erp.dto.list.CustomerList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 public class CustomerControllerTest {
@@ -124,8 +126,11 @@ public class CustomerControllerTest {
 
     @Test
     public void delete_delegatesToService() {
-        controller.delete(TEST_CODE);
+        ResponseEntity<String> response = controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(TEST_CODE, response.getBody());
     }
 }
