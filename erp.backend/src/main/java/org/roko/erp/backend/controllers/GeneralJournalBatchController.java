@@ -34,6 +34,8 @@ public class GeneralJournalBatchController {
     private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
     private static final String POST_OPERATION_ROUTING_KEY = "generaljournalbatch";
 
+    private static final String POST_SCHEDULED_ERR_TMPL = "General Journal Batch %s already scheduled for posting";
+
     private GeneralJournalBatchService svc;
     private GeneralJournalBatchLineService generalJournalBatchLineSvc;
     private RabbitTemplate rabbitMQClient;
@@ -153,7 +155,13 @@ public class GeneralJournalBatchController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            updateGeneralJournalBatchPostStatus(code);
+            GeneralJournalBatch generalJournalBatch = svc.get(code);
+
+            if (generalJournalBatch.getPostStatus().equals(DocumentPostStatus.SCHEDULED)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(POST_SCHEDULED_ERR_TMPL, code));
+            }
+
+            updateGeneralJournalBatchPostStatus(generalJournalBatch);
 
             rabbitMQClient.convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, code);
 
@@ -163,10 +171,9 @@ public class GeneralJournalBatchController {
         }
     }
 
-    private void updateGeneralJournalBatchPostStatus(String code) {
-        GeneralJournalBatch generalJournalBatch = svc.get(code);
+    private void updateGeneralJournalBatchPostStatus(GeneralJournalBatch generalJournalBatch) {
         generalJournalBatch.setPostStatus(DocumentPostStatus.SCHEDULED);
         generalJournalBatch.setPostStatusReason("");
-        svc.update(code, generalJournalBatch);
+        svc.update(generalJournalBatch.getCode(), generalJournalBatch);
     }
 }

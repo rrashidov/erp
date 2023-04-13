@@ -46,6 +46,8 @@ public class GeneralJournalBatchControllerTest {
 
     private static final int TEST_LINE_NO = 1234;
 
+    private static final String POST_SCHEDULED_ERR_TMPL = "General Journal Batch %s already scheduled for posting";
+
     @Captor
     private ArgumentCaptor<GeneralJournalBatchLineId> generalJournalBatchLineIdArgumentCaptor;
 
@@ -75,6 +77,9 @@ public class GeneralJournalBatchControllerTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(generalJournalBatchMock.getCode()).thenReturn(TEST_CODE);
+        when(generalJournalBatchMock.getPostStatus()).thenReturn(DocumentPostStatus.READY);
 
         GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
         generalJournalBatchLineId.setGeneralJournalBatch(generalJournalBatchMock);
@@ -216,5 +221,15 @@ public class GeneralJournalBatchControllerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(TEST_FAILED_MSG, response.getBody());
+    }
+
+    @Test
+    public void operationPost_returnsBadRequest_whenGeneralJournalBatchAlreadyScheduledForPosting() throws PostFailedException {
+        when(generalJournalBatchMock.getPostStatus()).thenReturn(DocumentPostStatus.SCHEDULED);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(String.format(POST_SCHEDULED_ERR_TMPL, TEST_CODE), response.getBody());
     }
 }
