@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/purchaseorders")
 public class PurchaseOrderController {
 
+    private static final String POST_SCHEDULED_ERR_TMPL = "Purchase Order %s already scheduled for posting";
+
     private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
     private static final String POST_OPERATION_ROUTING_KEY = "purchase.order";
 
@@ -175,7 +177,13 @@ public class PurchaseOrderController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            updatePurchaseOrderPostStatus(code);
+            PurchaseOrder purchaseOrder = svc.get(code);
+
+            if (purchaseOrder.getPostStatus().equals(DocumentPostStatus.SCHEDULED)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(POST_SCHEDULED_ERR_TMPL, code));
+            }
+
+            updatePurchaseOrderPostStatus(purchaseOrder);
 
             rabbitMQClient.convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, code);
 
@@ -185,10 +193,9 @@ public class PurchaseOrderController {
         }
     }
 
-    private void updatePurchaseOrderPostStatus(String code) {
-        PurchaseOrder purchaseOrder = svc.get(code);
+    private void updatePurchaseOrderPostStatus(PurchaseOrder purchaseOrder) {
         purchaseOrder.setPostStatus(DocumentPostStatus.SCHEDULED);
         purchaseOrder.setPostStatusReason("");
-        svc.update(code, purchaseOrder);
+        svc.update(purchaseOrder.getCode(), purchaseOrder);
     }
 }

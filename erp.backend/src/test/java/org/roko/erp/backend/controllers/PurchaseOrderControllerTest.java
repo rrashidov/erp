@@ -49,6 +49,8 @@ public class PurchaseOrderControllerTest {
 
     private static final int TEST_COUNT = 222;
 
+    private static final String POST_SCHEDULED_ERR_TMPL = "Purchase Order %s already scheduled for posting";
+
     @Captor
     private ArgumentCaptor<PurchaseOrderLineId> purchaseOrderLineIdArgumentCaptor;
 
@@ -81,6 +83,9 @@ public class PurchaseOrderControllerTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(purchaseOrderMock.getCode()).thenReturn(TEST_CODE);
+        when(purchaseOrderMock.getPostStatus()).thenReturn(DocumentPostStatus.READY);
 
         when(purchaseCodeSeriesSvcMock.orderCode()).thenReturn(NEW_CODE);
 
@@ -233,4 +238,15 @@ public class PurchaseOrderControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(TEST_POST_FAILED_MSG, response.getBody());
     }
+
+    @Test
+    public void postOperation_returnsBadRequest_whenPurchaseOrderAlreadyScheduledForPosting() throws PostFailedException {
+        when(purchaseOrderMock.getPostStatus()).thenReturn(DocumentPostStatus.SCHEDULED);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(String.format(POST_SCHEDULED_ERR_TMPL, TEST_CODE), response.getBody());
+    }
+
 }
