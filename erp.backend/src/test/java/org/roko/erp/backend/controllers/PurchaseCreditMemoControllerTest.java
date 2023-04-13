@@ -211,6 +211,7 @@ public class PurchaseCreditMemoControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         verify(purchaseCreditMemoMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+        verify(purchaseCreditMemoMock).setPostStatusReason("");
 
         verify(svcMock).update(TEST_CODE, purchaseCreditMemoMock);
 
