@@ -166,6 +166,7 @@ public class GeneralJournalBatchController {
     private void updateGeneralJournalBatchPostStatus(String code) {
         GeneralJournalBatch generalJournalBatch = svc.get(code);
         generalJournalBatch.setPostStatus(DocumentPostStatus.SCHEDULED);
+        generalJournalBatch.setPostStatusReason("");
         svc.update(code, generalJournalBatch);
     }
 }

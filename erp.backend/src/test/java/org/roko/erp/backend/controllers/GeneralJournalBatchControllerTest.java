@@ -200,6 +200,8 @@ public class GeneralJournalBatchControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         verify(generalJournalBatchMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+        verify(generalJournalBatchMock).setPostStatusReason("");
+
         verify(svcMock).update(TEST_CODE, generalJournalBatchMock);
 
         verify(rabbitMQClientMock).convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, TEST_CODE);
