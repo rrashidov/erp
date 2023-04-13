@@ -216,6 +216,7 @@ public class PurchaseOrderControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         verify(purchaseOrderMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+        verify(purchaseOrderMock).setPostStatusReason("");
 
         verify(svcMock).update(TEST_CODE, purchaseOrderMock);
 

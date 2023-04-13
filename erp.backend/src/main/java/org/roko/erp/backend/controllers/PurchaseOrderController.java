@@ -188,6 +188,7 @@ public class PurchaseOrderController {
     private void updatePurchaseOrderPostStatus(String code) {
         PurchaseOrder purchaseOrder = svc.get(code);
         purchaseOrder.setPostStatus(DocumentPostStatus.SCHEDULED);
+        purchaseOrder.setPostStatusReason("");
         svc.update(code, purchaseOrder);
     }
 }
