@@ -35,6 +35,8 @@ public class PurchaseCreditMemoController {
     private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
     private static final String POST_OPERATION_ROUTING_KEY = "purchase.creditmemo";
 
+    private static final String POST_SCHEDULED_ERR_TMPL = "Purchase Credit Memo %s already scheduled for posting";
+    
     private PurchaseCreditMemoService svc;
     private PurchaseCreditMemoLineService purchaseCreditMemoLineSvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
@@ -158,7 +160,13 @@ public class PurchaseCreditMemoController {
     @GetMapping("/{code}/operations/post")
     public ResponseEntity<String> operationPost(@PathVariable("code") String code) {
         try {
-            updatePurchaseCreditMemoPostStatus(code);
+            PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
+
+            if (purchaseCreditMemo.getPostStatus().equals(DocumentPostStatus.SCHEDULED)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(POST_SCHEDULED_ERR_TMPL, code));
+            }
+
+            updatePurchaseCreditMemoPostStatus(purchaseCreditMemo);
 
             rabbitMQClient.convertAndSend(POST_OPERATION_EXCHANGE_NAME, POST_OPERATION_ROUTING_KEY, code);
 
@@ -168,10 +176,9 @@ public class PurchaseCreditMemoController {
         }
     }
 
-    private void updatePurchaseCreditMemoPostStatus(String code) {
-        PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
+    private void updatePurchaseCreditMemoPostStatus(PurchaseCreditMemo purchaseCreditMemo) {
         purchaseCreditMemo.setPostStatus(DocumentPostStatus.SCHEDULED);
         purchaseCreditMemo.setPostStatusReason("");
-        svc.update(code, purchaseCreditMemo);
+        svc.update(purchaseCreditMemo.getCode(), purchaseCreditMemo);
     }
 }

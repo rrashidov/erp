@@ -49,6 +49,8 @@ public class PurchaseCreditMemoControllerTest {
 
     private static final String TEST_NEW_CODE = "test-new-code";
 
+    private static final String POST_SCHEDULED_ERR_TMPL = "Purchase Credit Memo %s already scheduled for posting";
+    
     @Captor
     private ArgumentCaptor<PurchaseCreditMemoLineId> purchaseCreditMemoLineIdArgumentCaptor;
 
@@ -81,6 +83,9 @@ public class PurchaseCreditMemoControllerTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(purchaseCreditMemoMock.getCode()).thenReturn(TEST_CODE);
+        when(purchaseCreditMemoMock.getPostStatus()).thenReturn(DocumentPostStatus.READY);
 
         when(purchaseCodeSeriesSvcMock.creditMemoCode()).thenReturn(TEST_NEW_CODE);
 
@@ -228,4 +233,15 @@ public class PurchaseCreditMemoControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(TEST_POST_FAILED_EXCEPTION, response.getBody());
     }
+
+    @Test
+    public void operationPost_returnsBadRequest_whenPurchaseCreditMemoAlreadyScheduledForPosting() throws PostFailedException {
+        when(purchaseCreditMemoMock.getPostStatus()).thenReturn(DocumentPostStatus.SCHEDULED);
+
+        ResponseEntity<String> response = controller.operationPost(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(String.format(POST_SCHEDULED_ERR_TMPL, TEST_CODE), response.getBody());
+    }
+    
 }
