@@ -177,6 +177,7 @@ public class SalesCreditMemoController {
     private void updateSalesCreditMemoPostStatus(String code) {
         SalesCreditMemo salesCreditMemo = svc.get(code);
         salesCreditMemo.setPostStatus(DocumentPostStatus.SCHEDULED);
+        salesCreditMemo.setPostStatusReason("");
         svc.update(code, salesCreditMemo);
     }
 }

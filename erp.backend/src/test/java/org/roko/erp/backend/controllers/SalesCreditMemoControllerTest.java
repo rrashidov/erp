@@ -212,6 +212,7 @@ public class SalesCreditMemoControllerTest {
         verify(rabbitMQClientMock).convertAndSend(SALES_CREDIT_MEMO_MSG_EXCHANGE_NAME, SALES_CREDIT_MEMO_MSG_ROUTING_KEY, TEST_CODE);
 
         verify(salesCreditMemoMock).setPostStatus(DocumentPostStatus.SCHEDULED);
+        verify(salesCreditMemoMock).setPostStatusReason("");
         verify(svcMock).update(TEST_CODE, salesCreditMemoMock);
     }
 
