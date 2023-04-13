@@ -147,9 +147,9 @@ public class GeneralJournalBatchController {
     }
 
     @DeleteMapping("/{code}")
-    public String delete(@PathVariable("code") String code) {
+    public ResponseEntity<String> delete(@PathVariable("code") String code) {
         svc.delete(code);
-        return code;
+        return ResponseEntity.ok(code);
     }
 
     @GetMapping("/{code}/operations/post")
