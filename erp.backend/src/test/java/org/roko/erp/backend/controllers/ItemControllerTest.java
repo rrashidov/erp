@@ -23,6 +23,8 @@ import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.dto.ItemLedgerEntryDTO;
 import org.roko.erp.dto.list.ItemLedgerEntryList;
 import org.roko.erp.dto.list.ItemList;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 public class ItemControllerTest {
@@ -151,8 +153,11 @@ public class ItemControllerTest {
 
     @Test
     public void delete_delegatesToRepo() {
-        controller.delete(TEST_CODE);
+        ResponseEntity<String> response = controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(TEST_CODE, response.getBody());
     }
 }
