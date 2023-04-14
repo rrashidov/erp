@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SalesOrderPolicy {
+public class SalesOrderPolicy implements EntityPolicy {
 
     private static final String NOT_FOUND_TMPL = "Sales Order %s not found";
     private static final String HAS_LINES_TMPL = "Sales Order %s has lines";

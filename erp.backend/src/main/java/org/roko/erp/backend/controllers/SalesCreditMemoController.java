@@ -3,6 +3,8 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.controllers.policy.PolicyResult;
+import org.roko.erp.backend.controllers.policy.SalesCreditMemoPolicy;
 import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.SalesCreditMemo;
 import org.roko.erp.backend.model.SalesCreditMemoLine;
@@ -41,14 +43,16 @@ public class SalesCreditMemoController {
     private SalesCreditMemoLineService salesCreditMemoLineSvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
     private RabbitTemplate rabbitMQClient;
+    private SalesCreditMemoPolicy policy;
 
     @Autowired
     public SalesCreditMemoController(SalesCreditMemoService svc, SalesCreditMemoLineService salesCreditMemoLineSvc,
-            SalesCodeSeriesService salesCodeSeriesSvc, RabbitTemplate rabbitMQClient) {
+            SalesCodeSeriesService salesCodeSeriesSvc, RabbitTemplate rabbitMQClient, SalesCreditMemoPolicy policy) {
         this.svc = svc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
         this.rabbitMQClient = rabbitMQClient;
+        this.policy = policy;
     }
 
     @GetMapping("/page/{page}")
@@ -159,6 +163,12 @@ public class SalesCreditMemoController {
 
     @DeleteMapping("/{code}")
     public ResponseEntity<String> delete(@PathVariable("code") String code) {
+        PolicyResult policyResult = policy.canDelete(code);
+
+        if (!policyResult.getResult()) {
+            return ResponseEntity.badRequest().body(policyResult.getText());
+        }
+        
         svc.delete(code);
         return ResponseEntity.ok(code);
     }
