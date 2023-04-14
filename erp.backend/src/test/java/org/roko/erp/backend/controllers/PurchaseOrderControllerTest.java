@@ -2,6 +2,7 @@ package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,6 +14,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.controllers.policy.PolicyResult;
+import org.roko.erp.backend.controllers.policy.PurchaseOrderPolicy;
 import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
@@ -51,6 +54,8 @@ public class PurchaseOrderControllerTest {
 
     private static final String POST_SCHEDULED_ERR_TMPL = "Purchase Order %s already scheduled for posting";
 
+    private static final String TEST_DELETE_ERROR_MSG = "test-delete-error-msg";
+
     @Captor
     private ArgumentCaptor<PurchaseOrderLineId> purchaseOrderLineIdArgumentCaptor;
 
@@ -78,11 +83,16 @@ public class PurchaseOrderControllerTest {
     @Mock
     private RabbitTemplate rabbitMQClientMock;
 
+    @Mock
+    private PurchaseOrderPolicy policyMock;
+
     private PurchaseOrderController controller;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(policyMock.canDelete(TEST_CODE)).thenReturn(new PolicyResult(true, ""));
 
         when(purchaseOrderMock.getCode()).thenReturn(TEST_CODE);
         when(purchaseOrderMock.getPostStatus()).thenReturn(DocumentPostStatus.READY);
@@ -109,7 +119,7 @@ public class PurchaseOrderControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new PurchaseOrderController(svcMock, purchaseOrderLineSvcMock, purchaseCodeSeriesSvcMock,
-                rabbitMQClientMock);
+                rabbitMQClientMock, policyMock);
     }
 
     @Test
@@ -152,13 +162,25 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
-    public void delete_delegatesToService() {
+    public void deleteSucceeds_whenPolicyAllows() {
         ResponseEntity<String> response = controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(TEST_CODE, response.getBody());
+    }
+
+    @Test
+    public void deleteFails_whenPolicyDoesNotAllowIt(){
+        when(policyMock.canDelete(TEST_CODE)).thenReturn(new PolicyResult(false, TEST_DELETE_ERROR_MSG));
+
+        ResponseEntity<String> response = controller.delete(TEST_CODE);
+
+        verify(svcMock, never()).delete(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(TEST_DELETE_ERROR_MSG, response.getBody());
     }
 
     @Test

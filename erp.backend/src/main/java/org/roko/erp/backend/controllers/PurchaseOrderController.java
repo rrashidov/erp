@@ -3,6 +3,8 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.controllers.policy.PolicyResult;
+import org.roko.erp.backend.controllers.policy.PurchaseOrderPolicy;
 import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.model.PurchaseOrderLine;
@@ -41,14 +43,16 @@ public class PurchaseOrderController {
     private PurchaseOrderLineService purchaseOrderLineSvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
     private RabbitTemplate rabbitMQClient;
+    private PurchaseOrderPolicy policy;
 
     @Autowired
     public PurchaseOrderController(PurchaseOrderService svc, PurchaseOrderLineService purchaseOrderLineSvc,
-            PurchaseCodeSeriesService purchaseCodeSeriesSvc, RabbitTemplate rabbitMQClient) {
+            PurchaseCodeSeriesService purchaseCodeSeriesSvc, RabbitTemplate rabbitMQClient, PurchaseOrderPolicy policy) {
         this.svc = svc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
         this.rabbitMQClient = rabbitMQClient;
+        this.policy = policy;
     }
 
     @GetMapping
@@ -170,6 +174,12 @@ public class PurchaseOrderController {
 
     @DeleteMapping("/{code}")
     public ResponseEntity<String> delete(@PathVariable("code") String code) {
+        PolicyResult policyResult = policy.canDelete(code);
+
+        if (!policyResult.getResult()) {
+            return ResponseEntity.badRequest().body(policyResult.getText());
+        }
+        
         svc.delete(code);
         return ResponseEntity.ok(code);
     }
