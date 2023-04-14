@@ -14,6 +14,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.controllers.policy.PolicyResult;
+import org.roko.erp.backend.controllers.policy.SalesOrderPolicy;
 import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
@@ -37,6 +39,8 @@ public class SalesOrderControllerTest {
     private static final String EXCHANGE_NAME = "erp.operations.post";
     private static final String ROUTING_KEY = "sales.order";
 
+    private static final String TEST_DELETE_MSG = "test-delete-msg";
+    
     private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
     private static final int TEST_COUNT = 222;
@@ -80,6 +84,9 @@ public class SalesOrderControllerTest {
     private SalesOrderPostService salesOrderPostSvcMock;
 
     @Mock
+    private SalesOrderPolicy salesOrderPolicy;
+
+    @Mock
     private RabbitTemplate rabbitMQClientMock;
 
     private SalesOrderController controller;
@@ -115,8 +122,10 @@ public class SalesOrderControllerTest {
         when(svcMock.toDTO(salesOrderMock)).thenReturn(salesOrderDtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
+        when(salesOrderPolicy.canDelete(TEST_CODE)).thenReturn(new PolicyResult(true, ""));
+
         controller = new SalesOrderController(svcMock, salesOrderLineSvcMock, salesCodeSeriesSvcMock,
-                rabbitMQClientMock);
+                rabbitMQClientMock, salesOrderPolicy);
     }
 
     @Test
@@ -222,6 +231,17 @@ public class SalesOrderControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(TEST_CODE, response.getBody());
     }
+
+    @Test
+    public void deleteReturnsBadRequest_whenSalesOrderCanNotBeDeleted() {
+        when(salesOrderPolicy.canDelete(TEST_CODE)).thenReturn(new PolicyResult(false, TEST_DELETE_MSG));
+
+        ResponseEntity<String> response =  controller.delete(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(TEST_DELETE_MSG, response.getBody());
+    }
+
 
     @Test
     public void postOperation_delegatesToService() throws PostFailedException {

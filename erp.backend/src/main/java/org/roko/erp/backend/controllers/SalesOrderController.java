@@ -3,6 +3,8 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.controllers.policy.PolicyResult;
+import org.roko.erp.backend.controllers.policy.SalesOrderPolicy;
 import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.SalesOrder;
 import org.roko.erp.backend.model.SalesOrderLine;
@@ -41,14 +43,17 @@ public class SalesOrderController {
     private SalesOrderLineService salesOrderLineSvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
     private RabbitTemplate rabbitMQClient;
+    private SalesOrderPolicy salesOrderPolicy;
 
     @Autowired
     public SalesOrderController(SalesOrderService svc, SalesOrderLineService salesOrderLineSvc,
-            SalesCodeSeriesService salesCodeSeriesSvc, RabbitTemplate rabbitMQClient) {
+            SalesCodeSeriesService salesCodeSeriesSvc, RabbitTemplate rabbitMQClient,
+            SalesOrderPolicy salesOrderPolicy) {
         this.svc = svc;
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
         this.rabbitMQClient = rabbitMQClient;
+        this.salesOrderPolicy = salesOrderPolicy;
     }
 
     @GetMapping("/page/{page}")
@@ -157,6 +162,12 @@ public class SalesOrderController {
 
     @DeleteMapping("/{code}")
     public ResponseEntity<String> delete(@PathVariable("code") String code) {
+        PolicyResult canDeleteResult = salesOrderPolicy.canDelete(code);
+
+        if (!canDeleteResult.getResult()) {
+            return badRequest(canDeleteResult.getText());
+        }
+
         svc.delete(code);
         return ResponseEntity.ok(code);
     }
@@ -167,16 +178,16 @@ public class SalesOrderController {
             SalesOrder salesOrder = svc.get(code);
 
             if (salesOrder.getPostStatus().equals(DocumentPostStatus.SCHEDULED)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(POST_SCHEDULED_ERR_TMPL, code));
+                return badRequest(String.format(POST_SCHEDULED_ERR_TMPL, code));
             };
 
             updateSalesOrderPostStatus(salesOrder);
-            
+
             rabbitMQClient.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, code);
 
             return ResponseEntity.ok("");
         } catch (AmqpException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return badRequest(e.getMessage());
         }
     }
 
@@ -185,4 +196,9 @@ public class SalesOrderController {
         salesOrder.setPostStatusReason("");
         svc.update(salesOrder.getCode(), salesOrder);
     }
+
+    private ResponseEntity<String> badRequest(String txt) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(txt);
+    }
+
 }
