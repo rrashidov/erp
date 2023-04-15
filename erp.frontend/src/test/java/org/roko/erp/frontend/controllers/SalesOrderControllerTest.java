@@ -32,6 +32,7 @@ import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.rules.sales.SalesOrderModelRule;
 import org.roko.erp.frontend.services.CustomerService;
+import org.roko.erp.frontend.services.DeleteFailedException;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
@@ -45,6 +46,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesOrderControllerTest {
+
+    private static final String DELETED_MSG_TMPL = "Sales Order %s deleted";
+
+    private static final String TEST_ERROR_MSG = "test-error-msg";
 
     private static final String TEST_POST_FAILED_EXCEPTION_MSG = "test-post-failed-exception-msg";
 
@@ -138,8 +143,6 @@ public class SalesOrderControllerTest {
     @Mock
     private FeedbackService feedbackSvcMock;
 
-    // private SalesOrderModelRule salesOrderModelRule = new SalesOrderModelRule();
-
     @Mock
     private SalesDocumentList salesOrderList;
 
@@ -174,7 +177,6 @@ public class SalesOrderControllerTest {
         when(paymentMethodList.getData()).thenReturn(paymentMethods);
 
         when(paymentMethodSvc.list()).thenReturn(paymentMethodList);
-        // when(paymentMethodSvc.get(TEST_PAYMENT_METHOD_CODE)).thenReturn(paymentMethodMock);
 
         when(customerList.getData()).thenReturn(customers);
 
@@ -283,12 +285,23 @@ public class SalesOrderControllerTest {
     }
 
     @Test
-    public void deleteSalesOrder_deletesSalesOrder() {
-        RedirectView redirectView = controller.delete(TEST_CODE);
+    public void deleteSalesOrder_deletesSalesOrder() throws DeleteFailedException {
+        RedirectView redirectView = controller.delete(TEST_CODE, httpSessionMock);
 
         assertEquals("/salesOrderList", redirectView.getUrl());
 
         verify(svcMock).delete(TEST_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.INFO, String.format(DELETED_MSG_TMPL, TEST_CODE), httpSessionMock);
+    }
+
+    @Test
+    public void deleteSalesOrderReturnsProperFeedback_whenDeleteFails() throws DeleteFailedException {
+        doThrow(new DeleteFailedException(TEST_ERROR_MSG)).when(svcMock).delete(TEST_CODE);
+
+        controller.delete(TEST_CODE, httpSessionMock);
+
+        verify(feedbackSvcMock).give(FeedbackType.ERROR, TEST_ERROR_MSG, httpSessionMock);
     }
 
     @Test

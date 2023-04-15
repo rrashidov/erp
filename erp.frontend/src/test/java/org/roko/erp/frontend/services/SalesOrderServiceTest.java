@@ -1,6 +1,8 @@
 package org.roko.erp.frontend.services;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,10 +54,20 @@ public class SalesOrderServiceTest {
     }
 
     @Test
-    public void delete_calllsBackend() {
+    public void delete_callsBackend() throws DeleteFailedException {
         svc.delete(TEST_CODE);
 
         verify(restTemplate).delete("/api/v1/salesorders/{code}", TEST_CODE);
+    }
+
+    @Test
+    public void deleteThrowsException_whenBackendReturnsBadRequest() throws DeleteFailedException {
+        doThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, "test-error-msg")).when(restTemplate)
+                .delete("/api/v1/salesorders/{code}", TEST_CODE);
+
+        assertThrows(DeleteFailedException.class, () -> {
+            svc.delete(TEST_CODE);
+        });
     }
 
     @Test

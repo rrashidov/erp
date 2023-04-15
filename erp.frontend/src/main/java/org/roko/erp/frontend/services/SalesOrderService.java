@@ -9,7 +9,7 @@ public interface SalesOrderService {
 
     public void update(String code, SalesDocumentDTO salesOrder);
 
-    public void delete(String code);
+    public void delete(String code) throws DeleteFailedException;
 
     public SalesDocumentDTO get(String code);
 

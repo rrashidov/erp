@@ -28,8 +28,12 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     }
 
     @Override
-    public void delete(String code) {
-        restTemplate.delete("/api/v1/salesorders/{code}", code);
+    public void delete(String code) throws DeleteFailedException {
+        try {
+            restTemplate.delete("/api/v1/salesorders/{code}", code);
+        } catch (HttpClientErrorException e) {
+            throw new DeleteFailedException(e.getMessage());
+        }
     }
 
     @Override
