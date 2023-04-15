@@ -4,7 +4,9 @@ import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.services.GeneralJournalBatchLineService;
 import org.roko.erp.backend.services.GeneralJournalBatchService;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GeneralJournalBatchPolicy implements EntityPolicy {
 
     private static final String NOT_FOUND_TMPL = "General Journal Batch %s not found";
