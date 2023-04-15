@@ -4,7 +4,9 @@ import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseOrder;
 import org.roko.erp.backend.services.PurchaseOrderLineService;
 import org.roko.erp.backend.services.PurchaseOrderService;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PurchaseOrderPolicy implements EntityPolicy {
 
     private static final String NOT_FOUND_TMPL = "Purchase Order %s not found";
