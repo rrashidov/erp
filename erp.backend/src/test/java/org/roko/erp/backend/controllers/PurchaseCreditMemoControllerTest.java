@@ -13,6 +13,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.roko.erp.backend.controllers.policy.PolicyResult;
+import org.roko.erp.backend.controllers.policy.PurchaseCreditMemoPolicy;
 import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.PurchaseCreditMemo;
 import org.roko.erp.backend.model.PurchaseCreditMemoLine;
@@ -31,6 +33,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class PurchaseCreditMemoControllerTest {
+
+    private static final String TEST_DELETE_ERR_MSG = "test-delete-err-msg";
 
     private static final String POST_OPERATION_EXCHANGE_NAME = "erp.operations.post";
     private static final String POST_OPERATION_ROUTING_KEY = "purchase.creditmemo";
@@ -78,11 +82,16 @@ public class PurchaseCreditMemoControllerTest {
     @Mock
     private RabbitTemplate rabbitMQClientMock;
 
+    @Mock
+    private PurchaseCreditMemoPolicy policyMock;
+
     private PurchaseCreditMemoController controller;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        when(policyMock.canDelete(TEST_CODE)).thenReturn(new PolicyResult(true, ""));
 
         when(purchaseCreditMemoMock.getCode()).thenReturn(TEST_CODE);
         when(purchaseCreditMemoMock.getPostStatus()).thenReturn(DocumentPostStatus.READY);
@@ -109,7 +118,7 @@ public class PurchaseCreditMemoControllerTest {
         when(svcMock.count()).thenReturn(TEST_COUNT);
 
         controller = new PurchaseCreditMemoController(svcMock, purchaseCreditMemoLineSvcMock, purchaseCodeSeriesSvcMock,
-                rabbitMQClientMock);
+                rabbitMQClientMock, policyMock);
     }
 
     @Test
@@ -145,13 +154,23 @@ public class PurchaseCreditMemoControllerTest {
     }
 
     @Test
-    public void delete_delegatesToService() {
+    public void deleteSucceeds_whenPolicyAllows() {
         ResponseEntity<String> response = controller.delete(TEST_CODE);
 
         verify(svcMock).delete(TEST_CODE);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(TEST_CODE, response.getBody());
+    }
+
+    @Test
+    public void deleteFails_whenPolicyDoesNotAllowIt() {
+        when(policyMock.canDelete(TEST_CODE)).thenReturn(new PolicyResult(false, TEST_DELETE_ERR_MSG));
+
+        ResponseEntity<String> response = controller.delete(TEST_CODE);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(TEST_DELETE_ERR_MSG, response.getBody());
     }
 
     @Test
