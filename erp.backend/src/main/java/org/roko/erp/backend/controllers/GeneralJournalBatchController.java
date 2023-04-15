@@ -3,6 +3,8 @@ package org.roko.erp.backend.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.roko.erp.backend.controllers.policy.GeneralJournalBatchPolicy;
+import org.roko.erp.backend.controllers.policy.PolicyResult;
 import org.roko.erp.backend.model.DocumentPostStatus;
 import org.roko.erp.backend.model.GeneralJournalBatch;
 import org.roko.erp.backend.model.GeneralJournalBatchLine;
@@ -39,13 +41,16 @@ public class GeneralJournalBatchController {
     private GeneralJournalBatchService svc;
     private GeneralJournalBatchLineService generalJournalBatchLineSvc;
     private RabbitTemplate rabbitMQClient;
+    private GeneralJournalBatchPolicy policy;
 
     @Autowired
     public GeneralJournalBatchController(GeneralJournalBatchService svc,
-            GeneralJournalBatchLineService generalJournalBatchLineSvc, RabbitTemplate rabbitMQClient) {
+            GeneralJournalBatchLineService generalJournalBatchLineSvc, RabbitTemplate rabbitMQClient,
+            GeneralJournalBatchPolicy policy) {
         this.svc = svc;
         this.generalJournalBatchLineSvc = generalJournalBatchLineSvc;
         this.rabbitMQClient = rabbitMQClient;
+        this.policy = policy;
     }
 
     @GetMapping("/pages/{page}")
@@ -148,6 +153,12 @@ public class GeneralJournalBatchController {
 
     @DeleteMapping("/{code}")
     public ResponseEntity<String> delete(@PathVariable("code") String code) {
+        PolicyResult canDelete = policy.canDelete(code);
+
+        if (!canDelete.getResult()) {
+            return ResponseEntity.badRequest().body(canDelete.getText());
+        }
+        
         svc.delete(code);
         return ResponseEntity.ok(code);
     }
