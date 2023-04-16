@@ -9,7 +9,7 @@ public interface SalesCreditMemoService {
 
     public void update(String code, SalesDocumentDTO salesCreditMemo);
 
-    public void delete(String code);
+    public void delete(String code) throws DeleteFailedException;
 
     public SalesDocumentDTO get(String code);
 

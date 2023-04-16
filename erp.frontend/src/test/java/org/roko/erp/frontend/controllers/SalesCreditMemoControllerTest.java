@@ -31,6 +31,7 @@ import org.roko.erp.dto.list.SalesDocumentList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CustomerService;
+import org.roko.erp.frontend.services.DeleteFailedException;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
@@ -44,6 +45,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class SalesCreditMemoControllerTest {
+
+    private static final String DELETED_MSG_TMPL = "Sales Credit Memo %s deleted";
 
     private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
@@ -284,12 +287,29 @@ public class SalesCreditMemoControllerTest {
     }
 
     @Test
-    public void delete_deletesSalesCreditMemo() {
-        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE);
+    public void delete_deletesSalesCreditMemo() throws DeleteFailedException {
+        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
 
         assertEquals("/salesCreditMemoList", redirectView.getUrl());
 
         verify(svcMock).delete(TEST_SALES_CREDIT_MEMO_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.INFO,
+                String.format(DELETED_MSG_TMPL, TEST_SALES_CREDIT_MEMO_CODE), httpSessionMock);
+    }
+
+    @Test
+    public void deleteGivesProperFeedback_whenDeleteFails() throws DeleteFailedException {
+        doThrow(new DeleteFailedException("test-err-msg")).when(svcMock).delete(TEST_SALES_CREDIT_MEMO_CODE);
+
+        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
+
+        assertEquals("/salesCreditMemoList", redirectView.getUrl());
+
+        verify(svcMock).delete(TEST_SALES_CREDIT_MEMO_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.ERROR,
+                "test-err-msg", httpSessionMock);
     }
 
     @Test
@@ -311,7 +331,8 @@ public class SalesCreditMemoControllerTest {
 
         verify(salesCreditMemoPostSvcMock).post(TEST_SALES_CREDIT_MEMO_CODE);
 
-        verify(feedbackSvcMock).give(FeedbackType.INFO, "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post scheduled.",
+        verify(feedbackSvcMock).give(FeedbackType.INFO,
+                "Sales credit memo " + TEST_SALES_CREDIT_MEMO_CODE + " post scheduled.",
                 httpSessionMock);
     }
 

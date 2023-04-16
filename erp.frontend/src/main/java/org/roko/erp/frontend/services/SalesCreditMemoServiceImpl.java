@@ -4,6 +4,7 @@ import org.roko.erp.dto.SalesDocumentDTO;
 import org.roko.erp.dto.list.SalesDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -27,8 +28,12 @@ public class SalesCreditMemoServiceImpl implements SalesCreditMemoService {
     }
 
     @Override
-    public void delete(String code) {
-        restTemplate.delete("/api/v1/salescreditmemos/{code}", code);
+    public void delete(String code) throws DeleteFailedException {
+        try {
+            restTemplate.delete("/api/v1/salescreditmemos/{code}", code);
+        } catch (HttpClientErrorException e) {
+            throw new DeleteFailedException(e.getMessage());
+        }
     }
 
     @Override

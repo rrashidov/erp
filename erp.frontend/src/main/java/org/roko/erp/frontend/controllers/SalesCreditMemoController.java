@@ -13,6 +13,7 @@ import org.roko.erp.dto.list.SalesDocumentList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CustomerService;
+import org.roko.erp.frontend.services.DeleteFailedException;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
@@ -33,6 +34,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class SalesCreditMemoController {
+
+    private static final String DELETE_MSG_TMPL = "Sales Credit Memo %s deleted";
 
     private SalesCreditMemoService svc;
     private PagingService pagingSvc;
@@ -119,8 +122,14 @@ public class SalesCreditMemoController {
     }
 
     @GetMapping("/deleteSalesCreditMemo")
-    public RedirectView delete(@RequestParam(name = "code") String code) {
-        svc.delete(code);
+    public RedirectView delete(@RequestParam(name = "code") String code, HttpSession httpSession) {
+        try {
+            svc.delete(code);
+
+            feedbackSvc.give(FeedbackType.INFO, String.format(DELETE_MSG_TMPL, code), httpSession);
+        } catch (DeleteFailedException e) {
+            feedbackSvc.give(FeedbackType.ERROR, e.getMessage(), httpSession);
+        }
 
         return new RedirectView("/salesCreditMemoList");
     }
