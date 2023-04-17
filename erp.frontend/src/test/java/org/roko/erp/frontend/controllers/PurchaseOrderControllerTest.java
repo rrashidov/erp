@@ -30,6 +30,7 @@ import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.roko.erp.dto.list.VendorList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
+import org.roko.erp.frontend.services.DeleteFailedException;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
@@ -44,6 +45,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseOrderControllerTest {
+
+    private static final String TEST_ERROR_MSG = "test-error-msg";
 
     private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
@@ -291,12 +294,27 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
-    public void delete_deletesTheEntity() {
-        RedirectView redirectView = controller.delete(TEST_CODE);
+    public void delete_deletesTheEntity() throws DeleteFailedException {
+        RedirectView redirectView = controller.delete(TEST_CODE, httpSessionMock);
 
         assertEquals("/purchaseOrderList", redirectView.getUrl());
 
         verify(svcMock).delete(TEST_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.INFO, String.format("Purchase Order %s deleted", TEST_CODE),
+                httpSessionMock);
+    }
+
+    @Test
+    public void deleteGivesProperFeedback_whenDeleteFails() throws DeleteFailedException {
+        doThrow(new DeleteFailedException(TEST_ERROR_MSG)).when(svcMock).delete(TEST_CODE);
+
+        controller.delete(TEST_CODE, httpSessionMock);
+
+        verify(svcMock).delete(TEST_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.ERROR, TEST_ERROR_MSG,
+                httpSessionMock);
     }
 
     @Test
@@ -318,7 +336,8 @@ public class PurchaseOrderControllerTest {
 
         verify(purchaseOrderPostSvcMock).post(TEST_CODE);
 
-        verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase order " + TEST_CODE + " post scheduled.", httpSessionMock);
+        verify(feedbackSvcMock).give(FeedbackType.INFO, "Purchase order " + TEST_CODE + " post scheduled.",
+                httpSessionMock);
     }
 
     @Test

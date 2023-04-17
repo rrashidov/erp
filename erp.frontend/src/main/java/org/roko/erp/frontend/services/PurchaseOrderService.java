@@ -9,7 +9,7 @@ public interface PurchaseOrderService {
 
     public void update(String code, PurchaseDocumentDTO purchaseOrder);
 
-    public void delete(String code);
+    public void delete(String code) throws DeleteFailedException;
 
     public PurchaseDocumentDTO get(String code);
 
