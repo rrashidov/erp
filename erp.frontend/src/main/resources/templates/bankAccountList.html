@@ -34,7 +34,7 @@
                         <td th:text="${bankAccount.name}"></td>
                         <td th:text="${bankAccount.balance}"></td>
                         <td><a class="btn btn-primary" th:href="@{/bankAccountCard?code={code}(code=${bankAccount.code})}">Edit</a> <a
-                            class="btn btn-primary" th:href="@{/deleteBankAccount?code={code}(code=${bankAccount.code})}">Delete</a></td>
+                            class="btn btn-primary" th:href="@{/deleteBankAccount?code={code}&page={page}(code=${bankAccount.code},page=${paging.currentPage})}">Delete</a></td>
                     </tr>
 
                 </tbody>

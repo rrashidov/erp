@@ -24,13 +24,14 @@ import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.BankAccountLedgerEntryService;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class BankAccountControllerTest {
 
     private static final String OBJECT_NAME = "bankAccount";
 
-    private static final int TEST_PAGE = 0;
+    private static final int TEST_PAGE = 12;
 
     private static final String EXPECTED_BANK_ACCOUNT_LIST_TEMPLATE = "bankAccountList.html";
     private static final String EXPECTED_BANK_ACCOUNT_CARD_TEMPLATE = "bankAccountCard.html";
@@ -74,6 +75,9 @@ public class BankAccountControllerTest {
 
     @Mock
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvcMock;
+
+    @Mock
+    private RedirectAttributes redirectAttributesMock;
 
     private BankAccountController controller;
 
@@ -171,7 +175,9 @@ public class BankAccountControllerTest {
 
     @Test
     public void deletingBankAccount_deletesBankAccount() {
-        controller.delete(TEST_CODE);
+        controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock);
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).delete(TEST_CODE);
     }
