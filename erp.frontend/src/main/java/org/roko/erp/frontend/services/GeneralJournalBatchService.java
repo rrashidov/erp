@@ -9,7 +9,7 @@ public interface GeneralJournalBatchService {
 
     public void update(String code, GeneralJournalBatchDTO generalJournalBatch);
 
-    public void delete(String code);
+    public void delete(String code) throws DeleteFailedException;
 
     public GeneralJournalBatchDTO get(String code);
 

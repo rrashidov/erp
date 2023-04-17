@@ -7,6 +7,7 @@ import org.roko.erp.dto.list.GeneralJournalBatchLineList;
 import org.roko.erp.dto.list.GeneralJournalBatchList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
+import org.roko.erp.frontend.services.DeleteFailedException;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.GeneralJournalBatchLineService;
 import org.roko.erp.frontend.services.GeneralJournalBatchPostService;
@@ -44,7 +45,8 @@ public class GeneralJournalBatchController {
     }
 
     @GetMapping("/generalJournalBatchList")
-    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model, HttpSession httpSession) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page, Model model,
+            HttpSession httpSession) {
         GeneralJournalBatchList generalJournalBatches = svc.list(page);
         PagingData pagingData = pagingSvc.generate("generalJournalBatch", page, (int) generalJournalBatches.getCount());
 
@@ -66,7 +68,7 @@ public class GeneralJournalBatchController {
             GeneralJournalBatchLineList generalJournalBatchLines = generalJournalBatchLineSvc
                     .list(code, page);
             PagingData pagingData = pagingSvc.generate("generalJournalBatchCard", code, page,
-            (int) generalJournalBatchLines.getCount());
+                    (int) generalJournalBatchLines.getCount());
 
             model.addAttribute("generalJournalBatchLines", generalJournalBatchLines.getData());
             model.addAttribute("paging", pagingData);
@@ -85,8 +87,14 @@ public class GeneralJournalBatchController {
     }
 
     @GetMapping("/deleteGeneralJournalBatch")
-    public RedirectView delete(@RequestParam(name = "code") String code) {
-        svc.delete(code);
+    public RedirectView delete(@RequestParam(name = "code") String code, HttpSession httpSession)
+            throws DeleteFailedException {
+        try {
+            svc.delete(code);
+            feedbackSvc.give(FeedbackType.INFO, String.format("General Journal Batch %s deleted", code), httpSession);
+        } catch (DeleteFailedException e) {
+            feedbackSvc.give(FeedbackType.ERROR, e.getMessage(), httpSession);
+        }
 
         return new RedirectView("/generalJournalBatchList");
     }
@@ -98,7 +106,8 @@ public class GeneralJournalBatchController {
 
             feedbackSvc.give(FeedbackType.INFO, "General journal batch " + code + " post scheduled.", httpSession);
         } catch (PostFailedException e) {
-            feedbackSvc.give(FeedbackType.ERROR, "General journal batch " + code + " post scheduling failed: " + e.getMessage(), httpSession);
+            feedbackSvc.give(FeedbackType.ERROR,
+                    "General journal batch " + code + " post scheduling failed: " + e.getMessage(), httpSession);
         }
 
         return new RedirectView("/generalJournalBatchList");

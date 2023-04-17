@@ -23,6 +23,7 @@ import org.roko.erp.dto.list.GeneralJournalBatchLineList;
 import org.roko.erp.dto.list.GeneralJournalBatchList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
+import org.roko.erp.frontend.services.DeleteFailedException;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.GeneralJournalBatchLineService;
 import org.roko.erp.frontend.services.GeneralJournalBatchPostService;
@@ -33,6 +34,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class GeneralJournalBatchControllerTest {
+
+    private static final String DELETE_ERR_MSG = "delete-err-msg";
 
     private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
@@ -168,12 +171,29 @@ public class GeneralJournalBatchControllerTest {
     }
 
     @Test
-    public void delete_deletesEntity() {
-        RedirectView redirectView = controller.delete(TEST_CODE);
+    public void delete_deletesEntity() throws DeleteFailedException {
+        RedirectView redirectView = controller.delete(TEST_CODE, httpSessionMock);
 
         assertEquals("/generalJournalBatchList", redirectView.getUrl());
 
         verify(svcMock).delete(TEST_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.INFO, String.format("General Journal Batch %s deleted", TEST_CODE),
+                httpSessionMock);
+    }
+
+    @Test
+    public void deleteGivesErrorFeedback_whenDeleteFails() throws DeleteFailedException {
+        doThrow(new DeleteFailedException(DELETE_ERR_MSG)).when(svcMock).delete(TEST_CODE);
+
+        RedirectView redirectView = controller.delete(TEST_CODE, httpSessionMock);
+
+        assertEquals("/generalJournalBatchList", redirectView.getUrl());
+
+        verify(svcMock).delete(TEST_CODE);
+
+        verify(feedbackSvcMock).give(FeedbackType.ERROR, DELETE_ERR_MSG,
+                httpSessionMock);
     }
 
     @Test

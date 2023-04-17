@@ -28,8 +28,12 @@ public class GeneralJournalBatchServiceImpl implements GeneralJournalBatchServic
     }
 
     @Override
-    public void delete(String code) {
-        restTemplate.delete("/api/v1/generaljournalbatches/{code}", code);
+    public void delete(String code) throws DeleteFailedException {
+        try {
+            restTemplate.delete("/api/v1/generaljournalbatches/{code}", code);
+        } catch (HttpClientErrorException e) {
+            throw new DeleteFailedException(e.getMessage());
+        }
     }
 
     @Override
