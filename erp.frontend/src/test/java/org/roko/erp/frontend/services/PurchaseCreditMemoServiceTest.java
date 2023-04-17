@@ -1,5 +1,7 @@
 package org.roko.erp.frontend.services;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.list.PurchaseDocumentList;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class PurchaseCreditMemoServiceTest {
@@ -46,10 +50,20 @@ public class PurchaseCreditMemoServiceTest {
     }
 
     @Test
-    public void delete_callsBackend() {
+    public void delete_callsBackend() throws DeleteFailedException {
         svc.delete(TEST_CODE);
 
         verify(restTemplateMock).delete("/api/v1/purchasecreditmemos/{code}", TEST_CODE);
+    }
+
+    @Test
+    public void deleteThrowsException_whenBackendReturnsBadRequestResponse() {
+        doThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, "test-err-msg")).when(restTemplateMock)
+                .delete("/api/v1/purchasecreditmemos/{code}", TEST_CODE);
+
+        assertThrows(DeleteFailedException.class, () -> {
+            svc.delete(TEST_CODE);
+        });
     }
 
     @Test

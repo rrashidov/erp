@@ -9,6 +9,7 @@ import org.roko.erp.dto.list.PurchaseDocumentList;
 import org.roko.erp.dto.list.VendorList;
 import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
+import org.roko.erp.frontend.services.DeleteFailedException;
 import org.roko.erp.frontend.services.FeedbackService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.PostFailedException;
@@ -115,8 +116,14 @@ public class PurchaseCreditMemoController {
     }
 
     @GetMapping("/deletePurchaseCreditMemo")
-    public RedirectView delete(@RequestParam(name = "code") String code) {
-        svc.delete(code);
+    public RedirectView delete(@RequestParam(name = "code") String code, HttpSession httpSession) {
+        try {
+            svc.delete(code);
+
+            feedbackSvc.give(FeedbackType.INFO, String.format("Purchase Credit Memo %s deleted", code), httpSession);
+        } catch (DeleteFailedException e) {
+            feedbackSvc.give(FeedbackType.ERROR, e.getMessage(), httpSession);
+        }
 
         return new RedirectView("/purchaseCreditMemoList");
     }
