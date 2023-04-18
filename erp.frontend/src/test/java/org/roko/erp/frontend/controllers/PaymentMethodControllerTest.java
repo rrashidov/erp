@@ -24,6 +24,7 @@ import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.BankAccountService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class PaymentMethodControllerTest {
@@ -76,6 +77,9 @@ public class PaymentMethodControllerTest {
 
     @Mock
     private BankAccountService bankAccountSvcMock;
+
+    @Mock
+    private RedirectAttributes redirectAttributesMock;
 
     private PaymentMethodController controller;
 
@@ -157,7 +161,7 @@ public class PaymentMethodControllerTest {
     }
 
     @Test
-    public void postingCard_updates_whenCalledForExistingEntity(){
+    public void postingCard_updates_whenCalledForExistingEntity() {
         controller.postCard(paymentMethodModelMock);
 
         verify(svcMock).update(TEST_CODE, paymentMethodModelMock);
@@ -165,10 +169,12 @@ public class PaymentMethodControllerTest {
 
     @Test
     public void deletingPaymentMethod_deletesPaymentMethod() {
-        RedirectView redirectView = controller.delete(TEST_CODE);
+        RedirectView redirectView = controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock);
 
         verify(svcMock).delete(TEST_CODE);
 
         assertEquals("/paymentMethodList", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
     }
 }

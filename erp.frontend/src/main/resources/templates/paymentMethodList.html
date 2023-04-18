@@ -34,7 +34,7 @@
                         <td th:text="${paymentMethod.bankAccountName}"></td>
 
                         <td><a class="btn btn-primary" th:href="@{/paymentMethodCard?code={code}(code=${paymentMethod.code})}">Edit</a> <a
-                            class="btn btn-primary" th:href="@{/deletePaymentMethod?code={code}(code=${paymentMethod.code})}">Delete</a>
+                            class="btn btn-primary" th:href="@{/deletePaymentMethod?code={code}&page={page}(code=${paymentMethod.code},page=${paging.currentPage})}">Delete</a>
                         </td>
                     </tr>
 

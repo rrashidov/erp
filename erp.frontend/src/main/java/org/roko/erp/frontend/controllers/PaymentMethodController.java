@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -72,8 +73,12 @@ public class PaymentMethodController {
     }
 
     @GetMapping("/deletePaymentMethod")
-    public RedirectView delete(@RequestParam(name="code") String code){
+    public RedirectView delete(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            RedirectAttributes redirectAttributesMock) {
         svc.delete(code);
+
+        redirectAttributesMock.addAttribute("page", page);
 
         return new RedirectView("/paymentMethodList");
     }
