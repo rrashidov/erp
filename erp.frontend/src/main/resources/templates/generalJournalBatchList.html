@@ -45,7 +45,7 @@
                         <td><a class="btn btn-primary"
                                 th:href="@{/generalJournalBatchCard?code={code}(code=${generalJournalBatch.code})}">Edit</a>
                             <a class="btn btn-primary"
-                                th:href="@{/deleteGeneralJournalBatch?code={code}(code=${generalJournalBatch.code})}">Delete</a>
+                                th:href="@{/deleteGeneralJournalBatch?code={code}&page={page}(code=${generalJournalBatch.code},page=${paging.currentPage})}">Delete</a>
                             <a class="btn btn-primary"
                                 th:href="@{/postGeneralJournalBatch?code={code}(code=${generalJournalBatch.code})}">Post</a>
                         </td>

@@ -31,6 +31,7 @@ import org.roko.erp.frontend.services.GeneralJournalBatchService;
 import org.roko.erp.frontend.services.PostFailedException;
 import org.roko.erp.frontend.services.util.FeedbackType;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class GeneralJournalBatchControllerTest {
@@ -87,6 +88,9 @@ public class GeneralJournalBatchControllerTest {
 
     @Mock
     private GeneralJournalBatchLineList generalJournalBatchLineList;
+
+    @Mock
+    private RedirectAttributes redirectAttributesMock;
 
     private GeneralJournalBatchController controller;
 
@@ -172,7 +176,7 @@ public class GeneralJournalBatchControllerTest {
 
     @Test
     public void delete_deletesEntity() throws DeleteFailedException {
-        RedirectView redirectView = controller.delete(TEST_CODE, httpSessionMock);
+        RedirectView redirectView = controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock, httpSessionMock);
 
         assertEquals("/generalJournalBatchList", redirectView.getUrl());
 
@@ -180,13 +184,15 @@ public class GeneralJournalBatchControllerTest {
 
         verify(feedbackSvcMock).give(FeedbackType.INFO, String.format("General Journal Batch %s deleted", TEST_CODE),
                 httpSessionMock);
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
     }
 
     @Test
     public void deleteGivesErrorFeedback_whenDeleteFails() throws DeleteFailedException {
         doThrow(new DeleteFailedException(DELETE_ERR_MSG)).when(svcMock).delete(TEST_CODE);
 
-        RedirectView redirectView = controller.delete(TEST_CODE, httpSessionMock);
+        RedirectView redirectView = controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock, httpSessionMock);
 
         assertEquals("/generalJournalBatchList", redirectView.getUrl());
 
@@ -194,6 +200,8 @@ public class GeneralJournalBatchControllerTest {
 
         verify(feedbackSvcMock).give(FeedbackType.ERROR, DELETE_ERR_MSG,
                 httpSessionMock);
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
     }
 
     @Test

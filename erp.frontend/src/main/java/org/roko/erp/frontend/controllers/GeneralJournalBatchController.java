@@ -21,10 +21,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class GeneralJournalBatchController {
+
+    private static final String DELETED_MSG_TMPL = "General Journal Batch %s deleted";
 
     private GeneralJournalBatchService svc;
     private PagingService pagingSvc;
@@ -87,14 +90,18 @@ public class GeneralJournalBatchController {
     }
 
     @GetMapping("/deleteGeneralJournalBatch")
-    public RedirectView delete(@RequestParam(name = "code") String code, HttpSession httpSession)
+    public RedirectView delete(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            RedirectAttributes redirectAttributes, HttpSession httpSession)
             throws DeleteFailedException {
         try {
             svc.delete(code);
-            feedbackSvc.give(FeedbackType.INFO, String.format("General Journal Batch %s deleted", code), httpSession);
+            feedbackSvc.give(FeedbackType.INFO, String.format(DELETED_MSG_TMPL, code), httpSession);
         } catch (DeleteFailedException e) {
             feedbackSvc.give(FeedbackType.ERROR, e.getMessage(), httpSession);
         }
+
+        redirectAttributes.addAttribute("page", page);
 
         return new RedirectView("/generalJournalBatchList");
     }
