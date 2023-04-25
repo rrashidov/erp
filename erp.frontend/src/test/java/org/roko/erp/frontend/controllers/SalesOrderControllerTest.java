@@ -286,20 +286,22 @@ public class SalesOrderControllerTest {
 
     @Test
     public void deleteSalesOrder_deletesSalesOrder() throws DeleteFailedException {
-        RedirectView redirectView = controller.delete(TEST_CODE, httpSessionMock);
+        RedirectView redirectView = controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock, httpSessionMock);
 
         assertEquals("/salesOrderList", redirectView.getUrl());
 
         verify(svcMock).delete(TEST_CODE);
 
         verify(feedbackSvcMock).give(FeedbackType.INFO, String.format(DELETED_MSG_TMPL, TEST_CODE), httpSessionMock);
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
     }
 
     @Test
     public void deleteSalesOrderReturnsProperFeedback_whenDeleteFails() throws DeleteFailedException {
         doThrow(new DeleteFailedException(TEST_ERROR_MSG)).when(svcMock).delete(TEST_CODE);
 
-        controller.delete(TEST_CODE, httpSessionMock);
+        controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock, httpSessionMock);
 
         verify(feedbackSvcMock).give(FeedbackType.ERROR, TEST_ERROR_MSG, httpSessionMock);
     }

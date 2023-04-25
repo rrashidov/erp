@@ -50,7 +50,7 @@
                                 class="btn btn-primary"
                                 th:href="@{/salesOrderCard?code={code}(code=${salesOrder.code})}">Card</a> <a
                                 class="btn btn-primary"
-                                th:href="@{/deleteSalesOrder?code={code}(code=${salesOrder.code})}">Delete</a> <a
+                                th:href="@{/deleteSalesOrder?code={code}&page={page}(code=${salesOrder.code},page=${paging.currentPage})}">Delete</a> <a
                                 class="btn btn-primary"
                                 th:href="@{/postSalesOrder?code={code}(code=${salesOrder.code})}">Post</a></td>
                     </tr>
