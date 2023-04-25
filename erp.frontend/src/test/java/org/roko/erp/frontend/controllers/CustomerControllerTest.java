@@ -27,6 +27,7 @@ import org.roko.erp.frontend.services.CustomerLedgerEntryService;
 import org.roko.erp.frontend.services.CustomerService;
 import org.roko.erp.frontend.services.PaymentMethodService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class CustomerControllerTest {
@@ -97,6 +98,9 @@ public class CustomerControllerTest {
 
     @Mock
     private CustomerLedgerEntryList customerLedgerEntryList;
+
+    @Mock
+    private RedirectAttributes redirectAttributesMock;
 
     private CustomerController controller;
 
@@ -224,9 +228,11 @@ public class CustomerControllerTest {
 
     @Test
     public void deletingCustomer_deletesCustomer() {
-        RedirectView redirect = controller.delete(TEST_CODE);
+        RedirectView redirect = controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock);
 
         assertEquals("/customerList", redirect.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(customerSvcMock).delete(TEST_CODE);
     }
