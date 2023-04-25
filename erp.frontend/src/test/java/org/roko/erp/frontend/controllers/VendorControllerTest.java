@@ -26,6 +26,7 @@ import org.roko.erp.frontend.services.PaymentMethodService;
 import org.roko.erp.frontend.services.VendorLedgerEntryService;
 import org.roko.erp.frontend.services.VendorService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class VendorControllerTest {
@@ -93,6 +94,9 @@ public class VendorControllerTest {
 
     @Mock
     private VendorLedgerEntryList vendorLedgerEntryList;
+
+    @Mock
+    private RedirectAttributes redirectAttributesMock;
     
     private VendorController controller;
 
@@ -218,10 +222,12 @@ public class VendorControllerTest {
     }
 
     @Test
-    public void delete_deletesVendor(){
-        RedirectView redirectView = controller.delete(TEST_CODE);
+    public void delete_deletesVendor() {
+        RedirectView redirectView = controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock);
 
         assertEquals("/vendorList", redirectView.getUrl());
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(vendorSvcMock).delete(TEST_CODE);
     }
