@@ -77,8 +77,12 @@ public class ItemController {
     }
 
     @GetMapping("/deleteItem")
-    public RedirectView delete(@RequestParam(name = "code") String code) {
+    public RedirectView delete(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            RedirectAttributes redirectAttributes) {
         svc.delete(code);
+
+        redirectAttributes.addAttribute("page", page);
 
         return new RedirectView("/itemList");
     }

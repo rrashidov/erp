@@ -180,9 +180,11 @@ public class ItemControllerTest {
 
     @Test
     public void deletingItem_deletesItem(){
-        RedirectView redirect = controller.delete(TEST_ITEM_CODE);
+        RedirectView redirect = controller.delete(TEST_ITEM_CODE, TEST_PAGE, redirectAttributesMock);
 
         verify(itemServiceMock).delete(TEST_ITEM_CODE);
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         assertEquals("/itemList", redirect.getUrl());
     }
