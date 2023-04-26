@@ -85,10 +85,14 @@ public class SalesOrderLineController {
 
     @GetMapping("/deleteSalesOrderLine")
     public RedirectView deleteSalesOrderLine(@RequestParam(name = "salesOrderCode") String salesOrderCode,
-            @RequestParam(name = "lineNo") Integer lineNo, RedirectAttributes redirectAttributes) {
+            @RequestParam(name = "lineNo") Integer lineNo,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            RedirectAttributes redirectAttributes) {
         salesOrderLineSvc.delete(salesOrderCode, lineNo);
 
         redirectAttributes.addAttribute("code", salesOrderCode);
+        redirectAttributes.addAttribute("page", page);
+        
         return new RedirectView("/salesOrderCard");
     }
 

@@ -208,13 +208,15 @@ public class SalesOrderLineControllerTest {
     }
 
     @Test
-    public void deletingSalesOrderLine_deletesSalesOrderLine(){
-        RedirectView redirectView = controller.deleteSalesOrderLine(TEST_CODE, TEST_SALES_ORDER_LINENO, redirectAttributesMock);
+    public void deletingSalesOrderLine_deletesSalesOrderLine() {
+        RedirectView redirectView = controller.deleteSalesOrderLine(TEST_CODE, TEST_SALES_ORDER_LINENO, TEST_PAGE,
+                redirectAttributesMock);
 
         assertEquals("/salesOrderCard", redirectView.getUrl());
 
         verify(salesOrderLineSvcMock).delete(TEST_CODE, TEST_SALES_ORDER_LINENO);
 
         verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
     }
 }
