@@ -288,7 +288,8 @@ public class SalesCreditMemoControllerTest {
 
     @Test
     public void delete_deletesSalesCreditMemo() throws DeleteFailedException {
-        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
+        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, TEST_PAGE, redirectAttributesMock,
+                httpSessionMock);
 
         assertEquals("/salesCreditMemoList", redirectView.getUrl());
 
@@ -296,13 +297,16 @@ public class SalesCreditMemoControllerTest {
 
         verify(feedbackSvcMock).give(FeedbackType.INFO,
                 String.format(DELETED_MSG_TMPL, TEST_SALES_CREDIT_MEMO_CODE), httpSessionMock);
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
     }
 
     @Test
     public void deleteGivesProperFeedback_whenDeleteFails() throws DeleteFailedException {
         doThrow(new DeleteFailedException("test-err-msg")).when(svcMock).delete(TEST_SALES_CREDIT_MEMO_CODE);
 
-        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, httpSessionMock);
+        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, TEST_PAGE, redirectAttributesMock,
+                httpSessionMock);
 
         assertEquals("/salesCreditMemoList", redirectView.getUrl());
 
