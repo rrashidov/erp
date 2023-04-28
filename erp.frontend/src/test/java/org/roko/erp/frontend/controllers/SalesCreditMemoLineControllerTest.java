@@ -39,6 +39,8 @@ public class SalesCreditMemoLineControllerTest {
     private static final Double TEST_PRICE = 12.00d;
     private static final Double TEST_AMOUNT = 120.00d;
 
+    private static final int TEST_PAGE = 12;
+
     private List<ItemDTO> items = new ArrayList<>();
 
     @Captor
@@ -208,12 +210,14 @@ public class SalesCreditMemoLineControllerTest {
 
     @Test
     public void deleting_deletesEntity() {
-        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO,
+        RedirectView redirectView = controller.delete(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO, TEST_PAGE,
                 redirectAttributesMock);
 
         assertEquals("/salesCreditMemoCard", redirectView.getUrl());
 
         verify(svcMock).delete(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO);
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
     }
 
 }
