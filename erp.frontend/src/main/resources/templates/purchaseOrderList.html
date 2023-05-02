@@ -46,7 +46,7 @@
                         <td th:text="${purchaseOrder.amount}"></td>
                         <td><a class="btn btn-primary" th:href="@{/purchaseOrderWizard?code={code}(code=${purchaseOrder.code})}">Edit</a>  <a
                             class="btn btn-primary" th:href="@{/purchaseOrderCard?code={code}(code=${purchaseOrder.code})}">Card</a> <a
-                            class="btn btn-primary" th:href="@{/deletePurchaseOrder?code={code}(code=${purchaseOrder.code})}">Delete</a> <a
+                            class="btn btn-primary" th:href="@{/deletePurchaseOrder?code={code}&page={page}(code=${purchaseOrder.code},page=${paging.currentPage})}">Delete</a> <a
                             class="btn btn-primary" th:href="@{/postPurchaseOrder?code={code}(code=${purchaseOrder.code})}">Post</a></td>
                     </tr>
 

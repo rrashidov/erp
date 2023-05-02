@@ -121,7 +121,9 @@ public class PurchaseOrderController {
     }
 
     @GetMapping("/deletePurchaseOrder")
-    public RedirectView delete(@RequestParam(name = "code") String code, HttpSession httpSession) {
+    public RedirectView delete(@RequestParam(name = "code") String code,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            RedirectAttributes redirectAttributes, HttpSession httpSession) {
         try {
             svc.delete(code);
 
@@ -129,6 +131,8 @@ public class PurchaseOrderController {
         } catch (DeleteFailedException e) {
             feedbackSvc.give(FeedbackType.ERROR, e.getMessage(), httpSession);
         }
+
+        redirectAttributes.addAttribute("page", page);
 
         return new RedirectView("/purchaseOrderList");
     }
