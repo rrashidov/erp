@@ -37,6 +37,7 @@ public class PurchaseOrderLineControllerTest {
     private static final Double TEST_PRICE = 12.00d;
 
     private static final int TEST_LINE_NO = 2;
+    private static final int TEST_PAGE = 12;
 
     private List<ItemDTO> items = new ArrayList<>();
 
@@ -207,12 +208,14 @@ public class PurchaseOrderLineControllerTest {
     }
 
     @Test
-    public void delete_deletesEntity(){
-        RedirectView redirectView = controller.delete(TEST_PURCHASE_ORDER_CODE, TEST_LINE_NO, redirectAttributesMock);
+    public void delete_deletesEntity() {
+        RedirectView redirectView = controller.delete(TEST_PURCHASE_ORDER_CODE, TEST_LINE_NO, TEST_PAGE,
+                redirectAttributesMock);
 
         assertEquals("/purchaseOrderCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_ORDER_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).delete(TEST_PURCHASE_ORDER_CODE, TEST_LINE_NO);
     }

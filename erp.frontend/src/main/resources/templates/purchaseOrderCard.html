@@ -82,7 +82,7 @@
                                     <td><a class="btn btn-primary"
                                             th:href="@{/purchaseOrderLineWizard?purchaseOrderCode={code}&lineNo={lineNo}(code=${purchaseOrder.code},lineNo=${purchaseOrderLine.lineNo})}">Edit</a>
                                         <a class="btn btn-primary"
-                                            th:href="@{/deletePurchaseOrderLine?purchaseOrderCode={code}&lineNo={lineNo}(code=${purchaseOrder.code},lineNo=${purchaseOrderLine.lineNo})}">Delete</a>
+                                            th:href="@{/deletePurchaseOrderLine?purchaseOrderCode={code}&lineNo={lineNo}&page={page}(code=${purchaseOrder.code},lineNo=${purchaseOrderLine.lineNo},page=${paging.currentPage})}">Delete</a>
                                     </td>
                                 </tr>
 
