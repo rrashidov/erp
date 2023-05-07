@@ -46,7 +46,7 @@
                         <td th:text="${purchaseCreditMemo.amount}"></td>
                         <td><a class="btn btn-primary" th:href="@{/purchaseCreditMemoWizard?code={code}(code=${purchaseCreditMemo.code})}">Edit</a>  <a
                             class="btn btn-primary" th:href="@{/purchaseCreditMemoCard?code={code}(code=${purchaseCreditMemo.code})}">Card</a> <a
-                            class="btn btn-primary" th:href="@{/deletePurchaseCreditMemo?code={code}(code=${purchaseCreditMemo.code})}">Delete</a> <a
+                            class="btn btn-primary" th:href="@{/deletePurchaseCreditMemo?code={code}&page={page}(code=${purchaseCreditMemo.code},page=${paging.currentPage})}">Delete</a> <a
                             class="btn btn-primary" th:href="@{/postPurchaseCreditMemo?code={code}(code=${purchaseCreditMemo.code})}">Post</a></td>
                     </tr>
 
