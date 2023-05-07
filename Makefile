@@ -3,6 +3,12 @@ include .envrc
 
 work_dir=$(pwd)
 
+.PHONY: clean
+clean:
+	@echo "Start cleaning project"
+	@${mvn_home} -T 1C clean
+	@echo "Finished cleaning project"
+
 .PHONY: build
 build:
 	@echo "Start building erp components"
