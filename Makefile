@@ -42,18 +42,14 @@ build-erp-rabbitmq:
 	@docker build -t erp.rabbitmq:0.0.1 -f ./docker/Dockerfile.rabbitmq ./docker
 	@echo "Finished building RabbitMQ container image to be used by erp components"
 
-.PHONY: start-locally
-start-locally: containerize build-erp-rabbitmq
-	@echo "Start erp setup locally"
-	@docker-compose -f ./docker/docker-compose.yml up -d 
-	@echo "erp is up and running locally. You can access it at http://localhost:8081"
-
 .PHONY: stop-locally
 stop-locally:
 	@echo "Stop locally running erp"
 	@docker-compose -f ./docker/docker-compose.yml down
 	@echo "Locally running erp stopped"
 
-.PHONY: test-locally
-test-locally: stop-locally start-locally
-	@echo "Go test it by hand"
+.PHONY: start-locally
+start-locally: stop-locally containerize build-erp-rabbitmq
+	@echo "Start erp setup locally"
+	@docker-compose -f ./docker/docker-compose.yml up -d 
+	@echo "erp is up and running locally. You can access it at http://localhost:8081"
