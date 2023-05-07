@@ -37,6 +37,7 @@ public class PurchaseCreditMemoLineControllerTest {
     private static final Double TEST_AMOUNT = 123.12;
 
     private static final int TEST_LINE_NO = 234;
+    private static final int TEST_PAGE = 12;
 
     private List<ItemDTO> items = new ArrayList<>();
 
@@ -205,12 +206,14 @@ public class PurchaseCreditMemoLineControllerTest {
     }
 
     @Test
-    public void delete_deletesEntity(){
-        RedirectView redirectView = controller.delete(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, redirectAttributesMock);
+    public void delete_deletesEntity() {
+        RedirectView redirectView = controller.delete(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, TEST_PAGE,
+                redirectAttributesMock);
 
         assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).delete(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO);
     }

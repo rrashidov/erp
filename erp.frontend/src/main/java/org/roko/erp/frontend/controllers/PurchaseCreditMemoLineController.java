@@ -92,10 +92,13 @@ public class PurchaseCreditMemoLineController {
 
     @GetMapping("/deletePurchaseCreditMemoLine")
     public RedirectView delete(@RequestParam(name = "purchaseCreditMemoCode") String code,
-            @RequestParam(name = "lineNo") Integer lineNo, RedirectAttributes redirectAttributes) {
+            @RequestParam(name = "lineNo") Integer lineNo,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            RedirectAttributes redirectAttributes) {
         svc.delete(code, lineNo);
 
         redirectAttributes.addAttribute("code", code);
+        redirectAttributes.addAttribute("page", page);
 
         return new RedirectView("/purchaseCreditMemoCard");
     }
