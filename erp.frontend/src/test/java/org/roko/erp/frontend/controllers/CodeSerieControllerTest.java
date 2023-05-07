@@ -20,6 +20,7 @@ import org.roko.erp.frontend.controllers.paging.PagingData;
 import org.roko.erp.frontend.controllers.paging.PagingService;
 import org.roko.erp.frontend.services.CodeSerieService;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class CodeSerieControllerTest {
@@ -55,6 +56,9 @@ public class CodeSerieControllerTest {
 
     @Mock
     private CodeSerieList codeSerieList;
+
+    @Mock
+    private RedirectAttributes redirectAttributesMock;
 
     private CodeSerieController controller;
 
@@ -144,10 +148,12 @@ public class CodeSerieControllerTest {
 
     @Test
     public void deleteReturnsProperTemplate(){
-        RedirectView redirectView = controller.delete(TEST_CODE);
+        RedirectView redirectView = controller.delete(TEST_CODE, TEST_PAGE, redirectAttributesMock);
 
         assertEquals("/codeSerieList", redirectView.getUrl());
 
         verify(svcMock).delete(TEST_CODE);
+
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
     }
 }
