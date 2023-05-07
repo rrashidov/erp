@@ -66,6 +66,7 @@ public class GeneralJournalBatchLineControllerTest {
 
     private static final String TEST_CODE = "test-code";
     private static final int TEST_LINE_NO = 123;
+    private static final int TEST_PAGE = 12;
 
     private static final GeneralJournalBatchLineType TEST_SOURCE_TYPE = GeneralJournalBatchLineType.VENDOR;
     private static final String TEST_SOURCE_CODE = "test-source-code";
@@ -327,11 +328,13 @@ public class GeneralJournalBatchLineControllerTest {
 
     @Test
     public void deleteGeneralJournalBatchLine_returnsProperTemplate() {
-        RedirectView redirectView = controller.deleteGeneralJournalBatchLine(TEST_CODE, TEST_LINE_NO, redirectAttributesMock);
+        RedirectView redirectView = controller.deleteGeneralJournalBatchLine(TEST_CODE, TEST_LINE_NO, TEST_PAGE,
+                redirectAttributesMock);
 
         assertEquals("/generalJournalBatchCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).delete(TEST_CODE, TEST_LINE_NO);
     }

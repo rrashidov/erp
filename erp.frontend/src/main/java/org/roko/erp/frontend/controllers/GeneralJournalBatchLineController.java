@@ -118,10 +118,13 @@ public class GeneralJournalBatchLineController {
 
     @GetMapping("/deleteGeneralJournalBatchLine")
     public RedirectView deleteGeneralJournalBatchLine(@RequestParam(name = "generalJournalBatchCode") String code,
-            @RequestParam(name = "lineNo") int lineNo, RedirectAttributes redirectAttributes) {
+            @RequestParam(name = "lineNo") int lineNo,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            RedirectAttributes redirectAttributes) {
         svc.delete(code, lineNo);
 
         redirectAttributes.addAttribute("code", code);
+        redirectAttributes.addAttribute("page", page);
 
         return new RedirectView("/generalJournalBatchCard");
     }

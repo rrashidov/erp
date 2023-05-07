@@ -73,7 +73,7 @@
                                     <td><a class="btn btn-primary"
                                             th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.lineNo})}">Edit</a>
                                         <a class="btn btn-primary"
-                                            th:href="@{/deleteGeneralJournalBatchLine?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.lineNo})}">Delete</a>
+                                            th:href="@{/deleteGeneralJournalBatchLine?generalJournalBatchCode={code}&lineNo={lineNo}&page={page}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.lineNo},page=${paging.currentPage})}">Delete</a>
                                     </td>
                                 </tr>
 
