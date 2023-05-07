@@ -63,8 +63,7 @@ public class ItemController {
     }
 
     @PostMapping("/itemCard")
-    public RedirectView postCard(@ModelAttribute ItemDTO item, Model model,
-            RedirectAttributes attributes) {
+    public RedirectView postCard(@ModelAttribute ItemDTO item) {
         ItemDTO itemFromDB = svc.get(item.getCode());
 
         if (itemFromDB == null) {

@@ -149,7 +149,7 @@ public class ItemControllerTest {
     public void postingItemCard_createsItem_ifDoesNotExist(){
         when(itemServiceMock.get(TEST_ITEM_CODE)).thenReturn(null);
 
-        RedirectView redirect = controller.postCard(itemMock, modelMock, redirectAttributesMock);
+        RedirectView redirect = controller.postCard(itemMock);
 
         assertEquals("/itemList", redirect.getUrl());
 
@@ -166,7 +166,7 @@ public class ItemControllerTest {
 
     @Test
     public void postingItemCard_updatesItem_whenCalledForExisting(){
-        controller.postCard(itemMock, modelMock, redirectAttributesMock);
+        controller.postCard(itemMock);
 
         verify(itemServiceMock).update(eq(TEST_ITEM_CODE), itemArgumentCaptor.capture());
 
