@@ -59,3 +59,9 @@ start-locally: stop-locally containerize build-erp-rabbitmq
 	@echo "Start erp setup locally"
 	@docker-compose -f ./docker/docker-compose.yml up -d 
 	@echo "erp is up and running locally. You can access it at http://localhost:8081"
+
+.PHONY: clean-local-mysql
+clean-local-mysql:
+	@echo "Start cleaning local mysql data"
+	@docker-compose -f ./docker/docker-compose.yml down -v
+	@echo "Finished cleaning local mysql data"
