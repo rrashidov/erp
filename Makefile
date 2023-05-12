@@ -65,3 +65,9 @@ clean-local-mysql:
 	@echo "Start cleaning local mysql data"
 	@docker-compose -f ./docker/docker-compose.yml down -v
 	@echo "Finished cleaning local mysql data"
+
+.PHONY: init-test-data
+init-test-data:
+	@echo "Start initializing test data"
+	./scripts/init-test-data.sh
+	@echo "Finished initializing test data"
