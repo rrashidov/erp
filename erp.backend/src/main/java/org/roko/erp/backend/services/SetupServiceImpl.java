@@ -36,7 +36,7 @@ public class SetupServiceImpl implements SetupService {
 
     @Override
     public void update(Setup setup) {
-        Setup setupFromDB = repo.findById("").get();
+        Setup setupFromDB = get();
 
         transferFields(setup, setupFromDB);
 
