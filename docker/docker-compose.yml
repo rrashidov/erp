@@ -93,8 +93,8 @@ services:
         condition: service_started
     healthcheck:
       test: "curl -f localhost:8082/api/v1/healthcheck"
-      interval: 2s
-      timeout: 2s
+      interval: 10s
+      timeout: 10s
       retries: 60
     logging:
       driver: gelf
