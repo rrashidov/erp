@@ -1,48 +1,5 @@
 version: "3.8"
 services:
-  elasticsearch:
-    image: elasticsearch:7.17.10
-    networks: 
-      - my-shared-network
-    environment:
-      - discovery.type=single-node
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    mem_limit: "1g"
-  redis-cache:
-    image: redis:6.2
-    networks: 
-      - my-shared-network
-  logstash-agent:
-    image: logstash:7.17.10
-    volumes:
-      - ./logstash-agent:/etc/logstash
-    command: logstash -f /etc/logstash/logstash.conf
-    depends_on:
-      - elasticsearch
-    ports:
-      - 12201:12201/udp
-    networks: 
-      - my-shared-network
-  logstash-central:
-    image: logstash:7.17.10
-    networks: 
-      - my-shared-network
-    volumes:
-      - ./logstash-central:/etc/logstash
-    command: logstash -f /etc/logstash/logstash.conf
-    depends_on:
-      - elasticsearch
-  kibana:
-    image: kibana:7.17.10
-    ports:
-      - 5601:5601
-    networks: 
-      - my-shared-network
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
   mysql:
     image: mysql:8.0.32
     environment:
@@ -89,19 +46,11 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-      logstash-agent:
-        condition: service_started
     healthcheck:
       test: "curl -f localhost:8082/api/v1/healthcheck"
       interval: 10s
       timeout: 10s
       retries: 60
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201" # Logstash UDP input port
-        tag: "backend"
-    restart: always
   frontend:
     image: erp.frontend:0.0.1
     environment:
@@ -123,4 +72,3 @@ networks:
 
 volumes:
   mysql-data: {}
-  elasticsearch-data: {}
