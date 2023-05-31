@@ -587,6 +587,7 @@ It was described in the Intro section what the main goals of the project are. In
 * no data validation when creating any of the objects;
 * no user context;
 * no authentication/authorization;
+* no atomicity for asynchronous operation triggering - triggering asynchronous operations is a two step process - update post status of the object and send a message to the Message Broker. These two operations should be executed atomically. Currently this is not the case. This is why the following issues could happen: use triggers post operation. Backend updates _postStatus_ field of the respective object. Sending message to Message Broker fails. The objects _postStatus_ field stays with value _SCHEDULED_. In this situation the post operation can not be retriggered because of the value stored in _postStatus_. No real processing is performed because there is no message sent to Message Broker. The object can not be deleted because of the value of the _postStatus_ field. In practice, the objects remains in _SCHEDULED_ post status forever.
 
 ## Roadmap
 
