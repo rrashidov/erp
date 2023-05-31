@@ -11,7 +11,7 @@
   - [Processes](#processes)
   - [Architecture](#architecture)
     - [Asynchronous business logic execution](#asynchronous-business-logic-execution)
-  - [HowToRun](#howtorun)
+  - [Dev Setup](#dev-setup)
   - [Caveats](#caveats)
   - [Roadmap](#roadmap)
 
@@ -563,50 +563,21 @@ This asynchronous architecture has some pros and cons:
 - cons
   - flexibility - if a new operation or a new object is introduced a change in the message broker setup will have to be done. This means that a new queue containing the messages for the object and the respective binding should be added. 
 
-## HowToRun
+## Dev Setup
 
-In order to run the application, you have to build it first. Maven is used as a build tool. You should execute simple maven command in the root of the repo in order to build the application:
+The project unitlizes [make](https://www.gnu.org/software/make/) for development related activities. 
 
-```
-$ mvn clean install
-```
+The following make targets are available with their respective purposes:
 
-As described in the Architecture section, the application consists of two components - frontend and backend. Respectively they are modules of the repository. Executing Maven in the root of the repository builds both components.
-
-The minimal maven version required is **3.2.5**.
-
-The result of a successfull maven execution is a jar file located in the **./target** folder of each of the submodules.
-
-First you have to run the backend component. This is done by execution the following command in the root of the repository:
-
-```
-java -jar ./erp.backend/target/backend-*.jar
-```
-
-This runs the backend component with embeded H2 in-memory database.
-
-Backend could be run against MySQL database as well. This could be done by providing some input parameters running the component:
-
-* DB_DRIVER - the MySQL value that should be provided is **com.mysql.cj.jdbc.Driver**;
-* DB_URL - the JDBC URL that will be used to connect to the database;
-* DB_USERNAME - the username to authenticate with;
-* DB_PASSWORD - the password to authenticate with;
-* DB_PLATFORM - the MySQL dialect for Hibernate - **org.hibernate.dialect.MySQL5InnoDBDialect**
-* SRV_PORT - the port to run the embedded server on;
-
-Moreover, you have to specify **prod** profile to run Spring with by specifying **spring.profiles.active** environment variable.
-
-Now that you have backend component, next you should run the frontend component. This is done by executing the following command in the root of the repository:
-
-```
-java -jar ./erp.frontend/target/frontend-*.jar
-```
-
-This runs the frontend component with default configuration where it tries to communicate with backend component at **http://localhost:8082**. You can change this by providing the following input parameter:
-
-* ERP_BACKENDURL - the endpoint where frontend will use to communicate with backend component;
-
-Moreover, you have to specify **prod** profile to run Spring with by specifying **spring.profiles.active** environment variable.
+- **help** - lists and briefly describes the available make targets;
+- **build** - builds Java components of the local dev setup (frontend and backend);
+- **clean** - deletes the built Java components;
+- **containerize** - builds container images with the Java components of the system;
+- **build-erp-rabbitmq** - builds container image based on RabbitMQ with the setup needed by the system; see [Asynchronous business logic execution](#asynchronous-business-logic-execution)
+- **init-test-data** - runs a script which using the RESST API of the system initializes some basic setup and creates some testing objects. This makes further manual testing of the system easier;
+- **clean-local-mysql** - cleans the data stored in the local development setup;
+- **start-locally** - starts the whole system locally using docker compose;
+- **stop-locally** - stops locally started system using docker compose;
 
 ## Caveats
 
