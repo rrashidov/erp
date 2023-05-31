@@ -1,0 +1,798 @@
+<!DOCTYPE html><html><head>
+      <title>README</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:////Users/i072325/.vscode/extensions/shd101wyy.markdown-preview-enhanced-0.6.8/node_modules/@shd101wyy/mume/dependencies/katex/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <style>
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}
+
+/* highlight */
+pre[data-line] {
+  position: relative;
+  padding: 1em 0 1em 3em;
+}
+pre[data-line] .line-highlight-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+}
+
+pre[data-line] .line-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: inherit 0;
+  margin-top: 1em;
+  background: hsla(24, 20%, 50%,.08);
+  background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+  pointer-events: none;
+  line-height: inherit;
+  white-space: pre;
+}
+
+pre[data-line] .line-highlight:before, 
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-start);
+  position: absolute;
+  top: .4em;
+  left: .6em;
+  min-width: 1em;
+  padding: 0 .5em;
+  background-color: hsla(24, 20%, 50%,.4);
+  color: hsl(24, 20%, 95%);
+  font: bold 65%/1.5 sans-serif;
+  text-align: center;
+  vertical-align: .3em;
+  border-radius: 999px;
+  text-shadow: none;
+  box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-end);
+  top: auto;
+  bottom: .4em;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p,html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div{display:inline}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  300px/2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h1 class="mume-header" id="erp">erp</h1>
+
+<h2 class="mume-header" id="toc">TOC</h2>
+
+<ul>
+<li><a href="#erp">erp</a>
+<ul>
+<li><a href="#toc">TOC</a></li>
+<li><a href="#intro">Intro</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#domainmodel">DomainModel</a></li>
+<li><a href="#ui">UI</a></li>
+<li><a href="#processes">Processes</a></li>
+<li><a href="#architecture">Architecture</a>
+<ul>
+<li><a href="#asynchronous-business-logic-execution">Asynchronous business logic execution</a></li>
+</ul>
+</li>
+<li><a href="#howtorun">HowToRun</a></li>
+<li><a href="#caveats">Caveats</a></li>
+<li><a href="#roadmap">Roadmap</a></li>
+</ul>
+</li>
+</ul>
+<h2 class="mume-header" id="intro">Intro</h2>
+
+<p><em>erp</em> is a project which has two main goals:</p>
+<ul>
+<li>put in practice some distributed computing princinples;</li>
+<li>put in practice some Spring projects (Spring Boot, Spring Web, Sprint Data JPA, etc.);</li>
+</ul>
+<p>To achieve these goals, <em>erp</em> is implemented as Java web application. It covers a very limited part of an <a href="https://en.wikipedia.org/wiki/Enterprise_resource_planning">ERP</a> domain. See <a href="#Features">Features</a> sections for more details regading implemented functionality.</p>
+<h2 class="mume-header" id="features">Features</h2>
+
+<p>The application provides the following set of features:</p>
+<ul>
+<li>inventory management:
+<ul>
+<li>manage a catalog of Items;</li>
+<li>manage the inventory of Items;</li>
+<li>manage movement (sales and purchases) of Items;</li>
+</ul>
+</li>
+<li>sales management:
+<ul>
+<li>manage a catalog of Customers;</li>
+<li>manage customer payments and refunds;</li>
+<li>manage Sales Orders;</li>
+<li>manage Sales Credit Memos;</li>
+<li>manage Sales Order and Credit Memo posting;</li>
+<li>manage Posted Sales Orders;</li>
+<li>manage Posted Sales Credit Memos;</li>
+</ul>
+</li>
+<li>purchases management
+<ul>
+<li>manage a catalog of Vendors</li>
+<li>manage vendor payments and refunds;</li>
+<li>manage Purchase Orders;</li>
+<li>manage Purchase Credit Memos;</li>
+<li>manage Purchase Order and Credit Memo posting;</li>
+<li>manage Posted Purchase Orders;</li>
+<li>manage Posted Purchase Credit Memos;</li>
+</ul>
+</li>
+<li>financeial assets management
+<ul>
+<li>manage a catalog of Bank Accounts;</li>
+<li>manage a catalog of Payment Methods;</li>
+<li>managet bank accounts operations - payments, refunds, inter balance transfers;</li>
+</ul>
+</li>
+</ul>
+<h2 class="mume-header" id="domainmodel">DomainModel</h2>
+
+<p>In order to provide the features describe above, the application is centered around a domain model and the objects it is comprised of.</p>
+<p><img src="./assets/DomainModel.png" alt="DomainModel.png"></p>
+<p>Objects in the domain model can be classified in the following groups:</p>
+<ul>
+<li>nomenclature objects [N] - nomenclature objects form different catalogs in the system;</li>
+<li>operations objects [O] - operations objects represent various activities and actions performed by the users;</li>
+<li>setup objects [S] - setup objects represent different pieces of information which control the operations and processes of the system;</li>
+</ul>
+<p>Here is a list of objects in the domain model, their classification (with [N], [O] or [S] after the object name) and short description:</p>
+<p><strong>Item [N]</strong></p>
+<p>This object represents an entry in the Item catalog. Items could be traded in the system - sales and purchases. In this context, Item object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Item;</li>
+<li>name - description of the Item;</li>
+<li>sales price - the price which is used when selling the Item;</li>
+<li>purchase price - the price which is used when purchasing the Item;</li>
+<li>inventory - shows the current inventory of the Item. It is sum of all the quantities that have been purchases minus the quantities which have been sold.</li>
+</ul>
+<p><strong>Customer [N]</strong></p>
+<p>This object represents and entry in the Customer catalog. Customers are entities which Items are sold to. In order to do that, Sales documents are created and posted. In this context, Customer object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Customer;</li>
+<li>name - name of the Customer;</li>
+<li>address - address of the Customer;</li>
+<li>payment method - payment method of the Customer. Based on this payment method a payment is filed automatically or not. To be further described in the Payment Method object.</li>
+<li>balance - shows the current balance of the Customer. It is sum of all the amounts of Sales documents posted minus the payments done by the Customer. Positive balance means that the Customer ows the respective amount.</li>
+</ul>
+<p><strong>Vendor [N]</strong></p>
+<p>This object represents and entry in the Vendor catalog. Vendors are entities which Items are purchased from. In order to do that, Purchase documents are created and posted. In this context, Vendor object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Vendor;</li>
+<li>name - name of the Vendor;</li>
+<li>address - address of the Vendor;</li>
+<li>payment method - payment method of the Vendor. Based on this payment a payment is filed automatically or not. To be further described in the Payment Method object.</li>
+<li>balance - shows the current balance of the Vendor. It is sum of all the amounts of Purchase documents posted minus the payments done by the Vendor. Positive balance means that the Vendor is woned the respective amount.</li>
+</ul>
+<p><strong>Bank Account [N]</strong></p>
+<p>This object represents an entity which stores financial assets. The name &quot;Bank Account&quot; implies that it is only accounts in a bank, but this is not the case. It could be any means of financial assets. Examples: a wallet, a vault, bank account in Bank X, bank account in Bank Y, etc. In this context, Bank Account object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Bank Account;</li>
+<li>name - name of the Bank Account;</li>
+<li>balance - shows the financial asserts available in the bank account. It is sum of all the payments and refunds done with the bank account. Besides payments and refunds, financial assets could be moved between bank accounts. These operations are entered in the system as free entries (instead of payment or refund). To be further described in the operations objects and Processes sections.</li>
+</ul>
+<p><strong>Payment Methods [N]</strong></p>
+<p>This object represents how payments from/to Customers/Vendors are done. There are two options:</p>
+<ul>
+<li>immediate payments - if the payment is immediate, a corresponding Bank Account is specified in the Payment Method. The payment/refund is done in this Bank Account.</li>
+<li>delayed payments - if the payment is delayed, no corresponding Bank Account is specified in the Payment Method. The payment/refund is done later and is entered into the system manually.</li>
+</ul>
+<p>In this context, Payment Method object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Payment Method;</li>
+<li>name - name of the Payment Method;</li>
+<li>bank account - states of the payment method is immediate or delayed. See above;</li>
+</ul>
+<p><strong>Sales Order [O]</strong></p>
+<p>This object represents an <strong>intent</strong> by the Customer to <strong>buy</strong> a certain items. In this context, Sales Order object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Sales Order. Automatically generated by the system using code serie. See Code Serie object and Processes for mode details;</li>
+<li>customer - the Customer the order is done by;</li>
+<li>date - the date the order is created;</li>
+<li>payment method - by default this is taken from the Customer the order is done for. However, it could be changed for the concrete Sales Order;</li>
+<li>amount - shows the total amount of the Sales Order. It is sum of the amount of the respective Sales Order Lines. See below;</li>
+</ul>
+<p><strong>Sales Order Line [O]</strong></p>
+<p>This object represents a separate item uncluded in the Sales Order. In this context, Sales Order Line object has the following fields:</p>
+<ul>
+<li>sales order - shows the Sales Order this line belongs to;</li>
+<li>line no - since a single Sales Order could have multiple lines, this field is used to distinguish different lines belonging to a single Sales Order;</li>
+<li>item - the Item this line represents;</li>
+<li>quantity - the quantity of the Item that will be sold;</li>
+<li>price - the price the Item will be sold on. It is taken from the sales price field of the Item object. However, it could be changed for this particular Sales Order Line;</li>
+<li>amount - calculated by multiplying the quantity and the price fields;</li>
+</ul>
+<p><strong>Sales Credit Memo [O]</strong></p>
+<p>This object represents an <strong>intent</strong> by the Customer to <strong>return</strong> certain items. In this context, Sales Credit Memo object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Sales Order. Automatically generated by the system using code serie. See Code Serie object and Processes for mode details;</li>
+<li>customer - the Customer the credit memo is done by;</li>
+<li>date - the date the credit memo is created;</li>
+<li>payment method - by default this is taken from the Customer the order is done for. However, it could be changed for the concrete Sales Credit Memo;</li>
+<li>amount - shows the total amount of the Sales Credit Memo. It is sum of the amount of the respective Sales Credit Memo Lines. See below;</li>
+</ul>
+<p><strong>Sales Credit Memo Line [O]</strong></p>
+<p>This object represents a separate item uncluded in the Sales Credit Memo. In this context, Sales Credit Memo Line object has the following fields:</p>
+<ul>
+<li>sales credit memo - shows the Sales Credit Memo this line belongs to;</li>
+<li>line no - since a single Sales Credit Memo could have multiple lines, this field is used to distinguish different lines belonging to a single Sales Credit Memo;</li>
+<li>item - the Item this line represents;</li>
+<li>quantity - the quantity of the Item that will be returned;</li>
+<li>price - the price the Item will be returned on. It is taken from the sales price field of the Item object. However, it could be changed for this particular Sales Credit Mmeo Line;</li>
+<li>amount - calculated by multiplying the quantity and the price fields;</li>
+</ul>
+<p><strong>Posted Sales Order [O]</strong></p>
+<p>This object represents a <strong>completed</strong> (a.k.a. posted) operation by the Customer to <strong>buy</strong> a certain items. In this context, Posted Sales Order object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Sales Order. Automatically generated by the system using code serie. See Code Serie object and Processes for mode details;</li>
+<li>customer - the Customer the order is done by;</li>
+<li>date - the date the order is completed;</li>
+<li>payment method - taken from the Sales Order;</li>
+<li>order code - code of the Sales Order which was completed;</li>
+<li>order date - date of the Sales Order which was completed;</li>
+<li>amount - shows the total amount of the Sales Order. It is sum of the amount of the respective Sales Order Lines. See below;</li>
+</ul>
+<p><strong>Posted Sales Order Line [O]</strong></p>
+<p>This object represents a separate item uncluded in the Posted Sales Order. In this context, Posted Sales Order Line object has the following fields:</p>
+<ul>
+<li>posted sales order - shows the Posted Sales Order this line belongs to;</li>
+<li>line no - since a single Posted Sales Order could have multiple lines, this field is used to distinguish different lines belonging to a single Posted Sales Order;</li>
+<li>item - the Item this line represents;</li>
+<li>quantity - the quantity of the Item that was sold;</li>
+<li>price - the price the Item was sold on;</li>
+<li>amount - the amount the Item was sold on;</li>
+</ul>
+<p><strong>Posted Sales Credit Memo [O]</strong></p>
+<p>This object represents a <strong>completed</strong> (a.k.a. posted) operation by the Customer to <strong>return</strong> certain items. In this context, Posted Sales Credit Memo object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Sales Order. Automatically generated by the system using code serie. See Code Serie object and Processes for mode details;</li>
+<li>customer - the Customer the credit memo is done by;</li>
+<li>date - the date the credit memo is completed;</li>
+<li>payment method - taken from the Sales Credit Memo;</li>
+<li>order code - code of the Sales Credit Memo which was completed;</li>
+<li>order date - date of the Sales Credit Memo which was completed;</li>
+<li>amount - shows the total amount of the Posted Sales Credit Memo. It is sum of the amount of the respective Posted Sales Credit Memo Lines. See below;</li>
+</ul>
+<p><strong>Posted Sales Credit Memo Line [O]</strong></p>
+<p>This object represents a separate item uncluded in the Posted Sales Credit Memo. In this context, Posted Sales Credit Memo Line object has the following fields:</p>
+<ul>
+<li>posted sales credit memo - shows the Posted Sales Credit Memo this line belongs to;</li>
+<li>line no - since a single Posted Sales Credit Memo could have multiple lines, this field is used to distinguish different lines belonging to a single Posted Sales Credit Memo;</li>
+<li>item - the Item this line represents;</li>
+<li>quantity - the quantity of the Item that was returned;</li>
+<li>price - the price the Item was returned on;</li>
+<li>amount - the amount the Item was returned on;</li>
+</ul>
+<p><strong>Purchase Order [O]</strong></p>
+<p>This object represents an <strong>intent</strong> by the Vendor to <strong>deliver</strong> certain items. In this context, Purchase Order object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Sales Order. Automatically generated by the system using code serie. See Code Serie object and Processes for mode details;</li>
+<li>vendor - the Vendor the order is done by;</li>
+<li>date - the date the order is created;</li>
+<li>payment method - by default this is taken from the Vendor the order is done for. However, it could be changed for the concrete Purchase Order;</li>
+<li>amount - shows the total amount of the Purchase Order. It is sum of the amount of the respective Purchase Order Lines. See below;</li>
+</ul>
+<p><strong>Purchase Order Line [O]</strong></p>
+<p>This object represents a separate item uncluded in the Purchase Order. In this context, Purchase Order Line object has the following fields:</p>
+<ul>
+<li>purchase order - shows the Purchase Order this line belongs to;</li>
+<li>line no - since a single Purchase Order could have multiple lines, this field is used to distinguish different lines belonging to a single Purchase Order;</li>
+<li>item - the Item this line represents;</li>
+<li>quantity - the quantity of the Item that will be purchased;</li>
+<li>price - the price the Item will be purchased on. It is taken from the purchase price field of the Item object. However, it could be changed for this particular Purchase Order Line;</li>
+<li>amount - calculated by multiplying the quantity and the price fields;</li>
+</ul>
+<p><strong>Purchase Credit Memo [O]</strong></p>
+<p>This object represents an <strong>intent</strong> by the Vendor to <strong>return</strong> certain items. In this context, Purchase Credit Memo object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Sales Order. Automatically generated by the system using code serie. See Code Serie object and Processes for mode details;</li>
+<li>vendor - the Vendor the credit memo is done by;</li>
+<li>date - the date the credit memo is created;</li>
+<li>payment method - by default this is taken from the Vendor the order is done for. However, it could be changed for the concrete Purchase Credit Memo;</li>
+<li>amount - shows the total amount of the Purchase Credit Memo. It is sum of the amount of the respective Purchase Credit Memo Lines. See below;</li>
+</ul>
+<p><strong>Purchase Credit Memo Line [O]</strong></p>
+<p>This object represents a separate item uncluded in the Purchase Credit Memo. In this context, Purchase Credit Memo Line object has the following fields:</p>
+<ul>
+<li>purchase credit memo - shows the Purchase Credit Memo this line belongs to;</li>
+<li>line no - since a single Purchase Credit Memo could have multiple lines, this field is used to distinguish different lines belonging to a single Purchase Credit Memo;</li>
+<li>item - the Item this line represents;</li>
+<li>quantity - the quantity of the Item that will be returned;</li>
+<li>price - the price the Item will be returned on. It is taken from the purchase price field of the Item object. However, it could be changed for this particular Purchase Credit Mmeo Line;</li>
+<li>amount - calculated by multiplying the quantity and the price fields;</li>
+</ul>
+<p><strong>Posted Purchase Order [O]</strong></p>
+<p>This object represents a <strong>completed</strong> (a.k.a. posted) operation by the Vendor to <strong>deliver</strong> certain items. In this context, Posted Purchase Order object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Sales Order. Automatically generated by the system using code serie. See Code Serie object and Processes for mode details;</li>
+<li>vendor - the Purchase the order is done by;</li>
+<li>date - the date the order is completed;</li>
+<li>payment method - taken from the Purchase Order;</li>
+<li>order code - code of the Purchase Order which was completed;</li>
+<li>order date - date of the Purchase Order which was completed;</li>
+<li>amount - shows the total amount of the Posted Purchase Order. It is sum of the amount of the respective Posted Purchase Order Lines. See below;</li>
+</ul>
+<p><strong>Posted Purchase Order Line [O]</strong></p>
+<p>This object represents a separate item uncluded in the Posted Purchase Order. In this context, Posted Purchase Order Line object has the following fields:</p>
+<ul>
+<li>posted purchase order - shows the Posted Purchase Order this line belongs to;</li>
+<li>line no - since a single Posted Purchase Order could have multiple lines, this field is used to distinguish different lines belonging to a single Posted Purchase Order;</li>
+<li>item - the Item this line represents;</li>
+<li>quantity - the quantity of the Item that was delivered;</li>
+<li>price - the price the Item was delivered on;</li>
+<li>amount - the amount the Item was delivered on;</li>
+</ul>
+<p><strong>Posted Purchase Credit Memo [O]</strong></p>
+<p>This object represents a <strong>completed</strong> (a.k.a. posted) operation by the Vendor to <strong>return</strong> certain items. In this context, Posted Purchase Credit Memo object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Sales Order. Automatically generated by the system using code serie. See Code Serie object and Processes for mode details;</li>
+<li>vendor - the Vendor the credit memo is done by;</li>
+<li>date - the date the credit memo is completed;</li>
+<li>payment method - taken from the Purchase Credit Memo;</li>
+<li>order code - code of the Purchase Credit Memo which was completed;</li>
+<li>order date - date of the Purchase Credit Memo which was completed;</li>
+<li>amount - shows the total amount of the Posted Purchase Credit Memo. It is sum of the amount of the respective Posted Purchase Credit Memo Lines. See below;</li>
+</ul>
+<p><strong>Posted Purchase Credit Memo Line [O]</strong></p>
+<p>This object represents a separate item uncluded in the Posted Purchase Credit Memo. In this context, Posted Purchase Credit Memo Line object has the following fields:</p>
+<ul>
+<li>posted purchase credit memo - shows the Posted Purchase Credit Memo this line belongs to;</li>
+<li>line no - since a single Posted Purchase Credit Memo could have multiple lines, this field is used to distinguish different lines belonging to a single Posted Purchase Credit Memo;</li>
+<li>item - the Item this line represents;</li>
+<li>quantity - the quantity of the Item that was returned;</li>
+<li>price - the price the Item was returned on;</li>
+<li>amount - the amount the Item was returned on;</li>
+</ul>
+<p><strong>Item Ledger Entry [O]</strong></p>
+<p>This object abstracts completed operations related to Item. Currently the system only supports sales/purchase order/credit memos. So, sales/purchase order/credit memo lines could be used instead. However, having this object defined separetely makes it possible to extend the system with other kinds of Item-related operations - production (instead of purchasing), scraping (in case of expiration), etc. In this context, the Item Ledger Entry object has the following fields:</p>
+<ul>
+<li>id - unique identifier of the Item Ledger Entry. Currently, auto-increment strategy is used;</li>
+<li>item - the Item this Item Ledger Entry is related to;</li>
+<li>type - type of the entry. Currently possible values are SALES_ORDER, SALES_CREDIT_MEMO, PURCHASE_ORDER, PURCHASE_CREDIT_MEMO;</li>
+<li>quantity - the quantity the Item Ledger Entry represents. The value is positive if the operation increments the inventory of the Item. Example: purchase order, sales credit memo. The value is negative if the operation decrements the inventory of the Item. Example: sales order, purchase credit memo;</li>
+<li>date - the date the operation was completed on;</li>
+<li>document code - code of the document that caused the Item Ledger Entry to be created;</li>
+</ul>
+<p><strong>Vendor Ledger Entry [O]</strong></p>
+<p>This object abstracts completed operations related to Vendors. Normal operations include purchase orders and credit memos and the respective payments and refunds. However, there might be cases where some corrective actions need to be taken. In this cases the Vendor Ledger Entry objects gives the flexibility needed. In this context, Vendor Ledger Entry object has the following fields:</p>
+<ul>
+<li>id - unique identifier of the Vendor Ledger Entry. Currently, auto-increment strategy is used;</li>
+<li>vendor - the Vendor this Vendor Ledger Entry is related to;</li>
+<li>type - type of the entry. Currently possible values are PURCHASE_ORDER, PURCHASE_CREDIT_MEMO, PAYMENT, REFUND;</li>
+<li>amount - the amount the Vendor Ledger Entry represents. The value is positive if the operation increments the balance of the Vendor. Example: purchase order, refund. The value is negative if the operation decrements the balance of the Vendor. Example: purchase credit memo, payment.</li>
+<li>date - the date the operation was completed on;</li>
+<li>document code - code of the document that caused the Vendor Ledger Entry to be created;</li>
+</ul>
+<p><strong>Customer Ledger Entry [O]</strong></p>
+<p>This object abstracts completed operations related to Customers. Normal operations include sales orders and credit memos and the respective payments and refunds. However, there might be cases where some corrective actions need to be taken. In this cases the Customer Ledger Entry object gives the flexibility needed. In this context, Customer Ledger Entry object has the following fields:</p>
+<ul>
+<li>id - unique identifier of the Customer Ledger Entry. Currently, auto-increment strategy is used;</li>
+<li>customer - the Customer this Customer Ledger Entry is related to;</li>
+<li>type - type of the entry. Currently possible values are SALES_ORDER, SALES_CREDIT_MEMO, PAYMENT, REFUND;</li>
+<li>amount - the amount the Customer Ledger Entry represents. The value is positive if the operation increments the balance of the Customer. Example: sales order, refund. The value is negative if the operation decrements the balance of the Customer. Example: sales credit memo, payment.</li>
+<li>date - the date the operation was completed on;</li>
+<li>document code - code of the document that caused the Customer Ledger Entry to be created;</li>
+</ul>
+<p><strong>Bank Account Ledger Entry [O]</strong></p>
+<p>This object represents operations related to Bank Accounts. Normal operations include sales/purchase order/credit memo payments/refunds. There may be cases where amounts need to be added/removed to/from bank account outside of the context of a particular document. Example: transfering funds between bank accounts. In this case the Bank Account Ledger Entry object gives the flxibility needed. In this context, Bank Account Ledger Entry object has the following fields:</p>
+<ul>
+<li>id - unique identifier of the Bank Account Ledger Entry. Currently, auto-increment strategy is used;</li>
+<li>bank account - the Bank Account this Bank Account Ledger Entry is related to;</li>
+<li>type - type of the entry. Currently possible values are FREE_ENTRY, CUSTOMER_PAYMENT, CUSTOMER_REFUND, VENDOR_PAYMENT, VENDOR_REFUND;</li>
+<li>amount - the amount the Bank Account Ledger Entry represents. The value is positive if the operation increments the balance of the Bank Account. Example: customer payment, vendor refund. The value is begative if the operation decrements the balance of the Bank Account. Example: customer refund, vendor payment.</li>
+<li>date - the date the operation was completed on;</li>
+<li>document code - code of the document that caused the Bank Account Ledger Entry to be created;</li>
+</ul>
+<p><strong>General Journal Batch [O]</strong></p>
+<p>As it was already mentioned, normal operations of the system include creating and posting sales and purchase orders and credit memos. However, there are cases when some corrective actions need to be taken. These actions can not be covered by purchase and sales documents. To cover these cases, there is a general journal functionality. General Journal Batch object is a way to group those corrective actions mentioned above. In this context, the General Journal Batch object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the General Journal Batch;</li>
+<li>name - name of the General Journal batch;</li>
+</ul>
+<p><strong>General Journal Batch Line [O]</strong></p>
+<p>This object represents an <strong>intent</strong> for a correction action described above. In this context, the object has the following fields:</p>
+<ul>
+<li>general journal batch code - unique identifier of the General Journal Batch that this General Journal Batch Line belongs to;</li>
+<li>line no - since a General Journal Batch can have multiple related General Journal Batch Lines, this field is used to distinguish different General Journal Batch Lines;</li>
+<li>source type - possible values are CUSTOMER, VENDOR, BANK_ACCOUNT. This field shows which object this corrective action is aimed to;</li>
+<li>source code - unique identifier of the object the corrective action belongs to. If Source Type is CUSTOMER, then this field contains Customer code and so on;</li>
+<li>source name - name of the object the corrective action belongs to. If Source Type is Customer, then this field contains Customer name and so on;</li>
+<li>operation type - possible values are EMPTY, ORDER, CREDIT_MEMO, PAYMENT, REFUND. If Source Type is Customer or Vendor, then values that make sense are ORDER, CREDIT_MEMO, PAYMENT and REFUND. This way the corrective action will cause the respective Customer/Vendor Ledger Entries to be created. If Source Type is Bank Account, then the meaningful option to select is EMPTY. Example usage: to enter the initial balance of Bank Accounts;</li>
+<li>document code - if the corrective action is representing a document or payment/refund, then this field could be used to state the respective Document code;</li>
+<li>date - date of the corrective action;</li>
+<li>amount - the amount that will be corrected;</li>
+<li>target - this field is used when Operation Type is PAYMENT or REFUND. In this case, the amount that will be payed/refunded will be taken from/returned to the Bank Account selected in this field;</li>
+</ul>
+<p><strong>Code Serie [S]</strong></p>
+<p>This object represents series of codes. These codes are used as codes in various documents that are managed in the system - sales/purchase orders/credit memos/posted orders/posted credit memos. In this context, this object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the Code Serie;</li>
+<li>name - description of the Code Serie;</li>
+<li>first code - the first code in the serie. The value should begin with an alpha symbol and then follow several digits. The digits form a number, which is increased every time a code is generated from the serie. Example: SO000 is the first code. Next ones are SO001, SO002, SO003 and so on;</li>
+<li>last code - the last code in the serie. When a new code is generated from the serie, it is updated in this field. If empty, the value from the first code field is used;</li>
+</ul>
+<p><strong>Setup [S]</strong></p>
+<p>This object holds various configuration options of the system. This object is intended to have only a single instance. It is automatically created by the system and values are populated by the administrator of the system. In this context, this object has the following fields:</p>
+<ul>
+<li>code - unique identifier of the object. As it was stated above, the object has only one instance which is automatically created by the system. The value the systems sets is empty string;</li>
+<li>sales order code serie - code serie used to generate codes for new Sales Orders;</li>
+<li>purchase order code serie - code serie used to generate codes for new Purchase Orders;</li>
+<li>sales credit memo code serie - code serie used to generate codes for new Sales Credit Memos;</li>
+<li>purchase credit memo code serie - code serie used to generate codes for new Purchase Credit Memos;</li>
+<li>posted sales order code serie - code serie used to generate codes for Posted Sales Orders;</li>
+<li>posted purchase order code serie - code serie used to generate codes for Posted Purchase Orders;</li>
+<li>posted sales credit memo code serie - code serie used to generate codes for Posted Sales Credit Memos;</li>
+<li>posted purchase credit memo code serie - code serie used to generate codes for Posted Purchase Credit Memos;</li>
+</ul>
+<h2 class="mume-header" id="ui">UI</h2>
+
+<p>The system has several basic UI elements:</p>
+<ul>
+<li>navigation</li>
+</ul>
+<p>This is the entrypoint to the system. The navigation tab is displayed on every page of the system. It shows the main functional areas of the system:</p>
+<p><img src="./assets/navigation.png" alt="Navigation"></p>
+<p>Clicking on each of the main elements in the navigation tab shows the elements of that functional area.</p>
+<p>General Ledger:</p>
+<p><img src="./assets/general-ledger.png" alt="General Ledger"></p>
+<p>Inventory:</p>
+<p><img src="./assets/inventory.png" alt="Inventory"></p>
+<p>Sales:</p>
+<p><img src="./assets/sales.png" alt="Sales"></p>
+<p>Purchases:</p>
+<p><img src="./assets/purchases.png" alt="Purchases"></p>
+<p>Admin:</p>
+<p><img src="./assets/admin.png" alt="Admin"></p>
+<ul>
+<li>list</li>
+</ul>
+<p>Clicking on each of the elements in the navigation opens the list of the respective object. Example: Items</p>
+<p><img src="./assets/items.png" alt="Items"></p>
+<p>Each list has several building blocks:</p>
+<p>Header:</p>
+<p><img src="./assets/items-header.png" alt="Items-Header"></p>
+<p>&quot;New&quot; button - this is available only for objects which can be created manualy by the user</p>
+<p><img src="./assets/items-new.png" alt="Items-New"></p>
+<p>Table Header - shows the names of the columns (fields) of the object that is listed:</p>
+<p><img src="./assets/items-tableheader.png" alt="Items-TableHeader"></p>
+<p>Table Lines - shows the actual data, the values of the respective fields of the object being listed:</p>
+<p><img src="./assets/items-tablerows.png" alt="Item-TableRows"></p>
+<p>Actions - this is usually the last column of the list. It contains buttons to perform various actions over the respective instance of the object being listed:</p>
+<p><img src="./assets/items-actions.png" alt="Item-Actions"></p>
+<p>Paging - at the bottim of each list there is a section which contains elements to navigate through the pages of the object being listed:</p>
+<p><img src="./assets/items-paging.png" alt="Item-Paging"></p>
+<ul>
+<li>card</li>
+</ul>
+<p>Card elements are used to create new and/or update existing instances of a particular object. Example: Item</p>
+<p><img src="./assets/item-card-new.png" alt="Item-Card-New"></p>
+<p>As stated above, card element could be used to create new objects or update existing ones. When used for updating existing ones, it is already populated with the data of the object being edited:</p>
+<p><img src="./assets/item-card-existing.png" alt="Item-Card-Existing"></p>
+<p>When a card is used for existing object instance, a sublist could also be displayed in the card. This sublist contains information regarding objects related to the main object displayed in the card. Example: in the Item card you see a list of Item Ledger Entries as a sublist:</p>
+<p><img src="./assets/item-card-ledger-entries.png" alt="Item-Card-Ledger-Entries"></p>
+<ul>
+<li>wizard</li>
+</ul>
+<p>There are some objects which can not be created with a single step. This means that values in some fields are populated automatically based on the values selected in other fields - Sales/Purchase Document Line price is populated from the Item selected in the item field. There are other cases, where values that could be populated in a certain field depend on the value selected in other fields - Source Code field in General Journal Batch Line is populated depending on the value selected in the field Source Type. To cover these cases there is a UI element called Wizard. Wizards are composed of different pages. On each page you select a value and then move on to the next one depending on the values selected on the previous page. Example: Sales Order Wizard:</p>
+<p>It is triggered by clicking &quot;New&quot; button on the Sales Order List:</p>
+<p><img src="./assets/sales-order-new.png" alt="Sales-Order-New"></p>
+<p>Triggering the Sales Order wizard opens its first page. Sales Order customer is selected on the first page of the Sales Order wizard:</p>
+<p><img src="./assets/sales-order-wizard-first-page.png" alt="Sales-Order-Wizard-FirstPage"></p>
+<p>Once you select the customer for the sales order, clicking &quot;Next&quot; moves to the second page of the Sales Order wizard:</p>
+<p><img src="./assets/sales-order-wizard-second-page.png" alt="Sales-Order-Wizard-SecondPage"></p>
+<p>You can see on the second page you can select the Payment Method for the Sales Order. The value of the Payment Method is populated from the payment method field of the Customer selected on the previous page. This is an example where values in some fields are populated based on values selected in other fields.</p>
+<p>Clicking finish on the last page of the Sales Order Wizard creates a new Sales Order and redirects to the Sales Order Card.</p>
+<p>Other objects which are created/updated using wizards are:</p>
+<ul>
+<li>Sales Order</li>
+<li>Sales Order Line</li>
+<li>Purchase Order</li>
+<li>Purchase Order Line</li>
+<li>Sales Credit Memo</li>
+<li>Sales Credit Memo Line</li>
+<li>Purchase Credit Memo</li>
+<li>Purchase Credit Memo Line</li>
+<li>General Journal Batch Line</li>
+</ul>
+<h2 class="mume-header" id="processes">Processes</h2>
+
+<p>Besides creating, updating, listing and deleting the domain model objects, there is one main action that could be executed in the system - posting. As it was mentioned in the Domain Model section, Sales/Purchase Orders represent the <strong>intent</strong> of a Customer/Vendor to buy/deliver Items. <strong>Posting</strong> a sales/purchase document (order or credit memo) is confirming this intent and materializes it. This is the simplest way to describe the <strong>Posting</strong> process.</p>
+<p>When you post a Sales Order, the following actions are performed by the system:</p>
+<ul>
+<li>Posted Sales Order is created using the information from the Sales Order;</li>
+<li>for each Sales Order Line a corresponding Posted Sales Order Line is created;</li>
+<li>for each Sales Order Line a corresponding Item Ledger Entry is created;</li>
+<li>Customer Ledger Entry is created;</li>
+<li>depending on the Payment Method, payment/refund Customer Ledger is created;</li>
+<li>depending on the Payment Method, Bank Account Ledger entry is created;</li>
+<li>Sales Order Lines are deleted;</li>
+<li>Sales Order is deleted;</li>
+</ul>
+<p>All the actions described above are performed in a transaction.</p>
+<p>Respective actions are performed when you post Sales Credit Memo, Purchase Order, Purchase Credit Memo and General Journal Batch.</p>
+<p>There are some checks which are performed during Posting of documents which could also cause the whole operation (transaction) to fail and be aborted (rollbacked):</p>
+<ul>
+<li>Sales Order - Item inventory is checked. If there is not enough inventory of a given Item to sell to the Customer, Post operation fails;</li>
+<li>Sales Credit Memo - if the Payment Method selected will cause a Customer Refund to be made, Bank Account balance is checked. If there is not enough balance of a given Bank Account to refund the Customer, Post operation fails;</li>
+<li>Purchase Order - if the Payment Method selected will cause a Vendor Payment to be made, Bank Account balance is checked. If there is not enough balance of a given Bank Account to pay the Vendor, Post operation fails;</li>
+<li>Purchase Credit Memo - Item inventory is checked. If there is not enough inventory of a given Item to return to the Vendor, Post operation fails;</li>
+</ul>
+<h2 class="mume-header" id="architecture">Architecture</h2>
+
+<p><img src="./assets/architecture-v3.png" alt="Architecture-v3"></p>
+<p><strong>erp</strong> is two component system - frontend and backend</p>
+<p><strong>Frontend</strong> component is responsible for the UI (web application) of the system. It handles all user requests as well as handling all web pages.</p>
+<p><strong>Backend</strong> component implements and exposes the application logic via REST API. The responsibilities of the backend component can be divided into two main groups:</p>
+<ul>
+<li>data access - it allows the end user (be it via the UI/front or directly calling the REST APIs) to maintain its data - Items, Customers, Vendors, Documents, etc. The data is stored in external RDBMS. This is one of the external dependencies of the system.</li>
+<li>business logic - it allows the end user (be it via the UI/frontend or directly calling the REST APIs) to trigger post operations over different objects - Sales Orders, Purchase Order, General Journals, etc. These operations are executed asynchronously. See [Asynchronous business logic execution](#Asynchronous business logic execution)</li>
+</ul>
+<h3 class="mume-header" id="asynchronous-business-logic-execution">Asynchronous business logic execution</h3>
+
+<h2 class="mume-header" id="howtorun">HowToRun</h2>
+
+<p>In order to run the application, you have to build it first. Maven is used as a build tool. You should execute simple maven command in the root of the repo in order to build the application:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>$ mvn clean install
+</code></pre><p>As described in the Architecture section, the application consists of two components - frontend and backend. Respectively they are modules of the repository. Executing Maven in the root of the repository builds both components.</p>
+<p>The minimal maven version required is <strong>3.2.5</strong>.</p>
+<p>The result of a successfull maven execution is a jar file located in the <strong>./target</strong> folder of each of the submodules.</p>
+<p>First you have to run the backend component. This is done by execution the following command in the root of the repository:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>java -jar ./erp.backend/target/backend-*.jar
+</code></pre><p>This runs the backend component with embeded H2 in-memory database.</p>
+<p>Backend could be run against MySQL database as well. This could be done by providing some input parameters running the component:</p>
+<ul>
+<li>DB_DRIVER - the MySQL value that should be provided is <strong>com.mysql.cj.jdbc.Driver</strong>;</li>
+<li>DB_URL - the JDBC URL that will be used to connect to the database;</li>
+<li>DB_USERNAME - the username to authenticate with;</li>
+<li>DB_PASSWORD - the password to authenticate with;</li>
+<li>DB_PLATFORM - the MySQL dialect for Hibernate - <strong>org.hibernate.dialect.MySQL5InnoDBDialect</strong></li>
+<li>SRV_PORT - the port to run the embedded server on;</li>
+</ul>
+<p>Moreover, you have to specify <strong>prod</strong> profile to run Spring with by specifying <strong>spring.profiles.active</strong> environment variable.</p>
+<p>Now that you have backend component, next you should run the frontend component. This is done by executing the following command in the root of the repository:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>java -jar ./erp.frontend/target/frontend-*.jar
+</code></pre><p>This runs the frontend component with default configuration where it tries to communicate with backend component at <strong><a href="http://localhost:8082">http://localhost:8082</a></strong>. You can change this by providing the following input parameter:</p>
+<ul>
+<li>ERP_BACKENDURL - the endpoint where frontend will use to communicate with backend component;</li>
+</ul>
+<p>Moreover, you have to specify <strong>prod</strong> profile to run Spring with by specifying <strong>spring.profiles.active</strong> environment variable.</p>
+<h2 class="mume-header" id="caveats">Caveats</h2>
+
+<p>It was described in the Intro section what the main goals of the project are. In order to focus on the main goals, some other features and functionalities were intentionally left out. Here are some of them:</p>
+<ul>
+<li>no sorting/filtering in any of the list UIs;</li>
+<li>no data validation when creating any of the objects;</li>
+<li>no user context;</li>
+<li>no authentication/authorization;</li>
+</ul>
+<h2 class="mume-header" id="roadmap">Roadmap</h2>
+
+<p>The application will be developed through the following stages:</p>
+<ul>
+<li>refactor posting to be asynchronous;</li>
+<li>separate backend into domain-based microservices - inventory, sales, purchases, etc.</li>
+<li>run locally with docker-compose</li>
+<li>run with k8s</li>
+</ul>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    </body></html>

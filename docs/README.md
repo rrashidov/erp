@@ -2,15 +2,18 @@
 
 ## TOC
 
-- [Intro](#Intro)
-- [Features](#Features)
-- [Domain Model](#DomainModel)
-- [UI](#UI)
-- [Processes](#Processes)
-- [Architecture](#Architecture)
-- [HowToRun](#HowToRun)
-- [Caveats](#Caveats)
-- [Roadmap](#Roadmap)
+- [erp](#erp)
+  - [TOC](#toc)
+  - [Intro](#intro)
+  - [Features](#features)
+  - [DomainModel](#domainmodel)
+  - [UI](#ui)
+  - [Processes](#processes)
+  - [Architecture](#architecture)
+    - [Asynchronous business logic execution](#asynchronous-business-logic-execution)
+  - [HowToRun](#howtorun)
+  - [Caveats](#caveats)
+  - [Roadmap](#roadmap)
 
 ## Intro
 
@@ -518,7 +521,7 @@ There are some checks which are performed during Posting of documents which coul
 
 ## Architecture
 
-![Architecture-v2](./assets/architecture-v2.png)
+![Architecture-v3](./assets/architecture-v3.png)
 
 **erp** is two component system - frontend and backend
 
@@ -526,10 +529,39 @@ There are some checks which are performed during Posting of documents which coul
 
 **Backend** component implements and exposes the application logic via REST API. The responsibilities of the backend component can be divided into two main groups:
 
-* data access - it allows the end user (be it via the UI/front or directly calling the REST APIs) to maintain its data - Items, Customers, Vendors, Documents, etc.
-* business logic - it allows the end user (be it via the UI/frontend or directly calling the REST APIs) to trigger post operations over different objects - Sales Orders, Purchase Order, General Journals, etc.
+* data access - it allows the end user (be it via the UI/front or directly calling the REST APIs) to maintain its data - Items, Customers, Vendors, Documents, etc. The data is stored in external RDBMS. This is one of the external dependencies of the system. 
+* business logic - it allows the end user (be it via the UI/frontend or directly calling the REST APIs) to trigger post operations over different objects - Sales Orders, Purchase Order, General Journals, etc. These operations are executed asynchronously. See [Asynchronous business logic execution](##asynchronous-business-logic-execution)
 
-Backend stores all its data in a relation database system. This is the only external dependency of the system.
+### Asynchronous business logic execution
+
+To enable future scalability of the system, post operations are implemented asynchronously. This means that posting a domain model object (sales order, sales credit memo, etc.) goes via the following steps:
+
+- **postStatus** field of the object is updated with value **SCHEDULED**;
+- respective message is sent to the Message Broker (RabbitMQ);
+
+These steps cover the **triggering** of the post operation.
+
+The actual execution of the post operation is covered by the following steps:
+
+- there are **message listeners** in backend component which are listening for messages in the respective queues;
+- once a message is received, the actual posting is executed;
+
+Important aspect of the asynchronous processing is the setup of the Message Broker (RabbitMQ). It contains the following artifacts with the respective purpose:
+
+- exchange **erp.operations.post** - all the messages that indicate that a certain post operation is triggered are sent to this exchange;
+- queues **operations.post.sales.order**, **operations.post.sales.creditmemo**, **operations.post.purchase.order**, **operations.post.purchase.creditmemo**, **operations.post.generaljournalbatch** - messages in these queues indicate that post operation for the respective object is triggered. The message itself contains the **code** of the operation the post operation is triggered about.
+- bindings between the mentioned above exchange and queues - the bindings are made with a certain **routing_key**. This is how a message posted to the exchange is routed to the proper queue.
+
+The setup of the Message Broker could be seen on the following diagram:
+
+![message-broker-setup](./assets/message-broker-setup.png)
+
+This asynchronous architecture has some pros and cons:
+
+- pros
+  - scalability - having operations separated in dedicated queues makes it possible to scale operation processing separately and independently. Example: if the system has a great number of triggered post operations for sales order, the components processing messages from its dedicated queue could be scaled up (bu bringing more instances) while keeping the components processing the messages from the other queues at the same scale. This is valid if posting of different objects is implemented as separate components. Currently this is not the case. Posting of all objects is part of the backend component.
+- cons
+  - flexibility - if a new operation or a new object is introduced a change in the message broker setup will have to be done. This means that a new queue containing the messages for the object and the respective binding should be added. 
 
 ## HowToRun
 
