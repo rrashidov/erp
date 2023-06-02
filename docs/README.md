@@ -48,10 +48,10 @@ The application provides the following set of features:
   * manage Purchase Order and Credit Memo posting;
   * manage Posted Purchase Orders;
   * manage Posted Purchase Credit Memos;
-* financeial assets management
+* financial assets management
   * manage a catalog of Bank Accounts;
   * manage a catalog of Payment Methods;
-  * managet bank accounts operations - payments, refunds, inter balance transfers;
+  * manage bank accounts operations - payments, refunds, transfers between Bank Accounts;
 
 ## DomainModel
 
