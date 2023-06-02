@@ -20,5 +20,6 @@
 		<module>erp.frontend</module>
 		<module>erp.backend</module>
 		<module>erp.dto</module>
+		<module>itests</module>
 	</modules>
 </project>

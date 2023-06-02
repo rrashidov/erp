@@ -97,3 +97,13 @@ stop-locally:
 	@docker-compose -f ./docker/docker-compose.yml down
 	@echo "Locally running erp stopped"
 
+# ==================================================================================== #
+# Testing 
+# ==================================================================================== #
+
+## run-integration-tests
+.PHONY: run-integration-tests
+run-integration-tests:
+	@echo "Start running integration tests"
+	@java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
+	@echo "Finished running integration tests. Check their output to see if the pass"
