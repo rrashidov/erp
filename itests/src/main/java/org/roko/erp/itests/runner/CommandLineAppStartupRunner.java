@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner;
 
+import org.roko.erp.itests.runner.generalledger.BankAccountTestRunner;
 import org.roko.erp.itests.runner.inventory.ItemTestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,12 +13,16 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private SampleIntegrationTest sampleIntegrationTest;
 
     @Autowired
+    private BankAccountTestRunner bankAccountTestRunner;
+
+    @Autowired
     private ItemTestRunner itemTestRunner;
 
     @Override
     public void run(String...args) throws Exception {
         try {
             sampleIntegrationTest.run();
+            bankAccountTestRunner.run();
             itemTestRunner.run();
 
             System.out.println("All OK!");
