@@ -10,9 +10,6 @@ import org.springframework.stereotype.Component;
 public class CommandLineAppStartupRunner implements CommandLineRunner {
 
     @Autowired
-    private SampleIntegrationTest sampleIntegrationTest;
-
-    @Autowired
     private BankAccountTestRunner bankAccountTestRunner;
 
     @Autowired
@@ -21,7 +18,6 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     @Override
     public void run(String...args) throws Exception {
         try {
-            sampleIntegrationTest.run();
             bankAccountTestRunner.run();
             itemTestRunner.run();
 
