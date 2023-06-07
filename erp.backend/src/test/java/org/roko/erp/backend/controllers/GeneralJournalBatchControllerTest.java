@@ -189,7 +189,7 @@ public class GeneralJournalBatchControllerTest {
 
     @Test
     public void postLine_delegatesToService() {
-        controller.postLine(TEST_CODE, generalJournalBatchLineDtoMock);
+        int lineNo = controller.postLine(TEST_CODE, generalJournalBatchLineDtoMock);
 
         verify(generalJournalBatchLineSvcMock).create(generalJournalBatchLineMock);
 
@@ -200,6 +200,8 @@ public class GeneralJournalBatchControllerTest {
 
         assertEquals(generalJournalBatchMock, generalJournalBatchLineId.getGeneralJournalBatch());
         assertEquals(TEST_MAX_LINENO + 1, generalJournalBatchLineId.getLineNo());
+
+        assertEquals(TEST_MAX_LINENO + 1, lineNo);
     }
 
     @Test

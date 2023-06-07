@@ -100,12 +100,13 @@ public class GeneralJournalBatchController {
 
         GeneralJournalBatchLineId generalJournalBatchLineId = new GeneralJournalBatchLineId();
         generalJournalBatchLineId.setGeneralJournalBatch(svc.get(code));
-        generalJournalBatchLineId.setLineNo(generalJournalBatchLineSvc.maxLineNo(generalJournalBatch) + 1);
+        int lineNo = generalJournalBatchLineSvc.maxLineNo(generalJournalBatch) + 1;
+        generalJournalBatchLineId.setLineNo(lineNo);
 
         GeneralJournalBatchLine generalJournalBatchLine = generalJournalBatchLineSvc.fromDTO(dto);
         generalJournalBatchLine.setGeneralJournalBatchLineId(generalJournalBatchLineId);
         generalJournalBatchLineSvc.create(generalJournalBatchLine);
-        return 0;
+        return lineNo;
     }
 
     @PutMapping("/{code}/lines/{lineNo}")
