@@ -1,6 +1,7 @@
 package org.roko.erp.itests.runner;
 
 import org.roko.erp.itests.runner.generalledger.BankAccountTestRunner;
+import org.roko.erp.itests.runner.generalledger.GeneralJournalBatchTestRunner;
 import org.roko.erp.itests.runner.generalledger.PaymentMethodTestRunner;
 import org.roko.erp.itests.runner.inventory.ItemTestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private PaymentMethodTestRunner paymentMethodTestRunner;
 
     @Autowired
+    private GeneralJournalBatchTestRunner generalJournalBatchTestRunner;
+
+    @Autowired
     private ItemTestRunner itemTestRunner;
 
     @Override
@@ -24,6 +28,8 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         try {
             bankAccountTestRunner.run();
             paymentMethodTestRunner.run();
+            generalJournalBatchTestRunner.run();
+            
             itemTestRunner.run();
 
             System.out.println("All OK!");
