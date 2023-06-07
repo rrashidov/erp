@@ -116,6 +116,7 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
             GeneralJournalBatchLine target) {
         target.setSourceType(source.getSourceType());
         target.setSourceCode(source.getSourceCode());
+        target.setSourceName(source.getSourceName());
         target.setOperationType(source.getOperationType());
         target.setDocumentCode(source.getDocumentCode());
         target.setOperationType(source.getOperationType());
