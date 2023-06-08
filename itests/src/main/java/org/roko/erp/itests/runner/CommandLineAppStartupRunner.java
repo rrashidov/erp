@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner;
 
+import org.roko.erp.itests.runner.admin.CodeSerieTestRunner;
 import org.roko.erp.itests.runner.generalledger.BankAccountTestRunner;
 import org.roko.erp.itests.runner.generalledger.GeneralJournalBatchTestRunner;
 import org.roko.erp.itests.runner.generalledger.PaymentMethodTestRunner;
@@ -31,6 +32,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     @Autowired
     private VendorTestRunner vendorTestRunner;
 
+    @Autowired
+    private CodeSerieTestRunner codeSerieTestRunner;
+
     @Override
     public void run(String...args) throws Exception {
         try {
@@ -43,6 +47,8 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
             customerTestRunner.run();
 
             vendorTestRunner.run();
+
+            codeSerieTestRunner.run();
             
             System.out.println("All OK!");
         } catch (ITestFailedException e) {
