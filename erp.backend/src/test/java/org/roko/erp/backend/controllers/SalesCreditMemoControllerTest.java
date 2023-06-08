@@ -154,7 +154,7 @@ public class SalesCreditMemoControllerTest {
 
     @Test
     public void postLine_delegatesToService() {
-        controller.postLine(TEST_CODE, salesDocumentLineDtoMock);
+        int lineNo = controller.postLine(TEST_CODE, salesDocumentLineDtoMock);
 
         verify(salesCreditMemoLineSvcMock).create(salesCreditMemoLineMock);
 
@@ -164,6 +164,7 @@ public class SalesCreditMemoControllerTest {
 
         assertEquals(salesCreditMemoMock, salesCreditMemoLineId.getSalesCreditMemo());
         assertEquals(TEST_MAX_LINE_NO + 1, salesCreditMemoLineId.getLineNo());
+        assertEquals(TEST_MAX_LINE_NO + 1, lineNo);
     }
 
     @Test

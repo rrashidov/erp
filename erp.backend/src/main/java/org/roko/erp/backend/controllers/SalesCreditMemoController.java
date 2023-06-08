@@ -107,13 +107,14 @@ public class SalesCreditMemoController {
 
         SalesCreditMemoLineId salesCreditMemoLineId = new SalesCreditMemoLineId();
         salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
-        salesCreditMemoLineId.setLineNo(maxLineNo + 1);
+        int lineNo = maxLineNo + 1;
+        salesCreditMemoLineId.setLineNo(lineNo);
 
         salesCreditMemoLine.setSalesCreditMemoLineId(salesCreditMemoLineId);
 
         salesCreditMemoLineSvc.create(salesCreditMemoLine);
 
-        return dto.getLineNo();
+        return lineNo;
     }
 
     @PutMapping("/{code}/lines/{lineNo}")
