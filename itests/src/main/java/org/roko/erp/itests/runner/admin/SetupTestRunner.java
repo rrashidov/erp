@@ -42,7 +42,13 @@ public class SetupTestRunner implements ITestRunner {
         client.update(setup);
         setup = client.read();
         verifySetupUpdated(setup);
+        setup = generateEmptySetup();
+        client.update(setup);
         print("Setup update test passed");
+    }
+
+    private SetupDTO generateEmptySetup() {
+        return new SetupDTO();
     }
 
     private void verifySetupUpdated(SetupDTO setup) throws ITestFailedException {

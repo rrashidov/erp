@@ -8,6 +8,7 @@ import org.roko.erp.itests.runner.generalledger.PaymentMethodTestRunner;
 import org.roko.erp.itests.runner.inventory.ItemTestRunner;
 import org.roko.erp.itests.runner.purchases.VendorTestRunner;
 import org.roko.erp.itests.runner.sales.CustomerTestRunner;
+import org.roko.erp.itests.runner.sales.SalesOrderTestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private CustomerTestRunner customerTestRunner;
 
     @Autowired
+    private SalesOrderTestRunner salesOrderTestRunner;
+
+    @Autowired
     private VendorTestRunner vendorTestRunner;
 
     @Autowired
@@ -42,6 +46,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     @Override
     public void run(String...args) throws Exception {
         try {
+            codeSerieTestRunner.run();
+            setupTestRunner.run();
+            
             bankAccountTestRunner.run();
             paymentMethodTestRunner.run();
             generalJournalBatchTestRunner.run();
@@ -49,12 +56,10 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
             itemTestRunner.run();
 
             customerTestRunner.run();
+            salesOrderTestRunner.run();
 
             vendorTestRunner.run();
 
-            codeSerieTestRunner.run();
-            setupTestRunner.run();
-            
             System.out.println("All OK!");
         } catch (ITestFailedException e) {
             System.out.println("Integration tests failed: " + e.getMessage());
