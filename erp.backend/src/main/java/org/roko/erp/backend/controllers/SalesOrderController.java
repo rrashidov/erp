@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/salesorders")
@@ -70,7 +71,13 @@ public class SalesOrderController {
 
     @GetMapping("/{code}")
     public SalesDocumentDTO get(@PathVariable("code") String code) {
-        return svc.toDTO(svc.get(code));
+        SalesOrder salesOrder = svc.get(code);
+
+        if (salesOrder == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return svc.toDTO(salesOrder);
     }
 
     @GetMapping("/{code}/lines/page/{page}")
