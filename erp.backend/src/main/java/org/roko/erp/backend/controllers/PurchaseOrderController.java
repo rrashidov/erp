@@ -117,15 +117,17 @@ public class PurchaseOrderController {
 
         int maxLineNo = purchaseOrderLineSvc.maxLineNo(purchaseOrder);
 
+        int lineNo = maxLineNo + 1;
+
         PurchaseOrderLineId purchaseOrderLineId = new PurchaseOrderLineId();
         purchaseOrderLineId.setPurchaseOrder(purchaseOrder);
-        purchaseOrderLineId.setLineNo(maxLineNo + 1);
+        purchaseOrderLineId.setLineNo(lineNo);
 
         PurchaseOrderLine purchaseOrderLine = purchaseOrderLineSvc.fromDTO(dto);
         purchaseOrderLine.setPurchaseOrderLineId(purchaseOrderLineId);
         purchaseOrderLineSvc.create(purchaseOrderLine);
 
-        return dto.getLineNo();
+        return lineNo;
     }
 
     @PutMapping("/{code}/lines/{lineNo}")

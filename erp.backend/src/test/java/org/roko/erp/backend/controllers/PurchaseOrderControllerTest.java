@@ -205,7 +205,7 @@ public class PurchaseOrderControllerTest {
 
     @Test
     public void postLine_delegatesToService() {
-        controller.postLine(TEST_CODE, purchaseOrderLineDtoMock);
+        int lineNo = controller.postLine(TEST_CODE, purchaseOrderLineDtoMock);
 
         verify(purchaseOrderLineSvcMock).create(purchaseOrderLineMock);
 
@@ -215,6 +215,8 @@ public class PurchaseOrderControllerTest {
 
         assertEquals(purchaseOrderMock, purchaseOrderLineId.getPurchaseOrder());
         assertEquals(TEST_MAX_LINE_NO + 1, purchaseOrderLineId.getLineNo());
+
+        assertEquals(TEST_MAX_LINE_NO + 1, lineNo);
     }
 
     @Test
