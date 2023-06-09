@@ -102,9 +102,11 @@ public class PurchaseCreditMemoController {
 
         int maxLineNo = purchaseCreditMemoLineSvc.maxLineNo(purchaseCreditMemo);
 
+        int lineNo = maxLineNo + 1;
+
         PurchaseCreditMemoLineId purchaseCreditMemoLineId = new PurchaseCreditMemoLineId();
         purchaseCreditMemoLineId.setPurchaseCreditMemo(purchaseCreditMemo);
-        purchaseCreditMemoLineId.setLineNo(maxLineNo + 1);
+        purchaseCreditMemoLineId.setLineNo(lineNo);
 
         PurchaseCreditMemoLine purchaseCreditMemoLine = purchaseCreditMemoLineSvc.fromDTO(dto);
 
@@ -112,7 +114,7 @@ public class PurchaseCreditMemoController {
 
         purchaseCreditMemoLineSvc.create(purchaseCreditMemoLine);
         
-        return dto.getLineNo();
+        return lineNo;
     }
 
     @PutMapping("/{code}/lines/{lineNo}")
