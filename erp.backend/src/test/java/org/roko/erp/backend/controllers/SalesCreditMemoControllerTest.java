@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -33,8 +34,11 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 public class SalesCreditMemoControllerTest {
+
+    private static final String NON_EXISTING_CODE = "non-existing-code";
 
     private static final String SALES_CREDIT_MEMO_MSG_ROUTING_KEY = "sales.creditmemo";
     private static final String SALES_CREDIT_MEMO_MSG_EXCHANGE_NAME = "erp.operations.post";
@@ -130,6 +134,13 @@ public class SalesCreditMemoControllerTest {
 
         verify(svcMock).get(TEST_CODE);
         verify(svcMock).toDTO(salesCreditMemoMock);
+    }
+
+    @Test
+    public void getThrowsException_whenCalledWithNotExistingCode() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.get(NON_EXISTING_CODE);
+        });
     }
 
     @Test
