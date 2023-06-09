@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/purchasecreditmemos")
@@ -70,7 +71,13 @@ public class PurchaseCreditMemoController {
 
     @GetMapping("/{code}")
     public PurchaseDocumentDTO get(@PathVariable("code") String code) {
-        return svc.toDTO(svc.get(code));
+        PurchaseCreditMemo purchaseCreditMemo = svc.get(code);
+
+        if (purchaseCreditMemo == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return svc.toDTO(purchaseCreditMemo);
     }
 
     @GetMapping("/{code}/lines/page/{page}")
@@ -93,7 +100,13 @@ public class PurchaseCreditMemoController {
         purchaseCreditMemoLineId.setPurchaseCreditMemo(svc.get(code));
         purchaseCreditMemoLineId.setLineNo(lineNo);
 
-        return purchaseCreditMemoLineSvc.toDTO(purchaseCreditMemoLineSvc.get(purchaseCreditMemoLineId));
+        PurchaseCreditMemoLine purchaseCreditMemoLine = purchaseCreditMemoLineSvc.get(purchaseCreditMemoLineId);
+
+        if (purchaseCreditMemoLine == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        
+        return purchaseCreditMemoLineSvc.toDTO(purchaseCreditMemoLine);
     }
 
     @PostMapping("/{code}/lines")

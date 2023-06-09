@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +32,7 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 public class PurchaseCreditMemoControllerTest {
 
@@ -44,6 +46,8 @@ public class PurchaseCreditMemoControllerTest {
     private static final int TEST_COUNT = 222;
 
     private static final String TEST_CODE = "test-code";
+
+    private static final String NON_EXISTING_CODE = "non-existing-code";
 
     private static final int TEST_PAGE = 123;
 
@@ -138,6 +142,13 @@ public class PurchaseCreditMemoControllerTest {
     }
 
     @Test
+    public void getThrowsException_whenCalledWithNonExistingCode() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.get(NON_EXISTING_CODE);
+        });
+    }
+
+    @Test
     public void post_delegatesToService() {
         controller.post(dtoMock);
 
@@ -192,6 +203,13 @@ public class PurchaseCreditMemoControllerTest {
         verify(svcMock).get(TEST_CODE);
         verify(purchaseCreditMemoLineSvcMock).get(purchaseCreditMemoLineId);
         verify(purchaseCreditMemoLineSvcMock).toDTO(purchaseCreditMemoLineMock);
+    }
+
+    @Test
+    public void getLineThrowsException_whenCalledWithNonExistingLine() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.getLine(NON_EXISTING_CODE, TEST_LINE_NO);
+        });
     }
 
     @Test
