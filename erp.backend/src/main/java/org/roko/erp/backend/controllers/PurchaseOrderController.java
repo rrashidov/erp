@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/purchaseorders")
@@ -81,7 +82,13 @@ public class PurchaseOrderController {
 
     @GetMapping("/{code}")
     public PurchaseDocumentDTO get(@PathVariable("code") String code) {
-        return svc.toDTO(svc.get(code));
+        PurchaseOrder purchaseOrder = svc.get(code);
+
+        if (purchaseOrder == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return svc.toDTO(purchaseOrder);
     }
 
     @GetMapping("/{code}/lines/page/{page}")
@@ -107,6 +114,10 @@ public class PurchaseOrderController {
         purchaseOrderLineId.setLineNo(lineNo);
 
         PurchaseOrderLine purchaseOrderLine = purchaseOrderLineSvc.get(purchaseOrderLineId);
+
+        if (purchaseOrderLine == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
 
         return purchaseOrderLineSvc.toDTO(purchaseOrderLine);
     }

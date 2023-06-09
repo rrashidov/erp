@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -32,6 +33,7 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 public class PurchaseOrderControllerTest {
 
@@ -45,6 +47,8 @@ public class PurchaseOrderControllerTest {
     private static final String NEW_CODE = "new-code";
 
     private static final String TEST_CODE = "test-code";
+
+    private static final String NON_EXISTING_CODE = "non-existing-code";
 
     private static final int TEST_PAGE = 123;
 
@@ -147,6 +151,13 @@ public class PurchaseOrderControllerTest {
     }
 
     @Test
+    public void getThrowsException_whenCalledWithNonExistingCode() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.get(NON_EXISTING_CODE);
+        });
+    }
+
+    @Test
     public void post_delegatesToService() {
         controller.post(dtoMock);
 
@@ -201,6 +212,13 @@ public class PurchaseOrderControllerTest {
 
         verify(purchaseOrderLineSvcMock).get(purchaseOrderLineId);
         verify(purchaseOrderLineSvcMock).toDTO(purchaseOrderLineMock);
+    }
+
+    @Test
+    public void getLineThrowsException_whenCalledWithNonExistingCode() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.getLine(NON_EXISTING_CODE, TEST_LINE_NO);
+        });
     }
 
     @Test
