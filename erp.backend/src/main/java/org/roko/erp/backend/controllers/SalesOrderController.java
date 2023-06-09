@@ -102,7 +102,13 @@ public class SalesOrderController {
         salesOrderLineId.setSalesOrder(salesOrder);
         salesOrderLineId.setLineNo(lineNo);
 
-        return salesOrderLineSvc.toDTO(salesOrderLineSvc.get(salesOrderLineId));
+        SalesOrderLine salesOrderLine = salesOrderLineSvc.get(salesOrderLineId);
+
+        if (salesOrderLine == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        
+        return salesOrderLineSvc.toDTO(salesOrderLine);
     }
 
     @PostMapping("/{code}/lines")

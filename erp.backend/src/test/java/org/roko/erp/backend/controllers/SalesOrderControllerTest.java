@@ -178,6 +178,13 @@ public class SalesOrderControllerTest {
     }
 
     @Test
+    public void getLineThrowsException_whenCalledForNonExistingEntity() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.getLine(NON_EXISTING_CODE, TEST_LINE_NO);
+        });
+    }
+
+    @Test
     public void postLine_delegatesToService() {
         controller.postLine(TEST_CODE, salesOrderLineDtoMock);
 
