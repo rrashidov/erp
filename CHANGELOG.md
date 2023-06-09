@@ -7,3 +7,6 @@
 - improve GeneralJournalBatch REST API - return 404 for non existing entities
 - improve SalesOrder REST API - return 404 for non existing entities
 - improve SalesCreditMemo REST API - return 404 for non existing entities
+- improve PurchaseOrder REST API - return 404 for non existing entities
+- improve PurchaseCreditMemo REST API - return 404 for non existing entities
+- implement REST API integration test
