@@ -7,6 +7,7 @@ import org.roko.erp.itests.runner.generalledger.GeneralJournalBatchTestRunner;
 import org.roko.erp.itests.runner.generalledger.PaymentMethodTestRunner;
 import org.roko.erp.itests.runner.inventory.ItemTestRunner;
 import org.roko.erp.itests.runner.sales.SalesOrderTestRunner;
+import org.roko.erp.itests.runner.purchases.PurchaseCreditMemoTestRunner;
 import org.roko.erp.itests.runner.purchases.PurchaseOrderTestRunner;
 import org.roko.erp.itests.runner.purchases.VendorTestRunner;
 import org.roko.erp.itests.runner.sales.CustomerTestRunner;
@@ -46,6 +47,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private PurchaseOrderTestRunner purchaseOrderTestRunner;
 
     @Autowired
+    private PurchaseCreditMemoTestRunner purchaseCreditMemoTestRunner;
+
+    @Autowired
     private CodeSerieTestRunner codeSerieTestRunner;
 
     @Autowired
@@ -69,6 +73,7 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 
             vendorTestRunner.run();
             purchaseOrderTestRunner.run();
+            purchaseCreditMemoTestRunner.run();
 
             System.out.println("All OK!");
         } catch (ITestFailedException e) {
