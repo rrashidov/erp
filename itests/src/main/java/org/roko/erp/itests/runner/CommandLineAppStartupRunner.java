@@ -6,10 +6,11 @@ import org.roko.erp.itests.runner.generalledger.BankAccountTestRunner;
 import org.roko.erp.itests.runner.generalledger.GeneralJournalBatchTestRunner;
 import org.roko.erp.itests.runner.generalledger.PaymentMethodTestRunner;
 import org.roko.erp.itests.runner.inventory.ItemTestRunner;
+import org.roko.erp.itests.runner.sales.SalesOrderTestRunner;
+import org.roko.erp.itests.runner.purchases.PurchaseOrderTestRunner;
 import org.roko.erp.itests.runner.purchases.VendorTestRunner;
 import org.roko.erp.itests.runner.sales.CustomerTestRunner;
 import org.roko.erp.itests.runner.sales.SalesCreditMemoTestRunner;
-import org.roko.erp.itests.runner.sales.SalesOrderTestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,9 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     private VendorTestRunner vendorTestRunner;
 
     @Autowired
+    private PurchaseOrderTestRunner purchaseOrderTestRunner;
+
+    @Autowired
     private CodeSerieTestRunner codeSerieTestRunner;
 
     @Autowired
@@ -64,6 +68,7 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
             salesCreditMemoTestRunner.run();
 
             vendorTestRunner.run();
+            purchaseOrderTestRunner.run();
 
             System.out.println("All OK!");
         } catch (ITestFailedException e) {
