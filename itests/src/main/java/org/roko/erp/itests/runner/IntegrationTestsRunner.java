@@ -17,7 +17,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CommandLineAppStartupRunner implements CommandLineRunner {
+public class IntegrationTestsRunner implements CommandLineRunner {
 
     @Autowired
     private BankAccountTestRunner bankAccountTestRunner;
