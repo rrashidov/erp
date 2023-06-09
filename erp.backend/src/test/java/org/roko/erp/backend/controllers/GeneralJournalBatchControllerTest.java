@@ -1,6 +1,7 @@
 package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -31,8 +32,11 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 public class GeneralJournalBatchControllerTest {
+
+    private static final String NON_EXISTING_CODE = "non-existing-code";
 
     private static final String TEST_DELETE_ERR_MSG = "test-delete-err-msg";
 
@@ -132,6 +136,13 @@ public class GeneralJournalBatchControllerTest {
     }
 
     @Test
+    public void getThrowsException_whenCalledForNonExistingEntity() {
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.get(NON_EXISTING_CODE);
+        });
+    }
+
+    @Test
     public void post_delegatesToService() {
         controller.post(dtoMock);
 
@@ -185,6 +196,13 @@ public class GeneralJournalBatchControllerTest {
 
         verify(generalJournalBatchLineSvcMock).get(generalJournalBatchLineId);
         verify(generalJournalBatchLineSvcMock).toDTO(generalJournalBatchLineMock);
+    }
+
+    @Test
+    public void getLineThrowsException_whenCalledForNonExistingLine() {
+        assertThrows(ResponseStatusException.class, () ->{
+            controller.getLine(NON_EXISTING_CODE, TEST_LINE_NO);
+        });
     }
 
     @Test

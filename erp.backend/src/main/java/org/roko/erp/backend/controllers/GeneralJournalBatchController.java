@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/generaljournalbatches")
@@ -67,7 +68,13 @@ public class GeneralJournalBatchController {
 
     @GetMapping("/{code}")
     public GeneralJournalBatchDTO get(@PathVariable("code") String code) {
-        return svc.toDTO(svc.get(code));
+        GeneralJournalBatch generalJournalBatch = svc.get(code);
+
+        if (generalJournalBatch == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return svc.toDTO(generalJournalBatch);
     }
 
     @GetMapping("/{code}/lines/page/{page}")
@@ -91,7 +98,13 @@ public class GeneralJournalBatchController {
         generalJournalBatchLineId.setGeneralJournalBatch(svc.get(code));
         generalJournalBatchLineId.setLineNo(lineNo);
 
-        return generalJournalBatchLineSvc.toDTO(generalJournalBatchLineSvc.get(generalJournalBatchLineId));
+        GeneralJournalBatchLine generalJournalBatchLine = generalJournalBatchLineSvc.get(generalJournalBatchLineId);
+
+        if (generalJournalBatchLine == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        
+        return generalJournalBatchLineSvc.toDTO(generalJournalBatchLine);
     }
 
     @PostMapping("/{code}/lines")
