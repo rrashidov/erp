@@ -2,6 +2,7 @@ package org.roko.erp.backend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -100,6 +101,7 @@ public class SalesCreditMemoControllerTest {
 
         when(salesCodeSeriesSvcMock.creditMemoCode()).thenReturn(GENERATED_CODE);
 
+        when(salesCreditMemoLineSvcMock.get(any(SalesCreditMemoLineId.class))).thenReturn(salesCreditMemoLineMock);
         when(salesCreditMemoLineSvcMock.list(salesCreditMemoMock, TEST_PAGE))
                 .thenReturn(Arrays.asList(salesCreditMemoLineMock));
         when(salesCreditMemoLineSvcMock.fromDTO(salesDocumentLineDtoMock)).thenReturn(salesCreditMemoLineMock);
@@ -161,6 +163,15 @@ public class SalesCreditMemoControllerTest {
 
         assertEquals(salesCreditMemoMock, salesCreditMemoLineId.getSalesCreditMemo());
         assertEquals(TEST_LINE_NO, salesCreditMemoLineId.getLineNo());
+    }
+
+    @Test
+    public void getLineThrowsException_whenCalledForNonExistingEntity() {
+        when(salesCreditMemoLineSvcMock.get(any(SalesCreditMemoLineId.class))).thenReturn(null);
+
+        assertThrows(ResponseStatusException.class, () -> {
+            controller.getLine(NON_EXISTING_CODE, TEST_LINE_NO);
+        });
     }
 
     @Test

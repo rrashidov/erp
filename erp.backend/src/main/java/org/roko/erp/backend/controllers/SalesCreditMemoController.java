@@ -100,7 +100,13 @@ public class SalesCreditMemoController {
         salesCreditMemoLineId.setSalesCreditMemo(salesCreditMemo);
         salesCreditMemoLineId.setLineNo(lineNo);
 
-        return salesCreditMemoLineSvc.toDTO(salesCreditMemoLineSvc.get(salesCreditMemoLineId));
+        SalesCreditMemoLine salesCreditMemoLine = salesCreditMemoLineSvc.get(salesCreditMemoLineId);
+
+        if (salesCreditMemoLine == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        
+        return salesCreditMemoLineSvc.toDTO(salesCreditMemoLine);
     }
 
     @PostMapping("/{code}/lines")
