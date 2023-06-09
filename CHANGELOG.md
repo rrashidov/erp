@@ -4,3 +4,6 @@
 
 - fix typos in README
 - fix issue in GeneralJournalBatchLine REST API
+- improve GeneralJournalBatch REST API - return 404 for non existing entities
+- improve SalesOrder REST API - return 404 for non existing entities
+- improve SalesCreditMemo REST API - return 404 for non existing entities
