@@ -103,7 +103,7 @@ stop-locally:
 
 ## run-integration-tests
 .PHONY: run-integration-tests
-run-integration-tests:
+run-integration-tests: stop-locally clean-local-mysql start-locally
 	@echo "Start running integration tests"
 	@java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
 	@echo "Finished running integration tests. Check their output to see if the pass"
