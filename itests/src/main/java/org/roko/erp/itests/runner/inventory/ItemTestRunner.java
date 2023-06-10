@@ -28,26 +28,26 @@ public class ItemTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Test creating Item");
+        print("Running Item create test");
         client.create(generateItemDTO());
-        print("Creating Item test passed");
+        print("Item create test passed");
 
-        print("Test reading Item");
+        print("Running Item read test");
         ItemDTO item = client.read(TEST_ITEM_CODE);
         verifyItemRead(item);
-        print("Reading Item test passed");
+        print("Item read test passed");
 
-        print("Test updating Item");
+        print("Running Item update test");
         client.update(TEST_ITEM_CODE, generateUpdatedItemDTO());
         item = client.read(TEST_ITEM_CODE);
         verifyItemUpdated(item);
-        print("Updating Item test passed");
+        print("Item update test passed");
 
-        print("Test deleting Item");
+        print("Running Item delete test");
         client.delete(TEST_ITEM_CODE);
         item = client.read(TEST_ITEM_CODE);
         verifyItemDeleted(item);
-        print("Deleting Item test passed");
+        print("Item delete test passed");
     }
 
     private void print(String msg) {

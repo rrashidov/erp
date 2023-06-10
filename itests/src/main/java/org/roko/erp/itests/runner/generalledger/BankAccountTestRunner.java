@@ -24,24 +24,24 @@ public class BankAccountTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Run BankAccount create test");
+        print("Running BankAccount create test");
         BankAccountDTO bankAccount = generateBankAccount();
         client.create(bankAccount);
         print("BankAccount create test passed");
 
-        print("Run BankAccount read test");
+        print("Running BankAccount read test");
         bankAccount = client.read(TEST_BANK_ACCOUNT_CODE);
         verifyBankAccountRead(bankAccount);
         print("BankAccount read test passed");
         
-        print("Run BankAccount update test");
+        print("Running BankAccount update test");
         bankAccount = generateUpdatedBankAccount();
         client.update(TEST_BANK_ACCOUNT_CODE, bankAccount);
         bankAccount = client.read(TEST_BANK_ACCOUNT_CODE);
         verifyUpdatedBankAccount(bankAccount);
         print("BankAccount update test passed");
         
-        print("Run BankAccount delete test");
+        print("Running BankAccount delete test");
         client.delete(TEST_BANK_ACCOUNT_CODE);
         bankAccount = client.read(TEST_BANK_ACCOUNT_CODE);
         verifyBankAccountDeleted(bankAccount);
