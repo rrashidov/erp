@@ -10,13 +10,13 @@ import org.roko.erp.dto.GeneralJournalBatchLineType;
 import org.roko.erp.itests.clients.BankAccountClient;
 import org.roko.erp.itests.clients.GeneralJournalBatchClient;
 import org.roko.erp.itests.clients.GeneralJournalBatchLineClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GeneralJournalBatchTestRunner implements ITestRunner {
+public class GeneralJournalBatchTestRunner extends BaseTestRunner {
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
@@ -51,56 +51,56 @@ public class GeneralJournalBatchTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running GeneralJournalBatch create test");
+        LOGGER.info("Running GeneralJournalBatch create test");
         client.create(generateGeneralJournalBatch());
-        print("GeneralJournalBatch create test passed");
+        LOGGER.info("GeneralJournalBatch create test passed");
 
-        print("Running GeneralJournalBatch read test");
+        LOGGER.info("Running GeneralJournalBatch read test");
         GeneralJournalBatchDTO generalJournalBatch = client.read(TEST_CODE);
         verifyGeneralJournalBatchRead(generalJournalBatch);
-        print("GeneralJournalBatch read test passed");
+        LOGGER.info("GeneralJournalBatch read test passed");
 
-        print("Running GeneralJournalBatch update test");
+        LOGGER.info("Running GeneralJournalBatch update test");
         generalJournalBatch = generateUpdatedGeneralJournalBatch();
         client.update(TEST_CODE, generalJournalBatch);
         generalJournalBatch = client.read(TEST_CODE);
         verifyGeneralJournalBatchUpdated(generalJournalBatch);
-        print("GeneralJournalBatch update test passed");
+        LOGGER.info("GeneralJournalBatch update test passed");
 
         testGeneralJournalBatchLine();
 
-        print("Running GeneralJournalBatch delete test");
+        LOGGER.info("Running GeneralJournalBatch delete test");
         client.delete(TEST_CODE);
         generalJournalBatch = client.read(TEST_CODE);
         verifyGeneralJournalBatchDeleted(generalJournalBatch);
-        print("GeneralJournalBatch delete test passed");
+        LOGGER.info("GeneralJournalBatch delete test passed");
     }
 
     private void testGeneralJournalBatchLine() throws ITestFailedException {
-        print("Running GeneralJournalBatchLine create test");
+        LOGGER.info("Running GeneralJournalBatchLine create test");
         BankAccountDTO bankAccount = generateBankAccount();
         bankAccountClient.create(bankAccount);
         int lineNo = lineClient.create(TEST_CODE, generateGeneralJournalBatchLine());
-        print("GeneralJournalBatchLine create test passed");
+        LOGGER.info("GeneralJournalBatchLine create test passed");
 
-        print("Running GeneralJournalBatchLine read test");
+        LOGGER.info("Running GeneralJournalBatchLine read test");
         GeneralJournalBatchLineDTO generalJournalBatchLine = lineClient.read(TEST_CODE, lineNo);
         verifyGeneralJournalbatchLineRead(generalJournalBatchLine);
-        print("GeneralJournalBatchLine read test passed");
+        LOGGER.info("GeneralJournalBatchLine read test passed");
 
-        print("Running GeneralJournalBatchLine update test");
+        LOGGER.info("Running GeneralJournalBatchLine update test");
         generalJournalBatchLine = generateGeneralJournalBatchLineUpdate();
         lineClient.update(TEST_CODE, lineNo, generalJournalBatchLine);
         generalJournalBatchLine = lineClient.read(TEST_CODE, lineNo);
         verifyGeneralJournalBatchLineUpdated(generalJournalBatchLine);
-        print("GeneralJournalBatchLine update test passed");
+        LOGGER.info("GeneralJournalBatchLine update test passed");
 
-        print("Running GeneralJournalBatchLine delete test");
+        LOGGER.info("Running GeneralJournalBatchLine delete test");
         lineClient.delete(TEST_CODE, lineNo);
         generalJournalBatchLine = lineClient.read(TEST_CODE, lineNo);
         verifyGeneralJournalBatchLineDeleted(generalJournalBatchLine);
         bankAccountClient.delete(TEST_BANK_ACCOUNT_CODE);
-        print("GeneralJournalBatchLine delete test passed");
+        LOGGER.info("GeneralJournalBatchLine delete test passed");
     }
 
     private void verifyGeneralJournalBatchLineDeleted(GeneralJournalBatchLineDTO generalJournalBatchLine)
@@ -274,7 +274,4 @@ public class GeneralJournalBatchTestRunner implements ITestRunner {
         return result;
     }
 
-    private void print(String msg) {
-        System.out.println(msg);
-    }
 }

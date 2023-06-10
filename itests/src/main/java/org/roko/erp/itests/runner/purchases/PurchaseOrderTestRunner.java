@@ -17,13 +17,13 @@ import org.roko.erp.itests.clients.PaymentMethodClient;
 import org.roko.erp.itests.clients.PurchaseOrderClient;
 import org.roko.erp.itests.clients.PurchaseOrderLineClient;
 import org.roko.erp.itests.clients.SetupClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PurchaseOrderTestRunner implements ITestRunner {
+public class PurchaseOrderTestRunner extends BaseTestRunner {
 
     private static final String SECOND_ITEM_CODE = "second-item-code";
     private static final String SECOND_ITEM_NAME = "second-item-name";
@@ -88,30 +88,30 @@ public class PurchaseOrderTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running PurchaseOrder create test");
+        LOGGER.info("Running PurchaseOrder create test");
         initPaymentMethods();
         initVendors();
         initPurchaseOrderCodeSerie();
 
         PurchaseDocumentDTO purchaseOrder = generatePurchaseOrder();
         String purchaseOrderCode = client.create(purchaseOrder);
-        print("PurchaseOrder create test passed");
+        LOGGER.info("PurchaseOrder create test passed");
 
-        print("Running PurchaseOrder read test");
+        LOGGER.info("Running PurchaseOrder read test");
         purchaseOrder = client.read(purchaseOrderCode);
         verifyPurchaseOrderRead(purchaseOrder);
-        print("PurchaseOrder read test passed");
+        LOGGER.info("PurchaseOrder read test passed");
 
-        print("Running PurchaseOrder update test");
+        LOGGER.info("Running PurchaseOrder update test");
         purchaseOrder = generatePurchaseOrderUpdate();
         client.update(purchaseOrderCode, purchaseOrder);
         purchaseOrder = client.read(purchaseOrderCode);
         verifyPurchaseOrderUpdated(purchaseOrder);
-        print("PurchaseOrder update test passed");
+        LOGGER.info("PurchaseOrder update test passed");
 
         testPurchaseOrderLines(purchaseOrderCode);
 
-        print("Running PurchaseOrder delete test");
+        LOGGER.info("Running PurchaseOrder delete test");
         client.delete(purchaseOrderCode);
         purchaseOrder = client.read(purchaseOrderCode);
         verifyPurchaseOrderDeleted(purchaseOrder);
@@ -121,11 +121,11 @@ public class PurchaseOrderTestRunner implements ITestRunner {
 
         paymentMethodClient.delete(TEST_PAYMENT_METHOD_CODE);
         paymentMethodClient.delete(SECOND_PAYMENT_METHOD_CODE);
-        print("PurchaseOrder delete test passed");
+        LOGGER.info("PurchaseOrder delete test passed");
     }
 
     private void testPurchaseOrderLines(String id) throws ITestFailedException {
-        print("Running PurchaseOrderLine create test");
+        LOGGER.info("Running PurchaseOrderLine create test");
         ItemDTO item = createItem();
         itemClient.create(item);
         item = generateSecondItem();
@@ -133,28 +133,28 @@ public class PurchaseOrderTestRunner implements ITestRunner {
 
         PurchaseDocumentLineDTO purchaseOrderLine = generatePurchaseOrderLine(id);
         int lineNo = linesClient.create(id, purchaseOrderLine);
-        print("PurchaseOrderLine create test passed");
+        LOGGER.info("PurchaseOrderLine create test passed");
 
-        print("Running PurchaseOrderLine read test");
+        LOGGER.info("Running PurchaseOrderLine read test");
         purchaseOrderLine = linesClient.read(id, lineNo);
         verifyPurchaseOrderLineRead(purchaseOrderLine);
-        print("PurchaseOrderLine read test passed");
+        LOGGER.info("PurchaseOrderLine read test passed");
         
-        print("Running PurchaseOrderLine update test");
+        LOGGER.info("Running PurchaseOrderLine update test");
         purchaseOrderLine = generatePurchaseOrderLineUpdate();
         linesClient.update(id, lineNo, purchaseOrderLine);
         purchaseOrderLine = linesClient.read(id, lineNo);
         verifyPurchaseOrderLineUpdated(purchaseOrderLine);
-        print("PurchaseOrderLine update test passed");
+        LOGGER.info("PurchaseOrderLine update test passed");
         
-        print("Running PurchaseOrderLine delete test");
+        LOGGER.info("Running PurchaseOrderLine delete test");
         linesClient.delete(id, lineNo);
         purchaseOrderLine = linesClient.read(id, lineNo);
         verifyPurchaseOrderLineDeleted(purchaseOrderLine);
 
         itemClient.delete(TEST_ITEM_CODE);
         itemClient.delete(SECOND_ITEM_CODE);
-        print("PurchaseOrderLine delete test passed");
+        LOGGER.info("PurchaseOrderLine delete test passed");
     }
 
     private void verifyPurchaseOrderLineDeleted(PurchaseDocumentLineDTO purchaseOrderLine) throws ITestFailedException {
@@ -388,10 +388,6 @@ public class PurchaseOrderTestRunner implements ITestRunner {
         result.setCode(TEST_PAYMENT_METHOD_CODE);
         result.setName(TEST_PAYMENT_METHOD_NAME);
         return result;
-    }
-
-    private void print(String msg) {
-        System.out.println(msg);
     }
 
 }

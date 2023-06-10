@@ -4,13 +4,13 @@ import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.dto.SetupDTO;
 import org.roko.erp.itests.clients.CodeSerieClient;
 import org.roko.erp.itests.clients.SetupClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SetupTestRunner implements ITestRunner {
+public class SetupTestRunner extends BaseTestRunner {
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
@@ -29,12 +29,12 @@ public class SetupTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running Setup read test");
+        LOGGER.info("Running Setup read test");
         SetupDTO setup = client.read();
         verifyEmptySetup(setup);
-        print("Setup read test passed");
+        LOGGER.info("Setup read test passed");
 
-        print("Running Setup update test");
+        LOGGER.info("Running Setup update test");
         CodeSerieDTO codeSerie = generateCodeSerie();
         codeSerieClient.create(codeSerie);
 
@@ -44,7 +44,7 @@ public class SetupTestRunner implements ITestRunner {
         verifySetupUpdated(setup);
         setup = generateEmptySetup();
         client.update(setup);
-        print("Setup update test passed");
+        LOGGER.info("Setup update test passed");
     }
 
     private SetupDTO generateEmptySetup() {
@@ -170,10 +170,6 @@ public class SetupTestRunner implements ITestRunner {
                     String.format("Setup posted purchase credit memo code serie issue: expected %s, got %s", "",
                             setup.getPostedPurchaseCreditMemoCodeSerieCode()));
         }
-    }
-
-    private void print(String msg) {
-        System.out.println(msg);
     }
 
 }

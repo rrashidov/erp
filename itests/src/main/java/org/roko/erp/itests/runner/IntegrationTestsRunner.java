@@ -7,6 +7,8 @@ import org.roko.erp.itests.runner.generalledger.GeneralJournalBatchTestRunner;
 import org.roko.erp.itests.runner.generalledger.PaymentMethodTestRunner;
 import org.roko.erp.itests.runner.inventory.ItemTestRunner;
 import org.roko.erp.itests.runner.sales.SalesOrderTestRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.roko.erp.itests.runner.purchases.PurchaseCreditMemoTestRunner;
 import org.roko.erp.itests.runner.purchases.PurchaseOrderTestRunner;
 import org.roko.erp.itests.runner.purchases.VendorTestRunner;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class IntegrationTestsRunner implements CommandLineRunner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests.runner");
 
     @Autowired
     private BankAccountTestRunner bankAccountTestRunner;
@@ -75,10 +79,9 @@ public class IntegrationTestsRunner implements CommandLineRunner {
             purchaseOrderTestRunner.run();
             purchaseCreditMemoTestRunner.run();
 
-            System.out.println("All OK!");
+            LOGGER.info("All OK!");
         } catch (ITestFailedException e) {
-            System.out.println("Integration tests failed: " + e.getMessage());
-            System.out.println();
+            LOGGER.error("Integration tests failed!", e);
         }
     }
 }

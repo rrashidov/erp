@@ -4,13 +4,13 @@ import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.itests.clients.BankAccountClient;
 import org.roko.erp.itests.clients.PaymentMethodClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PaymentMethodTestRunner implements ITestRunner {
+public class PaymentMethodTestRunner extends BaseTestRunner {
 
     private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
     private static final String TEST_BANK_ACCOUNT_NAME = "test-bank-account-name";
@@ -31,31 +31,31 @@ public class PaymentMethodTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running PaymentMethod create test");
+        LOGGER.info("Running PaymentMethod create test");
         PaymentMethodDTO paymentMethod = generatePaymentMethodDTO();
         client.create(paymentMethod);
-        print("PaymentMethod create test passed");
+        LOGGER.info("PaymentMethod create test passed");
 
-        print("Running PaymentMethod read test");
+        LOGGER.info("Running PaymentMethod read test");
         paymentMethod = client.read(TEST_PAYMENT_METHOD_CODE);
         verifyPaymentMethodRead(paymentMethod);
-        print("PaymentMethod read test passed");
+        LOGGER.info("PaymentMethod read test passed");
         
-        print("Running PaymentMethod update test");
+        LOGGER.info("Running PaymentMethod update test");
         BankAccountDTO bankAccount = generateBankAccount();
         bankAccountClient.create(bankAccount);
         paymentMethod = generateUpdatedPaymentMethod();
         client.update(TEST_PAYMENT_METHOD_CODE, paymentMethod);
         paymentMethod = client.read(TEST_PAYMENT_METHOD_CODE);
         verifyUpdatedPaymentMethod(paymentMethod);
-        print("PaymentMethod update test passed");
+        LOGGER.info("PaymentMethod update test passed");
 
-        print("Running PaymentMethod delete test");
+        LOGGER.info("Running PaymentMethod delete test");
         client.delete(TEST_PAYMENT_METHOD_CODE);
         paymentMethod = client.read(TEST_PAYMENT_METHOD_CODE);
         verifyPaymentMethodDeleted(paymentMethod);
         bankAccountClient.delete(TEST_BANK_ACCOUNT_CODE);
-        print("PaymentMethod delete test passed");
+        LOGGER.info("PaymentMethod delete test passed");
 
     }
 
@@ -108,10 +108,6 @@ public class PaymentMethodTestRunner implements ITestRunner {
         result.setCode(TEST_PAYMENT_METHOD_CODE);
         result.setName(TEST_PAYMENT_METHOD_NAME);
         return result;
-    }
-
-    private void print(String msg) {
-        System.out.println(msg);
     }
 
 }

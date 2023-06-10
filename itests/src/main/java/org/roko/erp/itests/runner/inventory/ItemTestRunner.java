@@ -2,13 +2,13 @@ package org.roko.erp.itests.runner.inventory;
 
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.itests.clients.ItemClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ItemTestRunner implements ITestRunner {
+public class ItemTestRunner extends BaseTestRunner {
 
     private static final String TEST_ITEM_CODE = "TESTITEMCODE";
     private static final String TEST_ITEM_NAME = "test-item-name";
@@ -28,30 +28,26 @@ public class ItemTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running Item create test");
+        LOGGER.info("Running Item create test");
         client.create(generateItemDTO());
-        print("Item create test passed");
+        LOGGER.info("Item create test passed");
 
-        print("Running Item read test");
+        LOGGER.info("Running Item read test");
         ItemDTO item = client.read(TEST_ITEM_CODE);
         verifyItemRead(item);
-        print("Item read test passed");
+        LOGGER.info("Item read test passed");
 
-        print("Running Item update test");
+        LOGGER.info("Running Item update test");
         client.update(TEST_ITEM_CODE, generateUpdatedItemDTO());
         item = client.read(TEST_ITEM_CODE);
         verifyItemUpdated(item);
-        print("Item update test passed");
+        LOGGER.info("Item update test passed");
 
-        print("Running Item delete test");
+        LOGGER.info("Running Item delete test");
         client.delete(TEST_ITEM_CODE);
         item = client.read(TEST_ITEM_CODE);
         verifyItemDeleted(item);
-        print("Item delete test passed");
-    }
-
-    private void print(String msg) {
-        System.out.println(msg);
+        LOGGER.info("Item delete test passed");
     }
 
     private ItemDTO generateItemDTO() {

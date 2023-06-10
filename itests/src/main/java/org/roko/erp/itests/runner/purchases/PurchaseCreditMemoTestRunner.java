@@ -17,13 +17,13 @@ import org.roko.erp.itests.clients.PaymentMethodClient;
 import org.roko.erp.itests.clients.PurchaseCreditMemoClient;
 import org.roko.erp.itests.clients.PurchaseCreditMemoLineClient;
 import org.roko.erp.itests.clients.SetupClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PurchaseCreditMemoTestRunner implements ITestRunner {
+public class PurchaseCreditMemoTestRunner extends BaseTestRunner {
 
     private static final String SECOND_ITEM_CODE = "second-item-code";
     private static final String SECOND_ITEM_NAME = "second-item-name";
@@ -88,30 +88,30 @@ public class PurchaseCreditMemoTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running PurchaseCreditMemo create test");
+        LOGGER.info("Running PurchaseCreditMemo create test");
         initPaymentMethods();
         initVendors();
         initPurchaseCreditMemoCodeSerie();
 
         PurchaseDocumentDTO purchaseCreditMemo = generatePurchaseCreditMemo();
         String purchaseCreditMemoCode = client.create(purchaseCreditMemo);
-        print("PurchaseCreditMemo create test passed");
+        LOGGER.info("PurchaseCreditMemo create test passed");
 
-        print("Running PurchaseCreditMemo read test");
+        LOGGER.info("Running PurchaseCreditMemo read test");
         purchaseCreditMemo = client.read(purchaseCreditMemoCode);
         verifyPurchaseCreditMemoRead(purchaseCreditMemo);
-        print("PurchaseCreditMemo read test passed");
+        LOGGER.info("PurchaseCreditMemo read test passed");
 
-        print("Running PurchaseCreditMemo update test");
+        LOGGER.info("Running PurchaseCreditMemo update test");
         purchaseCreditMemo = generatePurchaseCreditMemoUpdate();
         client.update(purchaseCreditMemoCode, purchaseCreditMemo);
         purchaseCreditMemo = client.read(purchaseCreditMemoCode);
         verifyPurchaseCreditMemoUpdated(purchaseCreditMemo);
-        print("PurchaseCreditMemo update test passed");
+        LOGGER.info("PurchaseCreditMemo update test passed");
 
         testPurchaseCreditMemoLines(purchaseCreditMemoCode);
 
-        print("Running PurchaseCreditMemo delete test");
+        LOGGER.info("Running PurchaseCreditMemo delete test");
         client.delete(purchaseCreditMemoCode);
         purchaseCreditMemo = client.read(purchaseCreditMemoCode);
         verifyPurchaseCreditMemoDeleted(purchaseCreditMemo);
@@ -121,11 +121,11 @@ public class PurchaseCreditMemoTestRunner implements ITestRunner {
 
         paymentMethodClient.delete(TEST_PAYMENT_METHOD_CODE);
         paymentMethodClient.delete(SECOND_PAYMENT_METHOD_CODE);
-        print("PurchaseCreditMemo delete test passed");
+        LOGGER.info("PurchaseCreditMemo delete test passed");
     }
 
     private void testPurchaseCreditMemoLines(String id) throws ITestFailedException {
-        print("Running PurchaseCreditMemoLine create test");
+        LOGGER.info("Running PurchaseCreditMemoLine create test");
         ItemDTO item = createItem();
         itemClient.create(item);
         item = generateSecondItem();
@@ -133,28 +133,28 @@ public class PurchaseCreditMemoTestRunner implements ITestRunner {
 
         PurchaseDocumentLineDTO purchaseCreditMemoLine = generatePurchaseCreditMemoLine(id);
         int lineNo = linesClient.create(id, purchaseCreditMemoLine);
-        print("PurchaseCreditMemoLine create test passed");
+        LOGGER.info("PurchaseCreditMemoLine create test passed");
 
-        print("Running PurchaseCreditMemoLine read test");
+        LOGGER.info("Running PurchaseCreditMemoLine read test");
         purchaseCreditMemoLine = linesClient.read(id, lineNo);
         verifyPurchaseCreditMemoLineRead(purchaseCreditMemoLine);
-        print("PurchaseCreditMemoLine read test passed");
+        LOGGER.info("PurchaseCreditMemoLine read test passed");
         
-        print("Running PurchaseCreditMemoLine update test");
+        LOGGER.info("Running PurchaseCreditMemoLine update test");
         purchaseCreditMemoLine = generatePurchaseCreditMemoLineUpdate();
         linesClient.update(id, lineNo, purchaseCreditMemoLine);
         purchaseCreditMemoLine = linesClient.read(id, lineNo);
         verifyPurchaseCreditMemoLineUpdated(purchaseCreditMemoLine);
-        print("PurchaseCreditMemoLine update test passed");
+        LOGGER.info("PurchaseCreditMemoLine update test passed");
         
-        print("Running PurchaseCreditMemoLine delete test");
+        LOGGER.info("Running PurchaseCreditMemoLine delete test");
         linesClient.delete(id, lineNo);
         purchaseCreditMemoLine = linesClient.read(id, lineNo);
         verifyPurchaseCreditMemoLineDeleted(purchaseCreditMemoLine);
 
         itemClient.delete(TEST_ITEM_CODE);
         itemClient.delete(SECOND_ITEM_CODE);
-        print("PurchaseCreditMemoLine delete test passed");
+        LOGGER.info("PurchaseCreditMemoLine delete test passed");
     }
 
     private void verifyPurchaseCreditMemoLineDeleted(PurchaseDocumentLineDTO purchaseCreditMemoLine) throws ITestFailedException {
@@ -388,10 +388,6 @@ public class PurchaseCreditMemoTestRunner implements ITestRunner {
         result.setCode(TEST_PAYMENT_METHOD_CODE);
         result.setName(TEST_PAYMENT_METHOD_NAME);
         return result;
-    }
-
-    private void print(String msg) {
-        System.out.println(msg);
     }
 
 }

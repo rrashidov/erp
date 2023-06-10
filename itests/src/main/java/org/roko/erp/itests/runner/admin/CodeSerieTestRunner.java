@@ -2,13 +2,13 @@ package org.roko.erp.itests.runner.admin;
 
 import org.roko.erp.dto.CodeSerieDTO;
 import org.roko.erp.itests.clients.CodeSerieClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CodeSerieTestRunner implements ITestRunner {
+public class CodeSerieTestRunner extends BaseTestRunner {
 
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
@@ -28,28 +28,28 @@ public class CodeSerieTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running CodeSerie create test");
+        LOGGER.info("Running CodeSerie create test");
         CodeSerieDTO codeSerie = generateCodeSerie();
         client.create(codeSerie);
-        print("CodeSerie create test passed");
+        LOGGER.info("CodeSerie create test passed");
 
-        print("Running CodeSerie read test");
+        LOGGER.info("Running CodeSerie read test");
         codeSerie = client.read(TEST_CODE);
         verifyCodeSerieRead(codeSerie);
-        print("CodeSerie read test passed");
+        LOGGER.info("CodeSerie read test passed");
 
-        print("Running CodeSerie update test");
+        LOGGER.info("Running CodeSerie update test");
         codeSerie = generateCodeSerieUpdate();
         client.update(TEST_CODE, codeSerie);
         codeSerie = client.read(TEST_CODE);
         verifyCodeSerieUpdated(codeSerie);
-        print("CodeSerie update test passed");
+        LOGGER.info("CodeSerie update test passed");
 
-        print("Running CodeSerie delete test");
+        LOGGER.info("Running CodeSerie delete test");
         client.delete(TEST_CODE);
         codeSerie = client.read(TEST_CODE);
         verifyCodeSerieDeleted(codeSerie);
-        print("CodeSerie delete test passed");
+        LOGGER.info("CodeSerie delete test passed");
     }
 
     private void verifyCodeSerieDeleted(CodeSerieDTO codeSerie) throws ITestFailedException {
@@ -112,10 +112,6 @@ public class CodeSerieTestRunner implements ITestRunner {
         result.setFirstCode(TEST_FIRST_CODE);
         result.setLastCode(TEST_LAST_CODE);
         return result;
-    }
-
-    private void print(String msg) {
-        System.out.println(msg);
     }
 
 }

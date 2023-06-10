@@ -4,12 +4,12 @@ import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.itests.clients.CustomerClient;
 import org.roko.erp.itests.clients.PaymentMethodClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 @Component
-public class CustomerTestRunner implements ITestRunner {
+public class CustomerTestRunner extends BaseTestRunner {
 
     private static final String SECOND_PAYMENT_METHOD_CODE = "second-payment-method-code";
     private static final String SECOND_PAYMENT_METHOD_NAME = "second-payment-method-name";
@@ -36,20 +36,20 @@ public class CustomerTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running Customer create test");
+        LOGGER.info("Running Customer create test");
         PaymentMethodDTO paymentMethod = generatePaymentMethod();
         paymentMethodClient.create(paymentMethod);
 
         CustomerDTO customer = generateCustomer();
         client.create(customer);
-        print("Customer create test passed");
+        LOGGER.info("Customer create test passed");
 
-        print("Running Customer read test");
+        LOGGER.info("Running Customer read test");
         customer = client.read(TEST_CUSTOMER_CODE);
         verifyCustomerRead(customer);
-        print("Customer read test passed");
+        LOGGER.info("Customer read test passed");
 
-        print("Running Customer update test");
+        LOGGER.info("Running Customer update test");
         paymentMethod = generateSecondPaymentMethod();
         paymentMethodClient.create(paymentMethod);
 
@@ -57,16 +57,16 @@ public class CustomerTestRunner implements ITestRunner {
         client.update(TEST_CUSTOMER_CODE, customer);
         customer = client.read(TEST_CUSTOMER_CODE);
         verifyCustomerUpdated(customer);
-        print("Customer update test passed");
+        LOGGER.info("Customer update test passed");
 
-        print("Running Customer delete test");
+        LOGGER.info("Running Customer delete test");
         client.delete(TEST_CUSTOMER_CODE);
         customer = client.read(TEST_CUSTOMER_CODE);
         verifyCustomerDeleted(customer);
 
         paymentMethodClient.delete(TEST_PAYMENT_METHOD_CODE);
         paymentMethodClient.delete(SECOND_PAYMENT_METHOD_CODE);
-        print("Customer delete test passed");
+        LOGGER.info("Customer delete test passed");
     }
 
     private void verifyCustomerDeleted(CustomerDTO customer) throws ITestFailedException {
@@ -154,10 +154,6 @@ public class CustomerTestRunner implements ITestRunner {
         result.setAddress(TEST_CUSTOMER_ADDRESS);
         result.setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
         return result;
-    }
-
-    private void print(String msg) {
-        System.out.println(msg);
     }
 
 }

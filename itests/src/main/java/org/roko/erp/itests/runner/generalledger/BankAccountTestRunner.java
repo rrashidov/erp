@@ -2,13 +2,13 @@ package org.roko.erp.itests.runner.generalledger;
 
 import org.roko.erp.dto.BankAccountDTO;
 import org.roko.erp.itests.clients.BankAccountClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BankAccountTestRunner implements ITestRunner {
+public class BankAccountTestRunner extends BaseTestRunner {
 
     private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
     private static final String TEST_BANK_ACCOUNT_NAME = "test-bank-account-name";
@@ -24,28 +24,28 @@ public class BankAccountTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running BankAccount create test");
+        LOGGER.info("Running BankAccount create test");
         BankAccountDTO bankAccount = generateBankAccount();
         client.create(bankAccount);
-        print("BankAccount create test passed");
+        LOGGER.info("BankAccount create test passed");
 
-        print("Running BankAccount read test");
+        LOGGER.info("Running BankAccount read test");
         bankAccount = client.read(TEST_BANK_ACCOUNT_CODE);
         verifyBankAccountRead(bankAccount);
-        print("BankAccount read test passed");
+        LOGGER.info("BankAccount read test passed");
         
-        print("Running BankAccount update test");
+        LOGGER.info("Running BankAccount update test");
         bankAccount = generateUpdatedBankAccount();
         client.update(TEST_BANK_ACCOUNT_CODE, bankAccount);
         bankAccount = client.read(TEST_BANK_ACCOUNT_CODE);
         verifyUpdatedBankAccount(bankAccount);
-        print("BankAccount update test passed");
+        LOGGER.info("BankAccount update test passed");
         
-        print("Running BankAccount delete test");
+        LOGGER.info("Running BankAccount delete test");
         client.delete(TEST_BANK_ACCOUNT_CODE);
         bankAccount = client.read(TEST_BANK_ACCOUNT_CODE);
         verifyBankAccountDeleted(bankAccount);
-        print("BankAccount delete test passed");
+        LOGGER.info("BankAccount delete test passed");
         
     }
 
@@ -84,7 +84,4 @@ public class BankAccountTestRunner implements ITestRunner {
         return result;
     }
 
-    private void print(String msg) {
-        System.out.println(msg);
-    }
 }

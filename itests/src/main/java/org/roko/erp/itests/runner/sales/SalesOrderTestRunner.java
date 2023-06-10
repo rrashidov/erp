@@ -17,13 +17,13 @@ import org.roko.erp.itests.clients.PaymentMethodClient;
 import org.roko.erp.itests.clients.SalesOrderClient;
 import org.roko.erp.itests.clients.SalesOrderLineClient;
 import org.roko.erp.itests.clients.SetupClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SalesOrderTestRunner implements ITestRunner {
+public class SalesOrderTestRunner extends BaseTestRunner {
 
     private static final String SECOND_ITEM_CODE = "second-item-code";
     private static final String SECOND_ITEM_NAME = "second-item-name";
@@ -88,30 +88,30 @@ public class SalesOrderTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running SalesOrder create test");
+        LOGGER.info("Running SalesOrder create test");
         initPaymentMethods();
         initCustomers();
         initSalesOrderCodeSerie();
 
         SalesDocumentDTO salesOrder = generateSalesOrder();
         String salesOrderCode = client.create(salesOrder);
-        print("SalesOrder create test passed");
+        LOGGER.info("SalesOrder create test passed");
 
-        print("Running SalesOrder read test");
+        LOGGER.info("Running SalesOrder read test");
         salesOrder = client.read(salesOrderCode);
         verifySalesOrderRead(salesOrder);
-        print("SalesOrder read test passed");
+        LOGGER.info("SalesOrder read test passed");
 
-        print("Running SalesOrder update test");
+        LOGGER.info("Running SalesOrder update test");
         salesOrder = generateSalesOrderUpdate();
         client.update(salesOrderCode, salesOrder);
         salesOrder = client.read(salesOrderCode);
         verifySalesOrderUpdated(salesOrder);
-        print("SalesOrder update test passed");
+        LOGGER.info("SalesOrder update test passed");
 
         testSalesOrderLines(salesOrderCode);
 
-        print("Running SalesOrder delete test");
+        LOGGER.info("Running SalesOrder delete test");
         client.delete(salesOrderCode);
         salesOrder = client.read(salesOrderCode);
         verifySalesOrderDeleted(salesOrder);
@@ -121,11 +121,11 @@ public class SalesOrderTestRunner implements ITestRunner {
 
         paymentMethodClient.delete(TEST_PAYMENT_METHOD_CODE);
         paymentMethodClient.delete(SECOND_PAYMENT_METHOD_CODE);
-        print("SalesOrder delete test passed");
+        LOGGER.info("SalesOrder delete test passed");
     }
 
     private void testSalesOrderLines(String id) throws ITestFailedException {
-        print("Running SalesOrderLine create test");
+        LOGGER.info("Running SalesOrderLine create test");
         ItemDTO item = createItem();
         itemClient.create(item);
         item = generateSecondItem();
@@ -133,28 +133,28 @@ public class SalesOrderTestRunner implements ITestRunner {
 
         SalesDocumentLineDTO salesOrderLine = generateSalesOrderLine(id);
         int lineNo = linesClient.create(id, salesOrderLine);
-        print("SalesOrderLine create test passed");
+        LOGGER.info("SalesOrderLine create test passed");
 
-        print("Running SalesOrderLine read test");
+        LOGGER.info("Running SalesOrderLine read test");
         salesOrderLine = linesClient.read(id, lineNo);
         verifySalesOrderLineRead(salesOrderLine);
-        print("SalesOrderLine read test passed");
+        LOGGER.info("SalesOrderLine read test passed");
         
-        print("Running SalesOrderLine update test");
+        LOGGER.info("Running SalesOrderLine update test");
         salesOrderLine = generateSalesOrderLineUpdate();
         linesClient.update(id, lineNo, salesOrderLine);
         salesOrderLine = linesClient.read(id, lineNo);
         verifySalesOrderLineUpdated(salesOrderLine);
-        print("SalesOrderLine update test passed");
+        LOGGER.info("SalesOrderLine update test passed");
         
-        print("Running SalesOrderLine delete test");
+        LOGGER.info("Running SalesOrderLine delete test");
         linesClient.delete(id, lineNo);
         salesOrderLine = linesClient.read(id, lineNo);
         verifySalesOrderLineDeleted(salesOrderLine);
 
         itemClient.delete(TEST_ITEM_CODE);
         itemClient.delete(SECOND_ITEM_CODE);
-        print("SalesOrderLine delete test passed");
+        LOGGER.info("SalesOrderLine delete test passed");
     }
 
     private void verifySalesOrderLineDeleted(SalesDocumentLineDTO salesOrderLine) throws ITestFailedException {
@@ -388,10 +388,6 @@ public class SalesOrderTestRunner implements ITestRunner {
         result.setCode(TEST_PAYMENT_METHOD_CODE);
         result.setName(TEST_PAYMENT_METHOD_NAME);
         return result;
-    }
-
-    private void print(String msg) {
-        System.out.println(msg);
     }
 
 }

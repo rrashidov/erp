@@ -4,13 +4,13 @@ import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.itests.clients.PaymentMethodClient;
 import org.roko.erp.itests.clients.VendorClient;
+import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class VendorTestRunner implements ITestRunner {
+public class VendorTestRunner extends BaseTestRunner {
 
     private static final String SECOND_PAYMENT_METHOD_CODE = "second-payment-method-code";
     private static final String SECOND_PAYMENT_METHOD_NAME = "second-payment-method-name";
@@ -37,20 +37,20 @@ public class VendorTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        print("Running Vendor create test");
+        LOGGER.info("Running Vendor create test");
         PaymentMethodDTO paymentMethod = generatePaymentMethod();
         paymentMethodClient.create(paymentMethod);
 
         VendorDTO vendor = generateVendor();
         client.create(vendor);
-        print("Vendor create test pased");
+        LOGGER.info("Vendor create test pased");
 
-        print("Running Vendor read test");
+        LOGGER.info("Running Vendor read test");
         vendor = client.read(TEST_VENDOR_CODE);
         verifyVendorRead(vendor);
-        print("Vendor read test pased");
+        LOGGER.info("Vendor read test pased");
 
-        print("Running Vendor update test");
+        LOGGER.info("Running Vendor update test");
         paymentMethod = generateSecondPaymentMethod();
         paymentMethodClient.create(paymentMethod);
 
@@ -58,16 +58,16 @@ public class VendorTestRunner implements ITestRunner {
         client.update(TEST_VENDOR_CODE, vendor);
         vendor = client.read(TEST_VENDOR_CODE);
         verifyVendorUpdated(vendor);
-        print("Vendor update test pased");
+        LOGGER.info("Vendor update test pased");
 
-        print("Running Vendor delete test");
+        LOGGER.info("Running Vendor delete test");
         client.delete(TEST_VENDOR_CODE);
         vendor = client.read(TEST_VENDOR_CODE);
         verifyVendorDeleted(vendor);
 
         paymentMethodClient.delete(TEST_PAYMENT_METHOD_CODE);
         paymentMethodClient.delete(SECOND_PAYMENT_METHOD_CODE);
-        print("Vendor delete test pased");
+        LOGGER.info("Vendor delete test pased");
     }
 
     private void verifyVendorDeleted(VendorDTO vendor) throws ITestFailedException {
@@ -156,7 +156,4 @@ public class VendorTestRunner implements ITestRunner {
         return result;
     }
 
-    private void print(String msg) {
-        System.out.println(msg);
-    }
 }
