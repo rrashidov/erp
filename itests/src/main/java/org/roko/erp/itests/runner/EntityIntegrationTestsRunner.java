@@ -19,7 +19,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IntegrationTestsRunner implements CommandLineRunner {
+public class EntityIntegrationTestsRunner implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests.runner");
 
