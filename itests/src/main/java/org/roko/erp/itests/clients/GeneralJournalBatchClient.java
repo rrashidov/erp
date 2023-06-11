@@ -36,4 +36,8 @@ public class GeneralJournalBatchClient {
     public void delete(String id) {
         rest.delete("/api/v1/generaljournalbatches/{code}", id);
     }
+
+    public void post(String id) {
+        rest.getForEntity("/api/v1/generaljournalbatches/{code}/operations/post", String.class, id);
+    }
 }
