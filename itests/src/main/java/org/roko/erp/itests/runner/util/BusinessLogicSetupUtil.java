@@ -40,7 +40,9 @@ public class BusinessLogicSetupUtil {
     public static final String TEST_PAYMENT_METHOD_CODE = "PM01";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
 
-    public static final String DELAYED_PAYMENT_METHOD_CODE = "PM02";
+    public static final String NO_BALANCE_PAYMENT_METHOD_CODE = "PM02";
+
+    public static final String DELAYED_PAYMENT_METHOD_CODE = "PM03";
 
     private static final String TEST_GENERAP_JOURNAL_BATCH_CODE = "GEN001";
     private static final String TEST_GENERAL_JOURNAL_BATCH_NAME = "test-general-journal-batch-name";
@@ -147,6 +149,15 @@ public class BusinessLogicSetupUtil {
             paymentMethod.setCode(TEST_PAYMENT_METHOD_CODE);
             paymentMethod.setName(TEST_PAYMENT_METHOD_NAME);
             paymentMethod.setBankAccountCode(TEST_BANK_ACCOUNT_CODE);
+            paymentMethodClient.create(paymentMethod);
+        }
+
+        paymentMethod = paymentMethodClient.read(NO_BALANCE_PAYMENT_METHOD_CODE);
+        if (paymentMethod == null) {
+            paymentMethod = new PaymentMethodDTO();
+            paymentMethod.setCode(NO_BALANCE_PAYMENT_METHOD_CODE);
+            paymentMethod.setName(TEST_PAYMENT_METHOD_NAME);
+            paymentMethod.setBankAccountCode(NO_BALANCE_BANK_ACCOUNT_CODE);
             paymentMethodClient.create(paymentMethod);
         }
 
