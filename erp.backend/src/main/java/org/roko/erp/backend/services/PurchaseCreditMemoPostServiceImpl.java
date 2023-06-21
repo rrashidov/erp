@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.roko.erp.backend.services.exc.PostFailedException;
+import org.roko.erp.backend.services.util.TimeService;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.model.Item;
@@ -34,6 +35,7 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
     private ItemService itemSvc;
+    private TimeService timeSvc;
 
     public PurchaseCreditMemoPostServiceImpl(PurchaseCreditMemoService purchaseCreditMemoSvc,
             PurchaseCreditMemoLineService purchaseCreditMemoLineSvc,
@@ -41,7 +43,8 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
             PostedPurchaseCreditMemoLineService postedPurchaseCreditMemoLineSvc,
             ItemLedgerEntryService itemLedgerEntrySvc, ItemService itemSvc,
             VendorLedgerEntryService vendorLedgerEntrySvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
+            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc,
+            TimeService timeSvc) {
         this.purchaseCreditMemoSvc = purchaseCreditMemoSvc;
         this.purchaseCreditMemoLineSvc = purchaseCreditMemoLineSvc;
         this.postedPurchaseCreditMemoSvc = postedPurchaseCreditMemoSvc;
@@ -51,11 +54,14 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
         this.vendorLedgerEntrySvc = vendorLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
+        this.timeSvc = timeSvc;
     }
 
     @Override
     @Transactional(rollbackFor = PostFailedException.class)
     public void post(String code) throws PostFailedException {
+        timeSvc.sleep();
+        
         PurchaseCreditMemo purchaseCreditMemo = purchaseCreditMemoSvc.get(code);
         List<PurchaseCreditMemoLine> purchaseCreditMemoLines = purchaseCreditMemoLineSvc.list(purchaseCreditMemo);
 

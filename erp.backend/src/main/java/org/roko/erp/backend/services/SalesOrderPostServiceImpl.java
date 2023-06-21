@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.roko.erp.backend.services.exc.PostFailedException;
+import org.roko.erp.backend.services.util.TimeService;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.model.BankAccountLedgerEntryType;
 import org.roko.erp.backend.model.CustomerLedgerEntry;
@@ -36,12 +37,14 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
     private ItemService itemSvc;
+    private TimeService timeSvc;
 
     @Autowired
     public SalesOrderPostServiceImpl(SalesOrderService salesOrderSvc, SalesOrderLineService salesOrderLineSvc,
             PostedSalesOrderService postedSalesOrderSvc, PostedSalesOrderLineService postedSalesOrderLineSvc,
             ItemService itemSvc, ItemLedgerEntryService itemLedgerEntrySvc, CustomerLedgerEntryService customerLedgerEntrySvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, SalesCodeSeriesService salesCodeSeriesSvc) {
+            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, SalesCodeSeriesService salesCodeSeriesSvc,
+            TimeService timeSvc) {
         this.salesOrderSvc = salesOrderSvc;
         this.salesOrderLineSvc = salesOrderLineSvc;
         this.postedSalesOrderSvc = postedSalesOrderSvc;
@@ -51,11 +54,14 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
         this.customerLedgerEntrySvc = customerLedgerEntrySvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
+        this.timeSvc = timeSvc;
     }
 
     @Override
     @Transactional(rollbackOn = PostFailedException.class)
     public void post(String code) throws PostFailedException {
+        timeSvc.sleep();
+        
         SalesOrder salesOrder = salesOrderSvc.get(code);
 
         PostedSalesOrder postedSalesOrder = createPostedSalesOrder(salesOrder);

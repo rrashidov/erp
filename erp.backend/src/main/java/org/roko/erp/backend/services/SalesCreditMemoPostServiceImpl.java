@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.roko.erp.backend.services.exc.PostFailedException;
+import org.roko.erp.backend.services.util.TimeService;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.model.BankAccountLedgerEntryType;
@@ -36,6 +37,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private SalesCodeSeriesService salesCodeSeriesSvc;
     private BankAccountService bankAccountSvc;
+    private TimeService timeSvc;
 
     @Autowired
     public SalesCreditMemoPostServiceImpl(SalesCreditMemoService salesCreditMemoSvc,
@@ -43,7 +45,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
             PostedSalesCreditMemoLineService postedSalesCreditMemoLineSvc, ItemLedgerEntryService itemLedgerEntrySvc,
             CustomerLedgerEntryService customerLedgerEntrySvc,
             BankAccountLedgerEntryService bankAccountLedgerEntrySvc, BankAccountService bankAccountSvc,
-            SalesCodeSeriesService salesCodeSeriesSvc) {
+            SalesCodeSeriesService salesCodeSeriesSvc, TimeService timeSvc) {
         this.salesCreditMemoSvc = salesCreditMemoSvc;
         this.salesCreditMemoLineSvc = salesCreditMemoLineSvc;
         this.postedSalesCreditMemoSvc = postedSalesCreditMemoSvc;
@@ -53,11 +55,14 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
         this.bankAccountSvc = bankAccountSvc;
         this.salesCodeSeriesSvc = salesCodeSeriesSvc;
+        this.timeSvc = timeSvc;
     }
 
     @Override
     @Transactional(rollbackFor = PostFailedException.class)
     public void post(String code) throws PostFailedException {
+        timeSvc.sleep();
+        
         SalesCreditMemo salesCreditMemo = salesCreditMemoSvc.get(code);
 
         PostedSalesCreditMemo postedSalesCreditMemo = createPostedSalesCreditMemo(salesCreditMemo);

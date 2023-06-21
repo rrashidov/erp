@@ -35,6 +35,7 @@ import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.PostedSalesOrderLineId;
 import org.roko.erp.backend.model.jpa.SalesOrderLineId;
 import org.roko.erp.backend.services.exc.PostFailedException;
+import org.roko.erp.backend.services.util.TimeService;
 
 public class SalesOrderPostServiceTest {
 
@@ -114,6 +115,9 @@ public class SalesOrderPostServiceTest {
     @Mock
     private SalesCodeSeriesService salesCodeSeriesSvcMock;
 
+    @Mock
+    private TimeService timeSvcMock;
+
     private SalesOrderPostService svc;
 
     @BeforeEach
@@ -151,12 +155,14 @@ public class SalesOrderPostServiceTest {
 
         svc = new SalesOrderPostServiceImpl(salesOrderSvcMock, salesOrderLineSvcMock, postedSalesOrderSvcMock,
                 postedSalesOrderLineSvcMock, itemSvcMock, itemLedgerEntrySvcMock, customerLedgerEntrySvcMock,
-                bankAccountLedgerEntrySvcMock, salesCodeSeriesSvcMock);
+                bankAccountLedgerEntrySvcMock, salesCodeSeriesSvcMock, timeSvcMock);
     }
 
     @Test
     public void allRelatedInteractionsAreDone() throws PostFailedException {
         svc.post(TEST_CODE);
+
+        verify(timeSvcMock).sleep();
 
         PostedSalesOrder postedSalesOrder = verifyPostedSalesOrderCreated();
 

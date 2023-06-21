@@ -34,6 +34,7 @@ import org.roko.erp.backend.model.VendorLedgerEntry;
 import org.roko.erp.backend.model.VendorLedgerEntryType;
 import org.roko.erp.backend.model.jpa.PurchaseCreditMemoLineId;
 import org.roko.erp.backend.services.exc.PostFailedException;
+import org.roko.erp.backend.services.util.TimeService;
 
 public class PurchaseCreditMemoPostServiceTest {
 
@@ -114,6 +115,9 @@ public class PurchaseCreditMemoPostServiceTest {
     @Mock
     private PurchaseCodeSeriesService purchaseCodeSeriesSvcMock;
 
+    @Mock
+    private TimeService timeSvcMock;
+
     private PurchaseCreditMemoPostService svc;
 
     @BeforeEach
@@ -151,12 +155,14 @@ public class PurchaseCreditMemoPostServiceTest {
         svc = new PurchaseCreditMemoPostServiceImpl(purchaseCreditMemoSvcMock, purchaseCreditMemoLineSvcMock,
                 postedPurchaseCreditMemoSvcMock, postedPurchaseCreditMemoLineSvcMock, itemLedgerEntrySvcMock,
                 itemSvcMock, vendorLedgerEntrySvcMock, bankAccountLedgerEntrySvcMock, 
-                purchaseCodeSeriesSvcMock);
+                purchaseCodeSeriesSvcMock, timeSvcMock);
     }
 
     @Test
     public void allRelatedInteractionsAreDone() throws PostFailedException {
         svc.post(TEST_CODE);
+
+        verify(timeSvcMock).sleep();
 
         PostedPurchaseCreditMemo postedPurchaseCreditMemo = verifyPostedPurchaseCreditMemoCreated();
 

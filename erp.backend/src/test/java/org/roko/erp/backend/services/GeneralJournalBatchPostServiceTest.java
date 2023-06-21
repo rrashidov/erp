@@ -32,6 +32,7 @@ import org.roko.erp.backend.model.VendorLedgerEntry;
 import org.roko.erp.backend.model.VendorLedgerEntryType;
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 import org.roko.erp.backend.services.exc.PostFailedException;
+import org.roko.erp.backend.services.util.TimeService;
 
 public class GeneralJournalBatchPostServiceTest {
 
@@ -96,6 +97,9 @@ public class GeneralJournalBatchPostServiceTest {
     @Mock
     private BankAccount bankAccountMock;
 
+    @Mock
+    private TimeService timeSvcMock;
+
     private GeneralJournalBatchPostService svc;
 
     @BeforeEach
@@ -124,7 +128,7 @@ public class GeneralJournalBatchPostServiceTest {
 
         svc = new GeneralJournalBatchPostServiceImpl(generalJournalBatchSvcMock, generalJournalBatchLineSvcMock,
                 customerLedgerEntrySvcMock, customerSvcMock, vendorLedgerEntrySvcMock, vendorSvcMock,
-                bankAccountLedgerEntrySvcMock, bankAccountSvcMock);
+                bankAccountLedgerEntrySvcMock, bankAccountSvcMock, timeSvcMock);
     }
 
     @Test
@@ -134,6 +138,8 @@ public class GeneralJournalBatchPostServiceTest {
         when(generalJournalBatchLineMock.getOperationType()).thenReturn(GeneralJournalBatchLineOperationType.ORDER);
 
         svc.post(TEST_CODE);
+
+        verify(timeSvcMock).sleep();
 
         verify(customerLedgerEntrySvcMock).create(customerLedgerEntryArgumentCaptor.capture());
 

@@ -14,6 +14,7 @@ import org.roko.erp.backend.model.GeneralJournalBatchLineType;
 import org.roko.erp.backend.model.VendorLedgerEntry;
 import org.roko.erp.backend.model.VendorLedgerEntryType;
 import org.roko.erp.backend.services.exc.PostFailedException;
+import org.roko.erp.backend.services.util.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,13 +30,15 @@ public class GeneralJournalBatchPostServiceImpl implements GeneralJournalBatchPo
     private VendorService vendorSvc;
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private BankAccountService bankAccountSvc;
+    private TimeService timeSvc;
 
     @Autowired
     public GeneralJournalBatchPostServiceImpl(GeneralJournalBatchService generalJournalBatchSvc,
             GeneralJournalBatchLineService generalJournalBatchLineSvc,
             CustomerLedgerEntryService customerLedgerEntrySvc, CustomerService customerSvc,
             VendorLedgerEntryService vendorLedgerEntrySvc, VendorService vendorSvc,
-            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, BankAccountService bankAccountSvc) {
+            BankAccountLedgerEntryService bankAccountLedgerEntrySvc, BankAccountService bankAccountSvc,
+            TimeService timeSvc) {
         this.generalJournalBatchSvc = generalJournalBatchSvc;
         this.generalJournalBatchLineSvc = generalJournalBatchLineSvc;
         this.customerLedgerEntrySvc = customerLedgerEntrySvc;
@@ -44,11 +47,14 @@ public class GeneralJournalBatchPostServiceImpl implements GeneralJournalBatchPo
         this.vendorSvc = vendorSvc;
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
         this.bankAccountSvc = bankAccountSvc;
+        this.timeSvc = timeSvc;
     }
 
     @Override
     @Transactional(rollbackFor = PostFailedException.class)
     public void post(String code) throws PostFailedException {
+        timeSvc.sleep();
+
         GeneralJournalBatch generalJournalBatch = generalJournalBatchSvc.get(code);
 
         List<GeneralJournalBatchLine> generalJournalBatchLines = generalJournalBatchLineSvc.list(generalJournalBatch);

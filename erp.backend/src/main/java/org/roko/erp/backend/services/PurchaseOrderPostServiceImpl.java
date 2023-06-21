@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.roko.erp.backend.services.exc.PostFailedException;
+import org.roko.erp.backend.services.util.TimeService;
 import org.roko.erp.backend.model.BankAccount;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
 import org.roko.erp.backend.model.BankAccountLedgerEntryType;
@@ -35,13 +36,15 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
     private BankAccountLedgerEntryService bankAccountLedgerEntrySvc;
     private PurchaseCodeSeriesService purchaseCodeSeriesSvc;
     private BankAccountService bankAccountSvc;
+    private TimeService timeSvc;
 
     @Autowired
     public PurchaseOrderPostServiceImpl(PurchaseOrderService purchaseOrderSvc,
             PurchaseOrderLineService purchaseOrderLineSvc, PostedPurchaseOrderService postedPurchaseOrderSvc,
             PostedPurchaseOrderLineService postedPurchaseOrderLineSvc, ItemLedgerEntryService itemLedgerEntrySvc,
             VendorLedgerEntryService vendorLedgerEntrySvc, BankAccountLedgerEntryService bankAccountLedgerEntrySvc,
-            BankAccountService bankAccountSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc) {
+            BankAccountService bankAccountSvc, PurchaseCodeSeriesService purchaseCodeSeriesSvc,
+            TimeService timeSvc) {
         this.purchaseOrderSvc = purchaseOrderSvc;
         this.purchaseOrderLineSvc = purchaseOrderLineSvc;
         this.postedPurchaseOrderSvc = postedPurchaseOrderSvc;
@@ -51,11 +54,14 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
         this.bankAccountLedgerEntrySvc = bankAccountLedgerEntrySvc;
         this.bankAccountSvc = bankAccountSvc;
         this.purchaseCodeSeriesSvc = purchaseCodeSeriesSvc;
+        this.timeSvc = timeSvc;
     }
 
     @Override
     @Transactional(rollbackOn = PostFailedException.class)
     public void post(String code) throws PostFailedException {
+        timeSvc.sleep();
+        
         PurchaseOrder purchaseOrder = purchaseOrderSvc.get(code);
         List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineSvc.list(purchaseOrder);
 
