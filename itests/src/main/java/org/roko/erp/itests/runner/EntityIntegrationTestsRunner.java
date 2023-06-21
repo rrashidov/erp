@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EntityIntegrationTestsRunner implements CommandLineRunner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests.runner");
+    private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
     @Autowired
     private BankAccountTestRunner bankAccountTestRunner;
