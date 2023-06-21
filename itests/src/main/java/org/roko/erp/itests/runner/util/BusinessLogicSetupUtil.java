@@ -220,7 +220,7 @@ public class BusinessLogicSetupUtil {
     private void waitGeneralJournalBatchPosted() {
         GeneralJournalBatchDTO generalJournalBatch = generalJournalBatchClient.read(TEST_GENERAP_JOURNAL_BATCH_CODE);
 
-        while (generalJournalBatch.getPostStatus() != "READY") {
+        while (!generalJournalBatch.getPostStatus().equals("READY")) {
             waitASecond();
             generalJournalBatch = generalJournalBatchClient.read(TEST_GENERAP_JOURNAL_BATCH_CODE);
         }

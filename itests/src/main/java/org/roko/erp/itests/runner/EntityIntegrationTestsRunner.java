@@ -16,9 +16,11 @@ import org.roko.erp.itests.runner.sales.CustomerTestRunner;
 import org.roko.erp.itests.runner.sales.SalesCreditMemoTestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(1)
 public class EntityIntegrationTestsRunner implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
