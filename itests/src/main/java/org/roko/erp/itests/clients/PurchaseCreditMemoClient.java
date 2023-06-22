@@ -40,4 +40,8 @@ public class PurchaseCreditMemoClient {
             return false;
         }
     }
+
+    public void post(String id){
+        rest.getForEntity("/api/v1/purchasecreditmemos/{code}/operations/post", String.class, id);
+    }
 }
