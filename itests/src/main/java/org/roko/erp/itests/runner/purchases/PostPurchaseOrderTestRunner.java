@@ -29,7 +29,7 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
-    private static final int TEST_QUANTITY = 120;
+    public static final int TEST_QUANTITY = 120;
     private static final int TEST_PRICE = 1;
     private static final int TEST_AMOUNT = 120;
 
@@ -86,13 +86,15 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
         verifyBankAccountBalance();
 
         verifyItemInventory();
+
+        LOGGER.info(String.format("Purchase Order post test passed", code, null));
     }
 
     private void verifyItemInventory() throws ITestFailedException {
         ItemDTO item = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         if (item.getInventory() != TEST_QUANTITY) {
-            throw new ITestFailedException(String.format("Item %s inventory issue: expected %d, got %d",
+            throw new ITestFailedException(String.format("Item %s inventory issue: expected %f, got %f",
                     BusinessLogicSetupUtil.TEST_ITEM_CODE, TEST_QUANTITY, item.getInventory()));
         }
 
@@ -105,7 +107,7 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
         double expectedBankAccountBalance = BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE - TEST_AMOUNT;
 
         if (bankAccount.getBalance() != expectedBankAccountBalance) {
-            throw new ITestFailedException(String.format("Bank Account %s balance issue: expected %d, got %d",
+            throw new ITestFailedException(String.format("Bank Account %s balance issue: expected %f, got %f",
                     BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE, expectedBankAccountBalance,
                     bankAccount.getBalance()));
         }
@@ -117,7 +119,7 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
         VendorDTO vendor = vendorClient.read(BusinessLogicSetupUtil.TEST_VENDOR_CODE);
 
         if (vendor.getBalance() != 0) {
-            throw new ITestFailedException(String.format("Vendor %s balance issue: expected %d, got %d",
+            throw new ITestFailedException(String.format("Vendor %s balance issue: expected %f, got %f",
                     BusinessLogicSetupUtil.TEST_VENDOR_CODE, 0, vendor.getBalance()));
         }
 
@@ -173,7 +175,7 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
     private void waitForPurchaseOrderToBePosted(String code) {
         while (purchaseOrderClient.read(code) != null) {
             try {
-                Thread.sleep(10_000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
         }
