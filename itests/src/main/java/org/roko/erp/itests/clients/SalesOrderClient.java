@@ -40,4 +40,8 @@ public class SalesOrderClient {
             return false;
         }
     }
+
+    public void post(String id) {
+        rest.getForEntity("/api/v1/salesorders/{code}/operations/post", String.class, id);
+    }
 }
