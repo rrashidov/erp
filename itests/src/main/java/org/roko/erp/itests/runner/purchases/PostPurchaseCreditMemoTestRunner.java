@@ -29,7 +29,7 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
-    private static final int TEST_QUANTITY = 20;
+    public static final int TEST_QUANTITY = 20;
     private static final int TEST_PRICE = 1;
     private static final int TEST_AMOUNT = 20;
 

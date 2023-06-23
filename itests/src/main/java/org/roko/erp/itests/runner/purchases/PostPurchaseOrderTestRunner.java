@@ -87,7 +87,7 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
 
         verifyItemInventory();
 
-        LOGGER.info(String.format("Purchase Order post test passed", code, null));
+        LOGGER.info("Purchase Order post test passed");
     }
 
     private void verifyItemInventory() throws ITestFailedException {
