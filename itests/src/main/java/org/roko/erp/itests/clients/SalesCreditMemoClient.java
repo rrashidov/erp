@@ -40,4 +40,8 @@ public class SalesCreditMemoClient {
             return false;
         }
     }
+
+    public void post(String id) {
+        rest.getForEntity("/api/v1/salescreditmemos/{code}/operations/post", String.class, id);
+    }
 }
