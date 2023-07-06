@@ -29,7 +29,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostSalesOrderTestRunner implements ITestRunner {
 
-    private static final int TEST_QUANTITY = 50;
+    public static final int TEST_QUANTITY = 50;
+    
     private static final int TEST_PRICE = 1;
     private static final int TEST_AMOUNT = 50;
 
