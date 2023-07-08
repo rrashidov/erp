@@ -56,14 +56,43 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        util.ensureSetup();
-        util.ensureBankAccounts();
-        util.ensurePaymentMethods();
-        util.ensureVendor();
-        util.ensureItems();
+        ensureNeededObjects();
 
+        happyPathTest();
+
+        delayedPaymentMethodTest();
+    }
+
+    private void delayedPaymentMethodTest() throws ITestFailedException {
+        String code = createPurchaseOrderWithDelayedPaymentMethod();
+        createPurchaseOrderLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
+
+        LOGGER.info(String.format("Purchase Order %s created", code));
+
+        triggerPurchaseOrderPost(code);
+
+        LOGGER.info(String.format("Purchase Order %s triggered for posting", code));
+
+        waitForPurchaseOrderToBePosted(code);
+
+        LOGGER.info(String.format("Purchase Order %s posted", code));
+
+        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2, TEST_AMOUNT);
+
+        LOGGER.info("Purchase Order post with delayed payment method test passed");
+    }
+
+    private String createPurchaseOrderWithDelayedPaymentMethod() {
+        PurchaseDocumentDTO purchaseOrder = new PurchaseDocumentDTO();
+        purchaseOrder.setVendorCode(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2);
+        purchaseOrder.setPaymentMethodCode(BusinessLogicSetupUtil.DELAYED_PAYMENT_METHOD_CODE);
+        purchaseOrder.setDate(new Date());
+        return purchaseOrderClient.create(purchaseOrder);
+    }
+
+    private void happyPathTest() throws ITestFailedException {
         String code = createPurchaseOrder();
-        createPurchaseOrderLine(code);
+        createPurchaseOrderLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         LOGGER.info(String.format("Purchase Order %s created", code));
 
@@ -81,13 +110,21 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
 
         verifyPostedPurchaseOrder();
 
-        verifyVendorBalance();
+        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE, 0);
 
         verifyBankAccountBalance();
 
         verifyItemInventory();
 
-        LOGGER.info("Purchase Order post test passed");
+        LOGGER.info("Purchase Order post happy path test passed");
+    }
+
+    private void ensureNeededObjects() throws ITestFailedException {
+        util.ensureSetup();
+        util.ensureBankAccounts();
+        util.ensurePaymentMethods();
+        util.ensureVendor();
+        util.ensureItems();
     }
 
     private void verifyItemInventory() throws ITestFailedException {
@@ -115,15 +152,15 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
         LOGGER.info(String.format("Bank Account %s verified", BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE));
     }
 
-    private void verifyVendorBalance() throws ITestFailedException {
-        VendorDTO vendor = vendorClient.read(BusinessLogicSetupUtil.TEST_VENDOR_CODE);
+    private void verifyVendorBalance(String vendorCode, double expectedBalance) throws ITestFailedException {
+        VendorDTO vendor = vendorClient.read(vendorCode);
 
-        if (vendor.getBalance() != 0) {
+        if (vendor.getBalance() != expectedBalance) {
             throw new ITestFailedException(String.format("Vendor %s balance issue: expected %f, got %f",
-                    BusinessLogicSetupUtil.TEST_VENDOR_CODE, 0, vendor.getBalance()));
+                    vendorCode, expectedBalance, vendor.getBalance()));
         }
 
-        LOGGER.info(String.format("Vendor %s verified", BusinessLogicSetupUtil.TEST_VENDOR_CODE));
+        LOGGER.info(String.format("Vendor %s verified", vendorCode));
     }
 
     private void verifyPostedPurchaseOrder() throws ITestFailedException {
@@ -191,9 +228,9 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
         purchaseOrderClient.post(code);
     }
 
-    private void createPurchaseOrderLine(String code) {
+    private void createPurchaseOrderLine(String code, String itemCode) {
         PurchaseDocumentLineDTO purchaseOrderLine = new PurchaseDocumentLineDTO();
-        purchaseOrderLine.setItemCode(BusinessLogicSetupUtil.TEST_ITEM_CODE);
+        purchaseOrderLine.setItemCode(itemCode);
         purchaseOrderLine.setQuantity(TEST_QUANTITY);
         purchaseOrderLine.setPrice(TEST_PRICE);
         purchaseOrderLine.setAmount(TEST_AMOUNT);

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 public class BusinessLogicSetupUtil {
 
     public static final String TEST_VENDOR_CODE = "VEND01";
+    public static final String TEST_VENDOR_CODE_2 = "VEND02";
     private static final String TEST_VENDOR_NAME = "test-vendor-name";
     private static final String TEST_VENDOR_ADDRESS = "test-vendor-address";
 
@@ -54,10 +55,11 @@ public class BusinessLogicSetupUtil {
     public static final String NO_BALANCE_BANK_ACCOUNT_CODE = "BA002";
 
     public static final String TEST_ITEM_CODE = "ITEM001";
+    public static final String TEST_ITEM_CODE_2 = "ITEM002";
     private static final String TEST_ITEM_NAME = "test-item-name";
     private static final double TEST_ITEM_PRICE = 1.0;
 
-    public static final String NO_INVENTORY_ITEM_CODE = "ITEM002";
+    public static final String NO_INVENTORY_ITEM_CODE = "ITEM003";
 
     private static final String SO_CS_CODE = "CS01";
     private static final String SO_CS_NAME = "Sales Orders";
@@ -123,6 +125,16 @@ public class BusinessLogicSetupUtil {
         if (vendor == null) {
             vendor = new VendorDTO();
             vendor.setCode(TEST_VENDOR_CODE);
+            vendor.setName(TEST_VENDOR_NAME);
+            vendor.setAddress(TEST_VENDOR_ADDRESS);
+            vendor.setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
+            vendorClient.create(vendor);
+        }
+
+        vendor = vendorClient.read(TEST_VENDOR_CODE_2);
+        if (vendor == null) {
+            vendor = new VendorDTO();
+            vendor.setCode(TEST_VENDOR_CODE_2);
             vendor.setName(TEST_VENDOR_NAME);
             vendor.setAddress(TEST_VENDOR_ADDRESS);
             vendor.setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
@@ -231,6 +243,16 @@ public class BusinessLogicSetupUtil {
         if (item == null) {
             item = new ItemDTO();
             item.setCode(TEST_ITEM_CODE);
+            item.setName(TEST_ITEM_NAME);
+            item.setPurchasePrice(TEST_ITEM_PRICE);
+            item.setSalesPrice(TEST_ITEM_PRICE);
+            itemClient.create(item);
+        }
+
+        item = itemClient.read(TEST_ITEM_CODE_2);
+        if (item == null) {
+            item = new ItemDTO();
+            item.setCode(TEST_ITEM_CODE_2);
             item.setName(TEST_ITEM_NAME);
             item.setPurchasePrice(TEST_ITEM_PRICE);
             item.setSalesPrice(TEST_ITEM_PRICE);
