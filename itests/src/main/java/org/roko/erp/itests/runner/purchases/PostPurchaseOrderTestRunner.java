@@ -33,6 +33,8 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
     private static final int TEST_PRICE = 1;
     private static final int TEST_AMOUNT = 120;
 
+    private static final long POST_WAIT_TIMEOUT = 10 * 60 * 1000;
+
     @Autowired
     private BusinessLogicSetupUtil util;
 
@@ -61,6 +63,53 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
         happyPathTest();
 
         delayedPaymentMethodTest();
+
+        noBalanceBankAccountTest();
+    }
+
+    private void noBalanceBankAccountTest() throws ITestFailedException {
+        String code = createPurchaseOrderWithNoBalanceBankAccountPaymentMethod();
+        createPurchaseOrderLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
+
+        LOGGER.info(String.format("Purchase Order %s created", code));
+
+        triggerPurchaseOrderPost(code);
+
+        LOGGER.info(String.format("Purchase Order %s triggered for posting", code));
+
+        verifyPurchaseOrderPostingFailed(code);
+
+        LOGGER.info("Purchase Order post no balance bank account test passed");
+    }
+
+    private void verifyPurchaseOrderPostingFailed(String code) throws ITestFailedException {
+        String purchaseOrderPostStatus = "";
+        boolean timeoutReached = false;
+        long start = System.currentTimeMillis();
+
+        while ((!purchaseOrderPostStatus.equals("FAILED")) && !timeoutReached) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+
+            purchaseOrderPostStatus = purchaseOrderClient.read(code).getPostStatus();
+
+            timeoutReached = (System.currentTimeMillis() - start) > POST_WAIT_TIMEOUT;
+        }
+
+        if (timeoutReached) {
+            throw new ITestFailedException(String.format("Purchase Order %s post status failed: expected %s, got %s",
+                    code, "FAILED", purchaseOrderPostStatus));
+        }
+    }
+
+    private String createPurchaseOrderWithNoBalanceBankAccountPaymentMethod() {
+        PurchaseDocumentDTO purchaseOrder = new PurchaseDocumentDTO();
+        purchaseOrder.setVendorCode(BusinessLogicSetupUtil.TEST_VENDOR_CODE);
+        purchaseOrder.setPaymentMethodCode(BusinessLogicSetupUtil.NO_BALANCE_PAYMENT_METHOD_CODE);
+        purchaseOrder.setDate(new Date());
+        return purchaseOrderClient.create(purchaseOrder);
     }
 
     private void delayedPaymentMethodTest() throws ITestFailedException {
