@@ -56,12 +56,12 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        util.ensureSetup();
-        util.ensureBankAccounts();
-        util.ensurePaymentMethods();
-        util.ensureVendor();
-        util.ensureItems();
+        ensureNeededObjects();
 
+        happyPathTest();
+    }
+
+    private void happyPathTest() throws ITestFailedException {
         String code = createPurchaseCreditMemo();
         createPurchaseCreditMemoLine(code);
 
@@ -88,6 +88,14 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         verifyItemInventory();
 
         LOGGER.info("Purchase Credit Memo post test passed");
+    }
+
+    private void ensureNeededObjects() throws ITestFailedException {
+        util.ensureSetup();
+        util.ensureBankAccounts();
+        util.ensurePaymentMethods();
+        util.ensureVendor();
+        util.ensureItems();
     }
 
     private void verifyItemInventory() throws ITestFailedException {
