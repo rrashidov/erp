@@ -6,9 +6,6 @@
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="balance" type="DOUBLE">
-                <constraints nullable="false"/>
-            </column>
             <column name="name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
@@ -45,9 +42,6 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="address" type="VARCHAR(255)"/>
-            <column name="balance" type="DOUBLE">
-                <constraints nullable="false"/>
-            </column>
             <column name="name" type="VARCHAR(255)"/>
             <column name="payment_method_code" type="VARCHAR(255)"/>
         </createTable>
@@ -103,9 +97,6 @@
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="inventory" type="DOUBLE">
-                <constraints nullable="false"/>
-            </column>
             <column name="name" type="VARCHAR(255)"/>
             <column name="purchase_price" type="DOUBLE">
                 <constraints nullable="false"/>
@@ -146,9 +137,6 @@
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
-                <constraints nullable="false"/>
-            </column>
             <column name="date" type="datetime"/>
             <column name="order_code" type="VARCHAR(255)"/>
             <column name="order_date" type="datetime"/>
@@ -182,9 +170,6 @@
         <createTable tableName="posted_purchase_order">
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="amount" type="DOUBLE">
-                <constraints nullable="false"/>
             </column>
             <column name="date" type="datetime"/>
             <column name="order_code" type="VARCHAR(255)"/>
@@ -220,9 +205,6 @@
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
-                <constraints nullable="false"/>
-            </column>
             <column name="date" type="datetime"/>
             <column name="order_code" type="VARCHAR(255)"/>
             <column name="order_date" type="datetime"/>
@@ -256,9 +238,6 @@
         <createTable tableName="posted_sales_order">
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="amount" type="DOUBLE">
-                <constraints nullable="false"/>
             </column>
             <column name="date" type="datetime"/>
             <column name="order_code" type="VARCHAR(255)"/>
@@ -294,9 +273,6 @@
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
-                <constraints nullable="false"/>
-            </column>
             <column name="date" type="datetime"/>
             <column name="payment_method_code" type="VARCHAR(255)"/>
             <column name="vendor_code" type="VARCHAR(255)"/>
@@ -328,9 +304,6 @@
         <createTable tableName="purchase_order">
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="amount" type="DOUBLE">
-                <constraints nullable="false"/>
             </column>
             <column name="date" type="datetime"/>
             <column name="payment_method_code" type="VARCHAR(255)"/>
@@ -364,9 +337,6 @@
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
-                <constraints nullable="false"/>
-            </column>
             <column name="date" type="datetime"/>
             <column name="customer_code" type="VARCHAR(255)"/>
             <column name="payment_method_code" type="VARCHAR(255)"/>
@@ -398,9 +368,6 @@
         <createTable tableName="sales_order">
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="amount" type="DOUBLE">
-                <constraints nullable="false"/>
             </column>
             <column name="date" type="datetime"/>
             <column name="customer_code" type="VARCHAR(255)"/>
@@ -451,9 +418,6 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="address" type="VARCHAR(255)"/>
-            <column name="balance" type="DOUBLE">
-                <constraints nullable="false"/>
-            </column>
             <column name="name" type="VARCHAR(255)"/>
             <column name="payment_method_code" type="VARCHAR(255)"/>
         </createTable>

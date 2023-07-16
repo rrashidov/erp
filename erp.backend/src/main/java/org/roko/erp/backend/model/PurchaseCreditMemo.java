@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class PurchaseCreditMemo {
@@ -24,6 +25,7 @@ public class PurchaseCreditMemo {
 
 	private String postStatusReason = "";
 
+	@Transient
 	private double amount;
 	
 	public String getCode() {

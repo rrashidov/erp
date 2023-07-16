@@ -2,6 +2,7 @@ package org.roko.erp.backend.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class BankAccount {
@@ -10,6 +11,7 @@ public class BankAccount {
 	private String code = "";
 	private String name = "";
 
+	@Transient
 	private double balance;
 	
 	public String getCode() {

@@ -3,6 +3,7 @@ package org.roko.erp.backend.model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class Vendor {
@@ -11,6 +12,8 @@ public class Vendor {
 	private String code;
 	private String name;
 	private String address;
+
+	@Transient
 	private double balance;
 
 	@ManyToOne

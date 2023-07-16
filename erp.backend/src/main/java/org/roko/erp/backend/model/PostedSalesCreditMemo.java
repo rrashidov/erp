@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class PostedSalesCreditMemo {
@@ -24,6 +25,7 @@ public class PostedSalesCreditMemo {
 
 	private Date orderDate;
 
+	@Transient
 	private double amount;
 	
 	public String getCode() {

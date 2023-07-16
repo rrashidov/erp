@@ -2,6 +2,7 @@ package org.roko.erp.backend.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class Item {
@@ -14,6 +15,7 @@ public class Item {
 	private double salesPrice = 0.00;
 	private double purchasePrice = 0.00;
 	
+	@Transient
 	private double inventory = 0.00;
 	
 	public String getCode() {
