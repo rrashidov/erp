@@ -32,7 +32,9 @@ public class BusinessLogicSetupUtil {
     public static final String TEST_VENDOR_CODE = "VEND01";
     public static final String TEST_VENDOR_CODE_2 = "VEND02";
     private static final String TEST_VENDOR_NAME = "test-vendor-name";
+    private static final String TEST_VENDOR_NAME_2 = "test-vendor-name-2";
     private static final String TEST_VENDOR_ADDRESS = "test-vendor-address";
+    private static final String TEST_VENDOR_ADDRESS_2 = "test-vendor-address-2";
 
     public static final String TEST_CUSTOMER_CODE = "CUST01";
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
@@ -42,8 +44,10 @@ public class BusinessLogicSetupUtil {
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
 
     public static final String NO_BALANCE_PAYMENT_METHOD_CODE = "PM02";
+    private static final String NO_BALANCE_PAYMENT_METHOD_NAME = "no-balance-payment-method-name";
 
     public static final String DELAYED_PAYMENT_METHOD_CODE = "PM03";
+    private static final String DELAYED_PAYMENT_METHOD_NAME = "delayed-payment-method-name";
 
     private static final String TEST_GENERAP_JOURNAL_BATCH_CODE = "GEN001";
     private static final String TEST_GENERAL_JOURNAL_BATCH_NAME = "test-general-journal-batch-name";
@@ -53,13 +57,16 @@ public class BusinessLogicSetupUtil {
     public static final double TEST_BANK_ACCOUNT_BALANCE = 1000.0;
 
     public static final String NO_BALANCE_BANK_ACCOUNT_CODE = "BA002";
+    private static final String NO_BALANCE_BANK_ACCOUNT_NAME = "no-balance-bank-account-name";
 
     public static final String TEST_ITEM_CODE = "ITEM001";
     public static final String TEST_ITEM_CODE_2 = "ITEM002";
     private static final String TEST_ITEM_NAME = "test-item-name";
+    private static final String TEST_ITEM_NAME_2 = "test-item-name-2";
     private static final double TEST_ITEM_PRICE = 1.0;
 
     public static final String NO_INVENTORY_ITEM_CODE = "ITEM003";
+    private static final String NO_INVENTORY_ITEM_NAME = "no-iventory-item-name";
 
     private static final String SO_CS_CODE = "CS01";
     private static final String SO_CS_NAME = "Sales Orders";
@@ -120,7 +127,7 @@ public class BusinessLogicSetupUtil {
     @Autowired
     private VendorClient vendorClient;
 
-    public void ensureVendor() {
+    public void ensureVendors() {
         VendorDTO vendor = vendorClient.read(TEST_VENDOR_CODE);
         if (vendor == null) {
             vendor = new VendorDTO();
@@ -135,8 +142,8 @@ public class BusinessLogicSetupUtil {
         if (vendor == null) {
             vendor = new VendorDTO();
             vendor.setCode(TEST_VENDOR_CODE_2);
-            vendor.setName(TEST_VENDOR_NAME);
-            vendor.setAddress(TEST_VENDOR_ADDRESS);
+            vendor.setName(TEST_VENDOR_NAME_2);
+            vendor.setAddress(TEST_VENDOR_ADDRESS_2);
             vendor.setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
             vendorClient.create(vendor);
         }
@@ -168,7 +175,7 @@ public class BusinessLogicSetupUtil {
         if (paymentMethod == null) {
             paymentMethod = new PaymentMethodDTO();
             paymentMethod.setCode(NO_BALANCE_PAYMENT_METHOD_CODE);
-            paymentMethod.setName(TEST_PAYMENT_METHOD_NAME);
+            paymentMethod.setName(NO_BALANCE_PAYMENT_METHOD_NAME);
             paymentMethod.setBankAccountCode(NO_BALANCE_BANK_ACCOUNT_CODE);
             paymentMethodClient.create(paymentMethod);
         }
@@ -177,7 +184,7 @@ public class BusinessLogicSetupUtil {
         if (paymentMethod == null) {
             paymentMethod = new PaymentMethodDTO();
             paymentMethod.setCode(DELAYED_PAYMENT_METHOD_CODE);
-            paymentMethod.setName(TEST_PAYMENT_METHOD_NAME);
+            paymentMethod.setName(DELAYED_PAYMENT_METHOD_NAME);
             paymentMethodClient.create(paymentMethod);
         }
     }
@@ -197,7 +204,7 @@ public class BusinessLogicSetupUtil {
         if (bankAccount == null) {
             bankAccount = new BankAccountDTO();
             bankAccount.setCode(NO_BALANCE_BANK_ACCOUNT_CODE);
-            bankAccount.setName(TEST_BANK_ACCOUNT_NAME);
+            bankAccount.setName(NO_BALANCE_BANK_ACCOUNT_NAME);
             bankAccountClient.create(bankAccount);
         }
     }
@@ -253,7 +260,7 @@ public class BusinessLogicSetupUtil {
         if (item == null) {
             item = new ItemDTO();
             item.setCode(TEST_ITEM_CODE_2);
-            item.setName(TEST_ITEM_NAME);
+            item.setName(TEST_ITEM_NAME_2);
             item.setPurchasePrice(TEST_ITEM_PRICE);
             item.setSalesPrice(TEST_ITEM_PRICE);
             itemClient.create(item);
@@ -263,7 +270,7 @@ public class BusinessLogicSetupUtil {
         if (item == null) {
             item = new ItemDTO();
             item.setCode(NO_INVENTORY_ITEM_CODE);
-            item.setName(TEST_ITEM_NAME);
+            item.setName(NO_INVENTORY_ITEM_NAME);
             item.setPurchasePrice(TEST_ITEM_PRICE);
             item.setSalesPrice(TEST_ITEM_PRICE);
             itemClient.create(item);

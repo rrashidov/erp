@@ -123,7 +123,7 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         util.ensureSetup();
         util.ensureBankAccounts();
         util.ensurePaymentMethods();
-        util.ensureVendor();
+        util.ensureVendors();
         util.ensureItems();
     }
 
