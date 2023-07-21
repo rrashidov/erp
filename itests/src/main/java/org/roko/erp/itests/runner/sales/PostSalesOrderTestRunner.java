@@ -32,7 +32,8 @@ public class PostSalesOrderTestRunner implements ITestRunner {
     public static final int TEST_QUANTITY = 50;
     
     private static final int TEST_PRICE = 1;
-    private static final int TEST_AMOUNT = 50;
+    
+    public static final int TEST_AMOUNT = 50;
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 

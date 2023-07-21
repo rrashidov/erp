@@ -35,6 +35,8 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
+    private static final long POST_WAIT_TIMEOUT = 10 * 60 * 1000;
+
     @Autowired
     private BusinessLogicSetupUtil util;
 
@@ -58,14 +60,85 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        util.ensureSetup();
-        util.ensureBankAccounts();
-        util.ensurePaymentMethods();
-        util.ensureItems();
-        util.ensureCustomer();
+        ensureNeededObjects();
 
+        happyPathTest();
+
+        delayedPaymentMethodTest();
+
+        noBalanceBankAccountTest();
+    }
+
+    private void noBalanceBankAccountTest() throws ITestFailedException {
+        String code = createSalesCreditMEmoWithNoBalanceBankAccountPaymentMethod();
+        createSalesCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
+
+        LOGGER.info(String.format("Sales Credit Memo %s created", code));
+
+        triggerSalesCreditMemoPost(code);
+
+        LOGGER.info(String.format("Sales Credit Memo %s triggered for posting", code));
+
+        verifySalesCreditMemoPostFailed(code);
+
+        LOGGER.info("Sales Credit Memo post no balance bank account test passed");
+    }
+
+    private void verifySalesCreditMemoPostFailed(String code) throws ITestFailedException {
+        String salesCreditMemoPostStatus = "";
+        boolean timeoutReached = false;
+        long start = System.currentTimeMillis();
+
+        while ((!salesCreditMemoPostStatus.equals("FAILED")) && !timeoutReached) {
+            salesCreditMemoPostStatus = salesCreditMemoClient.read(code).getPostStatus();
+
+            timeoutReached = (System.currentTimeMillis() - start) > POST_WAIT_TIMEOUT;
+        }
+
+        if (timeoutReached) {
+            throw new ITestFailedException(String.format("Sales Credit Memo %s post status failed: expected %s, got %s",
+                    code, "FAILED", salesCreditMemoPostStatus));
+        }
+    }
+
+    private String createSalesCreditMEmoWithNoBalanceBankAccountPaymentMethod() {
+        SalesDocumentDTO salesCreditMemo = new SalesDocumentDTO();
+        salesCreditMemo.setCustomerCode(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE);
+        salesCreditMemo.setPaymentMethodCode(BusinessLogicSetupUtil.NO_BALANCE_PAYMENT_METHOD_CODE);
+        salesCreditMemo.setDate(new Date());
+        return salesCreditMemoClient.create(salesCreditMemo);
+    }
+
+    private void delayedPaymentMethodTest() throws ITestFailedException {
+        String code = createSalesCreditMEmoWithDelayedPaymentMethod();
+        createSalesCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
+
+        LOGGER.info(String.format("Sales Credit Memo %s created", code));
+
+        triggerSalesCreditMemoPost(code);
+
+        LOGGER.info(String.format("Sales Credit Memo %s triggered for posting", code));
+
+        waitSalesCreditMemoToBePosted(code);
+
+        LOGGER.info(String.format("Sales Credit Memo %s posted", code));
+
+        verifyCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_2, PostSalesOrderTestRunner.TEST_AMOUNT - TEST_AMOUNT);
+
+        LOGGER.info("Sales Credit Memo post with delayed payment method test passed");
+    }
+
+    private String createSalesCreditMEmoWithDelayedPaymentMethod() {
+        SalesDocumentDTO salesCreditMemo = new SalesDocumentDTO();
+        salesCreditMemo.setCustomerCode(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_2);
+        salesCreditMemo.setPaymentMethodCode(BusinessLogicSetupUtil.DELAYED_PAYMENT_METHOD_CODE);
+        salesCreditMemo.setDate(new Date());
+        return salesCreditMemoClient.create(salesCreditMemo);
+    }
+
+    private void happyPathTest() throws ITestFailedException {
         String code = createSalesCreditMemo();
-        createSalesCreditMemoLine(code);
+        createSalesCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         LOGGER.info(String.format("Sales Credit Memo %s created", code));
 
@@ -83,13 +156,21 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
 
         verifyPostedSalesCreditMemo();
 
-        verifyCustomerBalance();
+        verifyCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE, 0.0);
 
         verifyBankAccountBalance();
 
         verifyItemInventory();
 
         LOGGER.info("Sales Credit Memo post test passed");
+    }
+
+    private void ensureNeededObjects() throws ITestFailedException {
+        util.ensureSetup();
+        util.ensureBankAccounts();
+        util.ensurePaymentMethods();
+        util.ensureItems();
+        util.ensureCustomer();
     }
 
     private void verifyItemInventory() throws ITestFailedException {
@@ -123,12 +204,12 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
         LOGGER.info(String.format("Bank Account %s verified", BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE));
     }
 
-private void verifyCustomerBalance() throws ITestFailedException {
-        CustomerDTO customer = customerClient.read(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE);
+private void verifyCustomerBalance(String customerCode, double expectedBalance) throws ITestFailedException {
+        CustomerDTO customer = customerClient.read(customerCode);
 
-        if (customer.getBalance() != 0) {
+        if (customer.getBalance() != expectedBalance) {
             throw new ITestFailedException(String.format("Customer %s balance issue: expected %f, got %f",
-                    BusinessLogicSetupUtil.TEST_CUSTOMER_CODE, 0, customer.getBalance()));
+                    customerCode, expectedBalance, customer.getBalance()));
         }
 
         LOGGER.info(String.format("Customer %s balance verified", BusinessLogicSetupUtil.TEST_CUSTOMER_CODE));
@@ -201,9 +282,9 @@ private void verifyCustomerBalance() throws ITestFailedException {
         salesCreditMemoClient.post(code);
     }
 
-    private void createSalesCreditMemoLine(String code) {
+    private void createSalesCreditMemoLine(String code, String itemCode) {
         SalesDocumentLineDTO salesCreditMemoLine = new SalesDocumentLineDTO();
-        salesCreditMemoLine.setItemCode(BusinessLogicSetupUtil.TEST_ITEM_CODE);
+        salesCreditMemoLine.setItemCode(itemCode);
         salesCreditMemoLine.setQuantity(TEST_QUANTITY);
         salesCreditMemoLine.setPrice(TEST_PRICE);
         salesCreditMemoLine.setAmount(TEST_AMOUNT);
