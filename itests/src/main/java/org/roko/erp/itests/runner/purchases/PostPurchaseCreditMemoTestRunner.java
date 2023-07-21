@@ -33,6 +33,8 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
     private static final int TEST_PRICE = 1;
     private static final int TEST_AMOUNT = 20;
 
+    private static final long POST_WAIT_TIMEOUT = 10 * 60 * 1000;
+
     @Autowired
     private BusinessLogicSetupUtil util;
 
@@ -61,6 +63,40 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         happyPathTest();
 
         delayedPaymentMethodTest();
+
+        noInventoryItemTest();
+    }
+
+    private void noInventoryItemTest() throws ITestFailedException {
+        String code = createPurchaseCreditMemo();
+        createPurchaseCreditMemoLine(code, BusinessLogicSetupUtil.NO_INVENTORY_ITEM_CODE);
+
+        LOGGER.info(String.format("Purchase Credit Memo %s created", code));
+
+        triggerPurchaseCreditMemoPost(code);
+
+        LOGGER.info(String.format("Purchase Credit Memo %s triggered for posting", code));
+
+        verifyPurchaseCreditMemoPostFailed(code);
+
+        LOGGER.info("Purchase Credit Memo post no inventory item test passed");
+    }
+
+    private void verifyPurchaseCreditMemoPostFailed(String code) throws ITestFailedException {
+        String purchaseCreditMemoPostStatus = "";
+        boolean timeoutReached = false;
+        long start = System.currentTimeMillis();
+
+        while ((!purchaseCreditMemoPostStatus.equals("FAILED")) && !timeoutReached) {
+            purchaseCreditMemoPostStatus = purchaseCreditMemoClient.read(code).getPostStatus();
+
+            timeoutReached = (System.currentTimeMillis() - start) > POST_WAIT_TIMEOUT;
+        }
+
+        if (timeoutReached) {
+            throw new ITestFailedException(String.format("Purchase Credit Memo %s post status failed: expected %s, got %s",
+                    code, "FAILED", purchaseCreditMemoPostStatus));
+        }
     }
 
     private void delayedPaymentMethodTest() throws ITestFailedException {
