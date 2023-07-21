@@ -29,7 +29,7 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
-    public static final int TEST_QUANTITY = 20;
+    private static final int TEST_QUANTITY = 20;
     private static final int TEST_PRICE = 1;
     private static final int TEST_AMOUNT = 20;
 
@@ -103,6 +103,8 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         String code = createPurchaseCreditMemoWithDelayedPaymentMethod();
         createPurchaseCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
 
+        double initialVendorBalance = getVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2);
+
         LOGGER.info(String.format("Purchase Credit Memo %s created", code));
 
         triggerPurchaseCreditMemoPost(code);
@@ -113,9 +115,13 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
         LOGGER.info(String.format("Purchase Credit Memo %s posted", code));
 
-        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2, PostPurchaseOrderTestRunner.TEST_AMOUNT - TEST_AMOUNT);
+        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2, initialVendorBalance - TEST_AMOUNT);
 
         LOGGER.info("Purchase Credit Memo post with delayed payment method test passed");
+    }
+
+    private double getVendorBalance(String vendorCode) {
+        return vendorClient.read(vendorCode).getBalance();
     }
 
     private String createPurchaseCreditMemoWithDelayedPaymentMethod() {
@@ -129,6 +135,8 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
     private void happyPathTest() throws ITestFailedException {
         String code = createPurchaseCreditMemo();
         createPurchaseCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
+
+        double initialItemInventory = getItemInventory(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         LOGGER.info(String.format("Purchase Credit Memo %s created", code));
 
@@ -150,9 +158,13 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
         verifyBankAccountBalance();
 
-        verifyItemInventory();
+        verifyItemInventory(initialItemInventory);
 
         LOGGER.info("Purchase Credit Memo post test passed");
+    }
+
+    private double getItemInventory(String itemCode) {
+        return itemClient.read(itemCode).getInventory();
     }
 
     private void ensureNeededObjects() throws ITestFailedException {
@@ -163,10 +175,10 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         util.ensureItems();
     }
 
-    private void verifyItemInventory() throws ITestFailedException {
+    private void verifyItemInventory(double initialItemInventory) throws ITestFailedException {
         ItemDTO item = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
-        double expectedInventory = PostPurchaseOrderTestRunner.TEST_QUANTITY - TEST_QUANTITY;
+        double expectedInventory = initialItemInventory - TEST_QUANTITY;
 
         if (item.getInventory() != expectedInventory) {
             throw new ITestFailedException(String.format("Item %s inventory issue: expected %f, got %f",

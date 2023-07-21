@@ -18,8 +18,6 @@ import org.roko.erp.itests.clients.SalesOrderClient;
 import org.roko.erp.itests.clients.SalesOrderLineClient;
 import org.roko.erp.itests.runner.ITestFailedException;
 import org.roko.erp.itests.runner.ITestRunner;
-import org.roko.erp.itests.runner.purchases.PostPurchaseCreditMemoTestRunner;
-import org.roko.erp.itests.runner.purchases.PostPurchaseOrderTestRunner;
 import org.roko.erp.itests.runner.util.BusinessLogicSetupUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +27,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostSalesOrderTestRunner implements ITestRunner {
 
-    public static final int TEST_QUANTITY = 50;
-    
+    private static final int TEST_QUANTITY = 50;
     private static final int TEST_PRICE = 1;
-    
-    public static final int TEST_AMOUNT = 50;
+    private static final int TEST_AMOUNT = 50;
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
@@ -134,6 +130,8 @@ public class PostSalesOrderTestRunner implements ITestRunner {
         String code = createSalesOrder();
         createSalesOrderLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
+        double initialItemInventory = getItemInventory(BusinessLogicSetupUtil.TEST_ITEM_CODE);
+
         LOGGER.info(String.format("Sales Order %s created", code));
 
         triggerSalesOrderPost(code);
@@ -154,9 +152,13 @@ public class PostSalesOrderTestRunner implements ITestRunner {
 
         verifyBankAccountBalance();
 
-        verifyItemInventory();
+        verifyItemInventory(initialItemInventory);
 
         LOGGER.info("Sales Order post test passed");
+    }
+
+    private double getItemInventory(String itemCode) {
+        return itemClient.read(itemCode).getInventory();
     }
 
     private void ensureNeededObjects() throws ITestFailedException {
@@ -167,8 +169,8 @@ public class PostSalesOrderTestRunner implements ITestRunner {
         util.ensureCustomer();
     }
 
-    private void verifyItemInventory() throws ITestFailedException {
-        double expectedItemIventory = PostPurchaseOrderTestRunner.TEST_QUANTITY - PostPurchaseCreditMemoTestRunner.TEST_QUANTITY - TEST_QUANTITY;
+    private void verifyItemInventory(double initialItemInventory) throws ITestFailedException {
+        double expectedItemIventory = initialItemInventory - TEST_QUANTITY;
 
         ItemDTO item = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 

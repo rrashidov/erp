@@ -18,8 +18,6 @@ import org.roko.erp.itests.clients.SalesCreditMemoClient;
 import org.roko.erp.itests.clients.SalesCreditMemoLineClient;
 import org.roko.erp.itests.runner.ITestFailedException;
 import org.roko.erp.itests.runner.ITestRunner;
-import org.roko.erp.itests.runner.purchases.PostPurchaseCreditMemoTestRunner;
-import org.roko.erp.itests.runner.purchases.PostPurchaseOrderTestRunner;
 import org.roko.erp.itests.runner.util.BusinessLogicSetupUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +111,8 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
         String code = createSalesCreditMEmoWithDelayedPaymentMethod();
         createSalesCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
 
+        double initialCustomerBalance = getCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_2);
+
         LOGGER.info(String.format("Sales Credit Memo %s created", code));
 
         triggerSalesCreditMemoPost(code);
@@ -123,9 +123,13 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
 
         LOGGER.info(String.format("Sales Credit Memo %s posted", code));
 
-        verifyCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_2, PostSalesOrderTestRunner.TEST_AMOUNT - TEST_AMOUNT);
+        verifyCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_2, initialCustomerBalance - TEST_AMOUNT);
 
         LOGGER.info("Sales Credit Memo post with delayed payment method test passed");
+    }
+
+    private double getCustomerBalance(String customerCode) {
+        return customerClient.read(customerCode).getBalance();
     }
 
     private String createSalesCreditMEmoWithDelayedPaymentMethod() {
@@ -139,6 +143,8 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
     private void happyPathTest() throws ITestFailedException {
         String code = createSalesCreditMemo();
         createSalesCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
+
+        double initialItemInventory = getItemInventory(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         LOGGER.info(String.format("Sales Credit Memo %s created", code));
 
@@ -160,9 +166,13 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
 
         verifyBankAccountBalance();
 
-        verifyItemInventory();
+        verifyItemInventory(initialItemInventory);
 
         LOGGER.info("Sales Credit Memo post test passed");
+    }
+
+    private double getItemInventory(String itemCode) {
+        return itemClient.read(itemCode).getInventory();
     }
 
     private void ensureNeededObjects() throws ITestFailedException {
@@ -173,12 +183,8 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
         util.ensureCustomer();
     }
 
-    private void verifyItemInventory() throws ITestFailedException {
-        double expectedItemIventory = 
-                PostPurchaseOrderTestRunner.TEST_QUANTITY
-                - PostPurchaseCreditMemoTestRunner.TEST_QUANTITY 
-                - PostSalesOrderTestRunner.TEST_QUANTITY
-                + TEST_QUANTITY;
+    private void verifyItemInventory(double initialItemInventory) throws ITestFailedException {
+        double expectedItemIventory = initialItemInventory + TEST_QUANTITY;
 
         ItemDTO item = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
