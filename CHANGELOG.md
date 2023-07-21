@@ -9,4 +9,4 @@
 - improve SalesCreditMemo REST API - return 404 for non existing entities
 - improve PurchaseOrder REST API - return 404 for non existing entities
 - improve PurchaseCreditMemo REST API - return 404 for non existing entities
-- implement REST API integration test
+- implement REST API integration tests
