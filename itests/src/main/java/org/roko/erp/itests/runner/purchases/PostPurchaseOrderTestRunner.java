@@ -31,7 +31,7 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
 
     public static final int TEST_QUANTITY = 120;
     private static final int TEST_PRICE = 1;
-    private static final int TEST_AMOUNT = 120;
+    public static final int TEST_AMOUNT = 120;
 
     private static final long POST_WAIT_TIMEOUT = 10 * 60 * 1000;
 

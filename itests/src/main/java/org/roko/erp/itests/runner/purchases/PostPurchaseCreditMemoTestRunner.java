@@ -59,11 +59,40 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         ensureNeededObjects();
 
         happyPathTest();
+
+        delayedPaymentMethodTest();
+    }
+
+    private void delayedPaymentMethodTest() throws ITestFailedException {
+        String code = createPurchaseCreditMemoWithDelayedPaymentMethod();
+        createPurchaseCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
+
+        LOGGER.info(String.format("Purchase Credit Memo %s created", code));
+
+        triggerPurchaseCreditMemoPost(code);
+
+        LOGGER.info(String.format("Purchase Credit Memo %s triggered for posting", code));
+
+        waitForPurchaseCreditMemoToBePosted(code);
+
+        LOGGER.info(String.format("Purchase Credit Memo %s posted", code));
+
+        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2, PostPurchaseOrderTestRunner.TEST_AMOUNT - TEST_AMOUNT);
+
+        LOGGER.info("Purchase Credit Memo post with delayed payment method test passed");
+    }
+
+    private String createPurchaseCreditMemoWithDelayedPaymentMethod() {
+        PurchaseDocumentDTO purchaseCreditMemo = new PurchaseDocumentDTO();
+        purchaseCreditMemo.setVendorCode(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2);
+        purchaseCreditMemo.setPaymentMethodCode(BusinessLogicSetupUtil.DELAYED_PAYMENT_METHOD_CODE);
+        purchaseCreditMemo.setDate(new Date());
+        return purchaseCreditMemoClient.create(purchaseCreditMemo);
     }
 
     private void happyPathTest() throws ITestFailedException {
         String code = createPurchaseCreditMemo();
-        createPurchaseCreditMemoLine(code);
+        createPurchaseCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         LOGGER.info(String.format("Purchase Credit Memo %s created", code));
 
@@ -81,7 +110,7 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
         verifyPostedPurchaseCreditMemo();
 
-        verifyVendorBalance();
+        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE, 0);
 
         verifyBankAccountBalance();
 
@@ -125,17 +154,16 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         LOGGER.info(String.format("Bank Account %s verified", BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE));
     }
 
-    private void verifyVendorBalance() throws ITestFailedException {
-        VendorDTO vendor = vendorClient.read(BusinessLogicSetupUtil.TEST_VENDOR_CODE);
+    private void verifyVendorBalance(String vendorCode, double expectedBalance) throws ITestFailedException {
+        VendorDTO vendor = vendorClient.read(vendorCode);
 
-        if (vendor.getBalance() != 0) {
+        if (vendor.getBalance() != expectedBalance) {
             throw new ITestFailedException(String.format("Vendor %s balance issue: expected %f, got %f",
-                    BusinessLogicSetupUtil.TEST_VENDOR_CODE, 0, vendor.getBalance()));
+                    vendorCode, expectedBalance, vendor.getBalance()));
         }
 
-        LOGGER.info(String.format("Vendor %s verified", BusinessLogicSetupUtil.TEST_VENDOR_CODE));
+        LOGGER.info(String.format("Vendor %s verified", vendorCode));
     }
-
 
     private void verifyPostedPurchaseCreditMemo() throws ITestFailedException {
         // this is hack - we know what first code we put for the posted purchase credit memo
@@ -207,9 +235,9 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         purchaseCreditMemoClient.post(code);
     }
 
-    private void createPurchaseCreditMemoLine(String code) {
+    private void createPurchaseCreditMemoLine(String code, String itemCode) {
         PurchaseDocumentLineDTO purchaseCreditMemoLine = new PurchaseDocumentLineDTO();
-        purchaseCreditMemoLine.setItemCode(BusinessLogicSetupUtil.TEST_ITEM_CODE);
+        purchaseCreditMemoLine.setItemCode(itemCode);
         purchaseCreditMemoLine.setQuantity(TEST_QUANTITY);
         purchaseCreditMemoLine.setPrice(TEST_PRICE);
         purchaseCreditMemoLine.setAmount(TEST_AMOUNT);
