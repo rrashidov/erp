@@ -36,6 +36,8 @@ public class PostSalesOrderTestRunner implements ITestRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
+    private static final long POST_WAIT_TIMEOUT = 10 * 60 * 1000;
+
     @Autowired
     private BusinessLogicSetupUtil util;
 
@@ -59,14 +61,77 @@ public class PostSalesOrderTestRunner implements ITestRunner {
 
     @Override
     public void run() throws ITestFailedException {
-        util.ensureSetup();
-        util.ensureBankAccounts();
-        util.ensurePaymentMethods();
-        util.ensureItems();
-        util.ensureCustomer();
+        ensureNeededObjects();
 
+        happyPathTest();
+
+        delayedPaymentMethodTest();
+
+        noInventoryItemTest();
+    }
+
+    private void noInventoryItemTest() throws ITestFailedException {
         String code = createSalesOrder();
-        createSalesOrderLine(code);
+        createSalesOrderLine(code, BusinessLogicSetupUtil.NO_INVENTORY_ITEM_CODE);
+
+        LOGGER.info(String.format("Sales Order %s created", code));
+
+        triggerSalesOrderPost(code);
+
+        LOGGER.info(String.format("Sales Order %s triggered for posting", code));
+
+        verifySalesOrderPostFailed(code);
+
+        LOGGER.info("Sales Order post no inventory item test passed");
+    }
+
+    private void verifySalesOrderPostFailed(String code) throws ITestFailedException {
+        String salesOrderPostStatus = "";
+        boolean timeoutReached = false;
+        long start = System.currentTimeMillis();
+
+        while ((!salesOrderPostStatus.equals("FAILED")) && !timeoutReached) {
+            salesOrderPostStatus = salesOrderClient.read(code).getPostStatus();
+
+            timeoutReached = (System.currentTimeMillis() - start) > POST_WAIT_TIMEOUT;
+        }
+
+        if (timeoutReached) {
+            throw new ITestFailedException(String.format("Sales Order %s post status failed: expected %s, got %s",
+                    code, "FAILED", salesOrderPostStatus));
+        }
+    }
+
+    private void delayedPaymentMethodTest() throws ITestFailedException {
+        String code = createdSalesOrderWithDelayedPaymentMethod();
+        createSalesOrderLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
+
+        LOGGER.info(String.format("Sales Order %s created", code));
+
+        triggerSalesOrderPost(code);
+
+        LOGGER.info(String.format("Sales Order %s triggered for posting", code));
+
+        waitSalesOrderToBePosted(code);
+
+        LOGGER.info(String.format("Sales Order %s posted", code));
+
+        verifyCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_2, TEST_AMOUNT);
+
+        LOGGER.info("Sales Order post with delayed payment method test passed");
+    }
+
+    private String createdSalesOrderWithDelayedPaymentMethod() {
+        SalesDocumentDTO salesOrder = new SalesDocumentDTO();
+        salesOrder.setCustomerCode(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_2);
+        salesOrder.setPaymentMethodCode(BusinessLogicSetupUtil.DELAYED_PAYMENT_METHOD_CODE);
+        salesOrder.setDate(new Date());
+        return salesOrderClient.create(salesOrder);
+    }
+
+    private void happyPathTest() throws ITestFailedException {
+        String code = createSalesOrder();
+        createSalesOrderLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         LOGGER.info(String.format("Sales Order %s created", code));
 
@@ -84,13 +149,21 @@ public class PostSalesOrderTestRunner implements ITestRunner {
 
         verifyPostedSalesOrder();
 
-        verifyCustomerBalance();
+        verifyCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE, 0);
 
         verifyBankAccountBalance();
 
         verifyItemInventory();
 
         LOGGER.info("Sales Order post test passed");
+    }
+
+    private void ensureNeededObjects() throws ITestFailedException {
+        util.ensureSetup();
+        util.ensureBankAccounts();
+        util.ensurePaymentMethods();
+        util.ensureItems();
+        util.ensureCustomer();
     }
 
     private void verifyItemInventory() throws ITestFailedException {
@@ -120,12 +193,12 @@ public class PostSalesOrderTestRunner implements ITestRunner {
         LOGGER.info(String.format("Bank Account %s verified", BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE));
     }
 
-    private void verifyCustomerBalance() throws ITestFailedException {
-        CustomerDTO customer = customerClient.read(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE);
+    private void verifyCustomerBalance(String customerCode, double expectedBalance) throws ITestFailedException {
+        CustomerDTO customer = customerClient.read(customerCode);
 
-        if (customer.getBalance() != 0) {
+        if (customer.getBalance() != expectedBalance) {
             throw new ITestFailedException(String.format("Customer %s balance issue: expected %f, got %f",
-                    BusinessLogicSetupUtil.TEST_CUSTOMER_CODE, 0, customer.getBalance()));
+                    customerCode, expectedBalance, customer.getBalance()));
         }
     }
 
@@ -196,9 +269,9 @@ public class PostSalesOrderTestRunner implements ITestRunner {
         salesOrderClient.post(code);
     }
 
-    private void createSalesOrderLine(String code) {
+    private void createSalesOrderLine(String code, String itemCode) {
         SalesDocumentLineDTO salesOrderLine = new SalesDocumentLineDTO();
-        salesOrderLine.setItemCode(BusinessLogicSetupUtil.TEST_ITEM_CODE);
+        salesOrderLine.setItemCode(itemCode);
         salesOrderLine.setQuantity(TEST_QUANTITY);
         salesOrderLine.setPrice(TEST_PRICE);
         salesOrderLine.setAmount(TEST_AMOUNT);

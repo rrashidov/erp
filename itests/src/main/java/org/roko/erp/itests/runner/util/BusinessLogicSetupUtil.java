@@ -30,15 +30,20 @@ import org.springframework.stereotype.Component;
 public class BusinessLogicSetupUtil {
 
     public static final String TEST_VENDOR_CODE = "VEND01";
-    public static final String TEST_VENDOR_CODE_2 = "VEND02";
     private static final String TEST_VENDOR_NAME = "test-vendor-name";
-    private static final String TEST_VENDOR_NAME_2 = "test-vendor-name-2";
     private static final String TEST_VENDOR_ADDRESS = "test-vendor-address";
+
+    public static final String TEST_VENDOR_CODE_2 = "VEND02";
+    private static final String TEST_VENDOR_NAME_2 = "test-vendor-name-2";
     private static final String TEST_VENDOR_ADDRESS_2 = "test-vendor-address-2";
 
     public static final String TEST_CUSTOMER_CODE = "CUST01";
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
     private static final String TEST_CUSTOMER_ADDRESS = "test-customer-address";
+
+    public static final String TEST_CUSTOMER_CODE_2 = "CUST02";
+    private static final String TEST_CUSTOMER_NAME_2 = "test-customer-name-2";
+    private static final String TEST_CUSTOMER_ADDRESS_2 = "test-customer-address-2";
 
     public static final String TEST_PAYMENT_METHOD_CODE = "PM01";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
@@ -157,6 +162,16 @@ public class BusinessLogicSetupUtil {
             customer.setName(TEST_CUSTOMER_NAME);
             customer.setAddress(TEST_CUSTOMER_ADDRESS);
             customer.setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
+            customerClient.create(customer);
+        }
+
+        customer = customerClient.read(TEST_CUSTOMER_CODE_2);
+        if (customer == null) {
+            customer = new CustomerDTO();
+            customer.setCode(TEST_CUSTOMER_CODE_2);
+            customer.setName(TEST_CUSTOMER_NAME_2);
+            customer.setAddress(TEST_CUSTOMER_ADDRESS_2);
+            customer.setPaymentMethodCode(DELAYED_PAYMENT_METHOD_CODE);
             customerClient.create(customer);
         }
     }
