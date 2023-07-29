@@ -10,3 +10,9 @@
 - improve PurchaseOrder REST API - return 404 for non existing entities
 - improve PurchaseCreditMemo REST API - return 404 for non existing entities
 - implement REST API integration tests
+- enable frontend http access logging
+- enable backend http access logging
+- enable frontend trace logging
+- enable backend trace logging
+- remove calculated fields from db schema
+
