@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner;
 
+import org.roko.erp.itests.runner.generalledger.PostGenJnlBatchTestRunner;
 import org.roko.erp.itests.runner.purchases.PostPurchaseCreditMemoTestRunner;
 import org.roko.erp.itests.runner.purchases.PostPurchaseOrderTestRunner;
 import org.roko.erp.itests.runner.sales.PostSalesCreditMemoTestRunner;
@@ -29,6 +30,9 @@ public class PostingIntegrationTestsRunner implements CommandLineRunner {
     @Autowired
     private PostSalesCreditMemoTestRunner postSalesCreditMemoTestRunner;
 
+    @Autowired
+    private PostGenJnlBatchTestRunner postGenJnlBatchTestRunner;
+
     @Override
     public void run(String... args) throws Exception {
         LOGGER.info("Running posting integration tests");
@@ -38,6 +42,8 @@ public class PostingIntegrationTestsRunner implements CommandLineRunner {
         postSalesOrderTestRunner.run();
         postSalesCreditMemoTestRunner.run();
 
+        postGenJnlBatchTestRunner.run();
+        
         LOGGER.info("Posting integration tests passed");
     }
     

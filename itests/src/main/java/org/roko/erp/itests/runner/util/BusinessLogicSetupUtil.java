@@ -54,14 +54,17 @@ public class BusinessLogicSetupUtil {
     public static final String DELAYED_PAYMENT_METHOD_CODE = "PM03";
     private static final String DELAYED_PAYMENT_METHOD_NAME = "delayed-payment-method-name";
 
-    private static final String TEST_GENERAP_JOURNAL_BATCH_CODE = "GEN001";
+    public static final String TEST_GENERAP_JOURNAL_BATCH_CODE = "GEN001";
     private static final String TEST_GENERAL_JOURNAL_BATCH_NAME = "test-general-journal-batch-name";
 
     public static final String TEST_BANK_ACCOUNT_CODE = "BA001";
     private static final String TEST_BANK_ACCOUNT_NAME = "test-bank-account-name";
     public static final double TEST_BANK_ACCOUNT_BALANCE = 1000.0;
 
-    public static final String NO_BALANCE_BANK_ACCOUNT_CODE = "BA002";
+    public static final String TEST_BANK_ACCOUNT_CODE_2 = "BA002";
+    private static final String TEST_BANK_ACCOUNT_NAME_2 = "test-bank-account-name-2";
+
+    public static final String NO_BALANCE_BANK_ACCOUNT_CODE = "BA003";
     private static final String NO_BALANCE_BANK_ACCOUNT_NAME = "no-balance-bank-account-name";
 
     public static final String TEST_ITEM_CODE = "ITEM001";
@@ -215,6 +218,14 @@ public class BusinessLogicSetupUtil {
 
         ensureBankAccountBalance();
 
+        bankAccount = bankAccountClient.read(TEST_BANK_ACCOUNT_CODE_2);
+        if (bankAccount == null) {
+            bankAccount = new BankAccountDTO();
+            bankAccount.setCode(TEST_BANK_ACCOUNT_CODE_2);
+            bankAccount.setName(TEST_BANK_ACCOUNT_NAME_2);
+            bankAccountClient.create(bankAccount);
+        }
+
         bankAccount = bankAccountClient.read(NO_BALANCE_BANK_ACCOUNT_CODE);
         if (bankAccount == null) {
             bankAccount = new BankAccountDTO();
@@ -251,7 +262,7 @@ public class BusinessLogicSetupUtil {
         waitGeneralJournalBatchPosted();
     }
 
-    private void waitGeneralJournalBatchPosted() {
+    public void waitGeneralJournalBatchPosted() {
         GeneralJournalBatchDTO generalJournalBatch = generalJournalBatchClient.read(TEST_GENERAP_JOURNAL_BATCH_CODE);
 
         while (!generalJournalBatch.getPostStatus().equals("READY")) {
