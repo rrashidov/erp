@@ -180,7 +180,7 @@ public class PostSalesCreditMemoTestRunner implements ITestRunner {
         util.ensureBankAccounts();
         util.ensurePaymentMethods();
         util.ensureItems();
-        util.ensureCustomer();
+        util.ensureCustomers();
     }
 
     private void verifyItemInventory(double initialItemInventory) throws ITestFailedException {

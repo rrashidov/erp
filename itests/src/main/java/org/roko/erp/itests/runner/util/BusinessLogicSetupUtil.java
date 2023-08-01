@@ -161,7 +161,7 @@ public class BusinessLogicSetupUtil {
         }
     }
 
-    public void ensureCustomer() {
+    public void ensureCustomers() {
         CustomerDTO customer = customerClient.read(TEST_CUSTOMER_CODE);
         if (customer == null) {
             customer = new CustomerDTO();

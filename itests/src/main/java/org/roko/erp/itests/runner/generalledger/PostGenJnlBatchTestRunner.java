@@ -57,7 +57,7 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
     private void postCustomerDocument() throws ITestFailedException {
         LOGGER.info("Running post customer document test");
 
-        util.ensureCustomer();
+        util.ensureCustomers();
 
         createCustomerDocumentGenJnlLine(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3);
 
