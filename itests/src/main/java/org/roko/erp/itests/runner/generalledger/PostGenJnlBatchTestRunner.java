@@ -3,10 +3,12 @@ package org.roko.erp.itests.runner.generalledger;
 import java.util.Date;
 
 import org.roko.erp.dto.BankAccountDTO;
+import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineOperationType;
 import org.roko.erp.dto.GeneralJournalBatchLineType;
 import org.roko.erp.itests.clients.BankAccountClient;
+import org.roko.erp.itests.clients.CustomerClient;
 import org.roko.erp.itests.clients.GeneralJournalBatchClient;
 import org.roko.erp.itests.clients.GeneralJournalBatchLineClient;
 import org.roko.erp.itests.runner.ITestFailedException;
@@ -36,6 +38,9 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
     @Autowired
     private BankAccountClient bankAccountClient;
 
+    @Autowired
+    private CustomerClient customerClient;
+
     @Override
     public void run() throws ITestFailedException {
         LOGGER.info("Run general journal batch post tests");
@@ -44,7 +49,32 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         transferBetweenBankAccountsTest();
 
+        postCustomerDocument();
+
         LOGGER.info("General journal batch post tests passed");
+    }
+
+    private void postCustomerDocument() throws ITestFailedException {
+        LOGGER.info("Running post customer document test");
+
+        util.ensureCustomer();
+
+        createCustomerDocumentGenJnlLine(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3);
+
+        postGeneralJournalBatchSynchronously();
+
+        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, TEST_AMOUNT);
+
+        LOGGER.info("Post customer document test passed");
+    }
+
+    private void assertCustomerBalance(String code, double expectedBalance) throws ITestFailedException {
+        CustomerDTO customer = customerClient.read(code);
+
+        if (customer.getBalance() != expectedBalance) {
+            throw new ITestFailedException(String.format("Customer %s balance issue: expected %f, got %f", code,
+                    expectedBalance, customer.getBalance()));
+        }
     }
 
     private void transferBetweenBankAccountsTest() throws ITestFailedException {
@@ -52,9 +82,11 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         util.ensureBankAccounts();
 
-        createGeneralJournalBatchLine();
+        createBankTransferGenJnlLine(
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE_2,
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE);
 
-        postGeneralJournalBatch();
+        postGeneralJournalBatchSynchronously();
 
         assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE,
                 BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE - TEST_AMOUNT);
@@ -71,7 +103,7 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
         LOGGER.info("Free entry post test passed");
     }
 
-    private void postGeneralJournalBatch() throws ITestFailedException {
+    private void postGeneralJournalBatchSynchronously() throws ITestFailedException {
         generalJournalBatchClient.post(BusinessLogicSetupUtil.TEST_GENERAP_JOURNAL_BATCH_CODE);
 
         util.waitGeneralJournalBatchPosted();
@@ -86,16 +118,30 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
         }
     }
 
-    private void createGeneralJournalBatchLine() {
+    private void createCustomerDocumentGenJnlLine(String code) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.CUSTOMER, code,
+                GeneralJournalBatchLineOperationType.ORDER, null);
+    }
+
+    private void createBankTransferGenJnlLine(String sourceBankAccount, String targetBankAccount) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.BANK_ACCOUNT, sourceBankAccount,
+                GeneralJournalBatchLineOperationType.EMPTY, targetBankAccount);
+    }
+
+    private void createGeneralJournalBatchLine(GeneralJournalBatchLineType generalJournalBatchLineType,
+            String generalJournalBatchLineCode,
+            GeneralJournalBatchLineOperationType generalJournalBatchLineOperationType, String bankAccountCode) {
         GeneralJournalBatchLineDTO genJnlBatchLine = new GeneralJournalBatchLineDTO();
         genJnlBatchLine.setGeneralJournalBatchCode(BusinessLogicSetupUtil.TEST_GENERAP_JOURNAL_BATCH_CODE);
-        genJnlBatchLine.setType(GeneralJournalBatchLineType.BANK_ACCOUNT);
-        genJnlBatchLine.setCode(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE_2);
-        genJnlBatchLine.setOperationType(GeneralJournalBatchLineOperationType.EMPTY);
+        genJnlBatchLine.setType(generalJournalBatchLineType);
+        genJnlBatchLine.setCode(generalJournalBatchLineCode);
+        genJnlBatchLine.setOperationType(generalJournalBatchLineOperationType);
         genJnlBatchLine.setDate(new Date());
         genJnlBatchLine.setDocumentCode("0");
         genJnlBatchLine.setAmount(TEST_AMOUNT);
-        genJnlBatchLine.setBankAccountCode(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE);
+        if (bankAccountCode != null) {
+            genJnlBatchLine.setBankAccountCode(bankAccountCode);
+        }
 
         generalJournalBatchLineClient.create(BusinessLogicSetupUtil.TEST_GENERAP_JOURNAL_BATCH_CODE, genJnlBatchLine);
     }

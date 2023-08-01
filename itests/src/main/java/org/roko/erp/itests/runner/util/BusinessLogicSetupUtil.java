@@ -45,6 +45,10 @@ public class BusinessLogicSetupUtil {
     private static final String TEST_CUSTOMER_NAME_2 = "test-customer-name-2";
     private static final String TEST_CUSTOMER_ADDRESS_2 = "test-customer-address-2";
 
+    public static final String TEST_CUSTOMER_CODE_3 = "CUST03";
+    private static final String TEST_CUSTOMER_NAME_3 = "test-customer-name-3";
+    private static final String TEST_CUSTOMER_ADDRESS_3 = "test-customer-address-3";
+
     public static final String TEST_PAYMENT_METHOD_CODE = "PM01";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
 
@@ -175,6 +179,16 @@ public class BusinessLogicSetupUtil {
             customer.setName(TEST_CUSTOMER_NAME_2);
             customer.setAddress(TEST_CUSTOMER_ADDRESS_2);
             customer.setPaymentMethodCode(DELAYED_PAYMENT_METHOD_CODE);
+            customerClient.create(customer);
+        }
+
+        customer = customerClient.read(TEST_CUSTOMER_CODE_3);
+        if (customer == null) {
+            customer = new CustomerDTO();
+            customer.setCode(TEST_CUSTOMER_CODE_3);
+            customer.setName(TEST_CUSTOMER_NAME_3);
+            customer.setAddress(TEST_CUSTOMER_ADDRESS_3);
+            customer.setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
             customerClient.create(customer);
         }
     }
