@@ -51,7 +51,27 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         postCustomerDocument();
 
+        postCustomerPayment();
+
         LOGGER.info("General journal batch post tests passed");
+    }
+
+    private void postCustomerPayment() throws ITestFailedException {
+        LOGGER.info("Running post customer payment test");
+
+        util.ensureBankAccounts();
+
+        createCustomerPaymentGenJnlLine(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3,
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE);
+
+        postGeneralJournalBatchSynchronously();
+
+        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, 0);
+
+        assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE,
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE + TEST_AMOUNT);
+
+        LOGGER.info("Post customer payment test passed");
     }
 
     private void postCustomerDocument() throws ITestFailedException {
@@ -121,6 +141,11 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
     private void createCustomerDocumentGenJnlLine(String code) {
         createGeneralJournalBatchLine(GeneralJournalBatchLineType.CUSTOMER, code,
                 GeneralJournalBatchLineOperationType.ORDER, null);
+    }
+
+    private void createCustomerPaymentGenJnlLine(String code, String bankAccountCode) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.CUSTOMER, code,
+                GeneralJournalBatchLineOperationType.PAYMENT, bankAccountCode);
     }
 
     private void createBankTransferGenJnlLine(String sourceBankAccount, String targetBankAccount) {
