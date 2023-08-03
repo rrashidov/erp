@@ -49,16 +49,51 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         transferBetweenBankAccountsTest();
 
-        postCustomerDocument();
+        postCustomerDocumentTest();
 
-        postCustomerPayment();
+        postCustomerPaymentTest();
+
+        postCustomerCreditMemoTest();
+
+        postCustomerRefundTest();
 
         LOGGER.info("General journal batch post tests passed");
     }
 
-    private void postCustomerPayment() throws ITestFailedException {
+    private void postCustomerDocumentTest() throws ITestFailedException {
+        LOGGER.info("Running post customer document test");
+
+        util.ensureCustomers();
+        util.ensureBankAccounts();
+
+        createCustomerDocumentGenJnlLine(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3);
+
+        postGeneralJournalBatchSynchronously();
+
+        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, TEST_AMOUNT);
+
+        LOGGER.info("Post customer document test passed");
+    }
+
+    private void postCustomerCreditMemoTest() throws ITestFailedException {
+        LOGGER.info("Running post customer credit memo test");
+
+        util.ensureCustomers();
+        util.ensureBankAccounts();
+
+        createCustomerCreditMemoGenJnlLine(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3);
+
+        postGeneralJournalBatchSynchronously();
+
+        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, -TEST_AMOUNT);
+
+        LOGGER.info("Post customer credit memo test passed");
+    }
+
+    private void postCustomerPaymentTest() throws ITestFailedException {
         LOGGER.info("Running post customer payment test");
 
+        util.ensureCustomers();
         util.ensureBankAccounts();
 
         createCustomerPaymentGenJnlLine(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3,
@@ -74,18 +109,23 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
         LOGGER.info("Post customer payment test passed");
     }
 
-    private void postCustomerDocument() throws ITestFailedException {
-        LOGGER.info("Running post customer document test");
+    private void postCustomerRefundTest() throws ITestFailedException {
+        LOGGER.info("Running post customer refund test");
 
         util.ensureCustomers();
+        util.ensureBankAccounts();
 
-        createCustomerDocumentGenJnlLine(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3);
+        createCustomerRefundGenJnlLine(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3,
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE);
 
         postGeneralJournalBatchSynchronously();
 
-        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, TEST_AMOUNT);
+        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, 0);
 
-        LOGGER.info("Post customer document test passed");
+        assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE,
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE - TEST_AMOUNT);
+
+        LOGGER.info("Post customer refund test passed");
     }
 
     private void assertCustomerBalance(String code, double expectedBalance) throws ITestFailedException {
@@ -143,9 +183,19 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
                 GeneralJournalBatchLineOperationType.ORDER, null);
     }
 
+    private void createCustomerCreditMemoGenJnlLine(String code) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.CUSTOMER, code,
+                GeneralJournalBatchLineOperationType.CREDIT_MEMO, null);
+    }
+
     private void createCustomerPaymentGenJnlLine(String code, String bankAccountCode) {
         createGeneralJournalBatchLine(GeneralJournalBatchLineType.CUSTOMER, code,
                 GeneralJournalBatchLineOperationType.PAYMENT, bankAccountCode);
+    }
+
+    private void createCustomerRefundGenJnlLine(String code, String bankAccountCode) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.CUSTOMER, code,
+                GeneralJournalBatchLineOperationType.REFUND, bankAccountCode);
     }
 
     private void createBankTransferGenJnlLine(String sourceBankAccount, String targetBankAccount) {
