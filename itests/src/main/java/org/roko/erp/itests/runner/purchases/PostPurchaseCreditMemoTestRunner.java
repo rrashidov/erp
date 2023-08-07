@@ -262,10 +262,6 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
     private void waitForPurchaseCreditMemoToBePosted(String code) {
         while (purchaseCreditMemoClient.read(code) != null) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
         }
     }
 

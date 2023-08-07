@@ -88,11 +88,6 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
         long start = System.currentTimeMillis();
 
         while ((!purchaseOrderPostStatus.equals("FAILED")) && !timeoutReached) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-
             purchaseOrderPostStatus = purchaseOrderClient.read(code).getPostStatus();
 
             timeoutReached = (System.currentTimeMillis() - start) > POST_WAIT_TIMEOUT;
@@ -260,10 +255,6 @@ public class PostPurchaseOrderTestRunner implements ITestRunner {
 
     private void waitForPurchaseOrderToBePosted(String code) {
         while (purchaseOrderClient.read(code) != null) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
         }
     }
 

@@ -298,7 +298,6 @@ public class BusinessLogicSetupUtil {
         GeneralJournalBatchDTO generalJournalBatch = generalJournalBatchClient.read(TEST_GENERAP_JOURNAL_BATCH_CODE);
 
         while (!generalJournalBatch.getPostStatus().equals("READY")) {
-            waitASecond();
             generalJournalBatch = generalJournalBatchClient.read(TEST_GENERAP_JOURNAL_BATCH_CODE);
         }
     }
@@ -455,14 +454,6 @@ public class BusinessLogicSetupUtil {
             codeSerie.setFirstCode(SO_CS_LAST_CODE);
             codeSerie.setLastCode(SO_CS_LAST_CODE);
             codeSerieClient.create(codeSerie);
-        }
-    }
-
-    private void waitASecond() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

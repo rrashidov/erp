@@ -252,10 +252,6 @@ public class PostSalesOrderTestRunner implements ITestRunner {
 
     private void waitSalesOrderToBePosted(String code) {
         while (salesOrderClient.read(code) != null) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
         }
     }
 

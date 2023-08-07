@@ -268,10 +268,6 @@ private void verifyCustomerBalance(String customerCode, double expectedBalance) 
 
     private void waitSalesCreditMemoToBePosted(String code) {
         while (salesCreditMemoClient.read(code) != null) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
         }
     }
 
