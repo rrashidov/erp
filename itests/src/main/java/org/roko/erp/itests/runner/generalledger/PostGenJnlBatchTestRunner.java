@@ -7,10 +7,12 @@ import org.roko.erp.dto.CustomerDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineDTO;
 import org.roko.erp.dto.GeneralJournalBatchLineOperationType;
 import org.roko.erp.dto.GeneralJournalBatchLineType;
+import org.roko.erp.dto.VendorDTO;
 import org.roko.erp.itests.clients.BankAccountClient;
 import org.roko.erp.itests.clients.CustomerClient;
 import org.roko.erp.itests.clients.GeneralJournalBatchClient;
 import org.roko.erp.itests.clients.GeneralJournalBatchLineClient;
+import org.roko.erp.itests.clients.VendorClient;
 import org.roko.erp.itests.runner.ITestFailedException;
 import org.roko.erp.itests.runner.ITestRunner;
 import org.roko.erp.itests.runner.util.BusinessLogicSetupUtil;
@@ -41,6 +43,9 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
     @Autowired
     private CustomerClient customerClient;
 
+    @Autowired
+    private VendorClient vendorClient;
+
     @Override
     public void run() throws ITestFailedException {
         LOGGER.info("Run general journal batch post tests");
@@ -57,7 +62,100 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         postCustomerRefundTest();
 
+        postVendorDocumentTest();
+
+        postVendorPaymentTest();
+
+        postVendorCreditMemoTest();
+
+        postVendorRefundTest();
+
         LOGGER.info("General journal batch post tests passed");
+    }
+
+    private void postVendorDocumentTest() throws ITestFailedException {
+        LOGGER.info("Running post vendor document test");
+
+        util.ensureVendors();
+        util.ensureBankAccounts();
+
+        createVendorDocumentGenJnlLine(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3);
+
+        postGeneralJournalBatchSynchronously();
+
+        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, TEST_AMOUNT);
+
+        LOGGER.info("Post vendor document test passed");
+    }
+
+    private void postVendorPaymentTest() throws ITestFailedException {
+        LOGGER.info("Running post vendor payment test");
+
+        util.ensureVendors();
+        util.ensureBankAccounts();
+
+        createVendorPaymentGenJnlLine(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3,
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE);
+
+        postGeneralJournalBatchSynchronously();
+
+        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, 0);
+
+        assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE,
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE - TEST_AMOUNT);
+
+        LOGGER.info("Post vendor payment test passed");
+    }
+
+    private void postVendorCreditMemoTest() throws ITestFailedException {
+        LOGGER.info("Running post vendor credit memo test");
+
+        util.ensureVendors();
+        util.ensureBankAccounts();
+
+        createVendorCreditMemotGenJnlLine(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3);
+
+        postGeneralJournalBatchSynchronously();
+
+        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, -TEST_AMOUNT);
+
+        LOGGER.info("Post vendor credit memo test passed");
+    }
+
+    private void postVendorRefundTest() throws ITestFailedException {
+        LOGGER.info("Running post vendor refund test");
+
+        util.ensureVendors();
+        util.ensureBankAccounts();
+
+        createVendorRefundGenJnlLine(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3,
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE);
+
+        postGeneralJournalBatchSynchronously();
+
+        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, 0);
+
+        LOGGER.info("Post vendor refund test passed");
+    }
+
+    private void createVendorDocumentGenJnlLine(String code) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.VENDOR, code,
+                GeneralJournalBatchLineOperationType.ORDER, null);
+    }
+
+    private void createVendorCreditMemotGenJnlLine(String code) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.VENDOR, code,
+                GeneralJournalBatchLineOperationType.CREDIT_MEMO, null);
+    }
+
+    private void createVendorPaymentGenJnlLine(String code, String bankAccountCode) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.VENDOR, code,
+                GeneralJournalBatchLineOperationType.PAYMENT, bankAccountCode);
+    }
+
+    private void createVendorRefundGenJnlLine(String code, String bankAccountCode) {
+        createGeneralJournalBatchLine(GeneralJournalBatchLineType.VENDOR, code,
+                GeneralJournalBatchLineOperationType.REFUND, bankAccountCode);
     }
 
     private void postCustomerDocumentTest() throws ITestFailedException {
@@ -134,6 +232,15 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
         if (customer.getBalance() != expectedBalance) {
             throw new ITestFailedException(String.format("Customer %s balance issue: expected %f, got %f", code,
                     expectedBalance, customer.getBalance()));
+        }
+    }
+
+    private void assertVendorBalance(String code, double expectedBalance) throws ITestFailedException {
+        VendorDTO vendor = vendorClient.read(code);
+
+        if (vendor.getBalance() != expectedBalance) {
+            throw new ITestFailedException(String.format("Vendor %s balance issue: expected %f, got %f", code,
+                    expectedBalance, vendor.getBalance()));
         }
     }
 

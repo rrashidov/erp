@@ -37,6 +37,10 @@ public class BusinessLogicSetupUtil {
     private static final String TEST_VENDOR_NAME_2 = "test-vendor-name-2";
     private static final String TEST_VENDOR_ADDRESS_2 = "test-vendor-address-2";
 
+    public static final String TEST_VENDOR_CODE_3 = "VEND03";
+    private static final String TEST_VENDOR_NAME_3 = "test-vendor-name-3";
+    private static final String TEST_VENDOR_ADDRESS_3 = "test-vendor-address-3";
+
     public static final String TEST_CUSTOMER_CODE = "CUST01";
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
     private static final String TEST_CUSTOMER_ADDRESS = "test-customer-address";
@@ -156,6 +160,16 @@ public class BusinessLogicSetupUtil {
             vendor.setCode(TEST_VENDOR_CODE_2);
             vendor.setName(TEST_VENDOR_NAME_2);
             vendor.setAddress(TEST_VENDOR_ADDRESS_2);
+            vendor.setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
+            vendorClient.create(vendor);
+        }
+
+        vendor = vendorClient.read(TEST_VENDOR_CODE_3);
+        if (vendor == null) {
+            vendor = new VendorDTO();
+            vendor.setCode(TEST_VENDOR_CODE_3);
+            vendor.setName(TEST_VENDOR_NAME_3);
+            vendor.setAddress(TEST_VENDOR_ADDRESS_3);
             vendor.setPaymentMethodCode(TEST_PAYMENT_METHOD_CODE);
             vendorClient.create(vendor);
         }
