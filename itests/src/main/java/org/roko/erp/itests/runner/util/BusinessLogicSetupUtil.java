@@ -268,6 +268,10 @@ public class BusinessLogicSetupUtil {
 
         double balanceDifference = TEST_BANK_ACCOUNT_BALANCE - bankAccount.getBalance();
 
+        if (balanceDifference == 0.0) {
+            return;
+        }
+
         GeneralJournalBatchDTO generalJournalBatch = generalJournalBatchClient.read(TEST_GENERAP_JOURNAL_BATCH_CODE);
         if (generalJournalBatch == null) {
             generalJournalBatch = new GeneralJournalBatchDTO();
