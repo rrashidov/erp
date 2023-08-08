@@ -15,3 +15,4 @@
 - enable frontend trace logging
 - enable backend trace logging
 - remove calculated fields from db schema
+- update RabbitMQ version to 3.12.2
