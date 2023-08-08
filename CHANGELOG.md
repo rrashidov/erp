@@ -16,3 +16,4 @@
 - enable backend trace logging
 - remove calculated fields from db schema
 - update RabbitMQ version to 3.12.2
+- update MySQL version to 8.0.34
