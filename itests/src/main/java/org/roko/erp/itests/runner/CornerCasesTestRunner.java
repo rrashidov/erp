@@ -1,6 +1,7 @@
 package org.roko.erp.itests.runner;
 
 import org.roko.erp.itests.runner.sales.ParallelSalesOrderPostTestRunner;
+import org.roko.erp.itests.runner.purchases.ParallelPurchaseCreditMemoPostTestRunner;
 import org.roko.erp.itests.runner.purchases.ParallelPurchaseOrderPostTestRunner;
 import org.roko.erp.itests.runner.sales.ParallelSalesCreditMemoPostTestRunner;
 import org.slf4j.Logger;
@@ -25,6 +26,9 @@ public class CornerCasesTestRunner implements CommandLineRunner {
     @Autowired
     private ParallelPurchaseOrderPostTestRunner parallelPurchaseOrderPostTestRunner;
 
+    @Autowired
+    private ParallelPurchaseCreditMemoPostTestRunner parallelPurchaseCreditMemoPostTestRunner;
+
     @Override
     public void run(String... args) throws Exception {
         LOGGER.info("Running corner cases posting integration tests");
@@ -32,6 +36,7 @@ public class CornerCasesTestRunner implements CommandLineRunner {
         parallelSalesOrderPostTestRunner.run();
         parallelSalesCreditMemoPostTestRunner.run();
         parallelPurchaseOrderPostTestRunner.run();
+        parallelPurchaseCreditMemoPostTestRunner.run();
         
         LOGGER.info("Corner cases posting integration tests passed");
     }
