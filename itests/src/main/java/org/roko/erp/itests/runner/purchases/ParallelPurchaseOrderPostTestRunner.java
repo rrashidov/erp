@@ -1,41 +1,21 @@
 package org.roko.erp.itests.runner.purchases;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
 
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.dto.PurchaseDocumentLineDTO;
 import org.roko.erp.itests.clients.PurchaseOrderClient;
 import org.roko.erp.itests.clients.PurchaseOrderLineClient;
-import org.roko.erp.itests.runner.ITestFailedException;
-import org.roko.erp.itests.runner.ITestRunner;
 import org.roko.erp.itests.runner.purchases.util.PurchaseOrderPostCallable;
+import org.roko.erp.itests.runner.util.AbstractParallelDocumentPostTestRunner;
 import org.roko.erp.itests.runner.util.BusinessLogicSetupUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ParallelPurchaseOrderPostTestRunner implements ITestRunner {
-
-    private static final int PARALLEL_POST_CNT = 10;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
-
-    private static final Object BARRIER = new Object();
-
-    private List<Object> feedbackList = new LinkedList<>();
-    private ExecutorService es = Executors.newFixedThreadPool(PARALLEL_POST_CNT);
-
-    @Autowired
-    private BusinessLogicSetupUtil util;
+public class ParallelPurchaseOrderPostTestRunner extends AbstractParallelDocumentPostTestRunner {
 
     @Autowired
     private PurchaseOrderClient purchaseOrderClient;
@@ -43,99 +23,16 @@ public class ParallelPurchaseOrderPostTestRunner implements ITestRunner {
     @Autowired
     private PurchaseOrderLineClient purchaseOrderLineClient;
 
+    @Autowired
+    private BusinessLogicSetupUtil util;
+
     @Override
-    public void run() throws ITestFailedException {
-        LOGGER.info("Running parallel purchase order post test");
-
-        try {
-            util.ensureBankAccounts();
-
-            List<String> purchaseOrderCodes = createPurchaseOrders();
-
-            List<Future<Boolean>> purchaseOrderPostFutures = schedulePostOperations(purchaseOrderCodes);
-
-            waitPostOperationsReachBarrier();
-
-            liftBarrier();
-
-            verifyPurchaseOrderPostResults(purchaseOrderPostFutures);
-        } finally {
-            cleanup();
-        }
-
-        LOGGER.info("Parallel purchase order post test passed");
+    protected void ensureStartingConditions() {
+        util.ensureBankAccounts();
     }
 
-    private void cleanup() {
-        es.shutdown();
-    }
-
-    private void verifyPurchaseOrderPostResults(List<Future<Boolean>> purchaseOrderPostFutures)
-            throws ITestFailedException {
-        final List<Object> successfullyPostedPurchaseOrders = new ArrayList<>();
-
-        purchaseOrderPostFutures.stream()
-                .forEach(x -> {
-                    try {
-                        if (x.get()) {
-                            successfullyPostedPurchaseOrders.add(new Object());
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        LOGGER.error("Problem getting post result", e);
-                    }
-                });
-
-        if (successfullyPostedPurchaseOrders.size() != 1) {
-            throw new ITestFailedException(
-                    String.format("Successfully posted sales credit memo count issue: expected %d, got %d", 1,
-                            successfullyPostedPurchaseOrders.size()));
-        }
-    }
-
-    private void liftBarrier() {
-        synchronized (BARRIER) {
-            BARRIER.notifyAll();
-        }
-
-        LOGGER.info("Purchase Orders post barrier lifted");
-    }
-
-    private void waitPostOperationsReachBarrier() {
-        int cnt = 0;
-        while (cnt < PARALLEL_POST_CNT) {
-            cnt = feedbackList.size();
-        }
-
-        LOGGER.info("Purchase Orders post threads reached the barrier");
-    }
-
-    private List<Future<Boolean>> schedulePostOperations(List<String> purchaseOrderCodes) {
-        List<Future<Boolean>> result = new LinkedList<>();
-
-        purchaseOrderCodes.stream()
-                .forEach(code -> {
-                    result.add(
-                            es.submit(new PurchaseOrderPostCallable(purchaseOrderClient, BARRIER, code, feedbackList)));
-                });
-
-        LOGGER.info("Purchase Orders scheduled to be posted");
-
-        return result;
-    }
-
-    private List<String> createPurchaseOrders() {
-        List<String> result = new LinkedList<>();
-
-        for (int i = 0; i < PARALLEL_POST_CNT; i++) {
-            result.add(createPurchaseOrder());
-        }
-
-        LOGGER.info("Purchase Orders created");
-
-        return result;
-    }
-
-    private String createPurchaseOrder() {
+    @Override
+    protected String createDocument() {
         PurchaseDocumentDTO purchaseOrder = new PurchaseDocumentDTO();
         purchaseOrder.setVendorCode(BusinessLogicSetupUtil.TEST_VENDOR_CODE);
         purchaseOrder.setPaymentMethodCode(BusinessLogicSetupUtil.TEST_PAYMENT_METHOD_CODE);
@@ -146,6 +43,16 @@ public class ParallelPurchaseOrderPostTestRunner implements ITestRunner {
         createPurchaseOrderLine(code);
 
         return code;
+    }
+
+    @Override
+    protected String getDocumentType() {
+        return "Purchase Order";
+    }
+
+    @Override
+    protected Callable<Boolean> createCallable(String code, List<Object> feedbackList, Object BARRIER) {
+        return new PurchaseOrderPostCallable(purchaseOrderClient, BARRIER, code, feedbackList);
     }
 
     private void createPurchaseOrderLine(String code) {
