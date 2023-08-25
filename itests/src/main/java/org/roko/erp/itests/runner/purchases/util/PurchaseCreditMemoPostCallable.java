@@ -1,37 +1,25 @@
 package org.roko.erp.itests.runner.purchases.util;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.roko.erp.dto.PurchaseDocumentDTO;
 import org.roko.erp.itests.clients.PurchaseCreditMemoClient;
+import org.roko.erp.itests.runner.util.AbstractBarrieredCallable;
 
-public class PurchaseCreditMemoPostCallable implements Callable<Boolean> {
+public class PurchaseCreditMemoPostCallable extends AbstractBarrieredCallable {
 
     private final PurchaseCreditMemoClient purchaseCreditMemoClient;
-    private final Object barrier;
     private final String code;
-    private final List<Object> feedbackList;
 
     public PurchaseCreditMemoPostCallable(PurchaseCreditMemoClient purchaseCreditMemoClient, Object barrier,
             String code, List<Object> feedbackList) {
+        super(barrier, feedbackList);
         this.purchaseCreditMemoClient = purchaseCreditMemoClient;
-        this.barrier = barrier;
         this.code = code;
-        this.feedbackList = feedbackList;
     }
 
     @Override
-    public Boolean call() throws Exception {
-        synchronized (barrier) {
-            try {
-                feedbackList.add(new Object());
-                barrier.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
+    protected Boolean doCall() {
         purchaseCreditMemoClient.post(code);
 
         return purchaseCreditMemoPostedSuccessfully();
