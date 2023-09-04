@@ -25,6 +25,8 @@
 
                     <div class="col-sm-6">
                         <label for="purchaseDocumentCode" class="form-label">Purchase Order</label>
+                        <input hidden type="text" class="form-control" id="page" placeholder="" value=""
+                            th:field="*{page}">
                         <input hidden type="text" class="form-control" id="lineNo" placeholder="" value=""
                             th:field="*{lineNo}">
                         <input readonly type="text" class="form-control" id="purchaseDocumentCode" placeholder="" value=""

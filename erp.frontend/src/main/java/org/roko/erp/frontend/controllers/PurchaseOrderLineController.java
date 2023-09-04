@@ -30,9 +30,11 @@ public class PurchaseOrderLineController {
 
     @GetMapping("/purchaseOrderLineWizard")
     public String purchaseOrderLineWizard(@RequestParam(name = "purchaseOrderCode") String code,
-            @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
+            @RequestParam(name = "lineNo", required = false) Integer lineNo, 
+            @RequestParam(name = "page", required = false) Integer page, Model model) {
         PurchaseDocumentLineDTO purchaseOrderLine = new PurchaseDocumentLineDTO();
         purchaseOrderLine.setPurchaseDocumentCode(code);
+        purchaseOrderLine.setPage(page);
 
         if (lineNo != null){
             purchaseOrderLine = svc.get(code, lineNo);
@@ -80,6 +82,7 @@ public class PurchaseOrderLineController {
         }
         
         redirectAttributes.addAttribute("code", purchaseOrderLineModel.getPurchaseDocumentCode());
+        redirectAttributes.addAttribute("page", purchaseOrderLineModel.getPage());
 
         return new RedirectView("/purchaseOrderCard");
     }

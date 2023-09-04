@@ -4,6 +4,7 @@ public class PurchaseDocumentLineDTO {
     
     private String purchaseDocumentCode = "";
     private int lineNo = 0;
+    private int page = 0;
     private String itemCode = "";
     private String itemName = "";
     private double quantity = 0.0;
@@ -51,6 +52,12 @@ public class PurchaseDocumentLineDTO {
     }
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+    public int getPage() {
+        return page;
+    }
+    public void setPage(int page) {
+        this.page = page;
     }
     
 }

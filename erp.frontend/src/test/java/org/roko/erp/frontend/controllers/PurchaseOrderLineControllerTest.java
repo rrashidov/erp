@@ -98,6 +98,7 @@ public class PurchaseOrderLineControllerTest {
         when(itemMock.getPurchasePrice()).thenReturn(TEST_ITEM_PURCHASE_PRICE);
 
         when(purchaseOrderLineModelMock.getPurchaseDocumentCode()).thenReturn(TEST_PURCHASE_ORDER_CODE);
+        when(purchaseOrderLineModelMock.getPage()).thenReturn(TEST_PAGE);
         when(purchaseOrderLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(purchaseOrderLineModelMock.getQuantity()).thenReturn(TEST_QTY);
         when(purchaseOrderLineModelMock.getPrice()).thenReturn(TEST_PRICE);
@@ -115,7 +116,7 @@ public class PurchaseOrderLineControllerTest {
 
     @Test
     public void wizard_returnsProperTemplate_whenCalledForNew(){
-        String template = controller.purchaseOrderLineWizard(TEST_PURCHASE_ORDER_CODE, null, modelMock);
+        String template = controller.purchaseOrderLineWizard(TEST_PURCHASE_ORDER_CODE, null, TEST_PAGE, modelMock);
 
         assertEquals("purchaseOrderLineWizardFirstPage.html", template);
 
@@ -125,6 +126,7 @@ public class PurchaseOrderLineControllerTest {
         PurchaseDocumentLineDTO purchaseOrderLineModel = purchaseOrderLineModelArgumentCaptor.getValue();
 
         assertEquals(TEST_PURCHASE_ORDER_CODE, purchaseOrderLineModel.getPurchaseDocumentCode());
+        assertEquals(TEST_PAGE, purchaseOrderLineModel.getPage());
         assertEquals(0, purchaseOrderLineModel.getLineNo());
         assertEquals("", purchaseOrderLineModel.getItemCode());
         assertEquals("", purchaseOrderLineModel.getItemName());
@@ -135,7 +137,7 @@ public class PurchaseOrderLineControllerTest {
 
     @Test
     public void wizard_returnsProperTemplate_whenCalledForExisting(){
-        String template = controller.purchaseOrderLineWizard(TEST_PURCHASE_ORDER_CODE, TEST_LINE_NO, modelMock);
+        String template = controller.purchaseOrderLineWizard(TEST_PURCHASE_ORDER_CODE, TEST_LINE_NO, TEST_PAGE, modelMock);
 
         assertEquals("purchaseOrderLineWizardFirstPage.html", template);
 
@@ -183,6 +185,7 @@ public class PurchaseOrderLineControllerTest {
         assertEquals("/purchaseOrderCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_ORDER_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).create(eq(TEST_PURCHASE_ORDER_CODE), purchaseOrderLineArgumentCaptor.capture());
 
