@@ -100,6 +100,7 @@ public class SalesOrderLineControllerTest {
         when(salesOrderLineSvcMock.get(TEST_CODE, TEST_SALES_ORDER_LINENO)).thenReturn(salesOrderLineMock);
 
         when(salesOrderLineModelMock.getSalesDocumentCode()).thenReturn(TEST_CODE);
+        when(salesOrderLineModelMock.getPage()).thenReturn(TEST_PAGE);
         when(salesOrderLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(salesOrderLineModelMock.getQuantity()).thenReturn(TEST_SALES_ORDER_LINE_QTY);
         when(salesOrderLineModelMock.getPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
@@ -121,7 +122,7 @@ public class SalesOrderLineControllerTest {
 
     @Test
     public void salesOrderLineWizard_returnsProperTemplate_whenCalledForNew(){
-        String template = controller.salesOrderLineWizard(TEST_CODE, null, modelMock);
+        String template = controller.salesOrderLineWizard(TEST_CODE, null, TEST_PAGE, modelMock);
 
         assertEquals("salesOrderLineWizardFirstPage.html", template);
 
@@ -136,7 +137,7 @@ public class SalesOrderLineControllerTest {
 
     @Test
     public void salesOrderLineWizard_returnsProperTemplate_whenCalledForExisting(){
-        String template = controller.salesOrderLineWizard(TEST_CODE, TEST_SALES_ORDER_LINENO, modelMock);
+        String template = controller.salesOrderLineWizard(TEST_CODE, TEST_SALES_ORDER_LINENO, TEST_PAGE, modelMock);
 
         assertEquals("salesOrderLineWizardFirstPage.html", template);
 
@@ -183,6 +184,7 @@ public class SalesOrderLineControllerTest {
         assertEquals("/salesOrderCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(salesOrderLineSvcMock).create(eq(TEST_CODE), salesOrderLineArgumentCaptor.capture());
 

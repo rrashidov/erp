@@ -28,9 +28,11 @@ public class SalesOrderLineController {
 
     @GetMapping("/salesOrderLineWizard")
     public String salesOrderLineWizard(@RequestParam(name = "salesOrderCode") String salesOrderCode,
-            @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
+            @RequestParam(name = "lineNo", required = false) Integer lineNo, 
+            @RequestParam(name = "page", required = false) int page, Model model) {
         SalesDocumentLineDTO salesOrderLine = new SalesDocumentLineDTO();
         salesOrderLine.setSalesDocumentCode(salesOrderCode);
+        salesOrderLine.setPage(page);
 
         if (lineNo != null) {
             salesOrderLine = salesOrderLineSvc.get(salesOrderCode, lineNo);
@@ -79,6 +81,7 @@ public class SalesOrderLineController {
         }
 
         redirectAttributes.addAttribute("code", salesOrderLine.getSalesDocumentCode());
+        redirectAttributes.addAttribute("page", salesOrderLine.getPage());
 
         return new RedirectView("/salesOrderCard");
     }

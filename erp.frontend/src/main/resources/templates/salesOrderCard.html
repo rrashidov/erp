@@ -93,7 +93,7 @@
                                     <td></td>
                                     <td></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/salesOrderLineWizard?salesOrderCode={code}(code=${salesOrder.code})}"
+                                            th:href="@{/salesOrderLineWizard?salesOrderCode={code}&page={page}(code=${salesOrder.code},page=${paging.currentPage})}"
                                             role="button">New</a></td>
                                 </tr>
                             </tbody>
