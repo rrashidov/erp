@@ -87,6 +87,7 @@ public class SalesCreditMemoLineControllerTest {
 
         when(salesCreditMemoLineMock.getSalesDocumentCode()).thenReturn(TEST_SALES_CREDIT_MEMO_CODE);
         when(salesCreditMemoLineMock.getLineNo()).thenReturn(TEST_LINE_NO);
+        when(salesCreditMemoLineMock.getPage()).thenReturn(TEST_PAGE);
         when(salesCreditMemoLineMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(salesCreditMemoLineMock.getItemName()).thenReturn(TEST_ITEM_NAME);
         when(salesCreditMemoLineMock.getQuantity()).thenReturn(TEST_QTY);
@@ -104,6 +105,7 @@ public class SalesCreditMemoLineControllerTest {
         when(salesCreditMemoSvcMock.get(TEST_SALES_CREDIT_MEMO_CODE)).thenReturn(salesCreditMemoMock);
 
         when(salesCreditMemoLineModelMock.getSalesDocumentCode()).thenReturn(TEST_SALES_CREDIT_MEMO_CODE);
+        when(salesCreditMemoLineModelMock.getPage()).thenReturn(TEST_PAGE);
         when(salesCreditMemoLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(salesCreditMemoLineModelMock.getQuantity()).thenReturn(TEST_QTY);
         when(salesCreditMemoLineModelMock.getPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
@@ -116,7 +118,7 @@ public class SalesCreditMemoLineControllerTest {
 
     @Test
     public void wizard_returnsProperTemplate_whenCalledForNew() {
-        String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, null, modelMock);
+        String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, null, TEST_PAGE, modelMock);
 
         assertEquals("salesCreditMemoLineWizardFirstPage.html", template);
 
@@ -125,7 +127,7 @@ public class SalesCreditMemoLineControllerTest {
 
     @Test
     public void wizard_returnsProperTemplate_whenCalledForexisting() {
-        String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO, modelMock);
+        String template = controller.wizard(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO, TEST_PAGE, modelMock);
 
         assertEquals("salesCreditMemoLineWizardFirstPage.html", template);
 
@@ -137,6 +139,7 @@ public class SalesCreditMemoLineControllerTest {
         SalesDocumentLineDTO salesCreditMemoLineModel = salesCreditMemoLineModelArgumentCaptor.getValue();
 
         assertEquals(TEST_LINE_NO, salesCreditMemoLineModel.getLineNo());
+        assertEquals(TEST_PAGE, salesCreditMemoLineModel.getPage());
         assertEquals(TEST_SALES_CREDIT_MEMO_CODE, salesCreditMemoLineModel.getSalesDocumentCode());
         assertEquals(TEST_ITEM_CODE, salesCreditMemoLineModel.getItemCode());
         assertEquals(TEST_ITEM_NAME, salesCreditMemoLineModel.getItemName());
@@ -176,6 +179,7 @@ public class SalesCreditMemoLineControllerTest {
         assertEquals("/salesCreditMemoCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_SALES_CREDIT_MEMO_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).create(eq(TEST_SALES_CREDIT_MEMO_CODE), salesCreditMemoLineArgumentCaptor.capture());
 

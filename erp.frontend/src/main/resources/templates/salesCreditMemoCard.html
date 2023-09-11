@@ -99,7 +99,7 @@
                                     <td></td>
                                     <td></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/salesCreditMemoLineWizard?salesCreditMemoCode={code}(code=${salesCreditMemo.code})}"
+                                            th:href="@{/salesCreditMemoLineWizard?salesCreditMemoCode={code}&page={page}(code=${salesCreditMemo.code},page=${paging.currentPage})}"
                                             role="button">New</a></td>
                                 </tr>
                             </tbody>

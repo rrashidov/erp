@@ -30,7 +30,8 @@ public class SalesCreditMemoLineController {
 
     @GetMapping("/salesCreditMemoLineWizard")
     public String wizard(@RequestParam(name = "salesCreditMemoCode") String salesCreditMemoCode,
-            @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
+            @RequestParam(name = "lineNo", required = false) Integer lineNo, 
+            @RequestParam(name = "page", required = false) int page,  Model model) {
         SalesDocumentLineDTO salesCreditMemoLine = new SalesDocumentLineDTO();
 
         salesCreditMemoLine.setSalesDocumentCode(salesCreditMemoCode);
@@ -38,6 +39,8 @@ public class SalesCreditMemoLineController {
         if (lineNo != null) {
             salesCreditMemoLine = svc.get(salesCreditMemoCode, lineNo);
         }
+
+        salesCreditMemoLine.setPage(page);
 
         ItemList itemList = itemSvc.list();
 
@@ -85,6 +88,7 @@ public class SalesCreditMemoLineController {
         }
 
         redirectAttributes.addAttribute("code", salesCreditMemoLineModel.getSalesDocumentCode());
+        redirectAttributes.addAttribute("page", salesCreditMemoLineModel.getPage());
 
         return new RedirectView("/salesCreditMemoCard");
     }
