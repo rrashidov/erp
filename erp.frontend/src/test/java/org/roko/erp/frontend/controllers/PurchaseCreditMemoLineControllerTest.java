@@ -90,6 +90,7 @@ public class PurchaseCreditMemoLineControllerTest {
         when(itemSvcMock.get(TEST_ITEM_CODE)).thenReturn(itemMock);
 
         when(purchaseCreditMemoLineModelMock.getPurchaseDocumentCode()).thenReturn(TEST_PURCHASE_CREDIT_MEMO_CODE);
+        when(purchaseCreditMemoLineModelMock.getPage()).thenReturn(TEST_PAGE);
         when(purchaseCreditMemoLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(purchaseCreditMemoLineModelMock.getQuantity()).thenReturn(TEST_QTY);
         when(purchaseCreditMemoLineModelMock.getPrice()).thenReturn(TEST_ITEM_PURCHASE_PRICE);
@@ -112,7 +113,7 @@ public class PurchaseCreditMemoLineControllerTest {
 
     @Test
     public void wizard_returnsProperTemplate_whenCalledForNew(){
-        String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, null, modelMock);
+        String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, null, TEST_PAGE, modelMock);
 
         assertEquals("purchaseCreditMemoLineWizardFirstPage.html", template);
 
@@ -123,6 +124,7 @@ public class PurchaseCreditMemoLineControllerTest {
 
         assertEquals(TEST_PURCHASE_CREDIT_MEMO_CODE, purchaseCreditMemoLineModel.getPurchaseDocumentCode());
         assertEquals(0, purchaseCreditMemoLineModel.getLineNo());
+        assertEquals(TEST_PAGE, purchaseCreditMemoLineModel.getPage());
         assertEquals("", purchaseCreditMemoLineModel.getItemCode());
         assertEquals("", purchaseCreditMemoLineModel.getItemName());
         assertEquals(0, purchaseCreditMemoLineModel.getQuantity());
@@ -132,7 +134,7 @@ public class PurchaseCreditMemoLineControllerTest {
 
     @Test
     public void wizard_returnsProperTemplate_whenCalledForExisting(){
-        String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, modelMock);
+        String template = controller.wizard(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, TEST_PAGE, modelMock);
 
         assertEquals("purchaseCreditMemoLineWizardFirstPage.html", template);
 
@@ -148,6 +150,8 @@ public class PurchaseCreditMemoLineControllerTest {
         assertEquals(TEST_QTY, purchaseCreditMemoLineModel.getQuantity());
         assertEquals(TEST_PRICE, purchaseCreditMemoLineModel.getPrice());
         assertEquals(TEST_AMOUNT, purchaseCreditMemoLineModel.getAmount());
+
+        verify(purchaseCreditMemoLineMock).setPage(TEST_PAGE);
     }
 
     @Test
@@ -181,6 +185,7 @@ public class PurchaseCreditMemoLineControllerTest {
         assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).create(eq(TEST_PURCHASE_CREDIT_MEMO_CODE), purchaseCreditMemoLineArgumentCaptor.capture());
 
@@ -201,6 +206,7 @@ public class PurchaseCreditMemoLineControllerTest {
         assertEquals("/purchaseCreditMemoCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_PURCHASE_CREDIT_MEMO_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).update(TEST_PURCHASE_CREDIT_MEMO_CODE, TEST_LINE_NO, purchaseCreditMemoLineModelMock);
     }

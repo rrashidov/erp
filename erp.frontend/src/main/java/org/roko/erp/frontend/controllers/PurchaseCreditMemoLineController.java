@@ -30,13 +30,16 @@ public class PurchaseCreditMemoLineController {
 
     @GetMapping("/purchaseCreditMemoLineWizard")
     public String wizard(@RequestParam(name = "purchaseCreditMemoCode") String purchaseCreditMemoCode,
-            @RequestParam(name = "lineNo", required = false) Integer lineNo, Model model) {
+            @RequestParam(name = "lineNo", required = false) Integer lineNo, 
+            @RequestParam(name = "page", required = false) int page, Model model) {
         PurchaseDocumentLineDTO purchaseCreditMemoLine = new PurchaseDocumentLineDTO();
         purchaseCreditMemoLine.setPurchaseDocumentCode(purchaseCreditMemoCode);
 
         if (lineNo != null) {
             purchaseCreditMemoLine = svc.get(purchaseCreditMemoCode, lineNo);
         }
+
+        purchaseCreditMemoLine.setPage(page);
 
         ItemList items = itemSvc.list();
 
@@ -86,6 +89,7 @@ public class PurchaseCreditMemoLineController {
         }
 
         redirectAttributes.addAttribute("code", purchaseCreditMemoLineModel.getPurchaseDocumentCode());
+        redirectAttributes.addAttribute("page", purchaseCreditMemoLineModel.getPage());
 
         return new RedirectView("/purchaseCreditMemoCard");
     }
