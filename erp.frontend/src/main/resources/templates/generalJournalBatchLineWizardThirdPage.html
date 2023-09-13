@@ -27,10 +27,12 @@
                 th:object="${generalJournalBatchLine}" method="post">
                 <div class="row g-3">
 
-                    <input hidden type="text" class="form-control" id="lineNo" placeholder="" value=""
-                        th:field="*{lineNo}">
                     <input hidden type="text" class="form-control" id="generalJournalBatchCode" placeholder="" value=""
                         th:field="*{generalJournalBatchCode}">
+                    <input hidden type="text" class="form-control" id="lineNo" placeholder="" value=""
+                        th:field="*{lineNo}">
+                    <input hidden type="text" class="form-control" id="page" placeholder="" value=""
+                        th:field="*{page}">
 
                         <input hidden type="text" class="form-control" id="code" placeholder="" value=""
                         th:field="*{code}">

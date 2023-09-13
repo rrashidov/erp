@@ -1,7 +1,6 @@
 package org.roko.erp.frontend.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -193,8 +192,6 @@ public class GeneralJournalBatchLineControllerTest {
 
         when(vendorSvcMock.list()).thenReturn(vendorList);
 
-        when(generalJournalBatchLineModelMock.getGeneralJournalBatchCode()).thenReturn(TEST_CODE);
-
         when(generalJournalBatchSvcMock.get(TEST_CODE)).thenReturn(generalJournalBatchMock);
 
         when(generalJournalBatchLineMock.getGeneralJournalBatchCode()).thenReturn(TEST_CODE);
@@ -208,8 +205,10 @@ public class GeneralJournalBatchLineControllerTest {
         when(generalJournalBatchLineMock.getAmount()).thenReturn(TEST_AMOUNT);
         when(generalJournalBatchLineMock.getBankAccountCode()).thenReturn(TEST_BANK_ACCOUNT_CODE_1);
 
+        when(generalJournalBatchLineModelMock.getGeneralJournalBatchCode()).thenReturn(TEST_CODE);
         when(generalJournalBatchLineModelMock.getType()).thenReturn(GeneralJournalBatchLineType.BANK_ACCOUNT);
         when(generalJournalBatchLineModelMock.getOperationType()).thenReturn(GeneralJournalBatchLineOperationType.EMPTY);
+        when(generalJournalBatchLineModelMock.getPage()).thenReturn(TEST_PAGE);
 
         when(svcMock.get(TEST_CODE, TEST_LINE_NO)).thenReturn(generalJournalBatchLineMock);
 
@@ -219,25 +218,29 @@ public class GeneralJournalBatchLineControllerTest {
 
     @Test
     public void wizard_returnsProperTemplate() {
-        String template = controller.wizard(TEST_CODE, 0, modelMock);
+        String template = controller.wizard(TEST_CODE, 0, TEST_PAGE, modelMock);
 
-        verify(modelMock).addAttribute(eq("generalJournalBatchLine"), any(GeneralJournalBatchLineDTO.class));
+        verify(modelMock).addAttribute(eq("generalJournalBatchLine"), generalJournalBatchLineModelArgumentCaptor.capture());
 
         assertEquals("generalJournalBatchLineWizardFirstPage.html", template);
+
+        GeneralJournalBatchLineDTO generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor.getValue();
+        assertEquals(TEST_CODE, generalJournalBatchLineModel.getGeneralJournalBatchCode());
+        assertEquals(TEST_PAGE, generalJournalBatchLineModel.getPage());
     }
 
     @Test
     public void wizard_returnsProperTemplate_whenCalledForExisting() {
-        controller.wizard(TEST_CODE, TEST_LINE_NO, modelMock);
+        controller.wizard(TEST_CODE, TEST_LINE_NO, TEST_PAGE, modelMock);
 
         verify(modelMock).addAttribute(eq("generalJournalBatchLine"),
                 generalJournalBatchLineModelArgumentCaptor.capture());
 
-                GeneralJournalBatchLineDTO generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor
-                .getValue();
+        GeneralJournalBatchLineDTO generalJournalBatchLineModel = generalJournalBatchLineModelArgumentCaptor.getValue();
 
         assertEquals(TEST_CODE, generalJournalBatchLineModel.getGeneralJournalBatchCode());
         assertEquals(TEST_LINE_NO, generalJournalBatchLineModel.getLineNo());
+        assertEquals(TEST_PAGE, generalJournalBatchLineModel.getPage());
         assertEquals(TEST_SOURCE_TYPE, generalJournalBatchLineModel.getType());
         assertEquals(TEST_SOURCE_CODE, generalJournalBatchLineModel.getCode());
         assertEquals(TEST_SOURCE_NAME, generalJournalBatchLineModel.getName());
@@ -313,6 +316,7 @@ public class GeneralJournalBatchLineControllerTest {
         assertEquals("/generalJournalBatchCard", redirectView.getUrl());
 
         verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).create(eq(TEST_CODE), generalJournalBatchLineArgumentCaptor.capture());
     }
@@ -322,6 +326,9 @@ public class GeneralJournalBatchLineControllerTest {
         when(generalJournalBatchLineModelMock.getLineNo()).thenReturn(TEST_LINE_NO);
 
         controller.postGeneralJournalBatchLineWizardThirdPage(generalJournalBatchLineModelMock, redirectAttributesMock);
+
+        verify(redirectAttributesMock).addAttribute("code", TEST_CODE);
+        verify(redirectAttributesMock).addAttribute("page", TEST_PAGE);
 
         verify(svcMock).update(eq(TEST_CODE), eq(TEST_LINE_NO), generalJournalBatchLineArgumentCaptor.capture());
     }

@@ -87,7 +87,7 @@
                                     <td></td>
                                     <td></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}(code=${generalJournalBatch.code})}"
+                                            th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}&page={page}(code=${generalJournalBatch.code},page=${paging.currentPage})}"
                                             role="button">New</a></td>
                                 </tr>
                             </tbody>

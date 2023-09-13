@@ -10,6 +10,8 @@ public class GeneralJournalBatchLineDTO {
 
     private int lineNo = 0;
 
+    private int page;
+
     private GeneralJournalBatchLineType type = GeneralJournalBatchLineType.CUSTOMER;
 
     private String code = "";
@@ -94,6 +96,12 @@ public class GeneralJournalBatchLineDTO {
     }
     public void setOperationType(GeneralJournalBatchLineOperationType operationType) {
         this.operationType = operationType;
+    }
+    public int getPage() {
+        return page;
+    }
+    public void setPage(int page) {
+        this.page = page;
     }
     
 }

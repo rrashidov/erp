@@ -47,8 +47,10 @@ public class GeneralJournalBatchLineController {
 
     @GetMapping("/generalJournalBatchLineWizard")
     public String wizard(@RequestParam(name = "generalJournalBatchCode") String code,
-            @RequestParam(name = "lineNo", required = false, defaultValue = "0") int lineNo, Model model) {
-                GeneralJournalBatchLineDTO generalJournalBatchLineModel = new GeneralJournalBatchLineDTO();
+            @RequestParam(name = "lineNo", required = false, defaultValue = "0") int lineNo, 
+            @RequestParam(name = "page", required = false) int page, Model model) {
+
+        GeneralJournalBatchLineDTO generalJournalBatchLineModel = new GeneralJournalBatchLineDTO();
         generalJournalBatchLineModel.setGeneralJournalBatchCode(code);
         generalJournalBatchLineModel.setDate(new Date());
 
@@ -56,6 +58,8 @@ public class GeneralJournalBatchLineController {
             GeneralJournalBatchLineDTO generalJournalBatchLine = svc.get(code, lineNo);
             toModel(generalJournalBatchLine, generalJournalBatchLineModel);
         }
+
+        generalJournalBatchLineModel.setPage(page);
 
         model.addAttribute("generalJournalBatchLine", generalJournalBatchLineModel);
 
@@ -112,6 +116,7 @@ public class GeneralJournalBatchLineController {
         }
 
         redirectAttributes.addAttribute("code", generalJournalBatchLine.getGeneralJournalBatchCode());
+        redirectAttributes.addAttribute("page", generalJournalBatchLine.getPage());
 
         return new RedirectView("/generalJournalBatchCard");
     }
