@@ -86,7 +86,7 @@
                                     <td th:text="${salesCreditMemoLine.price}"></td>
                                     <td th:text="${salesCreditMemoLine.amount}"></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/salesCreditMemoLineWizard?salesCreditMemoCode={code}&lineNo={lineNo}(code=${salesCreditMemo.code},lineNo=${salesCreditMemoLine.lineNo})}">Edit</a>
+                                            th:href="@{/salesCreditMemoLineWizard?salesCreditMemoCode={code}&lineNo={lineNo}&page={page}(code=${salesCreditMemo.code},lineNo=${salesCreditMemoLine.lineNo},page=${paging.currentPage})}">Edit</a>
                                         <a class="btn btn-primary"
                                             th:href="@{/deleteSalesCreditMemoLine?salesCreditMemoCode={code}&lineNo={lineNo}&page={page}(code=${salesCreditMemo.code},lineNo=${salesCreditMemoLine.lineNo},page=${paging.currentPage})}">Delete</a>
                                     </td>
