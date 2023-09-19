@@ -80,7 +80,7 @@
                                     <td th:text="${salesOrderLine.price}"></td>
                                     <td th:text="${salesOrderLine.amount}"></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/salesOrderLineWizard?salesOrderCode={code}&lineNo={lineNo}(code=${salesOrder.code},lineNo=${salesOrderLine.lineNo})}">Edit</a>
+                                            th:href="@{/salesOrderLineWizard?salesOrderCode={code}&lineNo={lineNo}&page={page}(code=${salesOrder.code},lineNo=${salesOrderLine.lineNo},page=${paging.currentPage})}">Edit</a>
                                         <a class="btn btn-primary"
                                             th:href="@{/deleteSalesOrderLine?salesOrderCode={code}&lineNo={lineNo}&page={page}(code=${salesOrder.code},lineNo=${salesOrderLine.lineNo},page=${paging.currentPage})}">Delete</a>
                                     </td>

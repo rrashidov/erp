@@ -32,11 +32,12 @@ public class SalesOrderLineController {
             @RequestParam(name = "page", required = false) int page, Model model) {
         SalesDocumentLineDTO salesOrderLine = new SalesDocumentLineDTO();
         salesOrderLine.setSalesDocumentCode(salesOrderCode);
-        salesOrderLine.setPage(page);
 
         if (lineNo != null) {
             salesOrderLine = salesOrderLineSvc.get(salesOrderCode, lineNo);
         }
+        
+        salesOrderLine.setPage(page);
 
         model.addAttribute("salesOrderLine", salesOrderLine);
         model.addAttribute("items", itemSvc.list().getData());
