@@ -34,11 +34,12 @@ public class PurchaseOrderLineController {
             @RequestParam(name = "page", required = false) Integer page, Model model) {
         PurchaseDocumentLineDTO purchaseOrderLine = new PurchaseDocumentLineDTO();
         purchaseOrderLine.setPurchaseDocumentCode(code);
-        purchaseOrderLine.setPage(page);
 
         if (lineNo != null){
             purchaseOrderLine = svc.get(code, lineNo);
         }
+
+        purchaseOrderLine.setPage(page);
 
         ItemList itemList = itemSvc.list();
 
