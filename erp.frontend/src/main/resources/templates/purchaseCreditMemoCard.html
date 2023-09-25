@@ -80,7 +80,7 @@
                                     <td th:text="${purchaseCreditMemoLine.price}"></td>
                                     <td th:text="${purchaseCreditMemoLine.amount}"></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/purchaseCreditMemoLineWizard?purchaseCreditMemoCode={code}&lineNo={lineNo}(code=${purchaseCreditMemo.code},lineNo=${purchaseCreditMemoLine.lineNo})}">Edit</a>
+                                            th:href="@{/purchaseCreditMemoLineWizard?purchaseCreditMemoCode={code}&lineNo={lineNo}&page={page}(code=${purchaseCreditMemo.code},lineNo=${purchaseCreditMemoLine.lineNo},page=${paging.currentPage})}">Edit</a>
                                         <a class="btn btn-primary"
                                             th:href="@{/deletePurchaseCreditMemoLine?purchaseCreditMemoCode={code}&lineNo={lineNo}&page={page}(code=${purchaseCreditMemo.code},lineNo=${purchaseCreditMemoLine.lineNo},page=${paging.currentPage})}">Delete</a>
                                     </td>
