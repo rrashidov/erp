@@ -71,7 +71,7 @@
                                     <td th:if="${generalJournalBatchLine.bankAccountCode} != null" th:text="${generalJournalBatchLine.bankAccountName}"></td>
                                     <td th:unless="${generalJournalBatchLine.bankAccountCode} != null"></td>
                                     <td><a class="btn btn-primary"
-                                            th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}&lineNo={lineNo}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.lineNo})}">Edit</a>
+                                            th:href="@{/generalJournalBatchLineWizard?generalJournalBatchCode={code}&lineNo={lineNo}&page={page}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.lineNo},page=${paging.currentPage})}">Edit</a>
                                         <a class="btn btn-primary"
                                             th:href="@{/deleteGeneralJournalBatchLine?generalJournalBatchCode={code}&lineNo={lineNo}&page={page}(code=${generalJournalBatch.code},lineNo=${generalJournalBatchLine.lineNo},page=${paging.currentPage})}">Delete</a>
                                     </td>
