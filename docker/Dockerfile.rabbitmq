@@ -1,4 +1,4 @@
-FROM rabbitmq:3.12.2-management
+FROM rabbitmq:3.12.6-management
 
 COPY rabbitmq.conf /etc/rabbitmq/
 COPY custom_definitions.json /etc/rabbitmq/
