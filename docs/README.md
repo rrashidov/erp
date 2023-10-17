@@ -565,7 +565,12 @@ This asynchronous architecture has some pros and cons:
 
 ## Dev Setup
 
-The project unitlizes [make](https://www.gnu.org/software/make/) for development related activities. 
+The project unitlizes [make](https://www.gnu.org/software/make/) for development related activities.
+
+To enable some customizations, **make** utilizes **.envrc** file. The following envrionment variables have to be set in **.envrc** file in order for **make** to work properly:
+
+- **export mvn_home=** - points to a location where the needed Maven version (3.2.5) could be found 
+- **export JAVA_HOME=** - [Optional] points to a JDK installation that will be used to build/run the Java components
 
 The following make targets are available with their respective purposes:
 
