@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.5
+
+- update RabbitMQ version to 3.12.6
+
 ## v0.0.4
 
 - fix typos in README
