@@ -4,6 +4,7 @@
 
 - update RabbitMQ version to 3.12.6
 - update MySQL version to 8.1.0
+- run backend and frontend with SapMachine 17
 
 ## v0.0.4
 
