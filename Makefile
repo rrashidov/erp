@@ -101,7 +101,7 @@ stop-locally:
 # Testing 
 # ==================================================================================== #
 
-## run-integration-tests
+## run-integration-tests: runs integration tests towards backend API
 .PHONY: run-integration-tests
 run-integration-tests: stop-locally clean-local-mysql start-locally
 	@echo "Start running integration tests"
