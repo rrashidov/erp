@@ -1,3 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM sapmachine:17-jre-ubuntu
 
-RUN apk add --no-cache curl bash htop
+RUN apt update
+RUN apt install curl -y
