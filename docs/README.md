@@ -578,6 +578,7 @@ The following make targets are available with their respective purposes:
 - **clean-local-mysql** - cleans the data stored in the local development setup;
 - **start-locally** - starts the whole system locally using docker compose;
 - **stop-locally** - stops locally started system using docker compose;
+- **run-integration-tests** - executes integration tests towards backend APIs;
 
 ## Caveats
 
