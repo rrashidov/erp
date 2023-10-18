@@ -6,6 +6,7 @@
 - update MySQL version to 8.1.0
 - run backend and frontend with SapMachine 17
 - compile Java components with Java 17
+- switch to Spring Boot 3.1.4
 
 ## v0.0.4
 
