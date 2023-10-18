@@ -2,8 +2,8 @@ package org.roko.erp.backend.model.jpa;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.ManyToOne;
 
 import org.roko.erp.backend.model.PurchaseOrder;
 

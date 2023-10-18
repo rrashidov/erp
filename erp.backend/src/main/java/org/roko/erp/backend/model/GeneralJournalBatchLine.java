@@ -2,11 +2,11 @@ package org.roko.erp.backend.model;
 
 import java.util.Date;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 
 import org.roko.erp.backend.model.jpa.GeneralJournalBatchLineId;
 

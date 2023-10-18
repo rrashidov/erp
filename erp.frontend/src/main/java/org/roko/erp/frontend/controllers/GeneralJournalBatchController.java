@@ -1,6 +1,6 @@
 package org.roko.erp.frontend.controllers;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.roko.erp.dto.GeneralJournalBatchDTO;
 import org.roko.erp.dto.list.GeneralJournalBatchLineList;

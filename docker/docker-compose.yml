@@ -35,7 +35,7 @@ services:
       - DB_URL=jdbc:mysql://mysql:3306/erp
       - DB_USERNAME=erp
       - DB_PASSWORD=erp
-      - DB_PLATFORM=org.hibernate.dialect.MySQL5InnoDBDialect
+      - DB_PLATFORM=org.hibernate.dialect.MySQLDialect
       - RMQ_HOSTNAME=rabbitmq
     ports:
       - "8082:8082"

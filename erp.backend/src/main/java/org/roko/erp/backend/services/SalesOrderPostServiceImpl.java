@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.roko.erp.backend.services.exc.PostFailedException;
 import org.roko.erp.backend.services.util.TimeService;
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
@@ -22,6 +20,7 @@ import org.roko.erp.backend.model.SalesOrderLine;
 import org.roko.erp.backend.model.jpa.PostedSalesOrderLineId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SalesOrderPostServiceImpl implements SalesOrderPostService {
@@ -58,7 +57,7 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     }
 
     @Override
-    @Transactional(rollbackOn = PostFailedException.class)
+    @Transactional(rollbackFor = PostFailedException.class)
     public void post(String code) throws PostFailedException {
         timeSvc.sleep();
         

@@ -1,6 +1,6 @@
 package org.roko.erp.frontend.services;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.roko.erp.frontend.services.util.Feedback;
 import org.roko.erp.frontend.services.util.FeedbackType;
