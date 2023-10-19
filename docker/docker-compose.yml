@@ -3,10 +3,10 @@ services:
   mysql:
     image: mysql:8.1.0
     environment:
-      - "MYSQL_ROOT_PASSWORD=root"
-      - "MYSQL_DATABASE=erp"
-      - "MYSQL_USER=erp"
-      - "MYSQL_PASSWORD=erp"
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}"
+      - "MYSQL_DATABASE=${MYSQL_DATABASE:-erp}"
+      - "MYSQL_USER=${MYSQL_USER:-erp}"
+      - "MYSQL_PASSWORD=${MYSQL_PASSWORD:-erp}"
     networks: 
       - my-shared-network
     volumes:
@@ -20,7 +20,7 @@ services:
   rabbitmq:
     image: erp.rabbitmq:0.0.1
     ports:
-      - "15672:15672"
+      - "${RABBITMQ_ADMIN_PORT:-15672}:15672"
     networks: 
       - my-shared-network
     healthcheck:
@@ -31,14 +31,14 @@ services:
   backend:
     image: erp.backend:0.0.1
     environment:
-      - DB_DRIVER=com.mysql.cj.jdbc.Driver
-      - DB_URL=jdbc:mysql://mysql:3306/erp
-      - DB_USERNAME=erp
-      - DB_PASSWORD=erp
-      - DB_PLATFORM=org.hibernate.dialect.MySQLDialect
+      - DB_DRIVER=${DB_DRIVER:-com.mysql.cj.jdbc.Driver}
+      - DB_URL=${DB_URL:-jdbc:mysql://mysql:3306/erp}
+      - DB_USERNAME=${MYSQL_USER:-erp}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-erp}
+      - DB_PLATFORM=${DB_PLATFORM:-org.hibernate.dialect.MySQLDialect}
       - RMQ_HOSTNAME=rabbitmq
     ports:
-      - "8082:8082"
+      - "${BACKEND_PORT:-8082}:8082"
     networks: 
       - my-shared-network
     depends_on:
@@ -56,7 +56,7 @@ services:
     environment:
       - "ERP_BACKENDURL=http://backend:8082"
     ports:
-      - "8081:8081"
+      - "${FRONTEND_PORT:-8081}:8081"
     networks: 
       - my-shared-network
     depends_on:
@@ -67,6 +67,7 @@ services:
       interval: 2s
       timeout: 2s
       retries: 60
+
 networks:
   my-shared-network: {}
 
