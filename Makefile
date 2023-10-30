@@ -76,7 +76,7 @@ init-test-data:
 .PHONY: clean-local-mysql
 clean-local-mysql:
 	@echo "Start cleaning local mysql data"
-	@docker compose -f ./docker/docker-compose.yml --project-name dev --env-file ./docker/.env down -v
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/.env down -v
 	@echo "Finished cleaning local mysql data"
 
 # ==================================================================================== #
@@ -87,14 +87,14 @@ clean-local-mysql:
 .PHONY: start-locally
 start-locally: stop-locally containerize build-erp-rabbitmq
 	@echo "Start erp setup locally"
-	@docker compose -f ./docker/docker-compose.yml --project-name dev --env-file ./docker/.env up -d 
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/.env up -d 
 	@echo "erp is up and running locally. You can access it at http://localhost:8081"
 
 ## stop-locally: stops anything run locally
 .PHONY: stop-locally
 stop-locally:
 	@echo "Stop locally running erp"
-	@docker compose -f ./docker/docker-compose.yml --project-name dev --env-file ./docker/.env down
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/.env down
 	@echo "Locally running erp stopped"
 
 # ==================================================================================== #
