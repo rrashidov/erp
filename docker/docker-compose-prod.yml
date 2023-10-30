@@ -1,0 +1,71 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.1.0
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}"
+      - "MYSQL_DATABASE=${MYSQL_DATABASE:-erp}"
+      - "MYSQL_USER=${MYSQL_USER:-erp}"
+      - "MYSQL_PASSWORD=${MYSQL_PASSWORD:-erp}"
+    networks: 
+      - my-shared-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=${MYSQL_ROOT_PASSWORD:-root} --execute \"SHOW DATABASES;\""
+      interval: 10s
+      timeout: 30s
+      retries: 30
+      start_period: 30s
+  rabbitmq:
+    image: erp.rabbitmq:0.0.1
+    networks: 
+      - my-shared-network
+    healthcheck:
+        test: "rabbitmqctl status"
+        interval: 5s
+        timeout: 20s
+        retries: 24
+  backend:
+    image: erp.backend:0.0.1
+    environment:
+      - DB_DRIVER=${DB_DRIVER:-com.mysql.cj.jdbc.Driver}
+      - DB_URL=${DB_URL:-jdbc:mysql://mysql:3306/erp}
+      - DB_USERNAME=${MYSQL_USER:-erp}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-erp}
+      - DB_PLATFORM=${DB_PLATFORM:-org.hibernate.dialect.MySQLDialect}
+      - RMQ_HOSTNAME=rabbitmq
+    networks: 
+      - my-shared-network
+    healthcheck:
+      test: "curl -f localhost:8082/api/v1/healthcheck"
+      interval: 10s
+      timeout: 10s
+      retries: 60
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+  frontend:
+    image: erp.frontend:0.0.1
+    environment:
+      - "ERP_BACKENDURL=http://backend:8082"
+    ports:
+      - "${FRONTEND_PORT:-8081}:8081"
+    networks: 
+      - my-shared-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: "curl -f localhost:8081/api/v1/healthcheck"
+      interval: 2s
+      timeout: 2s
+      retries: 60
+
+networks:
+  my-shared-network: {}
+
+volumes:
+  mysql-data: {}
