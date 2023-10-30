@@ -12,7 +12,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: "/usr/bin/mysql --user=root --password=root --execute \"SHOW DATABASES;\""
+      test: "/usr/bin/mysql --user=root --password=${MYSQL_ROOT_PASSWORD:-root} --execute \"SHOW DATABASES;\""
       interval: 10s
       timeout: 30s
       retries: 30
