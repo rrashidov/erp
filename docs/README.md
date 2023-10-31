@@ -585,6 +585,18 @@ The following make targets are available with their respective purposes:
 - **stop-locally** - stops locally started system using docker compose;
 - **run-integration-tests** - executes integration tests towards backend APIs;
 
+## Production usage
+
+Since the project is in a shape to be used with some limitations, it makes sense to have a way to run it productively.
+
+The idea is to utilize **make** and **docker compose** in order to run productive (non-dev) instances of the system.
+
+This is achieved with the following two **make** targets:
+
+- **start-production** - creates and starts a separate docker compose instance. The details of the instance are configured in the _./docker/env.prod_ file. 
+- **stop-production** - stops the production docker compose instance;
+
+
 ## Caveats
 
 It was described in the Intro section what the main goals of the project are. In order to focus on the main goals, some other features and functionalities were intentionally left out. Here are some of them:
