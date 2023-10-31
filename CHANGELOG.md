@@ -7,6 +7,7 @@
 - run backend and frontend with SapMachine 17
 - compile Java components with Java 17
 - switch to Spring Boot 3.1.4
+- enable running production instance
 
 ## v0.0.4
 
