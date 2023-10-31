@@ -76,7 +76,7 @@ init-test-data:
 .PHONY: clean-local-mysql
 clean-local-mysql:
 	@echo "Start cleaning local mysql data"
-	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/.env down -v
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/env.dev down -v
 	@echo "Finished cleaning local mysql data"
 
 # ==================================================================================== #
@@ -87,14 +87,14 @@ clean-local-mysql:
 .PHONY: start-locally
 start-locally: stop-locally containerize build-erp-rabbitmq
 	@echo "Start erp setup locally"
-	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/.env up -d 
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/env.dev up -d 
 	@echo "erp is up and running locally. You can access it at http://localhost:8081"
 
 ## stop-locally: stops anything run locally
 .PHONY: stop-locally
 stop-locally:
 	@echo "Stop locally running erp"
-	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/.env down
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/env.dev down
 	@echo "Locally running erp stopped"
 
 # ==================================================================================== #
@@ -107,3 +107,20 @@ run-integration-tests: stop-locally clean-local-mysql start-locally
 	@echo "Start running integration tests"
 	@java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
 	@echo "Finished running integration tests. Check their output to see if the pass"
+
+# ==================================================================================== #
+# Production 
+# ==================================================================================== #
+
+## start-production: creates and starts production docker compose instance
+.PHONY: start-production
+start-production: stop-production containerize build-erp-rabbitmq
+	@echo "Starting production docker compose instance"
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name prod --env-file ./docker/env.prod up -d
+	@echo "Finished starting production docker compose instance"
+
+## stop-production: stops production docker compose instance
+stop-production:
+	@echo "Stopping production docker compose instance"
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name prod --env-file ./docker/env.prod down
+	@echo "Finished stopping production docker compose instance"
