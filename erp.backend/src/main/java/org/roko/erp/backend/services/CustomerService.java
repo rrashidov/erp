@@ -19,7 +19,7 @@ public interface CustomerService {
 
     public List<Customer> list(int page);
 
-    public int count();
+    public long count();
 
     public CustomerDTO toDTO(Customer customer);
 

@@ -27,7 +27,7 @@ public class CustomerControllerTest {
 
     private static final String NON_EXISTING_CODE = "non-existing-code";
     
-    private static final int TEST_COUNT = 222;
+    private static final long TEST_COUNT = 222;
     private static final int TEST_PAGE = 12;
     private static final String TEST_CODE = "test-code";
 

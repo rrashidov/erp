@@ -48,7 +48,7 @@ public class SalesCreditMemoControllerTest {
 
     private static final String GENERATED_CODE = "generated-code";
 
-    private static final int TEST_COUNT = 222;
+    private static final long TEST_COUNT = 222;
 
     private static final int TEST_LINE_NO = 1234;
 

@@ -37,8 +37,8 @@ public class PostedSalesCreditMemoLineServiceImpl implements PostedSalesCreditMe
     }
 
     @Override
-    public int count(PostedSalesCreditMemo postedSalesCreditMemo) {
-        return new Long(repo.count(postedSalesCreditMemo)).intValue();
+    public long count(PostedSalesCreditMemo postedSalesCreditMemo) {
+        return repo.count(postedSalesCreditMemo);
     }
 
     @Override

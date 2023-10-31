@@ -15,7 +15,7 @@ public interface PostedPurchaseOrderService {
 
     public List<PostedPurchaseOrder> list(int page);
 
-    public int count();
+    public long count();
 
     public PostedPurchaseDocumentDTO toDTO(PostedPurchaseOrder postedPurchaseOrder);
 }

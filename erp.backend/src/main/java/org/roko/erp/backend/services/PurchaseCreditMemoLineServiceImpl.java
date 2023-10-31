@@ -67,8 +67,8 @@ public class PurchaseCreditMemoLineServiceImpl implements PurchaseCreditMemoLine
     }
 
     @Override
-    public int count(PurchaseCreditMemo purchaseCreditMemo) {
-        return new Long(repo.count(purchaseCreditMemo)).intValue();
+    public long count(PurchaseCreditMemo purchaseCreditMemo) {
+        return repo.count(purchaseCreditMemo);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class PurchaseOrderControllerTest {
 
     private static final int TEST_LINE_NO = 1234;
 
-    private static final int TEST_COUNT = 222;
+    private static final long TEST_COUNT = 222;
 
     private static final String POST_SCHEDULED_ERR_TMPL = "Purchase Order %s already scheduled for posting";
 

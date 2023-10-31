@@ -14,7 +14,7 @@ public interface BankAccountLedgerEntryService {
 
     public List<BankAccountLedgerEntry> findFor(BankAccount bankAccount, int page);
 
-    public int count(BankAccount bankAccount);
+    public long count(BankAccount bankAccount);
 
     public BankAccountLedgerEntryDTO toDTO(BankAccountLedgerEntry bankAccountLedgerEntry);
 }

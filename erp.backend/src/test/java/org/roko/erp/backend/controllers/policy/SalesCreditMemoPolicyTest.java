@@ -41,7 +41,7 @@ public class SalesCreditMemoPolicyTest {
 
         when(salesCreditMemoSvcMock.get(TEST_CODE)).thenReturn(salesCreditMemoMock);
 
-        when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(0);
+        when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(0l);
 
         policy = new SalesCreditMemoPolicy(salesCreditMemoSvcMock, salesCreditMemoLineSvcMock);
     }
@@ -68,7 +68,7 @@ public class SalesCreditMemoPolicyTest {
 
     @Test
     public void resultIsFalse_whenSalesCreditMemoLinesExist() {
-        when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(1);
+        when(salesCreditMemoLineSvcMock.count(salesCreditMemoMock)).thenReturn(1l);
 
         PolicyResult result = policy.canDelete(TEST_CODE);
 

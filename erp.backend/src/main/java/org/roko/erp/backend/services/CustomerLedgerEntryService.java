@@ -14,7 +14,7 @@ public interface CustomerLedgerEntryService {
 
     public List<CustomerLedgerEntry> findFor(Customer customer, int page);
 
-    public int count(Customer customer);
+    public long count(Customer customer);
 
     public CustomerLedgerEntryDTO toDTO(CustomerLedgerEntry customerLedgerEntry);
 }

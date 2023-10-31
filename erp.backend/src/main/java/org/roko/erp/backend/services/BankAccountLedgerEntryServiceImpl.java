@@ -36,8 +36,8 @@ public class BankAccountLedgerEntryServiceImpl implements BankAccountLedgerEntry
     }
 
     @Override
-    public int count(BankAccount bankAccount) {
-        return new Long(repo.count(bankAccount)).intValue();
+    public long count(BankAccount bankAccount) {
+        return repo.count(bankAccount);
     }
 
     @Override

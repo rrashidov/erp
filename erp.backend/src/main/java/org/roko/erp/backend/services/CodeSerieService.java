@@ -19,7 +19,7 @@ public interface CodeSerieService {
 
     public List<CodeSerie> list(int page);
 
-    public int count();
+    public long count();
 
     public String generate(String code);
 

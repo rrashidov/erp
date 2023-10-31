@@ -14,7 +14,7 @@ public interface VendorLedgerEntryService {
 
     public List<VendorLedgerEntry> findFor(Vendor vendor, int page);
 
-    public int count(Vendor vendor);
+    public long count(Vendor vendor);
 
     public VendorLedgerEntryDTO toDTO(VendorLedgerEntry vendorLedgerEntry);
 }

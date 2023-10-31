@@ -15,7 +15,7 @@ public interface PostedSalesCreditMemoService {
 
     public List<PostedSalesCreditMemo> list(int page);
 
-    public int count();
+    public long count();
 
     public PostedSalesDocumentDTO toDTO(PostedSalesCreditMemo postedSalesCreditMemo);
 }

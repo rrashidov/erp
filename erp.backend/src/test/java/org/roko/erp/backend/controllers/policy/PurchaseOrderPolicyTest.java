@@ -43,7 +43,7 @@ public class PurchaseOrderPolicyTest {
 
         when(purchaseOrderSvcMock.get(TEST_CODE)).thenReturn(purchaseOrderMock);
 
-        when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(0);
+        when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(0l);
 
         policy = new PurchaseOrderPolicy(purchaseOrderSvcMock, purchaseOrderLineSvcMock);
     }
@@ -68,7 +68,7 @@ public class PurchaseOrderPolicyTest {
 
     @Test
     public void resultIsFalse_whenPurchaseOrderLinesExist() {
-        when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(1);
+        when(purchaseOrderLineSvcMock.count(purchaseOrderMock)).thenReturn(1l);
 
         PolicyResult result = policy.canDelete(TEST_CODE);
 

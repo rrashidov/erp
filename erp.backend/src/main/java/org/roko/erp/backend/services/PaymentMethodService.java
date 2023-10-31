@@ -19,7 +19,7 @@ public interface PaymentMethodService {
 
     public List<PaymentMethod> list(int page);
 
-    public int count();
+    public long count();
 
     public PaymentMethodDTO toDTO(PaymentMethod paymentMethod);
 

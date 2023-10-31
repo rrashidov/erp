@@ -19,7 +19,7 @@ public interface PurchaseCreditMemoService {
 
     public List<PurchaseCreditMemo> list(int page);
 
-    public int count();
+    public long count();
 
     public PurchaseDocumentDTO toDTO(PurchaseCreditMemo purchaseCreditMemo);
 

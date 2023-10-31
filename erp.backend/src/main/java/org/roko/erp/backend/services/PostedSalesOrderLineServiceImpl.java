@@ -36,8 +36,8 @@ public class PostedSalesOrderLineServiceImpl implements PostedSalesOrderLineServ
     }
 
     @Override
-    public int count(PostedSalesOrder postedSalesOrder) {
-        return new Long(repo.count(postedSalesOrder)).intValue();
+    public long count(PostedSalesOrder postedSalesOrder) {
+        return repo.count(postedSalesOrder);
     }
 
     @Override

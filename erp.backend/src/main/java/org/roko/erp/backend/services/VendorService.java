@@ -19,7 +19,7 @@ public interface VendorService {
 
     public List<Vendor> list(int page);
 
-    public int count();
+    public long count();
 
     public VendorDTO toDTO(Vendor vendor);
 

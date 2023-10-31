@@ -21,7 +21,7 @@ public interface SalesCreditMemoLineService {
 
     public List<SalesCreditMemoLine> list(SalesCreditMemo salesCreditMemo, int page);
 
-    public int count(SalesCreditMemo salesCreditMemo);
+    public long count(SalesCreditMemo salesCreditMemo);
 
     public int maxLineNo(SalesCreditMemo salesCreditMemo);
 

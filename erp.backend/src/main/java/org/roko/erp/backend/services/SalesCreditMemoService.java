@@ -19,7 +19,7 @@ public interface SalesCreditMemoService {
 
     public List<SalesCreditMemo> list(int page);
 
-    public int count();
+    public long count();
 
     public SalesDocumentDTO toDTO(SalesCreditMemo salesCreditMemo);
 

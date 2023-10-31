@@ -47,7 +47,7 @@ public class GeneralJournalBatchControllerTest {
 
     private static final String TEST_FAILED_MSG = "test-failed-msg";
 
-    private static final int TEST_COUNT = 222;
+    private static final long TEST_COUNT = 222;
 
     private static final String TEST_CODE = "test-code";
 

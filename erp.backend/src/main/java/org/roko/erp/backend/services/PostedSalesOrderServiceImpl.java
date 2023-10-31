@@ -57,8 +57,8 @@ public class PostedSalesOrderServiceImpl implements PostedSalesOrderService {
     }
 
     @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
+    public long count() {
+        return repo.count();
     }
 
     @Override

@@ -19,7 +19,7 @@ public interface PurchaseOrderService {
 
     public List<PurchaseOrder> list(int page);
 
-    public int count();
+    public long count();
 
     public PurchaseDocumentDTO toDTO(PurchaseOrder purchaseOrder);
 

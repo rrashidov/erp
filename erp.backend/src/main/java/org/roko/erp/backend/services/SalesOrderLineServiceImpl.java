@@ -68,8 +68,8 @@ public class SalesOrderLineServiceImpl implements SalesOrderLineService {
     }
 
     @Override
-    public int count(SalesOrder salesOrder) {
-        return new Long(repo.countForSalesOrder(salesOrder)).intValue();
+    public long count(SalesOrder salesOrder) {
+        return repo.countForSalesOrder(salesOrder);
     }
 
     @Override

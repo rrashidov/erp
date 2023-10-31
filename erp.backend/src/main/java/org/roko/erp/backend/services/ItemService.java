@@ -19,7 +19,7 @@ public interface ItemService {
 
     public List<Item> list(int page);
 
-    public int count();
+    public long count();
 
     public ItemDTO toDTO(Item item);
 

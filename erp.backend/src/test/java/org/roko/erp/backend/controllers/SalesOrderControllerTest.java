@@ -47,7 +47,7 @@ public class SalesOrderControllerTest {
     
     private static final String TEST_POST_FAILED_MSG = "test-post-failed-msg";
 
-    private static final int TEST_COUNT = 222;
+    private static final long TEST_COUNT = 222;
 
     private static final String TEST_CODE = "test-code";
 

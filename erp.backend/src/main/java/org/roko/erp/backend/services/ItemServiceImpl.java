@@ -74,12 +74,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public int count() {
-        return new Long(repo.count()).intValue();
+    public long count() {
+        return repo.count();
     }
-
     
-
     @Override
     public Item fromDTO(ItemDTO itemDto) {
         Item item = new Item();

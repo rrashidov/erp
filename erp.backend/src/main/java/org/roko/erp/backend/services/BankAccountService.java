@@ -19,7 +19,7 @@ public interface BankAccountService {
 
     public List<BankAccount> list(int page);
 
-    public int count();
+    public long count();
 
     public BankAccountDTO toDTO(BankAccount bankAccount);
 

@@ -69,7 +69,7 @@ public class GeneralJournalBatchLineServiceImpl implements GeneralJournalBatchLi
     }
 
     @Override
-    public int count(GeneralJournalBatch generalJournalBatch) {
+    public long count(GeneralJournalBatch generalJournalBatch) {
         return repo.count(generalJournalBatch);
     }
 

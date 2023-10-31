@@ -21,7 +21,7 @@ public interface GeneralJournalBatchLineService {
 
     public void delete(GeneralJournalBatchLineId generalJournalBatchLineId);
 
-    public int count(GeneralJournalBatch generalJournalBatch);
+    public long count(GeneralJournalBatch generalJournalBatch);
 
     public int maxLineNo(GeneralJournalBatch generalJournalBatch);
 

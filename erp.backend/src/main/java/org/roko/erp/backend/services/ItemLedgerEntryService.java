@@ -14,7 +14,7 @@ public interface ItemLedgerEntryService {
 
     public List<ItemLedgerEntry> list(Item item, int page);
 
-    public int count(Item item);
+    public long count(Item item);
 
     public ItemLedgerEntryDTO toDTO(ItemLedgerEntry itemLedgerEntry);
 }

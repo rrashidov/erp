@@ -36,8 +36,8 @@ public class ItemLedgerEntryServiceImpl implements ItemLedgerEntryService {
     }
 
     @Override
-    public int count(Item item) {
-        return new Long(repo.count(item)).intValue();
+    public long count(Item item) {
+        return repo.count(item);
     }
 
     @Override

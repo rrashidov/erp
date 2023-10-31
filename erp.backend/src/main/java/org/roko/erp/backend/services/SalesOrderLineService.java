@@ -21,7 +21,7 @@ public interface SalesOrderLineService {
 
     public List<SalesOrderLine> list(SalesOrder salesOrder, int page);
 
-    public int count(SalesOrder salesOrder);
+    public long count(SalesOrder salesOrder);
 
     public int maxLineNo(SalesOrder salesOrder);
 

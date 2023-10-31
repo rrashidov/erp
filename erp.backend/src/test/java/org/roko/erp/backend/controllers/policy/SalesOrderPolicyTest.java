@@ -40,7 +40,7 @@ public class SalesOrderPolicyTest {
 
         when(svcMock.get(TEST_CODE)).thenReturn(salesOrderMock);
 
-        when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(0);
+        when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(0l);
 
         policy = new SalesOrderPolicy(svcMock, salesOrderLineSvcMock);
     }
@@ -67,7 +67,7 @@ public class SalesOrderPolicyTest {
 
     @Test
     public void resultIsFalse_whenSalesOrderHasLines() {
-        when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(1);
+        when(salesOrderLineSvcMock.count(salesOrderMock)).thenReturn(1l);
 
         PolicyResult result = policy.canDelete(TEST_CODE);
 

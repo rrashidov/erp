@@ -19,7 +19,7 @@ public interface SalesOrderService {
 
     public List<SalesOrder> list(int page);
 
-    public int count();
+    public long count();
 
     public SalesDocumentDTO toDTO(SalesOrder salesOrder);
 

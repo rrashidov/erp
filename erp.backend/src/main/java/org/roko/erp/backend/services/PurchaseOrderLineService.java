@@ -21,7 +21,7 @@ public interface PurchaseOrderLineService {
 
     public List<PurchaseOrderLine> list(PurchaseOrder purchaseOrder, int page);
 
-    public int count(PurchaseOrder purchaseOrder);
+    public long count(PurchaseOrder purchaseOrder);
 
     public int maxLineNo(PurchaseOrder purchaseOrder);
 

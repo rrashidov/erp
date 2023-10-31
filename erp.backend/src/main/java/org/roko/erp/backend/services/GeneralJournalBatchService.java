@@ -19,7 +19,7 @@ public interface GeneralJournalBatchService {
 
     public List<GeneralJournalBatch> list(int page);
 
-    public int count();
+    public long count();
 
     public GeneralJournalBatchDTO toDTO(GeneralJournalBatch generalJournalBatch);
 

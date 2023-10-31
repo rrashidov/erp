@@ -14,7 +14,7 @@ public interface PostedPurchaseOrderLineService {
 
     public List<PostedPurchaseOrderLine> list(PostedPurchaseOrder postedPurchaseOrder, int page);
 
-    public int count(PostedPurchaseOrder postedPurchaseOrder);
+    public long count(PostedPurchaseOrder postedPurchaseOrder);
 
     public PostedPurchaseDocumentLineDTO toDTO(PostedPurchaseOrderLine postedPurchaseOrderLine);
 }

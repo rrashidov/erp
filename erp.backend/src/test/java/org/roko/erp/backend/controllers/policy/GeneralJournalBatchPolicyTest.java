@@ -66,7 +66,7 @@ public class GeneralJournalBatchPolicyTest {
 
     @Test
     public void resultIsFalse_whenGeneralJournalBatchHasLines() {
-        when(generalJournalBatchLineSvcMock.count(generalJournalBatchMock)).thenReturn(1);
+        when(generalJournalBatchLineSvcMock.count(generalJournalBatchMock)).thenReturn(1l);
 
         PolicyResult result = policy.canDelete(TEST_CODE);
 
