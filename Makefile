@@ -116,11 +116,11 @@ run-integration-tests: stop-locally clean-local-mysql start-locally
 .PHONY: start-production
 start-production: stop-production containerize build-erp-rabbitmq
 	@echo "Starting production docker compose instance"
-	@docker compose -f ./docker/docker-compose-dev.yml --project-name prod --env-file ./docker/env.prod up -d
+	@docker compose -f ./docker/docker-compose-prod.yml --project-name prod --env-file ./docker/env.prod up -d
 	@echo "Finished starting production docker compose instance"
 
 ## stop-production: stops production docker compose instance
 stop-production:
 	@echo "Stopping production docker compose instance"
-	@docker compose -f ./docker/docker-compose-dev.yml --project-name prod --env-file ./docker/env.prod down
+	@docker compose -f ./docker/docker-compose-prod.yml --project-name prod --env-file ./docker/env.prod down
 	@echo "Finished stopping production docker compose instance"
