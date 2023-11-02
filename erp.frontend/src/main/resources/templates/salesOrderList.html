@@ -11,12 +11,12 @@
 
 <body>
 
-    <nav th:replace="navigation">
+    <nav th:replace="~{navigation}">
     </nav>
 
     <div class="container-fluid">
 
-        <nav th:replace="feedback">
+        <nav th:replace="~{feedback}">
         </nav>
 
         <h2>Sales Order List <a class="btn btn-primary" href="/salesOrderWizard" role="button">New</a></h2>
@@ -59,7 +59,7 @@
             </table>
         </div>
 
-        <nav th:replace="paging">
+        <nav th:replace="~{paging}">
         </nav>
 
     </div>

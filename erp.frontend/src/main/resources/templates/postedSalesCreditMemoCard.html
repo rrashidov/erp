@@ -11,7 +11,7 @@
 
 <body>
 
-    <nav th:replace="navigation">
+    <nav th:replace="~{navigation}">
     </nav>
 
     <div class="container-fluid">
@@ -79,7 +79,7 @@
                             </tbody>
                         </table>
 
-                        <nav th:replace="subPaging">
+                        <nav th:replace="~{subPaging}">
                         </nav>
 
                     </div>

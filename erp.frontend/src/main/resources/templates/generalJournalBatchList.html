@@ -11,12 +11,12 @@
 
 <body>
 
-    <nav th:replace="navigation">
+    <nav th:replace="~{navigation}">
     </nav>
 
     <div class="container-fluid">
 
-        <nav th:replace="feedback">
+        <nav th:replace="~{feedback}">
         </nav>
 
 
@@ -55,7 +55,7 @@
             </table>
         </div>
 
-        <nav th:replace="paging">
+        <nav th:replace="~{paging}">
         </nav>
 
     </div>
