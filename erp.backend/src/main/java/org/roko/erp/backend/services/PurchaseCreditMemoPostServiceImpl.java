@@ -1,5 +1,6 @@
 package org.roko.erp.backend.services;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -95,9 +96,9 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
             return;
         }
 
-        Optional<Double> amount = purchaseCreditMemoLines.stream()
+        Optional<BigDecimal> amount = purchaseCreditMemoLines.stream()
                 .map(PurchaseCreditMemoLine::getAmount)
-                .reduce((x, y) -> x + y);
+                .reduce((x, y) -> x.add(y));
 
         BankAccountLedgerEntry bankAccountLedgerEntry = new BankAccountLedgerEntry();
         bankAccountLedgerEntry.setBankAccount(postedPurchaseCreditMemo.getPaymentMethod().getBankAccount());
@@ -111,9 +112,9 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
 
     private void createVendorLedgerEntries(PostedPurchaseCreditMemo postedPurchaseCreditMemo,
             List<PurchaseCreditMemoLine> purchaseCreditMemoLines) {
-        Optional<Double> amount = purchaseCreditMemoLines.stream()
+        Optional<BigDecimal> amount = purchaseCreditMemoLines.stream()
                 .map(PurchaseCreditMemoLine::getAmount)
-                .reduce((x, y) -> x + y);
+                .reduce((x, y) -> x.add(y));
 
         createDocumentVendorLedgerEntry(postedPurchaseCreditMemo, amount.get());
 
@@ -122,7 +123,7 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
         }
     }
 
-    private void createRefundVendorLedgerEntry(PostedPurchaseCreditMemo postedPurchaseCreditMemo, Double amount) {
+    private void createRefundVendorLedgerEntry(PostedPurchaseCreditMemo postedPurchaseCreditMemo, BigDecimal amount) {
         VendorLedgerEntry vendorLedgerEntry = new VendorLedgerEntry();
         vendorLedgerEntry.setVendor(postedPurchaseCreditMemo.getVendor());
         vendorLedgerEntry.setType(VendorLedgerEntryType.REFUND);
@@ -133,11 +134,11 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
         vendorLedgerEntrySvc.create(vendorLedgerEntry);
     }
 
-    private void createDocumentVendorLedgerEntry(PostedPurchaseCreditMemo postedPurchaseCreditMemo, Double amount) {
+    private void createDocumentVendorLedgerEntry(PostedPurchaseCreditMemo postedPurchaseCreditMemo, BigDecimal amount) {
         VendorLedgerEntry vendorLedgerEntry = new VendorLedgerEntry();
         vendorLedgerEntry.setVendor(postedPurchaseCreditMemo.getVendor());
         vendorLedgerEntry.setType(VendorLedgerEntryType.PURCHASE_CREDIT_MEMO);
-        vendorLedgerEntry.setAmount(-amount);
+        vendorLedgerEntry.setAmount(amount.negate());
         vendorLedgerEntry.setDate(new Date());
         vendorLedgerEntry.setDocumentCode(postedPurchaseCreditMemo.getCode());
 
@@ -156,7 +157,7 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
             PostedPurchaseCreditMemo postedPurchaseCreditMemo) throws PostFailedException {
         Item item = itemSvc.get(purchaseCreditMemoLine.getItem().getCode());
 
-        if (item.getInventory() < purchaseCreditMemoLine.getQuantity()) {
+        if (item.getInventory().compareTo(purchaseCreditMemoLine.getQuantity()) == -1) {
             throw new PostFailedException(String.format(NOT_ENOUGH_ITEM_INVENTORY_MSG, item.getCode(),
                     item.getInventory(), purchaseCreditMemoLine.getQuantity()));
         }
@@ -164,7 +165,7 @@ public class PurchaseCreditMemoPostServiceImpl implements PurchaseCreditMemoPost
         ItemLedgerEntry itemLedgerEntry = new ItemLedgerEntry();
         itemLedgerEntry.setItem(purchaseCreditMemoLine.getItem());
         itemLedgerEntry.setType(ItemLedgerEntryType.PURCHASE_CREDIT_MEMO);
-        itemLedgerEntry.setQuantity(-purchaseCreditMemoLine.getQuantity());
+        itemLedgerEntry.setQuantity(purchaseCreditMemoLine.getQuantity().negate());
         itemLedgerEntry.setDate(new Date());
         itemLedgerEntry.setDocumentCode(postedPurchaseCreditMemo.getCode());
 

@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -73,7 +74,7 @@ public class GeneralJournalBatchLineControllerTest {
     private static final GeneralJournalBatchLineOperationType TEST_OPERATION_TYPE = GeneralJournalBatchLineOperationType.PAYMENT;
     private static final Date TEST_DATE = new Date();
     private static final String TEST_DOCUMENT_CODE = "test-document-code";
-    private static final Double TEST_AMOUNT = 12.12;
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(12.12);
 
     private static final org.roko.erp.dto.GeneralJournalBatchLineType TEST_SOURCE_TYPE_DTO = org.roko.erp.dto.GeneralJournalBatchLineType.VENDOR;
 

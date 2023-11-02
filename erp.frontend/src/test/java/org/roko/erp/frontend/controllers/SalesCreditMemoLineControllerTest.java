@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +32,13 @@ public class SalesCreditMemoLineControllerTest {
 
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final double TEST_ITEM_SALES_PRICE = 12.00d;
-    private static final Double TEST_QTY = 10.00d;
+    private static final BigDecimal TEST_ITEM_SALES_PRICE = new BigDecimal(12);
+    private static final BigDecimal TEST_QTY = new BigDecimal(10);
 
     private static final int TEST_LINE_NO = 123;
 
-    private static final Double TEST_PRICE = 12.00d;
-    private static final Double TEST_AMOUNT = 120.00d;
+    private static final BigDecimal TEST_PRICE = new BigDecimal(12);
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(120);
 
     private static final int TEST_PAGE = 12;
 
@@ -109,7 +110,7 @@ public class SalesCreditMemoLineControllerTest {
         when(salesCreditMemoLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(salesCreditMemoLineModelMock.getQuantity()).thenReturn(TEST_QTY);
         when(salesCreditMemoLineModelMock.getPrice()).thenReturn(TEST_ITEM_SALES_PRICE);
-        when(salesCreditMemoLineModelMock.getAmount()).thenReturn(TEST_QTY * TEST_ITEM_SALES_PRICE);
+        when(salesCreditMemoLineModelMock.getAmount()).thenReturn(TEST_QTY.multiply(TEST_ITEM_SALES_PRICE));
 
         when(svcMock.get(TEST_SALES_CREDIT_MEMO_CODE, TEST_LINE_NO)).thenReturn(salesCreditMemoLineMock);
 
@@ -168,7 +169,7 @@ public class SalesCreditMemoLineControllerTest {
 
         verify(modelMock).addAttribute("salesCreditMemoLineModel", salesCreditMemoLineModelMock);
 
-        verify(salesCreditMemoLineModelMock).setAmount(TEST_ITEM_SALES_PRICE * TEST_QTY);
+        verify(salesCreditMemoLineModelMock).setAmount(TEST_ITEM_SALES_PRICE.multiply(TEST_QTY));
     }
 
     @Test
@@ -188,7 +189,7 @@ public class SalesCreditMemoLineControllerTest {
         assertEquals(TEST_ITEM_CODE, createdSalesCreditMemoLine.getItemCode());
         assertEquals(TEST_QTY, createdSalesCreditMemoLine.getQuantity());
         assertEquals(TEST_ITEM_SALES_PRICE, createdSalesCreditMemoLine.getPrice());
-        assertEquals(TEST_QTY * TEST_ITEM_SALES_PRICE, createdSalesCreditMemoLine.getAmount());
+        assertEquals(TEST_QTY.multiply(TEST_ITEM_SALES_PRICE), createdSalesCreditMemoLine.getAmount());
     }
 
     @Test
@@ -209,7 +210,7 @@ public class SalesCreditMemoLineControllerTest {
         assertEquals(TEST_ITEM_CODE, createdSalesCreditMemoLine.getItemCode());
         assertEquals(TEST_QTY, createdSalesCreditMemoLine.getQuantity());
         assertEquals(TEST_ITEM_SALES_PRICE, createdSalesCreditMemoLine.getPrice());
-        assertEquals(TEST_QTY * TEST_ITEM_SALES_PRICE, createdSalesCreditMemoLine.getAmount());
+        assertEquals(TEST_QTY.multiply(TEST_ITEM_SALES_PRICE), createdSalesCreditMemoLine.getAmount());
     }
 
     @Test

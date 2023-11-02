@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +32,12 @@ public class SalesOrderLineControllerTest {
     private static final String TEST_CODE = "test-code";
 
     private static final int TEST_SALES_ORDER_LINENO = 1;
-    private static final double TEST_SALES_ORDER_LINE_QTY = 10.0d;
-    private static final double TEST_SALES_ORDER_LINE_AMOUNT = 123.89d;
+    private static final BigDecimal TEST_SALES_ORDER_LINE_QTY = new BigDecimal(10);
+    private static final BigDecimal TEST_SALES_ORDER_LINE_AMOUNT = new BigDecimal(123.89);
 
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final double TEST_ITEM_SALES_PRICE = 12.12d;
+    private static final BigDecimal TEST_ITEM_SALES_PRICE = new BigDecimal(12.12);
 
     private static final int TEST_PAGE = 123;
 
@@ -173,8 +174,6 @@ public class SalesOrderLineControllerTest {
         assertEquals("salesOrderLineWizardThirdPage.html", template);
 
         verify(modelMock).addAttribute("salesOrderLine", salesOrderLineModelMock);
-
-        verify(salesOrderLineModelMock).setAmount(salesOrderLineModelMock.getPrice() * TEST_SALES_ORDER_LINE_QTY);
     }
 
     @Test

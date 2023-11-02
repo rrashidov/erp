@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.purchases;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.roko.erp.dto.BankAccountDTO;
@@ -29,9 +30,9 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
-    private static final int TEST_QUANTITY = 20;
-    private static final int TEST_PRICE = 1;
-    private static final int TEST_AMOUNT = 20;
+    private static final BigDecimal TEST_QUANTITY = new BigDecimal("20");
+    private static final BigDecimal TEST_PRICE = new BigDecimal("1");
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal("20");
 
     private static final long POST_WAIT_TIMEOUT = 10 * 60 * 1000;
 
@@ -103,7 +104,7 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         String code = createPurchaseCreditMemoWithDelayedPaymentMethod();
         createPurchaseCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
 
-        double initialVendorBalance = getVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2);
+        BigDecimal initialVendorBalance = getVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2);
 
         LOGGER.info(String.format("Purchase Credit Memo %s created", code));
 
@@ -115,12 +116,12 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
         LOGGER.info(String.format("Purchase Credit Memo %s posted", code));
 
-        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2, initialVendorBalance - TEST_AMOUNT);
+        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_2, initialVendorBalance.subtract(TEST_AMOUNT));
 
         LOGGER.info("Purchase Credit Memo post with delayed payment method test passed");
     }
 
-    private double getVendorBalance(String vendorCode) {
+    private BigDecimal getVendorBalance(String vendorCode) {
         return vendorClient.read(vendorCode).getBalance();
     }
 
@@ -136,7 +137,7 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         String code = createPurchaseCreditMemo();
         createPurchaseCreditMemoLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
-        double initialItemInventory = getItemInventory(BusinessLogicSetupUtil.TEST_ITEM_CODE);
+        BigDecimal initialItemInventory = getItemInventory(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         LOGGER.info(String.format("Purchase Credit Memo %s created", code));
 
@@ -154,7 +155,7 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
 
         verifyPostedPurchaseCreditMemo();
 
-        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE, 0);
+        verifyVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE, new BigDecimal(0));
 
         verifyBankAccountBalance();
 
@@ -163,7 +164,7 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         LOGGER.info("Purchase Credit Memo post test passed");
     }
 
-    private double getItemInventory(String itemCode) {
+    private BigDecimal getItemInventory(String itemCode) {
         return itemClient.read(itemCode).getInventory();
     }
 
@@ -175,12 +176,12 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         util.ensureItems();
     }
 
-    private void verifyItemInventory(double initialItemInventory) throws ITestFailedException {
+    private void verifyItemInventory(BigDecimal  initialItemInventory) throws ITestFailedException {
         ItemDTO item = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
-        double expectedInventory = initialItemInventory - TEST_QUANTITY;
+        BigDecimal expectedInventory = initialItemInventory.subtract(TEST_QUANTITY);
 
-        if (item.getInventory() != expectedInventory) {
+        if (item.getInventory().compareTo(expectedInventory) != 0) {
             throw new ITestFailedException(String.format("Item %s inventory issue: expected %f, got %f",
                     BusinessLogicSetupUtil.TEST_ITEM_CODE, expectedInventory, item.getInventory()));
         }
@@ -191,9 +192,9 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
     private void verifyBankAccountBalance() throws ITestFailedException {
         BankAccountDTO bankAccount = bankAccountClient.read(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE);
 
-        double expectedBankAccountBalance = BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE + TEST_AMOUNT;
+        BigDecimal expectedBankAccountBalance = BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE.add(TEST_AMOUNT);
 
-        if (bankAccount.getBalance() != expectedBankAccountBalance) {
+        if (bankAccount.getBalance().compareTo(expectedBankAccountBalance) != 0) {
             throw new ITestFailedException(String.format("Bank Account %s balance issue: expected %f, got %f",
                     BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE, expectedBankAccountBalance,
                     bankAccount.getBalance()));
@@ -202,10 +203,10 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
         LOGGER.info(String.format("Bank Account %s verified", BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE));
     }
 
-    private void verifyVendorBalance(String vendorCode, double expectedBalance) throws ITestFailedException {
+    private void verifyVendorBalance(String vendorCode, BigDecimal expectedBalance) throws ITestFailedException {
         VendorDTO vendor = vendorClient.read(vendorCode);
 
-        if (vendor.getBalance() != expectedBalance) {
+        if (vendor.getBalance().compareTo(expectedBalance) != 0) {
             throw new ITestFailedException(String.format("Vendor %s balance issue: expected %f, got %f",
                     vendorCode, expectedBalance, vendor.getBalance()));
         }
@@ -240,20 +241,20 @@ public class PostPurchaseCreditMemoTestRunner implements ITestRunner {
                     BusinessLogicSetupUtil.TEST_ITEM_CODE, postedPurchaseDocumentLine.getItemCode()));
         }
 
-        if (postedPurchaseDocumentLine.getQuantity() != TEST_QUANTITY) {
-            throw new ITestFailedException(String.format("Purchase Credit Memo %s line qty issue: expected %d, got %d", code,
+        if (postedPurchaseDocumentLine.getQuantity().compareTo(TEST_QUANTITY) != 0) {
+            throw new ITestFailedException(String.format("Purchase Credit Memo %s line qty issue: expected %f, got %f", code,
                     TEST_QUANTITY, postedPurchaseDocumentLine.getQuantity()));
         }
 
-        if (postedPurchaseDocumentLine.getPrice() != TEST_PRICE) {
+        if (postedPurchaseDocumentLine.getPrice().compareTo(TEST_PRICE) != 0) {
             throw new ITestFailedException(
-                    String.format("Purchase Credit Memo %s line price issue: expected %d, got %d", code,
+                    String.format("Purchase Credit Memo %s line price issue: expected %f, got %f", code,
                             TEST_PRICE, postedPurchaseDocumentLine.getPrice()));
         }
 
-        if (postedPurchaseDocumentLine.getAmount() != TEST_AMOUNT) {
+        if (postedPurchaseDocumentLine.getAmount().compareTo(TEST_AMOUNT) != 0) {
             throw new ITestFailedException(
-                    String.format("Purchase Credit Memo %s line amount issue: expected %d, got %d", code,
+                    String.format("Purchase Credit Memo %s line amount issue: expected %f, got %f", code,
                             TEST_AMOUNT, postedPurchaseDocumentLine.getAmount()));
         }
 

@@ -1,5 +1,7 @@
 package org.roko.erp.backend.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
@@ -12,11 +14,11 @@ public class Item {
 	
 	private String name = "";
 	
-	private double salesPrice = 0.00;
-	private double purchasePrice = 0.00;
+	private BigDecimal salesPrice = new BigDecimal(0);
+	private BigDecimal purchasePrice = new BigDecimal(0);
 	
 	@Transient
-	private double inventory = 0.00;
+	private BigDecimal inventory = new BigDecimal(0);
 	
 	public String getCode() {
 		return code;
@@ -24,22 +26,22 @@ public class Item {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public double getSalesPrice() {
+	public BigDecimal getSalesPrice() {
 		return salesPrice;
 	}
-	public void setSalesPrice(double salesPrice) {
+	public void setSalesPrice(BigDecimal salesPrice) {
 		this.salesPrice = salesPrice;
 	}
-	public double getPurchasePrice() {
+	public BigDecimal getPurchasePrice() {
 		return purchasePrice;
 	}
-	public void setPurchasePrice(double purchasePrice) {
+	public void setPurchasePrice(BigDecimal purchasePrice) {
 		this.purchasePrice = purchasePrice;
 	}
-	public double getInventory() {
+	public BigDecimal getInventory() {
 		return inventory;
 	}
-	public void setInventory(double inventory) {
+	public void setInventory(BigDecimal inventory) {
 		this.inventory = inventory;
 	}
 	public String getName() {

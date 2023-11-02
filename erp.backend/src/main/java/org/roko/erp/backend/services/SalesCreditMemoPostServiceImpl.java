@@ -1,5 +1,6 @@
 package org.roko.erp.backend.services;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -95,15 +96,15 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
             PostedSalesCreditMemo postedSalesCreditMemo) throws PostFailedException {
         List<SalesCreditMemoLine> salesCreditMemoLines = salesCreditMemoLineSvc.list(salesCreditMemo);
 
-        Optional<Double> amount = salesCreditMemoLines.stream()
+        Optional<BigDecimal> amount = salesCreditMemoLines.stream()
                 .map(SalesCreditMemoLine::getAmount)
-                .reduce((x, y) -> x + y);
+                .reduce((x, y) -> x.add(y));
 
         createBankAccountLedgerEntry(postedSalesCreditMemo, amount);
     }
 
     private void createBankAccountLedgerEntry(PostedSalesCreditMemo postedSalesCreditMemo,
-            Optional<Double> amount) throws PostFailedException {
+            Optional<BigDecimal> amount) throws PostFailedException {
         if (postedSalesCreditMemo.getPaymentMethod().getBankAccount() == null) {
             return;
         }
@@ -111,7 +112,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
         BankAccount bankAccount = bankAccountSvc
                 .get(postedSalesCreditMemo.getPaymentMethod().getBankAccount().getCode());
 
-        if (bankAccount.getBalance() < amount.get()) {
+        if (bankAccount.getBalance().compareTo(amount.get()) == -1) {
             throw new PostFailedException(String.format(NOT_ENOUGH_BANK_ACCOUNT_BALANCE_MSG_TEMPLATE,
                     bankAccount.getCode(), bankAccount.getBalance(), amount.get()));
         }
@@ -119,7 +120,7 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
         BankAccountLedgerEntry bankAccountLedgerEntry = new BankAccountLedgerEntry();
         bankAccountLedgerEntry.setBankAccount(postedSalesCreditMemo.getPaymentMethod().getBankAccount());
         bankAccountLedgerEntry.setType(BankAccountLedgerEntryType.CUSTOMER_REFUND);
-        bankAccountLedgerEntry.setAmount(-amount.get());
+        bankAccountLedgerEntry.setAmount(amount.get().negate());
         bankAccountLedgerEntry.setDate(new Date());
         bankAccountLedgerEntry.setDocumentCode(postedSalesCreditMemo.getCode());
 
@@ -130,17 +131,18 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
             PostedSalesCreditMemo postedSalesCreditMemo) {
         List<SalesCreditMemoLine> salesCreditMemoLines = salesCreditMemoLineSvc.list(salesCreditMemo);
 
-        Optional<Double> amount = salesCreditMemoLines.stream()
+        Optional<BigDecimal> amount = salesCreditMemoLines.stream()
                 .map(SalesCreditMemoLine::getAmount)
-                .reduce((x, y) -> x + y);
+                .reduce((x, y) -> x.add(y));
 
         createSalesCreditMemoCustomerLedgerEntry(postedSalesCreditMemo, amount.get());
+
         if (salesCreditMemo.getPaymentMethod().getBankAccount() != null) {
             createRefundCustomerLedgerEntry(postedSalesCreditMemo, amount.get());
         }
     }
 
-    private void createRefundCustomerLedgerEntry(PostedSalesCreditMemo postedSalesCreditMemo, Double amount) {
+    private void createRefundCustomerLedgerEntry(PostedSalesCreditMemo postedSalesCreditMemo, BigDecimal amount) {
         CustomerLedgerEntry customerLedgerEntry = new CustomerLedgerEntry();
         customerLedgerEntry.setCustomer(postedSalesCreditMemo.getCustomer());
         customerLedgerEntry.setType(CustomerLedgerEntryType.REFUND);
@@ -151,11 +153,11 @@ public class SalesCreditMemoPostServiceImpl implements SalesCreditMemoPostServic
         customerLedgerEntrySvc.create(customerLedgerEntry);
     }
 
-    private void createSalesCreditMemoCustomerLedgerEntry(PostedSalesCreditMemo postedSalesCreditMemo, Double amount) {
+    private void createSalesCreditMemoCustomerLedgerEntry(PostedSalesCreditMemo postedSalesCreditMemo, BigDecimal amount) {
         CustomerLedgerEntry customerLedgerEntry = new CustomerLedgerEntry();
         customerLedgerEntry.setCustomer(postedSalesCreditMemo.getCustomer());
         customerLedgerEntry.setType(CustomerLedgerEntryType.SALES_CREDIT_MEMO);
-        customerLedgerEntry.setAmount(-amount);
+        customerLedgerEntry.setAmount(amount.negate());
         customerLedgerEntry.setDate(new Date());
         customerLedgerEntry.setDocumentCode(postedSalesCreditMemo.getCode());
 

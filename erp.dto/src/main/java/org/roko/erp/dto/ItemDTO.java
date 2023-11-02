@@ -1,12 +1,14 @@
 package org.roko.erp.dto;
 
+import java.math.BigDecimal;
+
 public class ItemDTO {
     
     private String code = "";	
 	private String name = "";
-	private double salesPrice = 0.00;
-	private double purchasePrice = 0.00;
-	private double inventory = 0.00;
+	private BigDecimal salesPrice = new BigDecimal(0);
+	private BigDecimal purchasePrice = new BigDecimal(0);
+	private BigDecimal inventory = new BigDecimal(0);
 
     public String getCode() {
         return code;
@@ -20,22 +22,22 @@ public class ItemDTO {
     public void setName(String name) {
         this.name = name;
     }
-    public double getSalesPrice() {
+    public BigDecimal getSalesPrice() {
         return salesPrice;
     }
-    public void setSalesPrice(double salesPrice) {
+    public void setSalesPrice(BigDecimal  salesPrice) {
         this.salesPrice = salesPrice;
     }
-    public double getPurchasePrice() {
+    public BigDecimal getPurchasePrice() {
         return purchasePrice;
     }
-    public void setPurchasePrice(double purchasePrice) {
+    public void setPurchasePrice(BigDecimal  purchasePrice) {
         this.purchasePrice = purchasePrice;
     }
-    public double getInventory() {
+    public BigDecimal getInventory() {
         return inventory;
     }
-    public void setInventory(double inventory) {
+    public void setInventory(BigDecimal  inventory) {
         this.inventory = inventory;
     }
     

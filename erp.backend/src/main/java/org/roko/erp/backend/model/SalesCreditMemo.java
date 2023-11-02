@@ -1,5 +1,6 @@
 package org.roko.erp.backend.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
@@ -26,7 +27,7 @@ public class SalesCreditMemo {
 	private String postStatusReason = "";
 
 	@Transient
-	private double amount;
+	private BigDecimal amount;
 
 	public String getCode() {
 		return code;
@@ -60,11 +61,11 @@ public class SalesCreditMemo {
 		this.paymentMethod = paymentMethod;
 	}
 
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

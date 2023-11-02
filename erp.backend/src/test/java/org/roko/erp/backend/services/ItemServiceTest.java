@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -28,9 +29,9 @@ public class ItemServiceTest {
     private static final String TEST_ID = "test-id";
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
-    private static final double TEST_SALES_PRICE = 123.12;
-    private static final double TEST_PURCHASE_PRICE = 23.45;
-    private static final double TEST_INVENTORY = 45.67;
+    private static final BigDecimal TEST_SALES_PRICE = new BigDecimal(123.12);
+    private static final BigDecimal TEST_PURCHASE_PRICE = new BigDecimal(23.45);
+    private static final BigDecimal TEST_INVENTORY = new BigDecimal(45.67);
 
     @Captor
     private ArgumentCaptor<Pageable> pageAbleArgumentCaptor;

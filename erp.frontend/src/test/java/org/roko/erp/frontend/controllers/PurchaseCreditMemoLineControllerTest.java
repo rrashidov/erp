@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,15 +27,17 @@ import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseCreditMemoLineControllerTest {
 
+    private static final BigDecimal ZERO = new BigDecimal(0);
+
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final double TEST_ITEM_PURCHASE_PRICE = 12.12d;
+    private static final BigDecimal TEST_ITEM_PURCHASE_PRICE = new BigDecimal(12.12);
 
     private static final String TEST_PURCHASE_CREDIT_MEMO_CODE = "test-purchase-credit-memo-code";
 
-    private static final Double TEST_QTY = 10.00d;
-    private static final Double TEST_PRICE = 23.45;
-    private static final Double TEST_AMOUNT = 123.12;
+    private static final BigDecimal TEST_QTY = new BigDecimal(10);
+    private static final BigDecimal TEST_PRICE = new BigDecimal(23.45);
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(123.12);
 
     private static final int TEST_LINE_NO = 234;
     private static final int TEST_PAGE = 12;
@@ -127,9 +130,9 @@ public class PurchaseCreditMemoLineControllerTest {
         assertEquals(TEST_PAGE, purchaseCreditMemoLineModel.getPage());
         assertEquals("", purchaseCreditMemoLineModel.getItemCode());
         assertEquals("", purchaseCreditMemoLineModel.getItemName());
-        assertEquals(0, purchaseCreditMemoLineModel.getQuantity());
-        assertEquals(0, purchaseCreditMemoLineModel.getPrice());
-        assertEquals(0, purchaseCreditMemoLineModel.getAmount());
+        assertEquals(0, purchaseCreditMemoLineModel.getQuantity().compareTo(ZERO));
+        assertEquals(0, purchaseCreditMemoLineModel.getPrice().compareTo(ZERO));
+        assertEquals(0, purchaseCreditMemoLineModel.getAmount().compareTo(ZERO));
     }
 
     @Test
@@ -164,7 +167,7 @@ public class PurchaseCreditMemoLineControllerTest {
 
         verify(purchaseCreditMemoLineModelMock).setItemName(TEST_ITEM_NAME);
         verify(purchaseCreditMemoLineModelMock).setPrice(TEST_ITEM_PURCHASE_PRICE);
-        verify(purchaseCreditMemoLineModelMock).setAmount(TEST_QTY * TEST_ITEM_PURCHASE_PRICE);
+        verify(purchaseCreditMemoLineModelMock).setAmount(TEST_QTY.multiply(TEST_ITEM_PURCHASE_PRICE));
     }
 
     @Test
@@ -175,7 +178,7 @@ public class PurchaseCreditMemoLineControllerTest {
 
         verify(modelMock).addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModelMock);
 
-        verify(purchaseCreditMemoLineModelMock).setAmount(TEST_QTY * TEST_ITEM_PURCHASE_PRICE);
+        verify(purchaseCreditMemoLineModelMock).setAmount(TEST_QTY.multiply(TEST_ITEM_PURCHASE_PRICE));
     }
 
     @Test

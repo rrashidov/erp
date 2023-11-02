@@ -1,5 +1,6 @@
 package org.roko.erp.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,7 +24,7 @@ public class SalesDocumentDTO {
 
     private String postStatusReason = "";
 
-    private double amount = 0.0;
+    private BigDecimal amount = new BigDecimal(0);
     
     public String getCode() {
         return code;
@@ -61,10 +62,10 @@ public class SalesDocumentDTO {
     public void setPaymentMethodName(String paymentMethodName) {
         this.paymentMethodName = paymentMethodName;
     }
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal  amount) {
         this.amount = amount;
     }
     public String getPostStatus() {

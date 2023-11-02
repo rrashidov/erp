@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 
+import java.math.BigDecimal;
+
 import org.roko.erp.backend.model.jpa.PostedSalesCreditMemoLineId;
 
 @Entity
@@ -20,11 +22,11 @@ public class PostedSalesCreditMemoLine {
 	@ManyToOne
 	private Item item;
 
-	private double quantity;
+	private BigDecimal quantity;
 
-	private double price;
+	private BigDecimal price;
 
-	private double amount;
+	private BigDecimal amount;
 	
 	public Item getItem() {
 		return item;
@@ -32,16 +34,16 @@ public class PostedSalesCreditMemoLine {
 	public void setItem(Item item) {
 		this.item = item;
 	}
-	public double getQuantity() {
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(double quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 	public PostedSalesCreditMemoLineId getPostedSalesCreditMemoLineId() {
@@ -56,10 +58,10 @@ public class PostedSalesCreditMemoLine {
 	public void setPostedSalesCreditMemo(PostedSalesCreditMemo postedSalesCreditMemo) {
 		this.postedSalesCreditMemo = postedSalesCreditMemo;
 	}
-	public double getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 	

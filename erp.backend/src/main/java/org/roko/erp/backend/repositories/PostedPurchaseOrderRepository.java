@@ -1,5 +1,7 @@
 package org.roko.erp.backend.repositories;
 
+import java.math.BigDecimal;
+
 import org.roko.erp.backend.model.PostedPurchaseOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,5 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface PostedPurchaseOrderRepository extends JpaRepository<PostedPurchaseOrder, String> {
 
     @Query("SELECT COALESCE(SUM(postedPurchaseOrderLine.amount), 0) FROM PostedPurchaseOrderLine postedPurchaseOrderLine WHERE postedPurchaseOrderLine.postedPurchaseOrder = :postedPurchaseOrder")
-    public double amount(@Param("postedPurchaseOrder") PostedPurchaseOrder postedPurchaseOrder);
+    public BigDecimal amount(@Param("postedPurchaseOrder") PostedPurchaseOrder postedPurchaseOrder);
 }

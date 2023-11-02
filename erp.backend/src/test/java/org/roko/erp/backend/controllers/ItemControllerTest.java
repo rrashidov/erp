@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -33,8 +34,8 @@ public class ItemControllerTest {
     
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
-    private static final double TEST_SALES_PRICE = 12.12;
-    private static final double TEST_PURCHASE_PRICE = 34.56;
+    private static final BigDecimal TEST_SALES_PRICE = new BigDecimal(12.12);
+    private static final BigDecimal TEST_PURCHASE_PRICE = new BigDecimal(34.56);
 
     private static final int TEST_PAGE = 12;
 

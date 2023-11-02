@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,7 @@ public class CustomerLedgerEntryServiceTest {
     private static final CustomerLedgerEntryType TEST_TYPE = CustomerLedgerEntryType.PAYMENT;
     private static final String TEST_DOCUMENT_CODE = "test-document-code";
     private static final Date TEST_DATE = new Date();
-    private static final double TEST_AMOUNT = 12.12;
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(12.12);
 
     private static final int TEST_PAGE = 12;
 

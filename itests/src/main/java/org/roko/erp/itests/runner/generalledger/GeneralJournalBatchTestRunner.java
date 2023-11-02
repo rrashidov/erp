@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.generalledger;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.roko.erp.dto.BankAccountDTO;
@@ -26,14 +27,14 @@ public class GeneralJournalBatchTestRunner extends BaseTestRunner {
 
     private static final String TEST_DOCUMENT_CODE = "test-document-code";
     private static final Date TEST_DATE = new Date();
-    private static final double TEST_AMOUNT = 12.34;
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal("12.34");
 
     private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
     private static final String TEST_BANK_ACCOUNT_NAME = "test-bank-account-name";
 
     private static final String UPDATED_DOCUMENT_CODE = "updated-document-code";
     private static final Date UPDATED_DATE = new Date();
-    private static final double UPDATED_AMOUNT = 56.78;
+    private static final BigDecimal UPDATED_AMOUNT = new BigDecimal("56.78");
 
     private GeneralJournalBatchClient client;
 
@@ -139,8 +140,8 @@ public class GeneralJournalBatchTestRunner extends BaseTestRunner {
                     UPDATED_DOCUMENT_CODE, generalJournalBatchLine.getDocumentCode()));
         }
 
-        if (generalJournalBatchLine.getAmount() != UPDATED_AMOUNT) {
-            throw new ITestFailedException(String.format("General journal batch line amount issue: expected %s, got %s",
+        if (generalJournalBatchLine.getAmount().compareTo(UPDATED_AMOUNT) != 0) {
+            throw new ITestFailedException(String.format("General journal batch line amount issue: expected %.2f, got %.2f",
                     UPDATED_AMOUNT, generalJournalBatchLine.getAmount()));
         }
 
@@ -197,9 +198,11 @@ public class GeneralJournalBatchTestRunner extends BaseTestRunner {
                     TEST_DOCUMENT_CODE, generalJournalBatchLine.getDocumentCode()));
         }
 
-        if (generalJournalBatchLine.getAmount() != TEST_AMOUNT) {
-            throw new ITestFailedException(String.format("General journal batch line amount issue: expected %s, got %s",
-                    TEST_AMOUNT, generalJournalBatchLine.getAmount()));
+        if (generalJournalBatchLine.getAmount().compareTo(TEST_AMOUNT) != 0) {
+            System.out.println(generalJournalBatchLine.getAmount());
+            System.out.println(TEST_AMOUNT);
+            throw new ITestFailedException(String.format("General journal batch line amount issue: expected %.2f, got %.2f. Result: %s",
+                    TEST_AMOUNT, generalJournalBatchLine.getAmount(), generalJournalBatchLine.getAmount().compareTo(TEST_AMOUNT)));
         }
 
         if (!generalJournalBatchLine.getBankAccountCode().equals(TEST_BANK_ACCOUNT_CODE)) {

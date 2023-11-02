@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.purchases;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -58,7 +59,7 @@ public class ParallelPurchaseOrderPostTestRunner extends AbstractParallelDocumen
     private void createPurchaseOrderLine(String code) {
         PurchaseDocumentLineDTO purchaseOrderLine = new PurchaseDocumentLineDTO();
         purchaseOrderLine.setItemCode(BusinessLogicSetupUtil.TEST_ITEM_CODE);
-        purchaseOrderLine.setQuantity(1.0);
+        purchaseOrderLine.setQuantity(new BigDecimal(1));
         purchaseOrderLine.setPrice(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE);
         purchaseOrderLine.setAmount(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE);
 

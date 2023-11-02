@@ -1,5 +1,7 @@
 package org.roko.erp.backend.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
@@ -12,7 +14,7 @@ public class BankAccount {
 	private String name = "";
 
 	@Transient
-	private double balance;
+	private BigDecimal balance;
 	
 	public String getCode() {
 		return code;
@@ -26,10 +28,10 @@ public class BankAccount {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public double getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
-	public void setBalance(double balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 	

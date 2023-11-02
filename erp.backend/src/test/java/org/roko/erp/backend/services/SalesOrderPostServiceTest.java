@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -47,13 +48,13 @@ public class SalesOrderPostServiceTest {
 
     private static final Date TEST_DATE = new Date();
 
-    private static final Double TEST_QTY = 10.00;
-    private static final Double TEST_PRICE = 12.00;
-    private static final Double TEST_AMOUNT = 120.00;
+    private static final BigDecimal TEST_QTY = new BigDecimal(10);
+    private static final BigDecimal TEST_PRICE = new BigDecimal(12);
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(120);
 
     private static final Integer TEST_LINE_NO = 123;
 
-    private static final Double TEST_ITEM_INVENTORY = 12.00;
+    private static final BigDecimal TEST_ITEM_INVENTORY = new BigDecimal(12);
 
     @Captor
     private ArgumentCaptor<PostedSalesOrder> postedSalesOrderArgumentCaptor;
@@ -194,7 +195,7 @@ public class SalesOrderPostServiceTest {
 
     @Test
     public void postingFails_whenItemDoesNotHaveEnoughInventory() {
-        when(itemMock.getInventory()).thenReturn(0.0);
+        when(itemMock.getInventory()).thenReturn(new BigDecimal(0));
 
         assertThrows(PostFailedException.class, () -> {svc.post(TEST_CODE);});
     }
@@ -222,7 +223,7 @@ public class SalesOrderPostServiceTest {
 
         assertEquals(bankAccountMock, bankAccountLedgerEntry.getBankAccount());
         assertEquals(BankAccountLedgerEntryType.CUSTOMER_PAYMENT, bankAccountLedgerEntry.getType());
-        assertEquals(TEST_AMOUNT * 2, bankAccountLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.multiply(new BigDecimal(2)), bankAccountLedgerEntry.getAmount());
         assertEquals(postedSalesOrder.getCode(), bankAccountLedgerEntry.getDocumentCode());
     }
 
@@ -248,14 +249,14 @@ public class SalesOrderPostServiceTest {
     private void verifyFirstCustomerLedgerEntry(CustomerLedgerEntry customerLedgerEntry, String documentCode) {
         assertEquals(customerMock, customerLedgerEntry.getCustomer());
         assertEquals(CustomerLedgerEntryType.SALES_ORDER, customerLedgerEntry.getType());
-        assertEquals(TEST_AMOUNT * 2, customerLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.multiply(new BigDecimal(2)), customerLedgerEntry.getAmount());
         assertEquals(documentCode, customerLedgerEntry.getDocumentCode());
     }
 
     private void verifySecondCustomerLedgerEntry(CustomerLedgerEntry customerLedgerEntry, String documentCode) {
         assertEquals(customerMock, customerLedgerEntry.getCustomer());
         assertEquals(CustomerLedgerEntryType.PAYMENT, customerLedgerEntry.getType());
-        assertEquals(-(TEST_AMOUNT * 2), customerLedgerEntry.getAmount());
+        assertEquals((TEST_AMOUNT.multiply(new BigDecimal(2))).negate(), customerLedgerEntry.getAmount());
         assertEquals(documentCode, customerLedgerEntry.getDocumentCode());
     }
 
@@ -266,7 +267,7 @@ public class SalesOrderPostServiceTest {
 
         assertEquals(itemMock, itemLedgerEntry.getItem());
         assertEquals(ItemLedgerEntryType.SALES_ORDER, itemLedgerEntry.getType());
-        assertEquals(-TEST_QTY, itemLedgerEntry.getQuantity());
+        assertEquals(TEST_QTY.negate(), itemLedgerEntry.getQuantity());
         assertEquals(postedSalesOrder.getCode(), itemLedgerEntry.getDocumentCode());
     }
 

@@ -1,5 +1,6 @@
 package org.roko.erp.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class CustomerLedgerEntryDTO {
@@ -8,7 +9,7 @@ public class CustomerLedgerEntryDTO {
     private String type;
     private String documentCode;
     private Date date;
-    private double amount;
+    private BigDecimal amount;
 
     public long getId() {
         return id;
@@ -34,10 +35,10 @@ public class CustomerLedgerEntryDTO {
     public void setDate(Date date) {
         this.date = date;
     }
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal  amount) {
         this.amount = amount;
     }
         

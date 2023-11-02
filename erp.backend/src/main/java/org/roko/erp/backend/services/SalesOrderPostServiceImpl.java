@@ -1,5 +1,6 @@
 package org.roko.erp.backend.services;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -97,14 +98,14 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
 
         List<SalesOrderLine> salesOrderLines = salesOrderLineSvc.list(salesOrder);
 
-        Optional<Double> amount = salesOrderLines.stream()
+        Optional<BigDecimal> amount = salesOrderLines.stream()
                 .map(SalesOrderLine::getAmount)
-                .reduce((x, y) -> x + y);
+                .reduce((x, y) -> x.add(y));
 
         createBankAccountLedgerEntry(postedSalesOrder, amount.get());
     }
 
-    private void createBankAccountLedgerEntry(PostedSalesOrder postedSalesOrder, Double amount) {
+    private void createBankAccountLedgerEntry(PostedSalesOrder postedSalesOrder, BigDecimal amount) {
         BankAccountLedgerEntry bankAccountLedgerEntry = new BankAccountLedgerEntry();
         bankAccountLedgerEntry.setBankAccount(postedSalesOrder.getPaymentMethod().getBankAccount());
         bankAccountLedgerEntry.setType(BankAccountLedgerEntryType.CUSTOMER_PAYMENT);
@@ -118,9 +119,9 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     private void createCustomerLedgerEntries(SalesOrder salesOrder, PostedSalesOrder postedSalesOrder) {
         List<SalesOrderLine> salesOrderLines = salesOrderLineSvc.list(salesOrder);
 
-        Optional<Double> amount = salesOrderLines.stream()
+        Optional<BigDecimal> amount = salesOrderLines.stream()
                 .map(SalesOrderLine::getAmount)
-                .reduce((x, y) -> x + y);
+                .reduce((x, y) -> x.add(y));
 
         createSalesOrderLedgerEntry(postedSalesOrder, amount.get());
         if (salesOrder.getPaymentMethod().getBankAccount() != null) {
@@ -128,7 +129,7 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
         }
     }
 
-    private void createSalesOrderLedgerEntry(PostedSalesOrder postedSalesOrder, Double amount) {
+    private void createSalesOrderLedgerEntry(PostedSalesOrder postedSalesOrder, BigDecimal amount) {
         CustomerLedgerEntry customerLedgerEntry = new CustomerLedgerEntry();
         customerLedgerEntry.setCustomer(postedSalesOrder.getCustomer());
         customerLedgerEntry.setType(CustomerLedgerEntryType.SALES_ORDER);
@@ -139,11 +140,11 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
         customerLedgerEntrySvc.create(customerLedgerEntry);
     }
 
-    private void createPaymentLedgerEntry(PostedSalesOrder postedSalesOrder, Double amount) {
+    private void createPaymentLedgerEntry(PostedSalesOrder postedSalesOrder, BigDecimal amount) {
         CustomerLedgerEntry customerLedgerEntry = new CustomerLedgerEntry();
         customerLedgerEntry.setCustomer(postedSalesOrder.getCustomer());
         customerLedgerEntry.setType(CustomerLedgerEntryType.PAYMENT);
-        customerLedgerEntry.setAmount(-amount);
+        customerLedgerEntry.setAmount(amount.negate());
         customerLedgerEntry.setDate(new Date());
         customerLedgerEntry.setDocumentCode(postedSalesOrder.getCode());
 
@@ -161,16 +162,16 @@ public class SalesOrderPostServiceImpl implements SalesOrderPostService {
     private void createItemLedgerEntry(SalesOrderLine salesOrderLine, PostedSalesOrder postedSalesOrder) throws PostFailedException {
         Item item = itemSvc.get(salesOrderLine.getItem().getCode());
 
-        double inventory = item.getInventory();
+        BigDecimal inventory = item.getInventory();
 
-        if (salesOrderLine.getQuantity() > inventory){
+        if (salesOrderLine.getQuantity().compareTo(inventory) == 1) {
             throw new PostFailedException(String.format(NOT_ENOUGH_INVENTORY_MSG, salesOrderLine.getItem().getCode(), inventory, salesOrderLine.getQuantity()));
         }
         
         ItemLedgerEntry itemLedgerEntry = new ItemLedgerEntry();
         itemLedgerEntry.setItem(salesOrderLine.getItem());
         itemLedgerEntry.setType(ItemLedgerEntryType.SALES_ORDER);
-        itemLedgerEntry.setQuantity(-salesOrderLine.getQuantity());
+        itemLedgerEntry.setQuantity(salesOrderLine.getQuantity().negate());
         itemLedgerEntry.setDate(new Date());
         itemLedgerEntry.setDocumentCode(postedSalesOrder.getCode());
 

@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.sales;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -61,7 +62,7 @@ public class ParallelSalesCreditMemoPostTestRunner extends AbstractParallelDocum
     private void createSalesCreditMemoLine(String code) {
         SalesDocumentLineDTO salesCreditMemoLine = new SalesDocumentLineDTO();
         salesCreditMemoLine.setItemCode(BusinessLogicSetupUtil.TEST_ITEM_CODE);
-        salesCreditMemoLine.setQuantity(1.0);
+        salesCreditMemoLine.setQuantity(new BigDecimal(1));
         salesCreditMemoLine.setPrice(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE);
         salesCreditMemoLine.setAmount(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE);
 

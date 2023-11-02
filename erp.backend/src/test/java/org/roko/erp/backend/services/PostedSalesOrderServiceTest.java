@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class PostedSalesOrderServiceTest {
     private static final Date TEST_DATE = new Date();
     private static final String TEST_CUSTOMER_NAME = "test-customer-name";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
-    private static final double TEST_AMOUNT = 11.22;
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(11.22);
 
     private static final int TEST_PAGE = 12;
 

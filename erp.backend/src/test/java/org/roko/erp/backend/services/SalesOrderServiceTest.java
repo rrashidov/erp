@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class SalesOrderServiceTest {
     private static final DocumentPostStatus TEST_POST_STATUS = DocumentPostStatus.SCHEDULED;
     private static final String TEST_POST_STATUS_REASON = "test-post-status-reason";
 
-    private static final double TEST_AMOUNT = 123.12;
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(123.12);
 
     private static final String NON_EXISTING_CODE = "non-existing-code";
 

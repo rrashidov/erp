@@ -1,5 +1,7 @@
 package org.roko.erp.backend.repositories;
 
+import java.math.BigDecimal;
+
 import org.roko.erp.backend.model.PostedPurchaseCreditMemo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,5 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface PostedPurchaseCreditMemoRepository extends JpaRepository<PostedPurchaseCreditMemo, String> {
 
     @Query("SELECT COALESCE(SUM(postedPurchaseCreditMemoLine.amount), 0) FROM PostedPurchaseCreditMemoLine postedPurchaseCreditMemoLine WHERE postedPurchaseCreditMemoLine.postedPurchaseCreditMemo = :postedPurchaseCreditMemo")
-    public double amount(@Param("postedPurchaseCreditMemo") PostedPurchaseCreditMemo postedPurchaseCreditMemo);
+    public BigDecimal amount(@Param("postedPurchaseCreditMemo") PostedPurchaseCreditMemo postedPurchaseCreditMemo);
 }

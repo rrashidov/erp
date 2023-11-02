@@ -1,5 +1,6 @@
 package org.roko.erp.backend.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import jakarta.persistence.Embedded;
@@ -27,7 +28,7 @@ public class GeneralJournalBatchLine {
 	private GeneralJournalBatchLineOperationType operationType;
 	private String documentCode;
 	private Date date;
-	private double amount;
+	private BigDecimal amount;
 
 	@ManyToOne
 	private BankAccount target;
@@ -56,10 +57,10 @@ public class GeneralJournalBatchLine {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal  amount) {
 		this.amount = amount;
 	}
 	public GeneralJournalBatchLineId getGeneralJournalBatchLineId() {

@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.purchases;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,8 +31,8 @@ public class PurchaseCreditMemoTestRunner extends BaseTestRunner {
 
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final double TEST_ITEM_SALES_PRICE = 1.0;
-    private static final double TEST_ITEM_PURCHASE_PRICE = 2.0;
+    private static final BigDecimal TEST_ITEM_SALES_PRICE = new BigDecimal("1");
+    private static final BigDecimal TEST_ITEM_PURCHASE_PRICE = new BigDecimal("2");
 
     private static final String EXPECTED_PURCHASE_CREDITMEMO_CODE = "PO001";
 
@@ -53,8 +54,8 @@ public class PurchaseCreditMemoTestRunner extends BaseTestRunner {
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
 
-    private static final double TEST_DOUBLE = 1.0;
-    private static final double UPDATED_DOUBLE = 3.0;
+    private static final BigDecimal TEST_BIGDECIMAL = new BigDecimal("1");
+    private static final BigDecimal UPDATED_BIGDECIMAL = new BigDecimal("3");
 
     private static final Date TEST_DATE = Calendar.getInstance().getTime();
 
@@ -174,28 +175,28 @@ public class PurchaseCreditMemoTestRunner extends BaseTestRunner {
             SECOND_ITEM_NAME, purchaseCreditMemoLine.getItemName()));
         }
 
-        if (!(purchaseCreditMemoLine.getQuantity() == UPDATED_DOUBLE)) {
+        if (purchaseCreditMemoLine.getQuantity().compareTo(UPDATED_BIGDECIMAL) != 0) {
             throw new ITestFailedException(String.format("PurchaseCreditMemoLine quantity issue: expected %f, got %f",
-            UPDATED_DOUBLE, purchaseCreditMemoLine.getQuantity()));
+            UPDATED_BIGDECIMAL, purchaseCreditMemoLine.getQuantity()));
         }
 
-        if (!(purchaseCreditMemoLine.getPrice() == UPDATED_DOUBLE)) {
-            throw new ITestFailedException(String.format("PurchaseCreditMemoLine price issue: expected %f, got %f", UPDATED_DOUBLE,
+        if (purchaseCreditMemoLine.getPrice().compareTo(UPDATED_BIGDECIMAL) != 0) {
+            throw new ITestFailedException(String.format("PurchaseCreditMemoLine price issue: expected %f, got %f", UPDATED_BIGDECIMAL,
                     purchaseCreditMemoLine.getPrice()));
         }
 
-        if (!(purchaseCreditMemoLine.getAmount() == UPDATED_DOUBLE)) {
+        if (purchaseCreditMemoLine.getAmount().compareTo(UPDATED_BIGDECIMAL) != 0) {
             throw new ITestFailedException(String.format("PurchaseCreditMemoLine amount issue: expected %f, got %f",
-            UPDATED_DOUBLE, purchaseCreditMemoLine.getAmount()));
+            UPDATED_BIGDECIMAL, purchaseCreditMemoLine.getAmount()));
         }
     }
 
     private PurchaseDocumentLineDTO generatePurchaseCreditMemoLineUpdate() {
         PurchaseDocumentLineDTO result = new PurchaseDocumentLineDTO();
         result.setItemCode(SECOND_ITEM_CODE);
-        result.setQuantity(UPDATED_DOUBLE);
-        result.setPrice(UPDATED_DOUBLE);
-        result.setAmount(UPDATED_DOUBLE);
+        result.setQuantity(UPDATED_BIGDECIMAL);
+        result.setPrice(UPDATED_BIGDECIMAL);
+        result.setAmount(UPDATED_BIGDECIMAL);
         return result;
     }
 
@@ -203,8 +204,8 @@ public class PurchaseCreditMemoTestRunner extends BaseTestRunner {
         ItemDTO result = new ItemDTO();
         result.setCode(SECOND_ITEM_CODE);
         result.setName(SECOND_ITEM_NAME);
-        result.setPurchasePrice(UPDATED_DOUBLE);
-        result.setPurchasePrice(UPDATED_DOUBLE);
+        result.setPurchasePrice(UPDATED_BIGDECIMAL);
+        result.setPurchasePrice(UPDATED_BIGDECIMAL);
         return result;
     }
 
@@ -220,28 +221,28 @@ public class PurchaseCreditMemoTestRunner extends BaseTestRunner {
                     TEST_ITEM_NAME, purchaseCreditMemoLine.getItemName()));
         }
 
-        if (!(purchaseCreditMemoLine.getQuantity() == TEST_DOUBLE)) {
+        if (purchaseCreditMemoLine.getQuantity().compareTo(TEST_BIGDECIMAL) != 0) {
             throw new ITestFailedException(String.format("PurchaseCreditMemoLine quantity issue: expected %f, got %f",
-                    TEST_DOUBLE, purchaseCreditMemoLine.getQuantity()));
+                    TEST_BIGDECIMAL, purchaseCreditMemoLine.getQuantity()));
         }
 
-        if (!(purchaseCreditMemoLine.getPrice() == TEST_DOUBLE)) {
-            throw new ITestFailedException(String.format("PurchaseCreditMemoLine price issue: expected %f, got %f", TEST_DOUBLE,
+        if (purchaseCreditMemoLine.getPrice().compareTo(TEST_BIGDECIMAL) != 0) {
+            throw new ITestFailedException(String.format("PurchaseCreditMemoLine price issue: expected %f, got %f", TEST_BIGDECIMAL,
                     purchaseCreditMemoLine.getPrice()));
         }
 
-        if (!(purchaseCreditMemoLine.getAmount() == TEST_DOUBLE)) {
+        if (purchaseCreditMemoLine.getAmount().compareTo(TEST_BIGDECIMAL) != 0) {
             throw new ITestFailedException(String.format("PurchaseCreditMemoLine amount issue: expected %f, got %f",
-                    TEST_DOUBLE, purchaseCreditMemoLine.getAmount()));
+                    TEST_BIGDECIMAL, purchaseCreditMemoLine.getAmount()));
         }
     }
 
     private PurchaseDocumentLineDTO generatePurchaseCreditMemoLine(String id) {
         PurchaseDocumentLineDTO result = new PurchaseDocumentLineDTO();
         result.setItemCode(TEST_ITEM_CODE);
-        result.setQuantity(TEST_DOUBLE);
-        result.setPrice(1.0);
-        result.setAmount(1.0);
+        result.setQuantity(TEST_BIGDECIMAL);
+        result.setPrice(new BigDecimal(1));
+        result.setAmount(new BigDecimal(1));
         return result;
     }
 

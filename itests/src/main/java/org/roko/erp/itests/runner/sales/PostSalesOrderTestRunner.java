@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.sales;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.roko.erp.dto.BankAccountDTO;
@@ -27,9 +28,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostSalesOrderTestRunner implements ITestRunner {
 
-    private static final int TEST_QUANTITY = 50;
-    private static final int TEST_PRICE = 1;
-    private static final int TEST_AMOUNT = 50;
+    private static final BigDecimal TEST_QUANTITY = new BigDecimal("50");
+    private static final BigDecimal TEST_PRICE = new BigDecimal("1");
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal("50");
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
@@ -130,7 +131,7 @@ public class PostSalesOrderTestRunner implements ITestRunner {
         String code = createSalesOrder();
         createSalesOrderLine(code, BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
-        double initialItemInventory = getItemInventory(BusinessLogicSetupUtil.TEST_ITEM_CODE);
+        BigDecimal initialItemInventory = getItemInventory(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
         LOGGER.info(String.format("Sales Order %s created", code));
 
@@ -148,7 +149,7 @@ public class PostSalesOrderTestRunner implements ITestRunner {
 
         verifyPostedSalesOrder();
 
-        verifyCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE, 0);
+        verifyCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE, new BigDecimal(0));
 
         verifyBankAccountBalance();
 
@@ -157,7 +158,7 @@ public class PostSalesOrderTestRunner implements ITestRunner {
         LOGGER.info("Sales Order post test passed");
     }
 
-    private double getItemInventory(String itemCode) {
+    private BigDecimal getItemInventory(String itemCode) {
         return itemClient.read(itemCode).getInventory();
     }
 
@@ -169,12 +170,12 @@ public class PostSalesOrderTestRunner implements ITestRunner {
         util.ensureCustomers();
     }
 
-    private void verifyItemInventory(double initialItemInventory) throws ITestFailedException {
-        double expectedItemIventory = initialItemInventory - TEST_QUANTITY;
+    private void verifyItemInventory(BigDecimal  initialItemInventory) throws ITestFailedException {
+        BigDecimal expectedItemIventory = initialItemInventory.subtract(TEST_QUANTITY);
 
         ItemDTO item = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE);
 
-        if (item.getInventory() != expectedItemIventory) {
+        if (item.getInventory().compareTo(expectedItemIventory) != 0) {
             throw new ITestFailedException(String.format("Item %s inventory issue: expected %f, got %f",
                     BusinessLogicSetupUtil.TEST_ITEM_CODE, expectedItemIventory, item.getInventory()));
         }
@@ -183,11 +184,11 @@ public class PostSalesOrderTestRunner implements ITestRunner {
     }
 
     private void verifyBankAccountBalance() throws ITestFailedException {
-        double expectedBankAccountBalance = BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE + TEST_AMOUNT;
+        BigDecimal expectedBankAccountBalance = BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE.add(TEST_AMOUNT);
 
         BankAccountDTO bankAccount = bankAccountClient.read(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE);
 
-        if (bankAccount.getBalance() != expectedBankAccountBalance) {
+        if (bankAccount.getBalance().compareTo(expectedBankAccountBalance) != 0) {
             throw new ITestFailedException(String.format("Bank Account %s balance issue: expected %f, got %f",
                     BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE, expectedBankAccountBalance,
                     bankAccount.getBalance()));
@@ -196,10 +197,10 @@ public class PostSalesOrderTestRunner implements ITestRunner {
         LOGGER.info(String.format("Bank Account %s verified", BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE));
     }
 
-    private void verifyCustomerBalance(String customerCode, double expectedBalance) throws ITestFailedException {
+    private void verifyCustomerBalance(String customerCode, BigDecimal expectedBalance) throws ITestFailedException {
         CustomerDTO customer = customerClient.read(customerCode);
 
-        if (customer.getBalance() != expectedBalance) {
+        if (customer.getBalance().compareTo(expectedBalance) != 0) {
             throw new ITestFailedException(String.format("Customer %s balance issue: expected %f, got %f",
                     customerCode, expectedBalance, customer.getBalance()));
         }
@@ -231,18 +232,18 @@ public class PostSalesOrderTestRunner implements ITestRunner {
                     code, BusinessLogicSetupUtil.TEST_ITEM_CODE, postedSalesOrderLine.getItemCode()));
         }
 
-        if (postedSalesOrderLine.getQuantity() != TEST_QUANTITY) {
+        if (postedSalesOrderLine.getQuantity().compareTo(TEST_QUANTITY) != 0) {
             throw new ITestFailedException(
                     String.format("Posted Sales Order %s line quantity issue: expected %f, got %f",
                             code, TEST_QUANTITY, postedSalesOrderLine.getQuantity()));
         }
 
-        if (postedSalesOrderLine.getPrice() != TEST_PRICE) {
+        if (postedSalesOrderLine.getPrice().compareTo(TEST_PRICE) != 0) {
             throw new ITestFailedException(String.format("Posted Sales Order %s line price issue: expected %f, got %f",
                     code, TEST_PRICE, postedSalesOrderLine.getPrice()));
         }
 
-        if (postedSalesOrderLine.getAmount() != TEST_AMOUNT) {
+        if (postedSalesOrderLine.getAmount().compareTo(TEST_AMOUNT) != 0) {
             throw new ITestFailedException(String.format("Posted Sales Order %s line amount issue: expected %f, got %f",
                     code, TEST_AMOUNT, postedSalesOrderLine.getAmount()));
         }

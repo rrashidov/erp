@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +34,8 @@ public class ItemControllerTest {
     
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final double TEST_ITEM_SALES_PRICE = 12.12;
-    private static final double TEST_ITEM_PURCHASE_PRICE = 23.23;
+    private static final BigDecimal TEST_ITEM_SALES_PRICE = new BigDecimal(12.12);
+    private static final BigDecimal TEST_ITEM_PURCHASE_PRICE = new BigDecimal(23.23);
 
     private static final int TEST_PAGE = 12;
 

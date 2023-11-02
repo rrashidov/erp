@@ -56,7 +56,7 @@ public class PurchaseOrderLineController {
         
         purchaseOrderLineModel.setItemName(item.getName());
         purchaseOrderLineModel.setPrice(item.getPurchasePrice());
-        purchaseOrderLineModel.setAmount(purchaseOrderLineModel.getQuantity() * purchaseOrderLineModel.getPrice());
+        purchaseOrderLineModel.setAmount(purchaseOrderLineModel.getQuantity().multiply(purchaseOrderLineModel.getPrice()));
 
         model.addAttribute("purchaseOrderLineModel", purchaseOrderLineModel);
         
@@ -65,7 +65,7 @@ public class PurchaseOrderLineController {
 
     @PostMapping("/purchaseOrderLineWizardSecondPage")
     public String postPurchaseOrderLineWizardSecondPage(@ModelAttribute PurchaseDocumentLineDTO purchaseOrderLineModel, Model model){
-        purchaseOrderLineModel.setAmount(purchaseOrderLineModel.getQuantity() * purchaseOrderLineModel.getPrice());
+        purchaseOrderLineModel.setAmount(purchaseOrderLineModel.getQuantity().multiply(purchaseOrderLineModel.getPrice()));
 
         model.addAttribute("purchaseOrderLineModel", purchaseOrderLineModel);
 

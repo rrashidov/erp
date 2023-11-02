@@ -1,5 +1,7 @@
 package org.roko.erp.itests.runner.inventory;
 
+import java.math.BigDecimal;
+
 import org.roko.erp.dto.ItemDTO;
 import org.roko.erp.itests.clients.ItemClient;
 import org.roko.erp.itests.runner.BaseTestRunner;
@@ -12,12 +14,12 @@ public class ItemTestRunner extends BaseTestRunner {
 
     private static final String TEST_ITEM_CODE = "TESTITEMCODE";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final double TEST_PURCHASE_PRICE = 1.0;
-    private static final double TEST_SALES_PRICE = 2.0;
+    private static final BigDecimal TEST_PURCHASE_PRICE = new BigDecimal("1");
+    private static final BigDecimal TEST_SALES_PRICE = new BigDecimal("2");
 
     private static final String UPDATED_ITEM_NAME = "updated-item-name";
-    private static final double UPDATED_PURCHASE_PRICE = 3.0;
-    private static final double UPDATED_SALES_PRICE = 4.0;
+    private static final BigDecimal UPDATED_PURCHASE_PRICE = new BigDecimal("3");
+    private static final BigDecimal UPDATED_SALES_PRICE = new BigDecimal("4");
 
     private ItemClient client;
 
@@ -79,13 +81,13 @@ public class ItemTestRunner extends BaseTestRunner {
                     String.format("Item name problem: expected: %s, got: %s", TEST_ITEM_NAME, item.getName()));
         }
 
-        if (item.getPurchasePrice() != TEST_PURCHASE_PRICE) {
-            throw new ITestFailedException(String.format("Item purchase price problem: expected: %f, got: %f",
+        if (item.getPurchasePrice().compareTo(TEST_PURCHASE_PRICE) != 0) {
+            throw new ITestFailedException(String.format("Item purchase price problem: expected: %.2f, got: %.2f",
                     TEST_PURCHASE_PRICE, item.getPurchasePrice()));
         }
 
-        if (item.getSalesPrice() != TEST_SALES_PRICE) {
-            throw new ITestFailedException(String.format("Item sales price problem: expected: %f, got: %f",
+        if (item.getSalesPrice().compareTo(TEST_SALES_PRICE) != 0) {
+            throw new ITestFailedException(String.format("Item sales price problem: expected: %.2f, got: %.2f",
                     TEST_SALES_PRICE, item.getSalesPrice()));
         }
     }
@@ -101,13 +103,13 @@ public class ItemTestRunner extends BaseTestRunner {
                     String.format("Item name problem: expected: %s, got: %s", TEST_ITEM_NAME, item.getName()));
         }
 
-        if (item.getPurchasePrice() != UPDATED_PURCHASE_PRICE) {
-            throw new ITestFailedException(String.format("Item purchase price problem: expected: %f, got: %f",
+        if (item.getPurchasePrice().compareTo(UPDATED_PURCHASE_PRICE) != 0) {
+            throw new ITestFailedException(String.format("Item purchase price problem: expected: %.2f, got: %.2f",
                     TEST_PURCHASE_PRICE, item.getPurchasePrice()));
         }
 
-        if (item.getSalesPrice() != UPDATED_SALES_PRICE) {
-            throw new ITestFailedException(String.format("Item sales price problem: expected: %f, got: %f",
+        if (item.getSalesPrice().compareTo(UPDATED_SALES_PRICE) != 0) {
+            throw new ITestFailedException(String.format("Item sales price problem: expected: %.2f, got: %.2f",
                     TEST_SALES_PRICE, item.getSalesPrice()));
         }
     }

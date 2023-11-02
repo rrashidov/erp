@@ -58,7 +58,7 @@ public class PurchaseCreditMemoLineController {
         purchaseCreditMemoLineModel.setPrice(item.getPurchasePrice());
 
         purchaseCreditMemoLineModel
-                .setAmount(purchaseCreditMemoLineModel.getQuantity() * purchaseCreditMemoLineModel.getPrice());
+                .setAmount(purchaseCreditMemoLineModel.getQuantity().multiply(purchaseCreditMemoLineModel.getPrice()));
 
         model.addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModel);
 
@@ -69,7 +69,7 @@ public class PurchaseCreditMemoLineController {
     public String postPurchaseCreditMemoLineWizardSecondPage(
             @ModelAttribute PurchaseDocumentLineDTO purchaseCreditMemoLineModel, Model model) {
         purchaseCreditMemoLineModel
-                .setAmount(purchaseCreditMemoLineModel.getQuantity() * purchaseCreditMemoLineModel.getPrice());
+                .setAmount(purchaseCreditMemoLineModel.getQuantity().multiply(purchaseCreditMemoLineModel.getPrice()));
 
         model.addAttribute("purchaseCreditMemoLineModel", purchaseCreditMemoLineModel);
 

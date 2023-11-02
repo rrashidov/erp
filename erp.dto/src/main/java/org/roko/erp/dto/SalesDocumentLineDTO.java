@@ -1,5 +1,7 @@
 package org.roko.erp.dto;
 
+import java.math.BigDecimal;
+
 public class SalesDocumentLineDTO {
     
     private String salesDocumentCode = "";
@@ -7,9 +9,9 @@ public class SalesDocumentLineDTO {
     private int page = 0;
     private String itemCode = "";
     private String itemName = "";
-    private double quantity = 0.0;
-    private double price = 0.0;
-    private double amount = 0.0;
+    private BigDecimal quantity = new BigDecimal(0);
+    private BigDecimal price = new BigDecimal(0);
+    private BigDecimal amount = new BigDecimal(0);
 
     public String getSalesDocumentCode() {
         return salesDocumentCode;
@@ -35,22 +37,22 @@ public class SalesDocumentLineDTO {
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
-    public double getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
-    public void setQuantity(double quantity) {
+    public void setQuantity(BigDecimal  quantity) {
         this.quantity = quantity;
     }
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal  price) {
         this.price = price;
     }
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal  amount) {
         this.amount = amount;
     }
     public int getPage() {

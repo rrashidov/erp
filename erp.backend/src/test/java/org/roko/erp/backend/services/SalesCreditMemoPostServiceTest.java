@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -44,14 +45,14 @@ public class SalesCreditMemoPostServiceTest {
 
     private static final Date TEST_DATE = new Date();
 
-    private static final Double TEST_QTY = 12.00;
-    private static final Double TEST_PRICE = 10.00;
-    private static final Double TEST_AMOUNT = 120.00;
+    private static final BigDecimal TEST_QTY = new BigDecimal(12);
+    private static final BigDecimal TEST_PRICE = new BigDecimal(10);
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(120);
 
     private static final int TEST_LINE_NO = 123;
 
     private static final String TEST_BANK_ACCOUNT_CODE = "test-bank-account-code";
-    private static final Double TEST_BANK_ACCOUNT_BALANCE = 250.00;
+    private static final BigDecimal TEST_BANK_ACCOUNT_BALANCE = new BigDecimal(250);
 
     @Captor
     private ArgumentCaptor<PostedSalesCreditMemo> postedSalesCreditMemoArgumentCaptor;
@@ -194,7 +195,7 @@ public class SalesCreditMemoPostServiceTest {
 
     @Test
     public void postFails_whenBankAccountBalanceIsNotEnough() throws PostFailedException {
-        when(bankAccountMock.getBalance()).thenReturn(0.0);
+        when(bankAccountMock.getBalance()).thenReturn(new BigDecimal(0));
 
         assertThrows(PostFailedException.class, () -> {svc.post(TEST_CODE);});
     }
@@ -222,7 +223,7 @@ public class SalesCreditMemoPostServiceTest {
 
         assertEquals(bankAccountMock, bankAccountLedgerEntry.getBankAccount());
         assertEquals(BankAccountLedgerEntryType.CUSTOMER_REFUND, bankAccountLedgerEntry.getType());
-        assertEquals(-(TEST_AMOUNT * 2), bankAccountLedgerEntry.getAmount());
+        assertEquals((TEST_AMOUNT.multiply(new BigDecimal(2))).negate(), bankAccountLedgerEntry.getAmount());
         assertEquals(postedSalesCreditMemo.getCode(), bankAccountLedgerEntry.getDocumentCode());
     }
 
@@ -246,7 +247,7 @@ public class SalesCreditMemoPostServiceTest {
             PostedSalesCreditMemo postedSalesCreditMemo) {
         assertEquals(customerMock, customerLedgerEntry.getCustomer());
         assertEquals(CustomerLedgerEntryType.REFUND, customerLedgerEntry.getType());
-        assertEquals(TEST_AMOUNT * 2, customerLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.multiply(new BigDecimal(2)), customerLedgerEntry.getAmount());
         assertEquals(postedSalesCreditMemo.getCode(), customerLedgerEntry.getDocumentCode());
     }
 
@@ -254,7 +255,7 @@ public class SalesCreditMemoPostServiceTest {
             PostedSalesCreditMemo postedSalesCreditMemo) {
         assertEquals(customerMock, customerLedgerEntry.getCustomer());
         assertEquals(CustomerLedgerEntryType.SALES_CREDIT_MEMO, customerLedgerEntry.getType());
-        assertEquals(-(TEST_AMOUNT * 2), customerLedgerEntry.getAmount());
+        assertEquals((TEST_AMOUNT.multiply(new BigDecimal(2))).negate(), customerLedgerEntry.getAmount());
         assertEquals(postedSalesCreditMemo.getCode(), customerLedgerEntry.getDocumentCode());
     }
 

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,7 @@ import org.roko.erp.backend.services.util.TimeService;
 public class PurchaseCreditMemoPostServiceTest {
 
     private static final String TEST_ITEM_CODE = "test-item-code";
-    private static final Double TEST_ITEM_INVENTORY = 30.00;
+    private static final BigDecimal TEST_ITEM_INVENTORY = new BigDecimal(30);
 
     private static final String TEST_NEW_CODE = "test-new-code";
 
@@ -49,11 +50,9 @@ public class PurchaseCreditMemoPostServiceTest {
 
     private static final int TEST_LINE_NO = 2;
 
-    private static final Double TEST_QTY = 10.00;
-
-    private static final Double TEST_PRICE = 12.00;
-
-    private static final Double TEST_AMOUNT = 120.00;
+    private static final BigDecimal TEST_QTY = new BigDecimal(10);
+    private static final BigDecimal TEST_PRICE = new BigDecimal(12);
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(120);
 
     @Captor
     private ArgumentCaptor<PostedPurchaseCreditMemo> posteedPurchaseCreditMemoArgumentCaptor;
@@ -194,7 +193,7 @@ public class PurchaseCreditMemoPostServiceTest {
 
     @Test
     public void postFails_whenItemHasNotEnoughInventory() throws PostFailedException {
-        when(itemMock.getInventory()).thenReturn(0.0);
+        when(itemMock.getInventory()).thenReturn(new BigDecimal(0));
 
         assertThrows(PostFailedException.class, () -> {svc.post(TEST_CODE);});
     }
@@ -222,7 +221,7 @@ public class PurchaseCreditMemoPostServiceTest {
 
         assertEquals(bankAccountMock, bankAccountLedgerEntry.getBankAccount());
         assertEquals(BankAccountLedgerEntryType.VENDOR_REFUND, bankAccountLedgerEntry.getType());
-        assertEquals(TEST_AMOUNT * 2, bankAccountLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.multiply(new BigDecimal(2)), bankAccountLedgerEntry.getAmount());
         assertEquals(postedPurchaseCreditMemo.getCode(), bankAccountLedgerEntry.getDocumentCode());
     }
 
@@ -251,7 +250,7 @@ public class PurchaseCreditMemoPostServiceTest {
             PostedPurchaseCreditMemo postedPurchaseCreditMemo) {
         assertEquals(vendorMock, paymentVendorLedgerEntry.getVendor());
         assertEquals(VendorLedgerEntryType.REFUND, paymentVendorLedgerEntry.getType());
-        assertEquals(TEST_AMOUNT * 2, paymentVendorLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.multiply(new BigDecimal(2)), paymentVendorLedgerEntry.getAmount());
         assertEquals(postedPurchaseCreditMemo.getCode(), paymentVendorLedgerEntry.getDocumentCode());
     }
 
@@ -259,7 +258,7 @@ public class PurchaseCreditMemoPostServiceTest {
             PostedPurchaseCreditMemo postedPurchaseCreditMemo) {
         assertEquals(vendorMock, documentVendorLedgerEntry.getVendor());
         assertEquals(VendorLedgerEntryType.PURCHASE_CREDIT_MEMO, documentVendorLedgerEntry.getType());
-        assertEquals(-(TEST_AMOUNT * 2), documentVendorLedgerEntry.getAmount());
+        assertEquals((TEST_AMOUNT.multiply(new BigDecimal(2))).negate(), documentVendorLedgerEntry.getAmount());
         assertEquals(postedPurchaseCreditMemo.getCode(), documentVendorLedgerEntry.getDocumentCode());
     }
 
@@ -270,7 +269,7 @@ public class PurchaseCreditMemoPostServiceTest {
 
         assertEquals(itemMock, itemLedgerEntry.getItem());
         assertEquals(ItemLedgerEntryType.PURCHASE_CREDIT_MEMO, itemLedgerEntry.getType());
-        assertEquals(-TEST_QTY, itemLedgerEntry.getQuantity());
+        assertEquals(TEST_QTY.negate(), itemLedgerEntry.getQuantity());
         assertEquals(postedPurchaseCreditMemo.getCode(), itemLedgerEntry.getDocumentCode());
     }
 

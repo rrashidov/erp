@@ -1,5 +1,7 @@
 package org.roko.erp.dto;
 
+import java.math.BigDecimal;
+
 public class CustomerDTO {
 
     private String code = "";
@@ -7,7 +9,7 @@ public class CustomerDTO {
     private String address = "";
     private String paymentMethodCode = "";
     private String paymentMethodName = "";
-    private double balance = 0;
+    private BigDecimal balance = new BigDecimal(0);
     
     public String getCode() {
         return code;
@@ -39,10 +41,10 @@ public class CustomerDTO {
     public void setPaymentMethodName(String paymentMethodName) {
         this.paymentMethodName = paymentMethodName;
     }
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
-    public void setBalance(double balance) {
+    public void setBalance(BigDecimal  balance) {
         this.balance = balance;
     }
     

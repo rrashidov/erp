@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.sales;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -36,7 +37,7 @@ public class ParallelSalesOrderPostTestRunner extends AbstractParallelDocumentPo
 
     @Override
     protected String createDocument() {
-        double itemInventory = getTestItemInventory();
+        BigDecimal itemInventory = getTestItemInventory();
 
         SalesDocumentDTO salesOrder = new SalesDocumentDTO();
         salesOrder.setCustomerCode(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE);
@@ -60,17 +61,17 @@ public class ParallelSalesOrderPostTestRunner extends AbstractParallelDocumentPo
         return new SalesOrderPostCallable(salesOrderClient, BARRIER, code, feedbackList);
     }
 
-    private void createSalesOrderLine(String salesOrderCode, double itemInventory) {
+    private void createSalesOrderLine(String salesOrderCode, BigDecimal itemInventory) {
         SalesDocumentLineDTO salesDocumentLineDTO = new SalesDocumentLineDTO();
         salesDocumentLineDTO.setItemCode(BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
         salesDocumentLineDTO.setQuantity(itemInventory);
-        salesDocumentLineDTO.setPrice(1.0);
+        salesDocumentLineDTO.setPrice(new BigDecimal(1));
         salesDocumentLineDTO.setAmount(itemInventory);
 
         salesOrderLineClient.create(salesOrderCode, salesDocumentLineDTO);
     }
 
-    private double getTestItemInventory() {
+    private BigDecimal getTestItemInventory() {
         ItemDTO item = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE_2);
         return item.getInventory();
     }

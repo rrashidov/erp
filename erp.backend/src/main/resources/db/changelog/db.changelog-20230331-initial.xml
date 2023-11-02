@@ -15,7 +15,7 @@
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="date" type="datetime"/>
@@ -52,7 +52,7 @@
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="date" type="datetime"/>
@@ -76,7 +76,7 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="date" type="datetime"/>
@@ -98,10 +98,10 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(255)"/>
-            <column name="purchase_price" type="DOUBLE">
+            <column name="purchase_price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="sales_price" type="DOUBLE">
+            <column name="sales_price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -114,7 +114,7 @@
             </column>
             <column name="date" type="datetime"/>
             <column name="document_code" type="VARCHAR(255)"/>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="type" type="INT"/>
@@ -150,13 +150,13 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DOUBLE">
+            <column name="price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="posted_purchase_credit_memo_code" type="VARCHAR(255)">
@@ -184,13 +184,13 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DOUBLE">
+            <column name="price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="posted_purchase_order_code" type="VARCHAR(255)">
@@ -218,13 +218,13 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DOUBLE">
+            <column name="price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="posted_sales_credit_memo_code" type="VARCHAR(255)">
@@ -252,13 +252,13 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DOUBLE">
+            <column name="price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="posted_sales_order_code" type="VARCHAR(255)">
@@ -284,13 +284,13 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DOUBLE">
+            <column name="price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="purchase_credit_memo_code" type="VARCHAR(255)">
@@ -316,13 +316,13 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DOUBLE">
+            <column name="price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="purchase_order_code" type="VARCHAR(255)">
@@ -348,13 +348,13 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DOUBLE">
+            <column name="price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="sales_credit_memo_code" type="VARCHAR(255)">
@@ -380,13 +380,13 @@
             <column name="line_no" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="DOUBLE">
+            <column name="price" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="quantity" type="DOUBLE">
+            <column name="quantity" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="sales_order_code" type="VARCHAR(255)">
@@ -428,7 +428,7 @@
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="amount" type="DOUBLE">
+            <column name="amount" type="DECIMAL(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="date" type="datetime"/>

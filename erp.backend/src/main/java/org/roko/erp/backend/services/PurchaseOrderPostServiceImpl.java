@@ -1,5 +1,6 @@
 package org.roko.erp.backend.services;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -94,13 +95,13 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
             return;
         }
 
-        Optional<Double> amount = purchaseOrderLines.stream()
+        Optional<BigDecimal> amount = purchaseOrderLines.stream()
                 .map(PurchaseOrderLine::getAmount)
-                .reduce((x, y) -> x + y);
+                .reduce((x, y) -> x.add(y));
 
         BankAccount bankAccount = bankAccountSvc.get(postedPurchaseOrder.getPaymentMethod().getBankAccount().getCode());
 
-        if (bankAccount.getBalance() < amount.get()) {
+        if (bankAccount.getBalance().compareTo(amount.get()) == -1) {
             throw new PostFailedException(String.format(NOT_ENOUGH_BANK_ACCOUNT_BALANCE_MSG, bankAccount.getCode(),
                     bankAccount.getBalance(), amount.get()));
         }
@@ -108,7 +109,7 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
         BankAccountLedgerEntry bankAccountLedgerEntry = new BankAccountLedgerEntry();
         bankAccountLedgerEntry.setBankAccount(postedPurchaseOrder.getPaymentMethod().getBankAccount());
         bankAccountLedgerEntry.setType(BankAccountLedgerEntryType.VENDOR_PAYMENT);
-        bankAccountLedgerEntry.setAmount(-amount.get());
+        bankAccountLedgerEntry.setAmount(amount.get().negate());
         bankAccountLedgerEntry.setDate(new Date());
         bankAccountLedgerEntry.setDocumentCode(postedPurchaseOrder.getCode());
 
@@ -117,9 +118,9 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
 
     private void createVendorLedgerEntries(List<PurchaseOrderLine> purchaseOrderLines,
             PostedPurchaseOrder postedPurchaseOrder) {
-        Optional<Double> amount = purchaseOrderLines.stream()
+        Optional<BigDecimal> amount = purchaseOrderLines.stream()
                 .map(PurchaseOrderLine::getAmount)
-                .reduce((x, y) -> x + y);
+                .reduce((x, y) -> x.add(y));
 
         createDocumentVendorLedgerEntry(postedPurchaseOrder, amount.get());
 
@@ -128,18 +129,18 @@ public class PurchaseOrderPostServiceImpl implements PurchaseOrderPostService {
         }
     }
 
-    private void createPaymentVendorLedgerEntry(PostedPurchaseOrder postedPurchaseOrder, Double amount) {
+    private void createPaymentVendorLedgerEntry(PostedPurchaseOrder postedPurchaseOrder, BigDecimal amount) {
         VendorLedgerEntry vendorLedgerEntry = new VendorLedgerEntry();
         vendorLedgerEntry.setVendor(postedPurchaseOrder.getVendor());
         vendorLedgerEntry.setType(VendorLedgerEntryType.PAYMENT);
-        vendorLedgerEntry.setAmount(-amount);
+        vendorLedgerEntry.setAmount(amount.negate());
         vendorLedgerEntry.setDate(new Date());
         vendorLedgerEntry.setDocumentCode(postedPurchaseOrder.getCode());
 
         vendorLedgerEntrySvc.create(vendorLedgerEntry);
     }
 
-    private void createDocumentVendorLedgerEntry(PostedPurchaseOrder postedPurchaseOrder, Double amount) {
+    private void createDocumentVendorLedgerEntry(PostedPurchaseOrder postedPurchaseOrder, BigDecimal amount) {
         VendorLedgerEntry vendorLedgerEntry = new VendorLedgerEntry();
         vendorLedgerEntry.setVendor(postedPurchaseOrder.getVendor());
         vendorLedgerEntry.setType(VendorLedgerEntryType.PURCHASE_ORDER);

@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.purchases;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,8 +31,8 @@ public class PurchaseOrderTestRunner extends BaseTestRunner {
 
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final double TEST_ITEM_SALES_PRICE = 1.0;
-    private static final double TEST_ITEM_PURCHASE_PRICE = 2.0;
+    private static final BigDecimal TEST_ITEM_SALES_PRICE = new BigDecimal("1");
+    private static final BigDecimal TEST_ITEM_PURCHASE_PRICE = new BigDecimal("2");
 
     private static final String EXPECTED_PURCHASE_ORDER_CODE = "PO001";
 
@@ -53,8 +54,8 @@ public class PurchaseOrderTestRunner extends BaseTestRunner {
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
 
-    private static final double TEST_DOUBLE = 1.0;
-    private static final double UPDATED_DOUBLE = 3.0;
+    private static final BigDecimal TEST_BIGDECIMAL = new BigDecimal("1");
+    private static final BigDecimal UPDATED_BIGDECIMAL = new BigDecimal("3");
 
     private static final Date TEST_DATE = Calendar.getInstance().getTime();
 
@@ -174,28 +175,28 @@ public class PurchaseOrderTestRunner extends BaseTestRunner {
             SECOND_ITEM_NAME, purchaseOrderLine.getItemName()));
         }
 
-        if (!(purchaseOrderLine.getQuantity() == UPDATED_DOUBLE)) {
+        if (purchaseOrderLine.getQuantity().compareTo(UPDATED_BIGDECIMAL) != 0) {
             throw new ITestFailedException(String.format("PurchaseOrderLine quantity issue: expected %f, got %f",
-            UPDATED_DOUBLE, purchaseOrderLine.getQuantity()));
+            UPDATED_BIGDECIMAL, purchaseOrderLine.getQuantity()));
         }
 
-        if (!(purchaseOrderLine.getPrice() == UPDATED_DOUBLE)) {
-            throw new ITestFailedException(String.format("PurchaseOrderLine price issue: expected %f, got %f", UPDATED_DOUBLE,
+        if (purchaseOrderLine.getPrice().compareTo(UPDATED_BIGDECIMAL) != 0) {
+            throw new ITestFailedException(String.format("PurchaseOrderLine price issue: expected %f, got %f", UPDATED_BIGDECIMAL,
                     purchaseOrderLine.getPrice()));
         }
 
-        if (!(purchaseOrderLine.getAmount() == UPDATED_DOUBLE)) {
+        if (purchaseOrderLine.getAmount().compareTo(UPDATED_BIGDECIMAL) != 0) {
             throw new ITestFailedException(String.format("PurchaseOrderLine amount issue: expected %f, got %f",
-            UPDATED_DOUBLE, purchaseOrderLine.getAmount()));
+            UPDATED_BIGDECIMAL, purchaseOrderLine.getAmount()));
         }
     }
 
     private PurchaseDocumentLineDTO generatePurchaseOrderLineUpdate() {
         PurchaseDocumentLineDTO result = new PurchaseDocumentLineDTO();
         result.setItemCode(SECOND_ITEM_CODE);
-        result.setQuantity(UPDATED_DOUBLE);
-        result.setPrice(UPDATED_DOUBLE);
-        result.setAmount(UPDATED_DOUBLE);
+        result.setQuantity(UPDATED_BIGDECIMAL);
+        result.setPrice(UPDATED_BIGDECIMAL);
+        result.setAmount(UPDATED_BIGDECIMAL);
         return result;
     }
 
@@ -203,8 +204,8 @@ public class PurchaseOrderTestRunner extends BaseTestRunner {
         ItemDTO result = new ItemDTO();
         result.setCode(SECOND_ITEM_CODE);
         result.setName(SECOND_ITEM_NAME);
-        result.setPurchasePrice(UPDATED_DOUBLE);
-        result.setPurchasePrice(UPDATED_DOUBLE);
+        result.setPurchasePrice(UPDATED_BIGDECIMAL);
+        result.setPurchasePrice(UPDATED_BIGDECIMAL);
         return result;
     }
 
@@ -220,28 +221,28 @@ public class PurchaseOrderTestRunner extends BaseTestRunner {
                     TEST_ITEM_NAME, purchaseOrderLine.getItemName()));
         }
 
-        if (!(purchaseOrderLine.getQuantity() == TEST_DOUBLE)) {
+        if (purchaseOrderLine.getQuantity().compareTo(TEST_BIGDECIMAL) != 0) {
             throw new ITestFailedException(String.format("PurchaseOrderLine quantity issue: expected %f, got %f",
-                    TEST_DOUBLE, purchaseOrderLine.getQuantity()));
+                    TEST_BIGDECIMAL, purchaseOrderLine.getQuantity()));
         }
 
-        if (!(purchaseOrderLine.getPrice() == TEST_DOUBLE)) {
-            throw new ITestFailedException(String.format("PurchaseOrderLine price issue: expected %f, got %f", TEST_DOUBLE,
+        if (purchaseOrderLine.getPrice().compareTo(TEST_BIGDECIMAL) != 0) {
+            throw new ITestFailedException(String.format("PurchaseOrderLine price issue: expected %f, got %f", TEST_BIGDECIMAL,
                     purchaseOrderLine.getPrice()));
         }
 
-        if (!(purchaseOrderLine.getAmount() == TEST_DOUBLE)) {
+        if (purchaseOrderLine.getAmount().compareTo(TEST_BIGDECIMAL) != 0) {
             throw new ITestFailedException(String.format("PurchaseOrderLine amount issue: expected %f, got %f",
-                    TEST_DOUBLE, purchaseOrderLine.getAmount()));
+                    TEST_BIGDECIMAL, purchaseOrderLine.getAmount()));
         }
     }
 
     private PurchaseDocumentLineDTO generatePurchaseOrderLine(String id) {
         PurchaseDocumentLineDTO result = new PurchaseDocumentLineDTO();
         result.setItemCode(TEST_ITEM_CODE);
-        result.setQuantity(TEST_DOUBLE);
-        result.setPrice(1.0);
-        result.setAmount(1.0);
+        result.setQuantity(TEST_BIGDECIMAL);
+        result.setPrice(new BigDecimal(1));
+        result.setAmount(new BigDecimal(1));
         return result;
     }
 

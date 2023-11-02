@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.util;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.roko.erp.dto.BankAccountDTO;
@@ -67,7 +68,7 @@ public class BusinessLogicSetupUtil {
 
     public static final String TEST_BANK_ACCOUNT_CODE = "BA001";
     private static final String TEST_BANK_ACCOUNT_NAME = "test-bank-account-name";
-    public static final double TEST_BANK_ACCOUNT_BALANCE = 1000.0;
+    public static final BigDecimal TEST_BANK_ACCOUNT_BALANCE = new BigDecimal(1000.0);
 
     public static final String TEST_BANK_ACCOUNT_CODE_2 = "BA002";
     private static final String TEST_BANK_ACCOUNT_NAME_2 = "test-bank-account-name-2";
@@ -79,7 +80,7 @@ public class BusinessLogicSetupUtil {
     public static final String TEST_ITEM_CODE_2 = "ITEM002";
     private static final String TEST_ITEM_NAME = "test-item-name";
     private static final String TEST_ITEM_NAME_2 = "test-item-name-2";
-    private static final double TEST_ITEM_PRICE = 1.0;
+    private static final BigDecimal TEST_ITEM_PRICE = new BigDecimal(1);
 
     public static final String NO_INVENTORY_ITEM_CODE = "ITEM003";
     private static final String NO_INVENTORY_ITEM_NAME = "no-iventory-item-name";
@@ -266,9 +267,9 @@ public class BusinessLogicSetupUtil {
     private void ensureBankAccountBalance() {
         BankAccountDTO bankAccount = bankAccountClient.read(TEST_BANK_ACCOUNT_CODE);
 
-        double balanceDifference = TEST_BANK_ACCOUNT_BALANCE - bankAccount.getBalance();
+        BigDecimal balanceDifference = TEST_BANK_ACCOUNT_BALANCE.subtract(bankAccount.getBalance());
 
-        if (balanceDifference == 0.0) {
+        if (balanceDifference.compareTo(new BigDecimal(0)) == 0) {
             return;
         }
 

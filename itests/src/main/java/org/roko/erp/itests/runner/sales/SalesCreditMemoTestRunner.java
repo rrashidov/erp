@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.sales;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,8 +31,8 @@ public class SalesCreditMemoTestRunner extends BaseTestRunner {
 
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final double TEST_ITEM_PURCHASE_PRICE = 1.0;
-    private static final double TEST_ITEM_SALES_PRICE = 2.0;
+    private static final BigDecimal TEST_ITEM_PURCHASE_PRICE = new BigDecimal("1");
+    private static final BigDecimal TEST_ITEM_SALES_PRICE = new BigDecimal("2");
 
     private static final String EXPECTED_SALES_CreditMemo_CODE = "SCM001";
 
@@ -53,8 +54,8 @@ public class SalesCreditMemoTestRunner extends BaseTestRunner {
     private static final String TEST_PAYMENT_METHOD_CODE = "test-payment-method-code";
     private static final String TEST_PAYMENT_METHOD_NAME = "test-payment-method-name";
 
-    private static final double TEST_DOUBLE = 1.0;
-    private static final double UPDATED_DOUBLE = 3.0;
+    private static final BigDecimal TEST_DOUBLE = new BigDecimal("1");
+    private static final BigDecimal UPDATED_DOUBLE = new BigDecimal("3");
 
     private static final Date TEST_DATE = Calendar.getInstance().getTime();
 
@@ -175,17 +176,17 @@ public class SalesCreditMemoTestRunner extends BaseTestRunner {
             SECOND_ITEM_NAME, salesCreditMemoLine.getItemName()));
         }
 
-        if (!(salesCreditMemoLine.getQuantity() == UPDATED_DOUBLE)) {
+        if (salesCreditMemoLine.getQuantity().compareTo(UPDATED_DOUBLE) != 0) {
             throw new ITestFailedException(String.format("SalesCreditMemoLine quantity issue: expected %f, got %f",
             UPDATED_DOUBLE, salesCreditMemoLine.getQuantity()));
         }
 
-        if (!(salesCreditMemoLine.getPrice() == UPDATED_DOUBLE)) {
+        if (salesCreditMemoLine.getPrice().compareTo(UPDATED_DOUBLE) != 0) {
             throw new ITestFailedException(String.format("SalesCreditMemoLine price issue: expected %f, got %f", UPDATED_DOUBLE,
                     salesCreditMemoLine.getPrice()));
         }
 
-        if (!(salesCreditMemoLine.getAmount() == UPDATED_DOUBLE)) {
+        if (salesCreditMemoLine.getAmount().compareTo(UPDATED_DOUBLE) != 0) {
             throw new ITestFailedException(String.format("SalesCreditMemoLine amount issue: expected %f, got %f",
             UPDATED_DOUBLE, salesCreditMemoLine.getAmount()));
         }
@@ -221,17 +222,17 @@ public class SalesCreditMemoTestRunner extends BaseTestRunner {
                     TEST_ITEM_NAME, salesCreditMemoLine.getItemName()));
         }
 
-        if (!(salesCreditMemoLine.getQuantity() == TEST_DOUBLE)) {
+        if (salesCreditMemoLine.getQuantity().compareTo(TEST_DOUBLE) != 0) {
             throw new ITestFailedException(String.format("SalesCreditMemoLine quantity issue: expected %f, got %f",
                     TEST_DOUBLE, salesCreditMemoLine.getQuantity()));
         }
 
-        if (!(salesCreditMemoLine.getPrice() == TEST_DOUBLE)) {
+        if (salesCreditMemoLine.getPrice().compareTo(TEST_DOUBLE) != 0) {
             throw new ITestFailedException(String.format("SalesCreditMemoLine price issue: expected %f, got %f", TEST_DOUBLE,
                     salesCreditMemoLine.getPrice()));
         }
 
-        if (!(salesCreditMemoLine.getAmount() == TEST_DOUBLE)) {
+        if (salesCreditMemoLine.getAmount().compareTo(TEST_DOUBLE) != 0) {
             throw new ITestFailedException(String.format("SalesCreditMemoLine amount issue: expected %f, got %f",
                     TEST_DOUBLE, salesCreditMemoLine.getAmount()));
         }
@@ -241,8 +242,8 @@ public class SalesCreditMemoTestRunner extends BaseTestRunner {
         SalesDocumentLineDTO result = new SalesDocumentLineDTO();
         result.setItemCode(TEST_ITEM_CODE);
         result.setQuantity(TEST_DOUBLE);
-        result.setPrice(1.0);
-        result.setAmount(1.0);
+        result.setPrice(new BigDecimal(1));
+        result.setAmount(new BigDecimal(1));
         return result;
     }
 

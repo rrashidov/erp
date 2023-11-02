@@ -1,5 +1,6 @@
 package org.roko.erp.backend.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
@@ -20,7 +21,7 @@ public class ItemLedgerEntry {
 
 	private ItemLedgerEntryType type;
 
-	private double quantity;
+	private BigDecimal quantity;
 
 	private Date date;
 
@@ -44,10 +45,10 @@ public class ItemLedgerEntry {
 	public void setType(ItemLedgerEntryType type) {
 		this.type = type;
 	}
-	public double getQuantity() {
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(double quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 	public String getDocumentCode() {

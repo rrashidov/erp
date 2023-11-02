@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -40,7 +41,7 @@ public class GeneralJournalBatchPostServiceTest {
     private static final int TEST_LINE_NO = 234;
     private static final String TEST_DOCUMENT_CODE = "test-document-code";
     private static final Date TEST_DATE = new Date();
-    private static final Double TEST_AMOUNT = 123.45;
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(123.45);
 
     private static final String TEST_CUSTOMER_CODE = "test-customer-code";
     private static final String TEST_VENDOR_CODE = "test-vendor-code";
@@ -189,7 +190,7 @@ public class GeneralJournalBatchPostServiceTest {
 
         assertEquals(customerMock, customerLedgerEntry.getCustomer());
         assertEquals(CustomerLedgerEntryType.SALES_CREDIT_MEMO, customerLedgerEntry.getType());
-        assertEquals(-TEST_AMOUNT, customerLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.negate(), customerLedgerEntry.getAmount());
         assertEquals(TEST_DATE, customerLedgerEntry.getDate());
         assertEquals(TEST_DOCUMENT_CODE, customerLedgerEntry.getDocumentCode());
     }
@@ -231,7 +232,7 @@ public class GeneralJournalBatchPostServiceTest {
 
         assertEquals(customerMock, customerLedgerEntry.getCustomer());
         assertEquals(CustomerLedgerEntryType.PAYMENT, customerLedgerEntry.getType());
-        assertEquals(-TEST_AMOUNT, customerLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.negate(), customerLedgerEntry.getAmount());
         assertEquals(TEST_DATE, customerLedgerEntry.getDate());
         assertEquals(TEST_DOCUMENT_CODE, customerLedgerEntry.getDocumentCode());
     }
@@ -310,7 +311,7 @@ public class GeneralJournalBatchPostServiceTest {
         BankAccountLedgerEntry bankAccountLedgerEntry = bankAccountLedgerEntryArgumentCaptor.getValue();
         assertEquals(bankAccountMock, bankAccountLedgerEntry.getBankAccount());
         assertEquals(BankAccountLedgerEntryType.CUSTOMER_REFUND, bankAccountLedgerEntry.getType());
-        assertEquals(-TEST_AMOUNT, bankAccountLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.negate(), bankAccountLedgerEntry.getAmount());
         assertEquals(TEST_DOCUMENT_CODE, bankAccountLedgerEntry.getDocumentCode());
         assertEquals(TEST_DATE, bankAccountLedgerEntry.getDate());
     }
@@ -372,7 +373,7 @@ public class GeneralJournalBatchPostServiceTest {
 
         assertEquals(vendorMock, vendorLedgerEntry.getVendor());
         assertEquals(VendorLedgerEntryType.PURCHASE_CREDIT_MEMO, vendorLedgerEntry.getType());
-        assertEquals(-TEST_AMOUNT, vendorLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.negate(), vendorLedgerEntry.getAmount());
         assertEquals(TEST_DATE, vendorLedgerEntry.getDate());
         assertEquals(TEST_DOCUMENT_CODE, vendorLedgerEntry.getDocumentCode());
     }
@@ -414,7 +415,7 @@ public class GeneralJournalBatchPostServiceTest {
 
         assertEquals(vendorMock, vendorLedgerEntry.getVendor());
         assertEquals(VendorLedgerEntryType.PAYMENT, vendorLedgerEntry.getType());
-        assertEquals(-TEST_AMOUNT, vendorLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.negate(), vendorLedgerEntry.getAmount());
         assertEquals(TEST_DATE, vendorLedgerEntry.getDate());
         assertEquals(TEST_DOCUMENT_CODE, vendorLedgerEntry.getDocumentCode());
     }
@@ -444,7 +445,7 @@ public class GeneralJournalBatchPostServiceTest {
         BankAccountLedgerEntry bankAccountLedgerEntry = bankAccountLedgerEntryArgumentCaptor.getValue();
         assertEquals(bankAccountMock, bankAccountLedgerEntry.getBankAccount());
         assertEquals(BankAccountLedgerEntryType.VENDOR_PAYMENT, bankAccountLedgerEntry.getType());
-        assertEquals(-TEST_AMOUNT, bankAccountLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.negate(), bankAccountLedgerEntry.getAmount());
         assertEquals(TEST_DOCUMENT_CODE, bankAccountLedgerEntry.getDocumentCode());
         assertEquals(TEST_DATE, bankAccountLedgerEntry.getDate());
     }
@@ -540,7 +541,7 @@ public class GeneralJournalBatchPostServiceTest {
 
         assertEquals(bankAccountMock, bankAccountLedgerEntry.getBankAccount());
         assertEquals(BankAccountLedgerEntryType.FREE_ENTRY, bankAccountLedgerEntry.getType());
-        assertEquals(-TEST_AMOUNT, bankAccountLedgerEntry.getAmount());
+        assertEquals(TEST_AMOUNT.negate(), bankAccountLedgerEntry.getAmount());
         assertEquals(TEST_DATE, bankAccountLedgerEntry.getDate());
         assertEquals(TEST_DOCUMENT_CODE, bankAccountLedgerEntry.getDocumentCode());
     }

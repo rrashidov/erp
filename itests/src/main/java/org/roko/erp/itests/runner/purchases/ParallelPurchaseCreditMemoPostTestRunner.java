@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.purchases;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -56,12 +57,12 @@ public class ParallelPurchaseCreditMemoPostTestRunner extends AbstractParallelDo
     }
 
     private void createPurchaseCreditMemoLine(String code) {
-        double itemInventory = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE).getInventory();
+        BigDecimal itemInventory = itemClient.read(BusinessLogicSetupUtil.TEST_ITEM_CODE).getInventory();
 
         PurchaseDocumentLineDTO purchaseDocumentLine = new PurchaseDocumentLineDTO();
         purchaseDocumentLine.setItemCode(BusinessLogicSetupUtil.TEST_ITEM_CODE);
         purchaseDocumentLine.setQuantity(itemInventory);
-        purchaseDocumentLine.setPrice(1.0);
+        purchaseDocumentLine.setPrice(new BigDecimal(1));
         purchaseDocumentLine.setAmount(itemInventory);
 
         purchaseCreditMemoLineClient.create(code, purchaseDocumentLine);

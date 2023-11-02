@@ -1,5 +1,6 @@
 package org.roko.erp.backend.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.roko.erp.backend.model.BankAccountLedgerEntry;
@@ -114,26 +115,26 @@ public class GeneralJournalBatchPostServiceImpl implements GeneralJournalBatchPo
         bankAccountLedgerEntrySvc.create(bankAccountLedgerEntry);
     }
 
-    private double getBalanceAmount(GeneralJournalBatchLine generalJournalBatchLine) {
+    private BigDecimal getBalanceAmount(GeneralJournalBatchLine generalJournalBatchLine) {
         if (generalJournalBatchLine.getSourceType().equals(GeneralJournalBatchLineType.CUSTOMER)) {
             if (generalJournalBatchLine.getOperationType().equals(GeneralJournalBatchLineOperationType.PAYMENT)) {
                 return generalJournalBatchLine.getAmount();
             }
             if (generalJournalBatchLine.getOperationType().equals(GeneralJournalBatchLineOperationType.REFUND)) {
-                return -generalJournalBatchLine.getAmount();
+                return generalJournalBatchLine.getAmount().negate();
             }
         }
 
         if (generalJournalBatchLine.getSourceType().equals(GeneralJournalBatchLineType.VENDOR)) {
             if (generalJournalBatchLine.getOperationType().equals(GeneralJournalBatchLineOperationType.PAYMENT)) {
-                return -generalJournalBatchLine.getAmount();
+                return generalJournalBatchLine.getAmount().negate();
             }
             if (generalJournalBatchLine.getOperationType().equals(GeneralJournalBatchLineOperationType.REFUND)) {
                 return generalJournalBatchLine.getAmount();
             }
         }
 
-        return -generalJournalBatchLine.getAmount();
+        return generalJournalBatchLine.getAmount().negate();
     }
 
     private BankAccountLedgerEntryType getBalanceBankAccountLedgerEntryType(
@@ -221,24 +222,24 @@ public class GeneralJournalBatchPostServiceImpl implements GeneralJournalBatchPo
         return null;
     }
 
-    private double getLedgerEntryAmount(GeneralJournalBatchLine generalJournalBatchLine) {
+    private BigDecimal getLedgerEntryAmount(GeneralJournalBatchLine generalJournalBatchLine) {
         if (generalJournalBatchLine.getOperationType().equals(GeneralJournalBatchLineOperationType.ORDER)) {
             return generalJournalBatchLine.getAmount();
         }
 
         if (generalJournalBatchLine.getOperationType().equals(GeneralJournalBatchLineOperationType.CREDIT_MEMO)) {
-            return -generalJournalBatchLine.getAmount();
+            return generalJournalBatchLine.getAmount().negate();
         }
 
         if (generalJournalBatchLine.getOperationType().equals(GeneralJournalBatchLineOperationType.PAYMENT)) {
-            return -generalJournalBatchLine.getAmount();
+            return generalJournalBatchLine.getAmount().negate();
         }
 
         if (generalJournalBatchLine.getOperationType().equals(GeneralJournalBatchLineOperationType.REFUND)) {
             return generalJournalBatchLine.getAmount();
         }
 
-        return 0.00;
+        return new BigDecimal(0.00);
     }
 
     private boolean balanceBankAccountLedgerEntryShouldBeCreated(GeneralJournalBatchLine generalJournalBatchLine) {

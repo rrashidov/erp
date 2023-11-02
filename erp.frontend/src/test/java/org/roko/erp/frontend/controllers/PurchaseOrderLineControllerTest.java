@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,15 +27,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class PurchaseOrderLineControllerTest {
+
+    private static final BigDecimal ZERO = new BigDecimal(0);
     
     private static final String TEST_ITEM_CODE = "test-item-code";
     private static final String TEST_ITEM_NAME = "test-item-name";
-    private static final Double TEST_ITEM_PURCHASE_PRICE = 12.00d;
+    private static final BigDecimal TEST_ITEM_PURCHASE_PRICE = new BigDecimal(12);
 
     private static final String TEST_PURCHASE_ORDER_CODE = "test-purchase-order-code";
 
-    private static final Double TEST_QTY = 10.00d;
-    private static final Double TEST_PRICE = 12.00d;
+    private static final BigDecimal TEST_QTY = new BigDecimal(10);
+    private static final BigDecimal TEST_PRICE = new BigDecimal(12);
 
     private static final int TEST_LINE_NO = 2;
     private static final int TEST_PAGE = 12;
@@ -89,7 +92,7 @@ public class PurchaseOrderLineControllerTest {
         when(purchaseOrderLineMock.getItemName()).thenReturn(TEST_ITEM_NAME);
         when(purchaseOrderLineMock.getQuantity()).thenReturn(TEST_QTY);
         when(purchaseOrderLineMock.getPrice()).thenReturn(TEST_PRICE);
-        when(purchaseOrderLineMock.getAmount()).thenReturn(TEST_PRICE * TEST_QTY);
+        when(purchaseOrderLineMock.getAmount()).thenReturn(TEST_PRICE.multiply(TEST_QTY));
 
         when(purchaseOrderSvcMock.get(TEST_PURCHASE_ORDER_CODE)).thenReturn(purchaseOrderMock);
 
@@ -102,7 +105,7 @@ public class PurchaseOrderLineControllerTest {
         when(purchaseOrderLineModelMock.getItemCode()).thenReturn(TEST_ITEM_CODE);
         when(purchaseOrderLineModelMock.getQuantity()).thenReturn(TEST_QTY);
         when(purchaseOrderLineModelMock.getPrice()).thenReturn(TEST_PRICE);
-        when(purchaseOrderLineModelMock.getAmount()).thenReturn(TEST_QTY * TEST_PRICE);
+        when(purchaseOrderLineModelMock.getAmount()).thenReturn(TEST_QTY.multiply(TEST_PRICE));
 
         when(itemList.getData()).thenReturn(items);
 
@@ -130,9 +133,9 @@ public class PurchaseOrderLineControllerTest {
         assertEquals(0, purchaseOrderLineModel.getLineNo());
         assertEquals("", purchaseOrderLineModel.getItemCode());
         assertEquals("", purchaseOrderLineModel.getItemName());
-        assertEquals(0, purchaseOrderLineModel.getQuantity());
-        assertEquals(0, purchaseOrderLineModel.getPrice());
-        assertEquals(0, purchaseOrderLineModel.getAmount());
+        assertEquals(0, purchaseOrderLineModel.getQuantity().compareTo(ZERO));
+        assertEquals(0, purchaseOrderLineModel.getPrice().compareTo(ZERO));
+        assertEquals(0, purchaseOrderLineModel.getAmount().compareTo(ZERO));
     }
 
     @Test
@@ -152,7 +155,7 @@ public class PurchaseOrderLineControllerTest {
         assertEquals(TEST_ITEM_NAME, purchaseOrderLineModel.getItemName());
         assertEquals(TEST_QTY, purchaseOrderLineModel.getQuantity());
         assertEquals(TEST_PRICE, purchaseOrderLineModel.getPrice());
-        assertEquals(TEST_QTY * TEST_PRICE, purchaseOrderLineModel.getAmount());
+        assertEquals(TEST_QTY.multiply(TEST_PRICE), purchaseOrderLineModel.getAmount());
     }
 
     @Test
@@ -173,7 +176,7 @@ public class PurchaseOrderLineControllerTest {
 
         assertEquals("purchaseOrderLineWizardThirdPage.html", template);
 
-        verify(purchaseOrderLineModelMock).setAmount(TEST_QTY * TEST_PRICE);
+        verify(purchaseOrderLineModelMock).setAmount(TEST_QTY.multiply(TEST_PRICE));
 
         verify(modelMock).addAttribute("purchaseOrderLineModel", purchaseOrderLineModelMock);
     }
@@ -194,7 +197,7 @@ public class PurchaseOrderLineControllerTest {
         assertEquals(TEST_ITEM_CODE, purchaseOrderLine.getItemCode());
         assertEquals(TEST_QTY, purchaseOrderLine.getQuantity());
         assertEquals(TEST_PRICE, purchaseOrderLine.getPrice());
-        assertEquals(TEST_QTY * TEST_PRICE, purchaseOrderLine.getAmount());
+        assertEquals(TEST_QTY.multiply(TEST_PRICE), purchaseOrderLine.getAmount());
     }
 
     @Test

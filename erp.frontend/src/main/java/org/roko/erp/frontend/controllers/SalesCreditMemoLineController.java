@@ -59,7 +59,7 @@ public class SalesCreditMemoLineController {
         salesCreditMemoLineModel.setPrice(item.getSalesPrice());
 
         salesCreditMemoLineModel
-                .setAmount(salesCreditMemoLineModel.getQuantity() * salesCreditMemoLineModel.getPrice());
+                .setAmount(salesCreditMemoLineModel.getQuantity().multiply(salesCreditMemoLineModel.getPrice()));
 
         model.addAttribute("salesCreditMemoLineModel", salesCreditMemoLineModel);
 
@@ -70,7 +70,7 @@ public class SalesCreditMemoLineController {
     public String postSalesCreditMemoLineWizardSecondPage(
             @ModelAttribute SalesDocumentLineDTO salesCreditMemoLineModel, Model model) {
         salesCreditMemoLineModel
-                .setAmount(salesCreditMemoLineModel.getPrice() * salesCreditMemoLineModel.getQuantity());
+                .setAmount(salesCreditMemoLineModel.getPrice().multiply(salesCreditMemoLineModel.getQuantity()));
 
         model.addAttribute("salesCreditMemoLineModel", salesCreditMemoLineModel);
 

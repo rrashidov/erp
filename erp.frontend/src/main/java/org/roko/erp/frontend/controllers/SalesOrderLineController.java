@@ -52,7 +52,7 @@ public class SalesOrderLineController {
         salesOrderLine.setItemName(item.getName());
         salesOrderLine.setPrice(item.getSalesPrice());
 
-        salesOrderLine.setAmount(salesOrderLine.getQuantity() * salesOrderLine.getPrice());
+        salesOrderLine.setAmount(salesOrderLine.getQuantity().multiply(salesOrderLine.getPrice()));
 
         model.addAttribute("salesOrderLine", salesOrderLine);
 
@@ -61,7 +61,7 @@ public class SalesOrderLineController {
 
     @PostMapping("/salesOrderLineWizardSecondPage")
     public String postSalesOrderLineWizardSecondPage(@ModelAttribute SalesDocumentLineDTO salesOrderLine, Model model) {
-        salesOrderLine.setAmount(salesOrderLine.getQuantity() * salesOrderLine.getPrice());
+        salesOrderLine.setAmount(salesOrderLine.getQuantity().multiply(salesOrderLine.getPrice()));
 
         model.addAttribute("salesOrderLine", salesOrderLine);
 

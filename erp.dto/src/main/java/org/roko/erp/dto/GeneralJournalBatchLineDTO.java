@@ -1,5 +1,6 @@
 package org.roko.erp.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,7 +26,7 @@ public class GeneralJournalBatchLineDTO {
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     private Date date;
 
-    private double amount = 0.0;
+    private BigDecimal amount = new BigDecimal(0);
 
     private String bankAccountCode = "";
     
@@ -67,10 +68,10 @@ public class GeneralJournalBatchLineDTO {
     public void setDate(Date date) {
         this.date = date;
     }
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal  amount) {
         this.amount = amount;
     }
     public String getBankAccountCode() {

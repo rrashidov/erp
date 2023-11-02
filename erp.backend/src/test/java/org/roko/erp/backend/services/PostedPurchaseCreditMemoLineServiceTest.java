@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -32,9 +34,9 @@ public class PostedPurchaseCreditMemoLineServiceTest {
 
     private static final int TEST_PAGE = 12;
 
-    private static final double TEST_QUANTITY = 12.00;
-    private static final double TEST_PRICE = 10.00;
-    private static final double TEST_AMOUNT = 120.00;
+    private static final BigDecimal TEST_QUANTITY = new BigDecimal(12);
+    private static final BigDecimal TEST_PRICE = new BigDecimal(10);
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(120);
 
     @Captor
     private ArgumentCaptor<Pageable> pageableArgumentCaptor;

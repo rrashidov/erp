@@ -1,5 +1,6 @@
 package org.roko.erp.itests.runner.generalledger;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.roko.erp.dto.BankAccountDTO;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostGenJnlBatchTestRunner implements ITestRunner {
 
-    private static final double TEST_AMOUNT = 123.00;
+    private static final BigDecimal TEST_AMOUNT = new BigDecimal(123);
 
     private static final Logger LOGGER = LoggerFactory.getLogger("erp.itests");
 
@@ -99,10 +100,10 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         postGeneralJournalBatchSynchronously();
 
-        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, 0);
+        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, new BigDecimal(0));
 
         assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE,
-                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE - TEST_AMOUNT);
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE.subtract(TEST_AMOUNT));
 
         LOGGER.info("Post vendor payment test passed");
     }
@@ -117,7 +118,7 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         postGeneralJournalBatchSynchronously();
 
-        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, -TEST_AMOUNT);
+        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, TEST_AMOUNT.negate());
 
         LOGGER.info("Post vendor credit memo test passed");
     }
@@ -133,7 +134,7 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         postGeneralJournalBatchSynchronously();
 
-        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, 0);
+        assertVendorBalance(BusinessLogicSetupUtil.TEST_VENDOR_CODE_3, new BigDecimal(0));
 
         LOGGER.info("Post vendor refund test passed");
     }
@@ -183,7 +184,7 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         postGeneralJournalBatchSynchronously();
 
-        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, -TEST_AMOUNT);
+        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, TEST_AMOUNT.negate());
 
         LOGGER.info("Post customer credit memo test passed");
     }
@@ -199,10 +200,10 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         postGeneralJournalBatchSynchronously();
 
-        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, 0);
+        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, new BigDecimal(0));
 
         assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE,
-                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE + TEST_AMOUNT);
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE.add(TEST_AMOUNT));
 
         LOGGER.info("Post customer payment test passed");
     }
@@ -218,27 +219,27 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
 
         postGeneralJournalBatchSynchronously();
 
-        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, 0);
+        assertCustomerBalance(BusinessLogicSetupUtil.TEST_CUSTOMER_CODE_3, new BigDecimal(0));
 
         assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE,
-                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE - TEST_AMOUNT);
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE.subtract(TEST_AMOUNT));
 
         LOGGER.info("Post customer refund test passed");
     }
 
-    private void assertCustomerBalance(String code, double expectedBalance) throws ITestFailedException {
+    private void assertCustomerBalance(String code, BigDecimal expectedBalance) throws ITestFailedException {
         CustomerDTO customer = customerClient.read(code);
 
-        if (customer.getBalance() != expectedBalance) {
+        if (customer.getBalance().compareTo(expectedBalance) != 0) {
             throw new ITestFailedException(String.format("Customer %s balance issue: expected %f, got %f", code,
                     expectedBalance, customer.getBalance()));
         }
     }
 
-    private void assertVendorBalance(String code, double expectedBalance) throws ITestFailedException {
+    private void assertVendorBalance(String code, BigDecimal expectedBalance) throws ITestFailedException {
         VendorDTO vendor = vendorClient.read(code);
 
-        if (vendor.getBalance() != expectedBalance) {
+        if (vendor.getBalance().compareTo(expectedBalance) != 0) {
             throw new ITestFailedException(String.format("Vendor %s balance issue: expected %f, got %f", code,
                     expectedBalance, vendor.getBalance()));
         }
@@ -256,7 +257,7 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
         postGeneralJournalBatchSynchronously();
 
         assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE,
-                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE - TEST_AMOUNT);
+                BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_BALANCE.subtract(TEST_AMOUNT));
         assertBankAccountBalance(BusinessLogicSetupUtil.TEST_BANK_ACCOUNT_CODE_2, TEST_AMOUNT);
 
         LOGGER.info("Transfer between bank accounts test passed");
@@ -276,10 +277,10 @@ public class PostGenJnlBatchTestRunner implements ITestRunner {
         util.waitGeneralJournalBatchPosted();
     }
 
-    private void assertBankAccountBalance(String code, double expectedBalance) throws ITestFailedException {
+    private void assertBankAccountBalance(String code, BigDecimal expectedBalance) throws ITestFailedException {
         BankAccountDTO bankAccount = bankAccountClient.read(code);
 
-        if (bankAccount.getBalance() != expectedBalance) {
+        if (bankAccount.getBalance().compareTo(expectedBalance) != 0) {
             throw new ITestFailedException(String.format("Bank account balance assert failed: expected %f, got %f",
                     expectedBalance, bankAccount.getBalance()));
         }

@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class VendorServiceTest {
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
     private static final String TEST_ADDRESS = "test-address";
-    private static final double TEST_BALANCE = 123.12;
+    private static final BigDecimal TEST_BALANCE = new BigDecimal(123.12);
 
     private static final int TEST_PAGE = 12;
 
