@@ -8,6 +8,8 @@
 - compile Java components with Java 17
 - switch to Spring Boot 3.1.4
 - enable running production instance
+- introduce ELK stack for dev setup
+- fix thymeleaf deprecated tag
 
 ## v0.0.4
 
