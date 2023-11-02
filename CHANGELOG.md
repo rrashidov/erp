@@ -10,6 +10,7 @@
 - enable running production instance
 - introduce ELK stack for dev setup
 - fix thymeleaf deprecated tag
+- replace double with BigDecimal
 
 ## v0.0.4
 
