@@ -61,6 +61,13 @@ build-erp-rabbitmq:
 	@docker build -t erp.rabbitmq:0.0.1 -f ./docker/Dockerfile.rabbitmq ./docker
 	@echo "Finished building RabbitMQ container image to be used by erp components"
 
+## build-erp-mysqlbackup: builds container image to backup MySQL DB
+.PHONY: build-erp-mysqlbackup
+build-erp-mysqlbackup:
+	@echo "Build mysqlbackup container image to be used by erp components"
+	@docker build -t erp.mysqlbackup:0.0.1 -f ./docker/Dockerfile.mysqlbackup ./docker
+	@echo "Finished building mysqlbackup container image to be used by erp components"
+
 # ==================================================================================== #
 # DATA
 # ==================================================================================== #
@@ -85,7 +92,7 @@ clean-local-mysql:
 
 ## start-locally: starts the whole system locally using docker compose
 .PHONY: start-locally
-start-locally: stop-locally containerize build-erp-rabbitmq
+start-locally: stop-locally containerize build-erp-rabbitmq build-erp-mysqlbackup
 	@echo "Start erp setup locally"
 	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/env.dev up -d 
 	@echo "erp is up and running locally. You can access it at http://localhost:8081"
@@ -114,7 +121,7 @@ run-integration-tests: stop-locally clean-local-mysql start-locally
 
 ## start-production: creates and starts production docker compose instance
 .PHONY: start-production
-start-production: stop-production containerize build-erp-rabbitmq
+start-production: stop-production containerize build-erp-rabbitmq build-erp-mysqlbackup
 	@echo "Starting production docker compose instance"
 	@docker compose -f ./docker/docker-compose-prod.yml --project-name prod --env-file ./docker/env.prod up -d
 	@echo "Finished starting production docker compose instance"

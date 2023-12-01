@@ -1,0 +1,7 @@
+FROM mysql:8.1.0
+
+COPY mysql-backup.sh /mysql-backup.sh
+
+RUN chmod +x /mysql-backup.sh
+
+ENTRYPOINT ["/mysql-backup.sh"]
