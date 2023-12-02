@@ -11,6 +11,7 @@
 - introduce ELK stack for dev setup
 - fix thymeleaf deprecated tag
 - replace double with BigDecimal
+- add db backup component to docker compose prod
 
 ## v0.0.4
 
