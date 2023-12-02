@@ -22,7 +22,7 @@ services:
     environment:
       - "MYSQL_BACKUP_PERIOD=${MYSQL_BACKUP_PERIOD:-60}"
     volumes:
-      - ${DB_BACKUP_PATH}:/usr/mysql/backup/
+      - ${DB_BACKUP_PATH:-""}:/usr/mysql/backup/
     depends_on:
       mysql:
         condition: service_healthy
