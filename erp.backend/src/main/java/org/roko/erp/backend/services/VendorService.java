@@ -17,9 +17,13 @@ public interface VendorService {
 
     public List<Vendor> list();
 
+    public List<Vendor> list(String name);
+
     public List<Vendor> list(int page);
 
     public long count();
+
+    public long count(String name);
 
     public VendorDTO toDTO(Vendor vendor);
 

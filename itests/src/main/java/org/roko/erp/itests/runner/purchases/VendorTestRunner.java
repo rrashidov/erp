@@ -1,7 +1,10 @@
 package org.roko.erp.itests.runner.purchases;
 
+import java.util.List;
+
 import org.roko.erp.dto.PaymentMethodDTO;
 import org.roko.erp.dto.VendorDTO;
+import org.roko.erp.dto.list.VendorList;
 import org.roko.erp.itests.clients.PaymentMethodClient;
 import org.roko.erp.itests.clients.VendorClient;
 import org.roko.erp.itests.runner.BaseTestRunner;
@@ -50,6 +53,10 @@ public class VendorTestRunner extends BaseTestRunner {
         verifyVendorRead(vendor);
         LOGGER.info("Vendor read test pased");
 
+        LOGGER.info("Running Vendor list with name filter test");
+        verifyListWithNameFilter();
+        LOGGER.info("Vendor list with name filter test passed");
+
         LOGGER.info("Running Vendor update test");
         paymentMethod = generateSecondPaymentMethod();
         paymentMethodClient.create(paymentMethod);
@@ -68,6 +75,26 @@ public class VendorTestRunner extends BaseTestRunner {
         paymentMethodClient.delete(TEST_PAYMENT_METHOD_CODE);
         paymentMethodClient.delete(SECOND_PAYMENT_METHOD_CODE);
         LOGGER.info("Vendor delete test pased");
+    }
+
+    private void verifyListWithNameFilter() throws ITestFailedException {
+        VendorList matchingList = client.list("VENDOR-NA");
+
+        List<VendorDTO> matchingData = matchingList.getData();
+        if (matchingData.stream().noneMatch(x -> x.getCode().equals(TEST_VENDOR_CODE))) {
+            throw new ITestFailedException(String.format(
+                    "Vendor name filter problem: expected vendor with code %s to be present in wildcard, case-insensitive search results",
+                    TEST_VENDOR_CODE));
+        }
+
+        VendorList nonMatchingList = client.list("no-such-vendor-name-should-match");
+
+        List<VendorDTO> nonMatchingData = nonMatchingList.getData();
+        if (nonMatchingData.stream().anyMatch(x -> x.getCode().equals(TEST_VENDOR_CODE))) {
+            throw new ITestFailedException(String.format(
+                    "Vendor name filter problem: vendor with code %s should not be present when name filter does not match",
+                    TEST_VENDOR_CODE));
+        }
     }
 
     private void verifyVendorDeleted(VendorDTO vendor) throws ITestFailedException {

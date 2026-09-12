@@ -1,6 +1,7 @@
 package org.roko.erp.itests.clients;
 
 import org.roko.erp.dto.VendorDTO;
+import org.roko.erp.dto.list.VendorList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -8,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class VendorClient {
-    
+
     private RestTemplate rest;
 
     @Autowired
@@ -19,7 +20,11 @@ public class VendorClient {
     public String create(VendorDTO vendor) {
         return rest.postForEntity("/api/v1/vendors", vendor, String.class).getBody();
     }
-    
+
+    public VendorList list(String name) {
+        return rest.getForObject("/api/v1/vendors?name={name}", VendorList.class, name);
+    }
+
     public VendorDTO read(String id) {
         try {
             return rest.getForEntity("/api/v1/vendors/{code}", VendorDTO.class, id).getBody();

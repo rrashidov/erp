@@ -67,6 +67,16 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    public List<Vendor> list(String name) {
+        List<Vendor> vendors = repo.findByNameContainingIgnoreCase(name);
+
+        vendors.stream()
+            .forEach(v -> v.setBalance(repo.balance(v)));
+
+        return vendors;
+    }
+
+    @Override
     public List<Vendor> list(int page) {
         List<Vendor> vendors = repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList();
 
@@ -79,6 +89,11 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public long count() {
         return repo.count();
+    }
+
+    @Override
+    public long count(String name) {
+        return repo.countByNameContainingIgnoreCase(name);
     }
 
     @Override

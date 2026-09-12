@@ -35,6 +35,8 @@ public class VendorServiceTest {
 
     private static final int TEST_PAGE = 12;
 
+    private static final long TEST_COUNT = 222;
+
     @Captor
     private ArgumentCaptor<Pageable> pageableArgumentCaptor;
 
@@ -89,6 +91,9 @@ public class VendorServiceTest {
         when(repoMock.findById(TEST_CODE)).thenReturn(Optional.of(vendorMock));
         when(repoMock.findAll()).thenReturn(Arrays.asList(vendorMock, vendorMock1, vendorMock2));
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
+        when(repoMock.findByNameContainingIgnoreCase(TEST_NAME))
+                .thenReturn(Arrays.asList(vendorMock, vendorMock1, vendorMock2));
+        when(repoMock.countByNameContainingIgnoreCase(TEST_NAME)).thenReturn(TEST_COUNT);
 
         svc = new VendorServiceImpl(repoMock, paymentMethodSvcMock);
     }
@@ -143,6 +148,17 @@ public class VendorServiceTest {
     }
 
     @Test
+    public void listWithName_delegatesToRepo(){
+        svc.list(TEST_NAME);
+
+        verify(repoMock).findByNameContainingIgnoreCase(TEST_NAME);
+
+        verify(repoMock).balance(vendorMock);
+        verify(repoMock).balance(vendorMock1);
+        verify(repoMock).balance(vendorMock2);
+    }
+
+    @Test
     public void listWithPage_delegatesToRepo() {
         svc.list(TEST_PAGE);
 
@@ -159,6 +175,13 @@ public class VendorServiceTest {
         svc.count();
 
         verify(repoMock).count();
+    }
+
+    @Test
+    public void countWithName_delegatesToRepo(){
+        svc.count(TEST_NAME);
+
+        verify(repoMock).countByNameContainingIgnoreCase(TEST_NAME);
     }
 
     @Test
