@@ -3,6 +3,10 @@ include .envrc
 
 work_dir=$(pwd)
 
+# Per-run host ports, picked by scripts/pick-free-ports.sh so local runs don't
+# collide with ports already taken by other processes/containers on the host.
+dev_env_files=--env-file ./docker/env.dev --env-file ./docker/env.dev.ports
+
 # ==================================================================================== #
 # HELPERS
 # ==================================================================================== #
@@ -74,53 +78,63 @@ build-erp-mysqlbackup:
 
 ## init-test-data: initialises some test data
 .PHONY: init-test-data
-init-test-data:
+init-test-data: ensure-dev-ports
 	@echo "Start initializing test data"
-	./scripts/init-test-data.sh
+	@. ./docker/env.dev.ports; BASE_URL="localhost:$${BACKEND_PORT:-8082}" ./scripts/init-test-data.sh
 	@echo "Finished initializing test data"
 
 ## clean-local-mysql: cleans MySQL data
 .PHONY: clean-local-mysql
-clean-local-mysql:
+clean-local-mysql: ensure-dev-ports
 	@echo "Start cleaning local mysql data"
-	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/env.dev down -v
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev $(dev_env_files) down -v
 	@echo "Finished cleaning local mysql data"
 
 # ==================================================================================== #
 # LOCAL SETUP
 # ==================================================================================== #
 
+## ensure-dev-ports: makes sure a docker/env.dev.ports file exists (created on demand with fallback defaults)
+.PHONY: ensure-dev-ports
+ensure-dev-ports:
+	@test -f ./docker/env.dev.ports || printf 'BACKEND_PORT=8082\nFRONTEND_PORT=8081\nRABBITMQ_ADMIN_PORT=15672\n' > ./docker/env.dev.ports
+
+## pick-free-ports: finds free host ports for backend/frontend/rabbitmq-admin and writes docker/env.dev.ports
+.PHONY: pick-free-ports
+pick-free-ports:
+	@./scripts/pick-free-ports.sh
+
 ## start-locally: starts the whole system locally using docker compose
 .PHONY: start-locally
-start-locally: stop-locally containerize build-erp-rabbitmq build-erp-mysqlbackup
+start-locally: stop-locally pick-free-ports containerize build-erp-rabbitmq build-erp-mysqlbackup
 	@echo "Start erp setup locally"
-	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/env.dev up -d 
-	@echo "erp is up and running locally. You can access it at http://localhost:8081"
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev $(dev_env_files) up -d
+	@. ./docker/env.dev.ports; echo "erp is up and running locally. You can access it at http://localhost:$${FRONTEND_PORT:-8081}"
 
 ## stop-locally: stops anything run locally
 .PHONY: stop-locally
-stop-locally:
+stop-locally: ensure-dev-ports
 	@echo "Stop locally running erp"
-	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev --env-file ./docker/env.dev down
+	@docker compose -f ./docker/docker-compose-dev.yml --project-name dev $(dev_env_files) down
 	@echo "Locally running erp stopped"
 
 # ==================================================================================== #
-# Testing 
+# Testing
 # ==================================================================================== #
 
 ## run-integration-tests: runs integration tests towards backend API
 .PHONY: run-integration-tests
 run-integration-tests: stop-locally clean-local-mysql start-locally
 	@echo "Start running integration tests"
-	@java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
+	@. ./docker/env.dev.ports; ERP_BACKENDURL="http://localhost:$${BACKEND_PORT:-8082}" java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
 	@echo "Finished running integration tests. Check their output to see if the pass"
 
 ## verify: builds, starts stack, seeds data, runs integration tests, and stops stack
 .PHONY: verify
 verify: stop-locally clean-local-mysql start-locally init-test-data
 	@echo "Start running integration tests"
-	@java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
-	@EXIT_CODE=$$?; \
+	@. ./docker/env.dev.ports; ERP_BACKENDURL="http://localhost:$${BACKEND_PORT:-8082}" java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar; \
+	EXIT_CODE=$$?; \
 	make stop-locally; \
 	exit $$EXIT_CODE
 
