@@ -129,9 +129,9 @@ run-integration-tests: stop-locally clean-local-mysql start-locally
 	@. ./docker/env.dev.ports; ERP_BACKENDURL="http://localhost:$${BACKEND_PORT:-8082}" java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
 	@echo "Finished running integration tests. Check their output to see if the pass"
 
-## verify: builds, starts stack, seeds data, runs integration tests; leaves the stack up on failure for investigation (use `make verify-cleanup` afterwards)
+## verify: builds, starts stack, runs integration tests; leaves the stack up on failure for investigation (use `make verify-cleanup` afterwards)
 .PHONY: verify
-verify: stop-locally clean-local-mysql start-locally init-test-data
+verify: stop-locally clean-local-mysql start-locally
 	@echo "Start running integration tests"
 	@. ./docker/env.dev.ports; ERP_BACKENDURL="http://localhost:$${BACKEND_PORT:-8082}" java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar; \
 	EXIT_CODE=$$?; \
