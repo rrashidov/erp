@@ -17,9 +17,13 @@ public interface ItemService {
 
     public List<Item> list();
 
+    public List<Item> list(String name);
+
     public List<Item> list(int page);
 
     public long count();
+
+    public long count(String name);
 
     public ItemDTO toDTO(Item item);
 

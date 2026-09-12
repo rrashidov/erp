@@ -64,6 +64,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public List<Item> list(String name) {
+        List<Item> items = repo.findByNameContainingIgnoreCase(name);
+
+        items.stream()
+                .forEach(item -> item.setInventory(repo.inventory(item)));
+
+        return items;
+    }
+
+    @Override
     public List<Item> list(int page) {
         List<Item> items = repo.findAll(PageRequest.of(page - 1, Constants.RECORDS_PER_PAGE)).toList();
 
@@ -77,7 +87,12 @@ public class ItemServiceImpl implements ItemService {
     public long count() {
         return repo.count();
     }
-    
+
+    @Override
+    public long count(String name) {
+        return repo.countByNameContainingIgnoreCase(name);
+    }
+
     @Override
     public Item fromDTO(ItemDTO itemDto) {
         Item item = new Item();

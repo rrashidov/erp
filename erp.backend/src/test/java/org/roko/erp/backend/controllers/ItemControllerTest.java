@@ -74,11 +74,13 @@ public class ItemControllerTest {
         when(itemMock.getPurchasePrice()).thenReturn(TEST_PURCHASE_PRICE);
 
         when(svcMock.list()).thenReturn(Arrays.asList(itemMock));
+        when(svcMock.list(TEST_NAME)).thenReturn(Arrays.asList(itemMock));
         when(svcMock.list(TEST_PAGE)).thenReturn(Arrays.asList(itemMock));
         when(svcMock.get(TEST_CODE)).thenReturn(itemMock);
         when(svcMock.fromDTO(itemDtoMock)).thenReturn(itemMock);
         when(svcMock.toDTO(itemMock)).thenReturn(itemDtoMock);
         when(svcMock.count()).thenReturn(TEST_COUNT);
+        when(svcMock.count(TEST_NAME)).thenReturn(TEST_COUNT);
 
         when(itemDtoMock.getCode()).thenReturn(TEST_CODE);
         when(itemDtoMock.getName()).thenReturn(TEST_NAME);
@@ -94,10 +96,24 @@ public class ItemControllerTest {
 
     @Test
     public void list_delegatesToSvc(){
-        ItemList list = controller.list();
+        ItemList list = controller.list(null);
 
         assertEquals(itemDtoMock, list.getData().get(0));
         assertEquals(TEST_COUNT, list.getCount());
+
+        verify(svcMock).list();
+        verify(svcMock).count();
+    }
+
+    @Test
+    public void listWithName_delegatesToSvc(){
+        ItemList list = controller.list(TEST_NAME);
+
+        assertEquals(itemDtoMock, list.getData().get(0));
+        assertEquals(TEST_COUNT, list.getCount());
+
+        verify(svcMock).list(TEST_NAME);
+        verify(svcMock).count(TEST_NAME);
     }
 
     @Test

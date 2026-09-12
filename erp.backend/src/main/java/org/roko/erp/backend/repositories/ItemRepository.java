@@ -1,6 +1,7 @@
 package org.roko.erp.backend.repositories;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.roko.erp.backend.model.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,8 @@ public interface ItemRepository extends JpaRepository<Item, String> {
 
     @Query("SELECT COALESCE(SUM(itemLedgerEntry.quantity), 0) FROM ItemLedgerEntry itemLedgerEntry WHERE itemLedgerEntry.item = :item")
     public BigDecimal inventory(@Param("item") Item item);
+
+    public List<Item> findByNameContainingIgnoreCase(String name);
+
+    public long countByNameContainingIgnoreCase(String name);
 }

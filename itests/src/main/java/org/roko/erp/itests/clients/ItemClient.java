@@ -1,6 +1,7 @@
 package org.roko.erp.itests.clients;
 
 import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.list.ItemList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -18,6 +19,10 @@ public class ItemClient {
 
     public String create(ItemDTO item) {
         return rest.postForObject("/api/v1/items", item, String.class);
+    }
+
+    public ItemList list(String name) {
+        return rest.getForObject("/api/v1/items?name={name}", ItemList.class, name);
     }
 
     public ItemDTO read(String id) {

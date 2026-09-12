@@ -29,6 +29,7 @@ public class ItemServiceTest {
     private static final String TEST_ID = "test-id";
     private static final String TEST_CODE = "test-code";
     private static final String TEST_NAME = "test-name";
+    private static final long TEST_COUNT = 111;
     private static final BigDecimal TEST_SALES_PRICE = new BigDecimal(123.12);
     private static final BigDecimal TEST_PURCHASE_PRICE = new BigDecimal(23.45);
     private static final BigDecimal TEST_INVENTORY = new BigDecimal(45.67);
@@ -79,6 +80,8 @@ public class ItemServiceTest {
         when(repoMock.findById(TEST_ID)).thenReturn(Optional.of(itemFromDBMock));
         when(repoMock.findAll()).thenReturn(Arrays.asList(itemMock, itemMock1, itemMock2));
         when(repoMock.findAll(any(Pageable.class))).thenReturn(pageMock);
+        when(repoMock.findByNameContainingIgnoreCase(TEST_NAME)).thenReturn(Arrays.asList(itemMock, itemMock1, itemMock2));
+        when(repoMock.countByNameContainingIgnoreCase(TEST_NAME)).thenReturn(TEST_COUNT);
 
         svc = new ItemServiceImpl(repoMock);
     }
@@ -133,6 +136,17 @@ public class ItemServiceTest {
     }
 
     @Test
+    public void listWithName_delegatesToRepo() {
+        svc.list(TEST_NAME);
+
+        verify(repoMock).findByNameContainingIgnoreCase(TEST_NAME);
+
+        verify(repoMock).inventory(itemMock);
+        verify(repoMock).inventory(itemMock1);
+        verify(repoMock).inventory(itemMock2);
+    }
+
+    @Test
     public void listWithPage_delegatesToRepo() {
         svc.list(TEST_PAGE);
 
@@ -149,6 +163,15 @@ public class ItemServiceTest {
         svc.count();
 
         verify(repoMock).count();
+    }
+
+    @Test
+    public void countWithName_delegatesToRepo(){
+        long count = svc.count(TEST_NAME);
+
+        assertEquals(TEST_COUNT, count);
+
+        verify(repoMock).countByNameContainingIgnoreCase(TEST_NAME);
     }
 
     @Test

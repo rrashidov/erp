@@ -1,8 +1,10 @@
 package org.roko.erp.itests.runner.inventory;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.roko.erp.dto.ItemDTO;
+import org.roko.erp.dto.list.ItemList;
 import org.roko.erp.itests.clients.ItemClient;
 import org.roko.erp.itests.runner.BaseTestRunner;
 import org.roko.erp.itests.runner.ITestFailedException;
@@ -39,6 +41,10 @@ public class ItemTestRunner extends BaseTestRunner {
         verifyItemRead(item);
         LOGGER.info("Item read test passed");
 
+        LOGGER.info("Running Item list with name filter test");
+        verifyListWithNameFilter();
+        LOGGER.info("Item list with name filter test passed");
+
         LOGGER.info("Running Item update test");
         client.update(TEST_ITEM_CODE, generateUpdatedItemDTO());
         item = client.read(TEST_ITEM_CODE);
@@ -68,6 +74,26 @@ public class ItemTestRunner extends BaseTestRunner {
         result.setPurchasePrice(UPDATED_PURCHASE_PRICE);
         result.setSalesPrice(UPDATED_SALES_PRICE);
         return result;
+    }
+
+    private void verifyListWithNameFilter() throws ITestFailedException {
+        ItemList matchingList = client.list("ITEM-NA");
+
+        List<ItemDTO> matchingData = matchingList.getData();
+        if (matchingData.stream().noneMatch(x -> x.getCode().equals(TEST_ITEM_CODE))) {
+            throw new ITestFailedException(String.format(
+                    "Item name filter problem: expected item with code %s to be present in wildcard, case-insensitive search results",
+                    TEST_ITEM_CODE));
+        }
+
+        ItemList nonMatchingList = client.list("no-such-item-name-should-match");
+
+        List<ItemDTO> nonMatchingData = nonMatchingList.getData();
+        if (nonMatchingData.stream().anyMatch(x -> x.getCode().equals(TEST_ITEM_CODE))) {
+            throw new ITestFailedException(String.format(
+                    "Item name filter problem: item with code %s should not be present when name filter does not match",
+                    TEST_ITEM_CODE));
+        }
     }
 
     private void verifyItemRead(ItemDTO item) throws ITestFailedException {

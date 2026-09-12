@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,14 +38,16 @@ public class ItemController {
     }
 
     @GetMapping
-    public ItemList list() {
-        List<ItemDTO> data = svc.list().stream()
+    public ItemList list(@RequestParam(value = "name", required = false) String name) {
+        List<Item> items = (name == null) ? svc.list() : svc.list(name);
+
+        List<ItemDTO> data = items.stream()
                 .map(x -> svc.toDTO(x))
                 .collect(Collectors.toList());
 
         ItemList list = new ItemList();
         list.setData(data);
-        list.setCount(svc.count());
+        list.setCount((name == null) ? svc.count() : svc.count(name));
         return list;
     }
 
