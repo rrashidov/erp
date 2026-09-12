@@ -115,8 +115,17 @@ run-integration-tests: stop-locally clean-local-mysql start-locally
 	@java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
 	@echo "Finished running integration tests. Check their output to see if the pass"
 
+## verify: builds, starts stack, seeds data, runs integration tests, and stops stack
+.PHONY: verify
+verify: stop-locally clean-local-mysql start-locally init-test-data
+	@echo "Start running integration tests"
+	@java -jar ./itests/target/itests-0.0.1-SNAPSHOT.jar
+	@EXIT_CODE=$$?; \
+	make stop-locally; \
+	exit $$EXIT_CODE
+
 # ==================================================================================== #
-# Production 
+# Production
 # ==================================================================================== #
 
 ## start-production: creates and starts production docker compose instance
