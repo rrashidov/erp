@@ -47,5 +47,8 @@ buildNumber.properties
 # Make
 .envrc
 
+# Generated per-run local ports (see scripts/pick-free-ports.sh)
+docker/env.dev.ports
+
 # TODOs
 TODOs.md
